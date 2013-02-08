@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;com.mobmonkey.mobmonkey.SignUpScreen&apos; to &apos;MobMonkey&apos;" description="Rename resource &apos;com.mobmonkey.mobmonkey.SignUpScreen&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/com.mobmonkey.mobmonkey.SignUpScreen" name="MobMonkey" stamp="1360192936730" updateReferences="true"/>
+</session>

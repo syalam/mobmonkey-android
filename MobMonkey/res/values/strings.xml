@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="app_name">MobMonkey</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">SignUpScreen</string>
+
+    <string name="cb_agree_tos">I accept the terms of use</string>
+    <string name="btn_sign_up">Sign Up</string>
+    <string name="btn_sign_up_facebook">Sign Up With Facebook</string>
+    <string name="btn_sign_up_twitter">Sign Up With Twitter</string>
+</resources>
