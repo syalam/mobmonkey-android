@@ -26,7 +26,9 @@
 	<string name="alert_invalid_gender">Please select your gender.</string>
 	<string name="alert_invalid_tos">Terms of Service must be accepted before signing up.</string>
 
+	<string name="title_birthdate">Please select your birthdate</string>
 	<string name="title_gender">Gender</string>
+	<string name="btn_choose">Choose</string>
 	<string name="btn_cancel">Cancel</string>
 	
 	<string-array name="alert_gender">

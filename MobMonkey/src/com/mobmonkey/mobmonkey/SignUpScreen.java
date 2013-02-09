@@ -23,16 +23,20 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.DatePicker.OnDateChangedListener;
 import android.text.TextUtils;
 
-public class SignUpScreen extends Activity implements OnDateSetListener{
+public class SignUpScreen extends Activity implements OnDateChangedListener, OnTouchListener {
 	private static final String TAG = "SignUpScreen: ";
 	
 	HashMap<String,Object> userInfo;
@@ -47,8 +51,9 @@ public class SignUpScreen extends Activity implements OnDateSetListener{
 	EditText etBirthdate;
 	EditText etGender;
 	CheckBox cbAcceptedToS;
+    MotionEvent prevEvent;
 	
-	Date birthdate;
+	Calendar birthdate;
 	
 	// TODO: remove soft keyboard from birthdate and gender
 	
@@ -79,16 +84,6 @@ public class SignUpScreen extends Activity implements OnDateSetListener{
 	    	case R.id.btnsignuptwitter:
 	    		// TODO: 
 	    		break;
-	    	case R.id.etbirthdate:
-	    		
-	    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
-	    		promptUserBirthdate();
-	    		break;
-	    	case R.id.etgender:
-	    		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-	    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
-	    		promptUserGender();
-	    		break;
     	}
     }
     
@@ -105,6 +100,9 @@ public class SignUpScreen extends Activity implements OnDateSetListener{
     	etBirthdate = (EditText) findViewById(R.id.etbirthdate);
     	etGender = (EditText) findViewById(R.id.etgender);
     	cbAcceptedToS = (CheckBox) findViewById(R.id.cbagreetos);
+    	
+    	etBirthdate.setOnTouchListener(SignUpScreen.this);
+    	etGender.setOnTouchListener(SignUpScreen.this);
     	
     	// TODO: Hardcoded values, to be removed
     	etFirstName.setText("Wilson");
@@ -168,7 +166,7 @@ public class SignUpScreen extends Activity implements OnDateSetListener{
     
     private boolean checkBirthdate() {
     	if(!TextUtils.isEmpty(etBirthdate.getText())) {
-    		userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTime());
+    		userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
     		return checkGender();
     	} else {
     		displayAlert(R.string.alert_invalid_birthdate);
@@ -215,12 +213,36 @@ public class SignUpScreen extends Activity implements OnDateSetListener{
     }
     
     private void promptUserBirthdate() {
-    	Calendar calendar = Calendar.getInstance();
-    	calendar.setTimeInMillis(System.currentTimeMillis());
-    	DatePickerDialog dpd = new DatePickerDialog(SignUpScreen.this, SignUpScreen.this, calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-    	dpd.setTitle("Please select your birthdate");
-    	dpd.setButton(DatePickerDialog.BUTTON_POSITIVE, "Choose", dpd);
-    	dpd.show();
+    	LayoutInflater layoutInflator = LayoutInflater.from(SignUpScreen.this);
+    	View vBirthdate = layoutInflator.inflate(R.layout.birthdate_picker, null);
+    	
+    	final DatePicker dpBirthdate = (DatePicker) vBirthdate.findViewById(R.id.dpbirthdate);
+    	
+    	if(birthdate == null) {
+	    	birthdate = Calendar.getInstance();
+	    	birthdate.setTimeInMillis(System.currentTimeMillis());
+	    	birthdate.set(birthdate.get(Calendar.YEAR) - 21, birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH));
+		    dpBirthdate.init(birthdate.get(Calendar.YEAR), birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH), SignUpScreen.this);
+    	} else {
+    		dpBirthdate.init(birthdate.get(Calendar.YEAR), birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH), SignUpScreen.this);
+    	}
+    	
+    	new AlertDialog.Builder(SignUpScreen.this)
+    		.setTitle(R.string.title_birthdate)
+    		.setView(vBirthdate)
+    		.setCancelable(false)
+    		.setPositiveButton(R.string.btn_choose, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
+					Log.d(TAG, TAG + "dpBirthdate: " + birthdate.toString());
+					Log.d(TAG, TAG + "dpBirthdateMilli: " + birthdate.getTimeInMillis());
+					Date tempDate = new Date(birthdate.get(Calendar.YEAR) - 1900, birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH));
+					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+					etBirthdate.setText(simpleDateFormat.format(tempDate));
+				}
+			})
+			.setNegativeButton(R.string.btn_cancel, null)
+			.show();
     }
     
     private void promptUserGender() {
@@ -235,12 +257,6 @@ public class SignUpScreen extends Activity implements OnDateSetListener{
     		.setCancelable(false)
     		.show();
     }
-    
-	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-		birthdate = new Date(year - 1900, monthOfYear, dayOfMonth);
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
-		etBirthdate.setText(simpleDateFormat.format(birthdate));
-	}
 	
     private class SignUpCallback implements MMCallback {
 		public void processCallback(Object obj) {
@@ -262,4 +278,31 @@ public class SignUpScreen extends Activity implements OnDateSetListener{
 			Log.d(TAG, TAG + "response: " + (String) obj);
 		}	
     }
+    
+	public boolean onTouch(View v, MotionEvent event) {
+		Log.d(TAG, TAG + "onTouch: " + event.getAction());
+		if(event.getAction() == MotionEvent.ACTION_DOWN) {
+			prevEvent = event;
+		}
+		
+		if(event.getAction() == MotionEvent.ACTION_UP) {
+			switch(v.getId()) {
+		    	case R.id.etbirthdate:
+		    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
+		    		promptUserBirthdate();
+		    		return true;
+		    	case R.id.etgender:
+		    		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
+		    		promptUserGender();
+		    		return true;
+			}
+		}
+		
+		return false;
+	}
+
+	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+		
+	}
 }
