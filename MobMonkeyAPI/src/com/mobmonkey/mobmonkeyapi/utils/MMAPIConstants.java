@@ -31,6 +31,7 @@ public final class MMAPIConstants {
 	public static final String KEY_CONTENT_TYPE = "Content-Type";
 	public static final String KEY_PARTNER_ID = "MobMonkey-partnerId";
 	
+	public static final String CONTENT_TYPE_APP_JSON = "application/json";
 	public static final String DEVICE_TYPE = "Android";
 	
 	public static final String TEXT_MALE = "Male";

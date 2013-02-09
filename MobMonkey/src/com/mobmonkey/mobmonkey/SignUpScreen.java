@@ -29,6 +29,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -36,6 +37,11 @@ import android.widget.Toast;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.text.TextUtils;
 
+/**
+ * Android activity screen that allows user to sign up his/her account through MobMonkey, Facebook or twitter.
+ * @author Dezapp, LLC
+ *
+ */
 public class SignUpScreen extends Activity implements OnDateChangedListener, OnTouchListener {
 	private static final String TAG = "SignUpScreen: ";
 	
@@ -55,8 +61,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	
 	Calendar birthdate;
 	
-	// TODO: remove soft keyboard from birthdate and gender
-	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,26 +75,37 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
         initUserInfoFields();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
     
+    /**
+     * Handler for when {@link Button}s or any other {@link View}s are clicked.
+     * @param view
+     */
     public void viewOnClick(View view) {
     	switch(view.getId()) {
 	    	case R.id.btnsignup:
 	    		signUpNormal();
 	    		break;
 	    	case R.id.btnsignupfacebook:
-	    		// TODO: 
+	    		signUpFacebook();
 	    		break;
 	    	case R.id.btnsignuptwitter:
-	    		// TODO: 
+	    		signUpTwitter();
 	    		break;
     	}
     }
     
+    /**
+     * Initialize all the variables to be used in {@link SignUpScreen}.
+     */
     private void initUserInfoFields() {
     	userInfo = new HashMap<String, Object>();
     	
@@ -112,6 +131,9 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	etPasswordConfirm.setText("helloworld123");
     }
     
+    /**
+     * Function that handles user sign up through MobMonkey
+     */
     private void signUpNormal() {
     	if(checkFirstName()) {
     		MMSignUp.signUpNewUser(new SignUpCallback(), userInfo, MMConstants.PARTNER_ID);
@@ -119,6 +141,22 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
+    private void signUpFacebook() {
+    	if(checkAcceptedToS()) {
+    		// TODO:
+    	}
+    }
+    
+    private void signUpTwitter() {
+    	if(checkAcceptedToS()) {
+    		// TODO:
+    	}
+    }
+    
+    /**
+     * Function that check if the first name {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
     private boolean checkFirstName() {
     	if(!TextUtils.isEmpty(etFirstName.getText())) {
     		userInfo.put(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
@@ -129,6 +167,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
+    /**
+     * Function that check if the last name {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
     private boolean checkLastName() {
     	if(!TextUtils.isEmpty(etLastName.getText().toString())) {
     		userInfo.put(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
@@ -139,6 +181,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
+    /**
+     * Function that check if the email address {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
     private boolean checkEmailAddress() {
     	if(!TextUtils.isEmpty(etEmailAddress.getText())) {
     		userInfo.put(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
@@ -149,6 +195,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
+    /**
+     * Function that check if the password {@link EditText} fields are valid and are not empty. In addition, it compare the passwords to determine if they are equal and and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
     private boolean checkPassword() {
     	if(!TextUtils.isEmpty(etPassword.getText()) && !TextUtils.isEmpty(etPasswordConfirm.getText())) {
     		if(etPassword.getText().toString().equals(etPasswordConfirm.getText().toString())) {
@@ -164,6 +214,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
+    /**
+     * Function that check if the birthdate {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
     private boolean checkBirthdate() {
     	if(!TextUtils.isEmpty(etBirthdate.getText())) {
     		userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
@@ -174,6 +228,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
+    /**
+     * Function that check if the gender {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
     private boolean checkGender() {
     	if(!TextUtils.isEmpty(etGender.getText())) {
     		userInfo.put(MMAPIConstants.KEY_GENDER, convertGender());
@@ -184,6 +242,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
+    /**
+     * Function that check if the {@link CheckBox} accept term of use is checked and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
     private boolean checkAcceptedToS() {
     	if(cbAcceptedToS.isChecked()) {
     		userInfo.put(MMAPIConstants.KEY_ACCEPTEDTOS, cbAcceptedToS.isChecked());
@@ -194,6 +256,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
+    /**
+     * Function that converts the gender of the user from {@link String} representation to {@link Integer} representation.
+     * @return
+     */
     private int convertGender() {
     	int gender = MMAPIConstants.DEFAULT_INT;
     	if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_MALE)) {
@@ -204,6 +270,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	return gender;
     }
     
+    /**
+     * Display an {@link AlertDialog} with the associated message informing user that they forgot enter a certain input field.
+     * @param messageId String resource id of the message to be displayed
+     */
     private void displayAlert(int messageId) {
     	new AlertDialog.Builder(SignUpScreen.this)
     		.setTitle(R.string.app_name)
@@ -212,6 +282,9 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     		.show();
     }
     
+    /**
+     * Prompt the user with an {@link AlertDialog} to select his/her birthdate.
+     */
     private void promptUserBirthdate() {
     	LayoutInflater layoutInflator = LayoutInflater.from(SignUpScreen.this);
     	View vBirthdate = layoutInflator.inflate(R.layout.birthdate_picker, null);
@@ -234,8 +307,6 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     		.setPositiveButton(R.string.btn_choose, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
-					Log.d(TAG, TAG + "dpBirthdate: " + birthdate.toString());
-					Log.d(TAG, TAG + "dpBirthdateMilli: " + birthdate.getTimeInMillis());
 					Date tempDate = new Date(birthdate.get(Calendar.YEAR) - 1900, birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH));
 					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
 					etBirthdate.setText(simpleDateFormat.format(tempDate));
@@ -245,6 +316,9 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 			.show();
     }
     
+    /**
+     * Prompt the user with an {@link AlertDialog} for his/her gender.
+     */
     private void promptUserGender() {
     	new AlertDialog.Builder(SignUpScreen.this)
     		.setTitle(R.string.title_gender)
@@ -258,6 +332,11 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     		.show();
     }
 	
+    /**
+     * Customed {@link MMCallback} ???
+     * @author Dezapp, LLC
+     *
+     */
     private class SignUpCallback implements MMCallback {
 		public void processCallback(Object obj) {
 			if(progressDialog != null) {
@@ -279,8 +358,14 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 		}	
     }
     
+    /**
+     * {@link OnTouchListener} handler for birthdate and gender {@link EditText}. When the {@link EditText}s are touched, it will prompt the user to select his/her birthdate or gender.
+     */
+    /*
+     * (non-Javadoc)
+     * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
+     */
 	public boolean onTouch(View v, MotionEvent event) {
-		Log.d(TAG, TAG + "onTouch: " + event.getAction());
 		if(event.getAction() == MotionEvent.ACTION_DOWN) {
 			prevEvent = event;
 		}
@@ -302,6 +387,13 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 		return false;
 	}
 
+	/**
+	 * Handle events when the date changes on the {@link DatePicker}
+	 */
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.DatePicker.OnDateChangedListener#onDateChanged(android.widget.DatePicker, int, int, int)
+	 */
 	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		
 	}
