@@ -1,39 +1,65 @@
 package com.mobmonkey.mobmonkey;
 
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.servercalls.MMSignUp;
+import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
-import com.mobmonkey.mobmonkeyapi.utils.MMConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMGetDeviceUUID;
 
 import android.os.Bundle;
-import android.provider.Settings.Secure;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.TextView;
-import android.telephony.TelephonyManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Toast;
+import android.text.TextUtils;
 
-public class SignUpScreen extends Activity {	
-	TextView tvResponse;
-	UUID deviceUUID;
+public class SignUpScreen extends Activity implements OnDateSetListener{
+	private static final String TAG = "SignUpScreen: ";
 	
+	HashMap<String,Object> userInfo;
+	
+	InputMethodManager imm;
 	ProgressDialog progressDialog;
+	EditText etFirstName;
+	EditText etLastName;
+	EditText etEmailAddress;
+	EditText etPassword;
+	EditText etPasswordConfirm;
+	EditText etBirthdate;
+	EditText etGender;
+	CheckBox cbAcceptedToS;
+	
+	Date birthdate;
+	
+	// TODO: remove soft keyboard from birthdate and gender
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // TODO: move this to the first screen of the app 
+        MMGetDeviceUUID.setContext(getApplicationContext());
+        
         setContentView(R.layout.signupscreen);
-        tvResponse = (TextView) findViewById(R.id.tvresponse);
-        
-        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-        
-        String tmDevice = telephonyManager.getDeviceId();
-        String tmSerial = telephonyManager.getSimSerialNumber();
-        String androidId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
-        deviceUUID = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+        initUserInfoFields();
     }
 
     @Override
@@ -42,25 +68,198 @@ public class SignUpScreen extends Activity {
         return true;
     }
     
-    public void signUp(View view) {
+    public void viewOnClick(View view) {
     	switch(view.getId()) {
 	    	case R.id.btnsignup:
-	        	progressDialog = ProgressDialog.show(SignUpScreen.this, MMConstants.DEFAULT_STRING, "Signing up...", true, true);
-	        	MMSignUp.signUpNewUser(new SignUpCallback(), deviceUUID);
+	    		signUpNormal();
 	    		break;
 	    	case R.id.btnsignupfacebook:
+	    		// TODO: 
 	    		break;
 	    	case R.id.btnsignuptwitter:
+	    		// TODO: 
+	    		break;
+	    	case R.id.etbirthdate:
+	    		
+	    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
+	    		promptUserBirthdate();
+	    		break;
+	    	case R.id.etgender:
+	    		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
+	    		promptUserGender();
 	    		break;
     	}
     }
     
+    private void initUserInfoFields() {
+    	userInfo = new HashMap<String, Object>();
+    	
+    	imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    	
+    	etFirstName = (EditText) findViewById(R.id.etfirstname);
+    	etLastName = (EditText) findViewById(R.id.etlastname);
+    	etEmailAddress = (EditText) findViewById(R.id.etemailaddress);
+    	etPassword = (EditText) findViewById(R.id.etpassword);
+    	etPasswordConfirm = (EditText) findViewById(R.id.etpasswordconfirm);
+    	etBirthdate = (EditText) findViewById(R.id.etbirthdate);
+    	etGender = (EditText) findViewById(R.id.etgender);
+    	cbAcceptedToS = (CheckBox) findViewById(R.id.cbagreetos);
+    	
+    	// TODO: Hardcoded values, to be removed
+    	etFirstName.setText("Wilson");
+    	etLastName.setText("Xie");
+    	etEmailAddress.setText("Wilson@dezapp.com");
+    	etPassword.setText("helloworld123");
+    	etPasswordConfirm.setText("helloworld123");
+    }
+    
+    private void signUpNormal() {
+    	if(checkFirstName()) {
+    		MMSignUp.signUpNewUser(new SignUpCallback(), userInfo, MMConstants.PARTNER_ID);
+    		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, "Signing up...", true, true);
+    	}
+    }
+    
+    private boolean checkFirstName() {
+    	if(!TextUtils.isEmpty(etFirstName.getText())) {
+    		userInfo.put(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
+    		return checkLastName();
+    	} else {
+    		displayAlert(R.string.alert_invalid_first_name);
+    		return false;
+    	}
+    }
+    
+    private boolean checkLastName() {
+    	if(!TextUtils.isEmpty(etLastName.getText().toString())) {
+    		userInfo.put(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
+    		return checkEmailAddress();
+    	} else {
+    		displayAlert(R.string.alert_invalid_last_name);
+    		return false;
+    	}
+    }
+    
+    private boolean checkEmailAddress() {
+    	if(!TextUtils.isEmpty(etEmailAddress.getText())) {
+    		userInfo.put(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+    		return checkPassword();
+    	} else {
+    		displayAlert(R.string.alert_invalid_email_address);
+    		return false;
+    	}
+    }
+    
+    private boolean checkPassword() {
+    	if(!TextUtils.isEmpty(etPassword.getText()) && !TextUtils.isEmpty(etPasswordConfirm.getText())) {
+    		if(etPassword.getText().toString().equals(etPasswordConfirm.getText().toString())) {
+    			userInfo.put(MMAPIConstants.KEY_PASSWORD, etPassword.getText().toString());
+    			return checkBirthdate();
+    		} else {
+    			displayAlert(R.string.alert_invalid_password_not_match);
+    			return false;
+    		}
+    	} else {
+    		displayAlert(R.string.alert_invalid_password);
+    		return false;
+    	}
+    }
+    
+    private boolean checkBirthdate() {
+    	if(!TextUtils.isEmpty(etBirthdate.getText())) {
+    		userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTime());
+    		return checkGender();
+    	} else {
+    		displayAlert(R.string.alert_invalid_birthdate);
+    		return false;
+    	}
+    }
+    
+    private boolean checkGender() {
+    	if(!TextUtils.isEmpty(etGender.getText())) {
+    		userInfo.put(MMAPIConstants.KEY_GENDER, convertGender());
+    		return checkAcceptedToS();
+    	} else {
+    		displayAlert(R.string.alert_invalid_gender);
+    		return false;
+    	}
+    }
+    
+    private boolean checkAcceptedToS() {
+    	if(cbAcceptedToS.isChecked()) {
+    		userInfo.put(MMAPIConstants.KEY_ACCEPTEDTOS, cbAcceptedToS.isChecked());
+    		return true;
+    	} else {
+    		displayAlert(R.string.alert_invalid_tos);
+    		return false;
+    	}
+    }
+    
+    private int convertGender() {
+    	int gender = MMAPIConstants.DEFAULT_INT;
+    	if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_MALE)) {
+    		gender = MMAPIConstants.NUM_MALE;
+    	} else if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_FEMALE)) {
+    		gender = MMAPIConstants.NUM_FEMALE;
+    	}
+    	return gender;
+    }
+    
+    private void displayAlert(int messageId) {
+    	new AlertDialog.Builder(SignUpScreen.this)
+    		.setTitle(R.string.app_name)
+    		.setMessage(messageId)
+    		.setNeutralButton(android.R.string.ok, null)
+    		.show();
+    }
+    
+    private void promptUserBirthdate() {
+    	Calendar calendar = Calendar.getInstance();
+    	calendar.setTimeInMillis(System.currentTimeMillis());
+    	DatePickerDialog dpd = new DatePickerDialog(SignUpScreen.this, SignUpScreen.this, calendar.get(Calendar.YEAR) - 20, calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+    	dpd.setTitle("Please select your birthdate");
+    	dpd.setButton(DatePickerDialog.BUTTON_POSITIVE, "Choose", dpd);
+    	dpd.show();
+    }
+    
+    private void promptUserGender() {
+    	new AlertDialog.Builder(SignUpScreen.this)
+    		.setTitle(R.string.title_gender)
+    		.setItems(R.array.alert_gender, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					etGender.setText(getResources().getStringArray(R.array.alert_gender)[which]);
+				}
+			})
+    		.setNegativeButton(R.string.btn_cancel, null)
+    		.setCancelable(false)
+    		.show();
+    }
+    
+	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+		birthdate = new Date(year - 1900, monthOfYear, dayOfMonth);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+		etBirthdate.setText(simpleDateFormat.format(birthdate));
+	}
+	
     private class SignUpCallback implements MMCallback {
 		public void processCallback(Object obj) {
 			if(progressDialog != null) {
 				progressDialog.dismiss();
 			}
-			tvResponse.setText((String) obj);
+			
+			try {
+				JSONObject response = new JSONObject((String) obj);
+				if(response.getString("status").equals("Success")) {
+					// TODO: go to profile screen?
+					Toast.makeText(SignUpScreen.this, "Sign Up Successful", Toast.LENGTH_LONG).show();
+				} else {
+					// TODO: alert user
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			Log.d(TAG, TAG + "response: " + (String) obj);
 		}	
     }
 }

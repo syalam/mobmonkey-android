@@ -38,7 +38,7 @@ public class MMAsyncTask extends AsyncTask<HttpPost, Void, String> {
 			InputStream inStream = httpEntity.getContent();
 			
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inStream, "iso-8859-1"), 8);
-			String line = MMConstants.DEFAULT_STRING;
+			String line = MMAPIConstants.DEFAULT_STRING;
 			stringBuilder = new StringBuilder();
 			while((line = bufferedReader.readLine()) != null) {
 				stringBuilder.append(line + "\n");
