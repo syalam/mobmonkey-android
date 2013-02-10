@@ -10,6 +10,8 @@
 	<string name="btn_sign_in_facebook">Sign In with Facebook</string>
 	<string name="btn_sign_in_twitter">Sign In with Twitter</string>
 	
+	<string name="pd_signing_in">Signing in&#8230;</string>
+	
 	<!-- SignUp Screen -->
 	<string name="et_firstname">First Name</string>
 	<string name="et_lastname">Last Name</string>
@@ -23,15 +25,6 @@
 	<string name="btn_sign_up_facebook">Sign Up With Facebook</string>
 	<string name="btn_sign_up_twitter">Sign Up With Twitter</string>
 	
-	<string name="alert_invalid_first_name">Please enter your first name.</string>
-	<string name="alert_invalid_last_name">Please enter your last name.</string>
-	<string name="alert_invalid_email_address">Please enter your email address.</string>
-	<string name="alert_invalid_password">Please enter your password</string>
-	<string name="alert_invalid_password_not_match">The passwords you have entered do not match, please re-enter your password.</string>
-	<string name="alert_invalid_birthdate">Please enter your birthdate.</string>
-	<string name="alert_invalid_gender">Please select your gender.</string>
-	<string name="alert_invalid_tos">Terms of Service must be accepted before signing up.</string>
-
 	<string name="title_birthdate">Please select your birthdate</string>
 	<string name="title_gender">Gender</string>
 	<string name="btn_choose">Choose</string>
@@ -41,5 +34,23 @@
 	    <item>Male</item>
 	    <item>Female</item>
 	</string-array>
+	
+	<string name="alert_invalid_first_name">Please enter your first name.</string>
+	<string name="alert_invalid_last_name">Please enter your last name.</string>
+	<string name="alert_invalid_email_address">Please enter your email address.</string>
+	<string name="alert_invalid_password">Please enter your password</string>
+	<string name="alert_invalid_password_not_match">The passwords you have entered do not match, please re-enter your password.</string>
+	<string name="alert_invalid_birthdate">Please enter your birthdate.</string>
+	<string name="alert_invalid_gender">Please select your gender.</string>
+	<string name="alert_invalid_tos">Terms of Service must be accepted before signing up.</string>
+
+	<string name="pd_signing_up">Signing up&#8230;</string>
+	<string name="toast_sign_up_successful">Sign up successful</string>
+	
+	<!-- Settings Screen -->
+	<string name="title_settings">Settings</string>
+	
+	<!-- Terms of use Screen -->
+	<string name="title_terms_of_use">Terms of use</string>
 	
 </resources>

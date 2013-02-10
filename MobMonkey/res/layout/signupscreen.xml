@@ -76,13 +76,25 @@
 				android:hint="@string/et_gender"
 				android:editable="false"/>
 			
-			<CheckBox android:id="@+id/cbagreetos"
-				android:layout_width="match_parent"
+			<LinearLayout android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="20dp"
-				android:layout_marginRight="20dp"
-				android:gravity="center"
-				android:text="@string/cb_agree_tos"/>
+				android:orientation="horizontal"
+				android:gravity="center">
+				
+				<CheckBox android:id="@+id/cbagreetos"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginRight="10dp"/>
+				
+				<TextView android:id="@+id/tvtos"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:text="@string/cb_agree_tos"
+				    android:textColor="@drawable/selector_termsofuse"
+				    android:onClick="viewOnClick"
+				    android:clickable="true"/>
+				
+			</LinearLayout>
 			
 			<Button android:id="@+id/btnsignup"
 				android:layout_width="match_parent"

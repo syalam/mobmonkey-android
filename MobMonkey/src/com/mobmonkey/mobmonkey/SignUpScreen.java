@@ -9,7 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
-import com.mobmonkey.mobmonkeyapi.servercalls.MMSignUp;
+import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMGetDeviceUUID;
@@ -17,11 +17,10 @@ import com.mobmonkey.mobmonkeyapi.utils.MMGetDeviceUUID;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -91,6 +90,9 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
      */
     public void viewOnClick(View view) {
     	switch(view.getId()) {
+	    	case R.id.tvtos:
+	    		openToS();
+	    		break;
 	    	case R.id.btnsignup:
 	    		signUpNormal();
 	    		break;
@@ -132,12 +134,19 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     }
     
     /**
+     * 
+     */
+    private void openToS() {
+    	startActivity(new Intent(SignUpScreen.this, TermsofuseScreen.class));
+    }
+    
+    /**
      * Function that handles user sign up through MobMonkey
      */
     private void signUpNormal() {
     	if(checkFirstName()) {
-    		MMSignUp.signUpNewUser(new SignUpCallback(), userInfo, MMConstants.PARTNER_ID);
-    		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, "Signing up...", true, true);
+    		MMSignUpAdapter.signUpNewUser(new SignUpCallback(), userInfo, MMConstants.PARTNER_ID);
+    		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up), true, false);
     	}
     }
     
@@ -331,9 +340,9 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     		.setCancelable(false)
     		.show();
     }
-	
+    
     /**
-     * Customed {@link MMCallback} ???
+     * Custom {@link MMCallback} specifically for SignUpScreen to be processed after receiving response from server.
      * @author Dezapp, LLC
      *
      */
@@ -346,8 +355,9 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 			try {
 				JSONObject response = new JSONObject((String) obj);
 				if(response.getString("status").equals("Success")) {
-					// TODO: go to profile screen?
-					Toast.makeText(SignUpScreen.this, "Sign Up Successful", Toast.LENGTH_LONG).show();
+					Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
+					startActivity(new Intent(SignUpScreen.this, SettingsScreen.class));
+					finish();
 				} else {
 					// TODO: alert user
 				}
