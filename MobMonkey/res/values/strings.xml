@@ -49,6 +49,18 @@
 	
 	<string name="app_id_facebook">509890709049518</string>
 	
+	<!-- Trending Now Screen -->
+	<string name="title_trendingnow">What\'s Trending Now!</string>
+	
+	<!--  Inbox Screen -->
+	<string name="title_inbox">Inbox</string>
+	
+	<!-- Search Screen -->
+	<string name="title_search">Search</string>
+	
+	<!-- Bookmarks Screen -->
+	<string name="title_bookmarks">Bookmarks</string>
+	
 	<!-- Settings Screen -->
 	<string name="title_settings">Settings</string>
 	

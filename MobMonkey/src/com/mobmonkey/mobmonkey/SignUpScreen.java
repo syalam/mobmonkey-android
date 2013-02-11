@@ -480,7 +480,7 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 				JSONObject response = new JSONObject((String) obj);
 				if(response.getString("status").equals("Success")) {
 					Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
-					startActivity(new Intent(SignUpScreen.this, SettingsScreen.class));
+					startActivity(new Intent(SignUpScreen.this, MainScreen.class));
 					finish();
 				} else {
 					// TODO: alert user

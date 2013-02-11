@@ -1,6 +1,5 @@
 package com.mobmonkey.mobmonkey;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 import org.json.JSONException;
@@ -24,8 +23,10 @@ import com.mobmonkey.mobmonkeyapi.utils.MMGetDeviceUUID;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -54,6 +55,12 @@ public class SignInScreen extends Activity {
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		if(connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting()) {
+			Toast.makeText(SignInScreen.this, "You have no internet access at the moment, canmnot start MobMonkey", Toast.LENGTH_LONG).show();
+			finish();
+		}
+		
 		super.onCreate(savedInstanceState);
         // TODO: move this to the first screen of the app 
         MMGetDeviceUUID.setContext(getApplicationContext());
@@ -172,7 +179,7 @@ public class SignInScreen extends Activity {
 				JSONObject response = new JSONObject((String) obj);
 				if(response.getString("status").equals("Success")) {
 					Toast.makeText(SignInScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
-					startActivity(new Intent(SignInScreen.this, SettingsScreen.class));
+					startActivity(new Intent(SignInScreen.this, MainScreen.class));
 					finish();
 				} else {
 					// TODO: alert user

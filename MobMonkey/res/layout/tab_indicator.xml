@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dip"
+    android:layout_height="55dip"
+    android:background="@drawable/tab_indicator"
+    android:layout_weight="1"
+    android:padding="5dip">
+    
+    <ImageView android:id="@+id/ivtabicon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_launcher"
+        android:contentDescription=""/>
+
+</RelativeLayout>
