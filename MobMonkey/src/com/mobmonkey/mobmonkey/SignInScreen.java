@@ -11,6 +11,10 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
+
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -68,13 +72,14 @@ public class SignInScreen extends Activity {
 				signInFacebook();
 				break;
 			case R.id.btnsignintwitter:
+				signInTwitter();
 				break;
 			case R.id.btnsignup:
 				startActivity(new Intent(SignInScreen.this, SignUpScreen.class));
 				break;
 		}
 	}
-	
+
 	private void init() {
 		etEmailAddress = (EditText) findViewById(R.id.etemailaddress);
 		etPassword = (EditText) findViewById(R.id.etpassword);
@@ -108,6 +113,11 @@ public class SignInScreen extends Activity {
 //				}
 //			}
 //		});
+		
+	}
+	
+	private void signInTwitter() {
+		
 	}
 	
     /**

@@ -21,6 +21,9 @@ import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMGetDeviceUUID;
 
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
