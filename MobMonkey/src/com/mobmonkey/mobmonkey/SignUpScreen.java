@@ -22,9 +22,16 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMGetDeviceUUID;
 
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.RequestToken;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -76,6 +83,8 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	String userEmail;
 	
 	LoginActivity fbLogin;
+	Twitter twitter;
+	RequestToken requestToken;
 	
 	/*
 	 * (non-Javadoc)
@@ -86,6 +95,13 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.signupscreen);
+        
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+        	StrictMode.ThreadPolicy policy = 
+        		new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        	StrictMode.setThreadPolicy(policy);
+        }
+        
         initUserInfoFields();
         
         userPrefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
@@ -225,12 +241,52 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     }
     
     private void signUpTwitter() {
+    	String PREF_KEY_OAUTH_TOKEN = "oauth_token";
+    	String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
+    	String PREF_KEY_TWITTER_LOGIN = "isTwitterLoggedIn";
+    	
+    	String TWITTER_CALLBACK_URL = "mobmonkey://com.mobmonkey.mobmonkey?";
+    	
+    	String URL_TWITTER_AUTH = "auth_url";
+        String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
+        String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
+    	
     	if(checkAcceptedToS()) {
-    		// TODO:
+    		ConfigurationBuilder builder = new ConfigurationBuilder();
+    		builder.setOAuthConsumerKey(MMConstants.TWITTER_CONSUMER_KEY);
+    		builder.setOAuthConsumerSecret(MMConstants.TWITTER_CONSUMER_SECRET);
+    		builder.setOAuthAccessToken(userPrefs.getString("twitter_access_token", null));
+    		builder.setOAuthAccessTokenSecret(userPrefs.getString("twitter_access_token_secret", null));
+    		Configuration configuration = builder.build();
+    		
+    		TwitterFactory factory = new TwitterFactory(configuration);
+    		twitter = factory.getInstance();
+    		
+    		try {
+				requestToken = twitter.getOAuthRequestToken(TWITTER_CALLBACK_URL);
+				Log.d(TAG, TAG + "authURL: " + requestToken.getAuthenticationURL());
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.getAuthenticationURL())));
+			} catch (TwitterException e) {
+				e.printStackTrace();
+			}
     	}
     }
     
-    /**
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onNewIntent(android.content.Intent)
+	 */
+	@Override
+	protected void onNewIntent(Intent intent) {
+		Log.d(TAG, TAG + "onNewIntent");
+		super.onNewIntent(intent);
+		Uri uri = intent.getData();
+		String oauthToken = uri.getQueryParameter("oauth_token");
+		String oauthVerifier = uri.getQueryParameter("oauth_verifier");
+		Log.d(TAG, TAG + "oauthToken: " + oauthToken);
+		Log.d(TAG, TAG + "oauthVerifier: " + oauthVerifier);
+	}
+
+	/**
      * Function that check if the first name {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
      * @return <code>false</code> otherwise
      */

@@ -25,8 +25,16 @@
 		
 		<activity android:name=".SignUpScreen"
 		    android:windowSoftInputMode="stateHidden"
-		    android:screenOrientation="portrait">
+		    android:screenOrientation="portrait"
+		    android:launchMode="singleTask">
 			
+   			<intent-filter>
+			    <action android:name="android.intent.action.VIEW"/>
+			    <category android:name="android.intent.category.BROWSABLE"/>
+			    <category android:name="android.intent.category.DEFAULT"/>
+			    <data android:scheme="mobmonkey" android:host="com.mobmonkey.mobmonkey"/>
+			</intent-filter>
+		    
 		</activity>
 		
 		<activity android:name=".SettingsScreen"

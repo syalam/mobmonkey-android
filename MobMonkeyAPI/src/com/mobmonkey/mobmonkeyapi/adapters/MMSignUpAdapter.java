@@ -20,7 +20,7 @@ import com.mobmonkey.mobmonkeyapi.utils.*;
  */
 public final class MMSignUpAdapter {
 	private final static String TAG = "MMSignUp: ";
-	private static String signUpURL = MMAPIConstants.URL + "signup/user";;
+	private static String signUpURL;
 	private static JSONObject userInfo;
 	
 	/**
@@ -30,6 +30,7 @@ public final class MMSignUpAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signUpNewUser(MMCallback mmCallback, HashMap<String,Object> map, String partnerId) {
+		signUpURL = MMAPIConstants.URL + "signup/user";
 		try {
 			userInfo = new JSONObject(map);
 			// TODO: remove hardcoded values

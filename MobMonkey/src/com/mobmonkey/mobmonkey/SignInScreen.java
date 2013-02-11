@@ -83,6 +83,10 @@ public class SignInScreen extends Activity {
 	private void init() {
 		etEmailAddress = (EditText) findViewById(R.id.etemailaddress);
 		etPassword = (EditText) findViewById(R.id.etpassword);
+		
+		// TODO: hardcoded values, to be removed
+		etEmailAddress.setText("duds411@yahoo.com");
+		etPassword.setText("helloworld123");
 	}
 	
 	private void signInNormal() {

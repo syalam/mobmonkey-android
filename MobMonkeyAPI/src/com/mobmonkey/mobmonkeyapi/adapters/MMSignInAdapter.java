@@ -28,26 +28,17 @@ public final class MMSignInAdapter {
 	 * @param partnerId
 	 */
 	public static void signInUser(MMCallback mmCallback, String emailAddress, String password, String partnerId) {
-		try {
-			userInfo = new JSONObject();
-			userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
-			userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMGetDeviceUUID.getDeviceUUID().toString());
-			
-			HttpPost httpPost = new HttpPost(signInURL);
-			StringEntity stringEntity = new StringEntity(userInfo.toString());
-			httpPost.setEntity(stringEntity);
-			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
-			// TODO: encrypt password
-			httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
-			
-			new MMAsyncTask(mmCallback).execute(httpPost);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		signInURL = signInURL + "?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+				MMGetDeviceUUID.getDeviceUUID().toString() + "&useOAuth=false";
+		
+		HttpPost httpPost = new HttpPost(signInURL);
+		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
+		// TODO: encrypt password
+		httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
+		
+		new MMAsyncTask(mmCallback).execute(httpPost);
 	}
 	
 	/**
@@ -57,7 +48,7 @@ public final class MMSignInAdapter {
 		Log.d(TAG, TAG + "providerUserName: " + emailAddress);
 		Log.d(TAG, TAG + "access token: " + accessToken);
 		Log.d(TAG, TAG + "deviceId: " + MMGetDeviceUUID.getDeviceUUID().toString());
-		signInURL = MMAPIConstants.URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+		signInURL = signInURL + "?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
 				MMGetDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + "facebook" + 
 				"&oauthToken=" + accessToken + "&providerUserName=" + emailAddress;
 //		userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
