@@ -1,6 +1,7 @@
 package com.mobmonkey.mobmonkey;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,6 +9,12 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.facebook.LoginActivity;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -21,6 +28,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,6 +51,8 @@ import android.text.TextUtils;
  */
 public class SignUpScreen extends Activity implements OnDateChangedListener, OnTouchListener {
 	private static final String TAG = "SignUpScreen: ";
+	SharedPreferences userPrefs;
+	SharedPreferences.Editor userPrefsEditor;
 	
 	HashMap<String,Object> userInfo;
 	
@@ -60,6 +70,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	
 	Calendar birthdate;
 	
+	String userEmail;
+	
+	LoginActivity fbLogin;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -67,11 +81,12 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: move this to the first screen of the app 
-        MMGetDeviceUUID.setContext(getApplicationContext());
         
         setContentView(R.layout.signupscreen);
         initUserInfoFields();
+        
+        userPrefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
+        userPrefsEditor = userPrefs.edit();
     }
 
     /*
@@ -150,9 +165,59 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
+    boolean requestEmail = true;
     private void signUpFacebook() {
     	if(checkAcceptedToS()) {
-    		// TODO:
+//    		Session session = Session.getActiveSession();
+//    		if(session == null) {
+//    			session = new Session(this);
+//    		}
+//    		Session.setActiveSession(session);
+//    		Session.OpenRequest request = new Session.OpenRequest(this).setCallback(null);
+//    		request.setPermissions(Arrays.asList("email"));
+    		
+//    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList("email"));
+//    		Session session = Session.getActiveSession();
+//    		
+//    		if(session == null) {
+//    			session = new Session(this);
+//    		}
+//    		
+//    		session.requestNewReadPermissions(request);
+//    		Session.setActiveSession(session);
+////    		session.openForRead(new Session.OpenRequest(this).setCallback(new Session.StatusCallback() {
+////				public void call(Session session, SessionState state, Exception exception) {
+////					Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+////						public void onCompleted(GraphUser user, Response response) {
+////							if(user != null) {
+////								Log.d(TAG, TAG + "user: " + user.getUsername());
+////							}
+////						}
+////					});
+////				}
+////			}));
+    		
+    		Session.openActiveSession(SignUpScreen.this, true, new Session.StatusCallback() {
+				public void call(Session session, SessionState state, Exception exception) {
+					if(session.isOpened() && requestEmail) {
+			    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList("email"));
+						session.requestNewReadPermissions(request);
+						requestEmail = false;
+						Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+							public void onCompleted(GraphUser user, Response response) {
+								if(user != null) {
+									Log.d(TAG, TAG + "graphUser: " + user.getUsername());
+									Log.d(TAG, TAG + "user: " + user.getProperty("email"));
+									userPrefsEditor.putString("FBToken", Session.getActiveSession().getAccessToken());
+									userPrefsEditor.putString("FBUserName", (String) user.getProperty("email"));
+									userPrefsEditor.commit();
+//									userEmail = (String) user.getProperty("email");
+								}
+							}
+						});
+					}
+				}
+			});
     	}
     }
     
@@ -406,5 +471,36 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	 */
 	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+//		Log.d(TAG, TAG + "Access Token: " + Session.getActiveSession().getAccessToken());
+//		for(String perm : Session.getActiveSession().getPermissions()) {
+//			Log.d(TAG, TAG + "perm: " + perm);
+//		}
+//		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList("email"));
+//		Session session = Session.getActiveSession();
+//		
+//		if(session == null) {
+//			session = new Session(this);
+//		}
+//		
+//		session.requestNewReadPermissions(request);
+//		Session.setActiveSession(session);
+//		session.openForRead(new Session.OpenRequest(this).setCallback(new Session.StatusCallback() {
+//			public void call(Session session, SessionState state, Exception exception) {
+//				Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+//					public void onCompleted(GraphUser user, Response response) {
+//						if(user != null) {
+//							Log.d(TAG, TAG + "user: " + user.getUsername());
+//						}
+//					}
+//				});
+//			}
+//		}));
+		MMSignUpAdapter.signUpNewUserFacebook(new SignUpCallback(), userPrefs.getString("FBToken", ""), userPrefs.getString("FBUserName", ""), MMConstants.PARTNER_ID);
 	}
 }

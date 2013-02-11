@@ -7,6 +7,8 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.mobmonkey.mobmonkeyapi.utils.*;
 
 /**
@@ -51,8 +53,24 @@ public final class MMSignInAdapter {
 	/**
 	 * 
 	 */
-	public static void signInUserFacebook() {
+	public static void signInUserFacebook(MMCallback mmCallback, String accessToken, String emailAddress, String partnerId) {
+		Log.d(TAG, TAG + "providerUserName: " + emailAddress);
+		Log.d(TAG, TAG + "access token: " + accessToken);
+		Log.d(TAG, TAG + "deviceId: " + MMGetDeviceUUID.getDeviceUUID().toString());
+		signInURL = MMAPIConstants.URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+				MMGetDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + "facebook" + 
+				"&oauthToken=" + accessToken + "&providerUserName=" + emailAddress;
+//		userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
+//		userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMGetDeviceUUID.getDeviceUUID().toString());
+	
+		HttpPost httpPost = new HttpPost(signInURL);
+		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader("OauthProviderUserName", emailAddress);
+		httpPost.setHeader("OauthToken", accessToken);
+		httpPost.setHeader("OatuthProvider", "facebook");
 		
+		new MMAsyncTask(mmCallback).execute(httpPost);
 	}
 	
 	/**

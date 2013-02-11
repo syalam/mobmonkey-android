@@ -47,6 +47,8 @@
 	<string name="pd_signing_up">Signing up&#8230;</string>
 	<string name="toast_sign_up_successful">Sign up successful</string>
 	
+	<string name="app_id_facebook">509890709049518</string>
+	
 	<!-- Settings Screen -->
 	<string name="title_settings">Settings</string>
 	

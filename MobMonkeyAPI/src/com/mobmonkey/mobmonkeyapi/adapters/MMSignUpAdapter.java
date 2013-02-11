@@ -60,8 +60,21 @@ public final class MMSignUpAdapter {
 	/**
 	 * 
 	 */
-	public static void signUpNewUserFacebook() {
-		// TODO:
+	public static void signUpNewUserFacebook(MMCallback mmCallback, String accessToken, String emailAddress, String partnerId) {
+		signUpURL = MMAPIConstants.URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+					MMGetDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + "facebook" + 
+					"&oauthToken=" + accessToken + "&providerUserName=" + emailAddress;
+//			userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
+//			userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMGetDeviceUUID.getDeviceUUID().toString());
+		
+		HttpPost httpPost = new HttpPost(signUpURL);
+		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader("OauthProviderUserName", emailAddress);
+		httpPost.setHeader("OauthToken", accessToken);
+		httpPost.setHeader("OatuthProvider", "facebook");
+		
+		new MMAsyncTask(mmCallback).execute(httpPost);
 	}
 	
 	/**
