@@ -19,7 +19,6 @@ import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
-import com.mobmonkey.mobmonkeyapi.utils.MMGetDeviceUUID;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -281,9 +280,14 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 		super.onNewIntent(intent);
 		Uri uri = intent.getData();
 		String oauthToken = uri.getQueryParameter("oauth_token");
-		String oauthVerifier = uri.getQueryParameter("oauth_verifier");
+//		String oauthVerifier = uri.getQueryParameter("oauth_verifier");
+		Log.d(TAG, TAG + uri.toString());
 		Log.d(TAG, TAG + "oauthToken: " + oauthToken);
-		Log.d(TAG, TAG + "oauthVerifier: " + oauthVerifier);
+//		Log.d(TAG, TAG + "oauthVerifier: " + oauthVerifier);
+		
+		Intent signUpTwitterIntent = new Intent(SignUpScreen.this, SignUpTwitter.class);
+		signUpTwitterIntent.putExtra("OAUTH_TOKEN", uri);
+		startActivityForResult(signUpTwitterIntent, 1000);
 	}
 
 	/**
@@ -507,11 +511,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 		if(event.getAction() == MotionEvent.ACTION_UP) {
 			switch(v.getId()) {
 		    	case R.id.etbirthdate:
-		    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
+		    		imm.hideSoftInputFromWindow(etBirthdate.getWindowToken(), 0);
 		    		promptUserBirthdate();
 		    		return true;
 		    	case R.id.etgender:
-		    		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
 		    		promptUserGender();
 		    		return true;
@@ -535,7 +538,11 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+		if(requestCode == 1000) {
+			
+		} else {
+			Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+		}
 //		Log.d(TAG, TAG + "Access Token: " + Session.getActiveSession().getAccessToken());
 //		for(String perm : Session.getActiveSession().getPermissions()) {
 //			Log.d(TAG, TAG + "perm: " + perm);
