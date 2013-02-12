@@ -325,6 +325,8 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     private boolean checkEmailAddress() {
     	if(!TextUtils.isEmpty(etEmailAddress.getText())) {
     		userInfo.put(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+    		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+    		userPrefsEditor.commit();
     		return checkPassword();
     	} else {
     		displayAlert(R.string.alert_invalid_email_address);
@@ -340,6 +342,8 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	if(!TextUtils.isEmpty(etPassword.getText()) && !TextUtils.isEmpty(etPasswordConfirm.getText())) {
     		if(etPassword.getText().toString().equals(etPasswordConfirm.getText().toString())) {
     			userInfo.put(MMAPIConstants.KEY_PASSWORD, etPassword.getText().toString());
+    			userPrefsEditor.putString(MMAPIConstants.KEY_PASSWORD, etPassword.getText().toString());
+    			userPrefsEditor.commit();
     			return checkBirthdate();
     		} else {
     			displayAlert(R.string.alert_invalid_password_not_match);

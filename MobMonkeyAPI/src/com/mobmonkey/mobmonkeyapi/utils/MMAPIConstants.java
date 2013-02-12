@@ -32,6 +32,15 @@ public final class MMAPIConstants {
 	public static final String KEY_PARTNER_ID = "MobMonkey-partnerId";
 	public static final String KEY_USER = "MobMonkey-user";
 	public static final String KEY_AUTH = "MobMonkey-auth";
+	public static final String KEY_OAUTH_TOKEN = "OauthToken";
+	public static final String KEY_OAUTH_TOKEN_SECRET = "OauthTokenSecret";
+	public static final String KEY_LATITUDE = "latitude";
+	public static final String KEY_LONGITUDE = "longitude";
+	public static final String KEY_RADIUS_IN_YARDS = "radiusInYards";
+	public static final String KEY_NAME = "name";
+	public static final String KEY_CATEGORY_IDS = "categoryIds";
+	
+	public static final String MOB_MONKEY_PARTNER_ID = "aba0007c-ebee-42db-bd52-7c9f02e3d371";
 	
 	public static final String CONTENT_TYPE_APP_JSON = "application/json";
 	public static final String DEVICE_TYPE = "Android";
