@@ -1,8 +1,13 @@
 package com.mobmonkey.mobmonkey;
 
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,6 +19,7 @@ import android.widget.TabWidget;
  *
  */
 public class MainScreen extends TabActivity {
+	protected static final String TAG = "TAG ";
 	TabWidget tabWidget;
 	TabHost tabHost;
 	
@@ -24,13 +30,20 @@ public class MainScreen extends TabActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mainscreen);
+		 
+		LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
+		Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		double longitude = location.getLongitude();
+		double latitude = location.getLatitude();
+		
+		Log.d(TAG, TAG + "LOCATION Longitude: " + longitude + " Latitude: " + latitude);
 		
 		tabWidget = getTabWidget();
 		tabHost = getTabHost();
 		setTabs();
 		tabHost.setCurrentTab(4);
 	}
-	
+
 	private void setTabs() {
 		addTab("Trending Now", R.drawable.tab_trendingnow, TrendingNowScreen.class);
 		addTab("Inbox", R.drawable.tab_inbox, InboxScreen.class);
