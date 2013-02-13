@@ -84,7 +84,7 @@ public final class MMSignUpAdapter {
 	public static void signUpNewUserTwitter(MMCallback mmCallback, HashMap<String,Object> map, String partnerId) {
 		signUpURL = MMAPIConstants.URL + "signin/registeremail?deviceType=" + MMAPIConstants.DEVICE_TYPE +
 				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + "&oauthToken=" + (String) map.get(MMAPIConstants.KEY_OAUTH_TOKEN) + 
-				"&providerUserName=" + "@scumbaghank" + "&eMailAddress=" + (String) map.get(MMAPIConstants.KEY_EMAIL_ADDRESS) +
+				"&providerUserName=" + (String) map.get(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME) + "&eMailAddress=" + (String) map.get(MMAPIConstants.KEY_EMAIL_ADDRESS) +
 				"&provide=" + MMAPIConstants.OAUTH_PROVIDER_TWITTER;
 		
 		HttpPost httpPost = new HttpPost(signUpURL);

@@ -174,6 +174,7 @@ public class SignUpTwitter extends Activity implements OnTouchListener, OnDateCh
     
     private void signUpTwitter() {
     	if(checkFirstName()) {
+    		userInfo.put(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, "@scumbaghank7");
     		MMSignUpAdapter.signUpNewUserTwitter(new SignUpTwitterCallback(), userInfo, MMConstants.PARTNER_ID);
     		progressDialog = ProgressDialog.show(SignUpTwitter.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up), true, false);
     	}

@@ -285,11 +285,13 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 		super.onNewIntent(intent);
 		Uri uri = intent.getData();
 		
+		Log.d(TAG, TAG + "oauth token: " + uri.getQueryParameter("oauth_token"));
+		
 		userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_TOKEN, uri.getQueryParameter("oauth_token"));
 		userPrefsEditor.commit();
 
 //		Log.d(TAG, TAG + "twitter: " + twitter.get)
-		MMSignInAdapter.signInUserTwitter(new SignUpCallback(), userPrefs.getString(MMAPIConstants.KEY_OAUTH_TOKEN, MMAPIConstants.DEFAULT_STRING), "@scumbaghank2", MMConstants.PARTNER_ID);
+		MMSignInAdapter.signInUserTwitter(new SignUpCallback(), userPrefs.getString(MMAPIConstants.KEY_OAUTH_TOKEN, MMAPIConstants.DEFAULT_STRING), "@scumbaghank7", MMConstants.PARTNER_ID);
 	}
 
 	/**
@@ -488,16 +490,18 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 			
 			try {
 				JSONObject response = new JSONObject((String) obj);
-				if(response.getString("status").equals("Success")) {
-					Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
-					startActivity(new Intent(SignUpScreen.this, MainScreen.class));
-					finish();
-				} else if (response.getString("status").equals("Failure") && response.getString("id").equals("404")){
-					Intent signUpTwitterIntent = new Intent(SignUpScreen.this, SignUpTwitter.class);
-					startActivityForResult(signUpTwitterIntent, 1000);
-				} else {
+//				if(response.getString("status").equals("Success")) {
+					if (response.getString("id").equals("404")){
+						Intent signUpTwitterIntent = new Intent(SignUpScreen.this, SignUpTwitter.class);
+						startActivityForResult(signUpTwitterIntent, 1000);
+					} else if (response.getString("id").equals("200")){
+						Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
+						startActivity(new Intent(SignUpScreen.this, MainScreen.class));
+						finish();
+					}
+//				} else {
 					// TODO: alert user signup failed
-				}
+//				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
