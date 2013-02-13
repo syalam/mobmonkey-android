@@ -5,20 +5,31 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
+import android.widget.Toast;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
 
@@ -27,12 +38,16 @@ import android.widget.EditText;
  *
  */
 public class SignUpTwitter extends Activity implements OnTouchListener, OnDateChangedListener {
+	private static final String TAG = "SignUpTwitter: ";
+	
 	SharedPreferences userPrefs;
+	SharedPreferences.Editor userPrefsEditor;
 	
 	MotionEvent prevEvent;
+	ProgressDialog progressDialog;
 	InputMethodManager inputMethodManager;
 	
-	HashMap<String,Object> hashMap;
+	HashMap<String,Object> userInfo;
 	
 	EditText etFirstName;
 	EditText etLastName;
@@ -76,7 +91,7 @@ public class SignUpTwitter extends Activity implements OnTouchListener, OnDateCh
 		
 	}
 	
-	public void onClick(View view) {
+	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsignup:
 				signUpTwitter();
@@ -86,10 +101,11 @@ public class SignUpTwitter extends Activity implements OnTouchListener, OnDateCh
 	
 	private void init() {
     	userPrefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
+    	userPrefsEditor = userPrefs.edit();
 		inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		
-    	hashMap = new HashMap<String,Object>();
-    	hashMap.put("OAuth", userPrefs.getString("", ""));
+    	userInfo = new HashMap<String,Object>();
+    	userInfo.put(MMAPIConstants.KEY_OAUTH_TOKEN, userPrefs.getString(MMAPIConstants.KEY_OAUTH_TOKEN, MMAPIConstants.DEFAULT_STRING));
     	
     	etFirstName = (EditText) findViewById(R.id.etfirstname);
     	etLastName = (EditText) findViewById(R.id.etlastname);
@@ -157,6 +173,129 @@ public class SignUpTwitter extends Activity implements OnTouchListener, OnDateCh
     }
     
     private void signUpTwitter() {
-    	
+    	if(checkFirstName()) {
+    		MMSignUpAdapter.signUpNewUserTwitter(new SignUpTwitterCallback(), userInfo, MMConstants.PARTNER_ID);
+    		progressDialog = ProgressDialog.show(SignUpTwitter.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up), true, false);
+    	}
+    }
+    
+	/**
+     * Function that check if the first name {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
+    private boolean checkFirstName() {
+    	if(!TextUtils.isEmpty(etFirstName.getText())) {
+    		userInfo.put(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
+    		return checkLastName();
+    	} else {
+    		displayAlert(R.string.alert_invalid_first_name);
+    		return false;
+    	}
+    }
+    
+    /**
+     * Function that check if the last name {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
+    private boolean checkLastName() {
+    	if(!TextUtils.isEmpty(etLastName.getText().toString())) {
+    		userInfo.put(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
+    		return checkEmailAddress();
+    	} else {
+    		displayAlert(R.string.alert_invalid_last_name);
+    		return false;
+    	}
+    }
+    
+    /**
+     * Function that check if the email address {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
+    private boolean checkEmailAddress() {
+    	if(!TextUtils.isEmpty(etEmailAddress.getText())) {
+    		userInfo.put(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+    		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+    		userPrefsEditor.commit();
+    		return checkBirthdate();
+    	} else {
+    		displayAlert(R.string.alert_invalid_email_address);
+    		return false;
+    	}
+    }
+    
+    /**
+     * Function that check if the birthdate {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
+    private boolean checkBirthdate() {
+    	if(!TextUtils.isEmpty(etBirthdate.getText())) {
+    		userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
+    		return checkGender();
+    	} else {
+    		displayAlert(R.string.alert_invalid_birthdate);
+    		return false;
+    	}
+    }
+    
+    /**
+     * Function that check if the gender {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
+    private boolean checkGender() {
+    	if(!TextUtils.isEmpty(etGender.getText())) {
+    		userInfo.put(MMAPIConstants.KEY_GENDER, convertGender());
+    		return true;
+    	} else {
+    		displayAlert(R.string.alert_invalid_gender);
+    		return false;
+    	}
+    }
+    
+    /**
+     * Function that converts the gender of the user from {@link String} representation to {@link Integer} representation.
+     * @return
+     */
+    private int convertGender() {
+    	int gender = MMAPIConstants.DEFAULT_INT;
+    	if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_MALE)) {
+    		gender = MMAPIConstants.NUM_MALE;
+    	} else if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_FEMALE)) {
+    		gender = MMAPIConstants.NUM_FEMALE;
+    	}
+    	return gender;
+    }
+    
+    /**
+     * Display an {@link AlertDialog} with the associated message informing user that they forgot enter a certain input field.
+     * @param messageId String resource id of the message to be displayed
+     */
+    private void displayAlert(int messageId) {
+    	new AlertDialog.Builder(SignUpTwitter.this)
+    		.setTitle(R.string.app_name)
+    		.setMessage(messageId)
+    		.setNeutralButton(android.R.string.ok, null)
+    		.show();
+    }
+    
+    private class SignUpTwitterCallback implements MMCallback {
+		public void processCallback(Object obj) {
+			if(progressDialog != null) {
+				progressDialog.dismiss();
+			}
+			
+			try {
+				JSONObject response = new JSONObject((String) obj);
+				if(response.getString("status").equals("Success")) {
+					Toast.makeText(SignUpTwitter.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
+					startActivity(new Intent(SignUpTwitter.this, MainScreen.class));
+					finish();
+				} else {
+					// TODO: alert user signup failed
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			Log.d(TAG, TAG + "response: " + (String)obj);
+		}
     }
 }

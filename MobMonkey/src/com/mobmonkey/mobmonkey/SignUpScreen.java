@@ -16,6 +16,7 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -271,6 +272,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
+    /**
+     * Handle the callback from authenticating user Twitter
+     * Process - First sign user in to MobMonkey via Twitter, if success, go to user Settings screen, else go to RegisterUserTwitterDetails screen
+     */
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onNewIntent(android.content.Intent)
 	 */
@@ -279,15 +284,12 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 		Log.d(TAG, TAG + "onNewIntent");
 		super.onNewIntent(intent);
 		Uri uri = intent.getData();
-		String oauthToken = uri.getQueryParameter("oauth_token");
-//		String oauthVerifier = uri.getQueryParameter("oauth_verifier");
-		Log.d(TAG, TAG + uri.toString());
-		Log.d(TAG, TAG + "oauthToken: " + oauthToken);
-//		Log.d(TAG, TAG + "oauthVerifier: " + oauthVerifier);
 		
-		Intent signUpTwitterIntent = new Intent(SignUpScreen.this, SignUpTwitter.class);
-		signUpTwitterIntent.putExtra("OAUTH_TOKEN", uri);
-		startActivityForResult(signUpTwitterIntent, 1000);
+		userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_TOKEN, uri.getQueryParameter("oauth_token"));
+		userPrefsEditor.commit();
+
+//		Log.d(TAG, TAG + "twitter: " + twitter.get)
+		MMSignInAdapter.signInUserTwitter(new SignUpCallback(), userPrefs.getString(MMAPIConstants.KEY_OAUTH_TOKEN, MMAPIConstants.DEFAULT_STRING), "@scumbaghank2", MMConstants.PARTNER_ID);
 	}
 
 	/**
@@ -490,8 +492,11 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 					Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
 					startActivity(new Intent(SignUpScreen.this, MainScreen.class));
 					finish();
+				} else if (response.getString("status").equals("Failure") && response.getString("id").equals("404")){
+					Intent signUpTwitterIntent = new Intent(SignUpScreen.this, SignUpTwitter.class);
+					startActivityForResult(signUpTwitterIntent, 1000);
 				} else {
-					// TODO: alert user
+					// TODO: alert user signup failed
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -543,7 +548,7 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == 1000) {
-			
+			Log.d(TAG, TAG + "coming back from twitter sign up");
 		} else {
 			Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 		}

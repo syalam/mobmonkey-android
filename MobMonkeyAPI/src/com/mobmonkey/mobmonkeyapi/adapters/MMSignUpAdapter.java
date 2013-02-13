@@ -40,7 +40,7 @@ public final class MMSignUpAdapter {
 			userInfo.put(MMAPIConstants.KEY_PHONE_NUMBER, "480-555-5555");
 			// end TODO:
 			userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
-			userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMGetDeviceUUID.getDeviceUUID().toString());
+			userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString());
 			
 			Log.d(TAG, TAG + "userInfo: " + userInfo.toString());
 			
@@ -63,7 +63,7 @@ public final class MMSignUpAdapter {
 	 */
 	public static void signUpNewUserFacebook(MMCallback mmCallback, String accessToken, String emailAddress, String partnerId) {
 		signUpURL = MMAPIConstants.URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
-					MMGetDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + "facebook" + 
+					MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + "facebook" + 
 					"&oauthToken=" + accessToken + "&providerUserName=" + emailAddress;
 //			userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
 //			userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMGetDeviceUUID.getDeviceUUID().toString());
@@ -71,9 +71,9 @@ public final class MMSignUpAdapter {
 		HttpPost httpPost = new HttpPost(signUpURL);
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader("OauthProviderUserName", emailAddress);
-		httpPost.setHeader("OauthToken", accessToken);
-		httpPost.setHeader("OatuthProvider", "facebook");
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, emailAddress);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, accessToken);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
 		
 		new MMAsyncTask(mmCallback).execute(httpPost);
 	}
@@ -81,7 +81,19 @@ public final class MMSignUpAdapter {
 	/**
 	 * 
 	 */
-	public static void signUpNewUserTwitter() {
-		// TODO:
+	public static void signUpNewUserTwitter(MMCallback mmCallback, HashMap<String,Object> map, String partnerId) {
+		signUpURL = MMAPIConstants.URL + "signin/registeremail?deviceType=" + MMAPIConstants.DEVICE_TYPE +
+				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + "&oauthToken=" + (String) map.get(MMAPIConstants.KEY_OAUTH_TOKEN) + 
+				"&providerUserName=" + "@scumbaghank" + "&eMailAddress=" + (String) map.get(MMAPIConstants.KEY_EMAIL_ADDRESS) +
+				"&provide=" + MMAPIConstants.OAUTH_PROVIDER_TWITTER;
+		
+		HttpPost httpPost = new HttpPost(signUpURL);
+		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, (String) map.get(MMAPIConstants.KEY_EMAIL_ADDRESS));
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, (String) map.get(MMAPIConstants.KEY_OAUTH_TOKEN));
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER);
+		
+		new MMAsyncTask(mmCallback).execute(httpPost);
 	}
 }

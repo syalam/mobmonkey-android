@@ -6,10 +6,11 @@ import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMAsyncTask;
+import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 public class MMSearchLocationAdapter {
 	
-	public static void searchTextWithLocation(String searchText, String latitude, String longitude, String email, String password)
+	public static void searchTextWithLocation(MMCallback mmCallback, String searchText, String latitude, String longitude, String email, String password)
 	{
 		String searchLocationURL = "http://api.mobmonkey.com/rest/search/location";
 		

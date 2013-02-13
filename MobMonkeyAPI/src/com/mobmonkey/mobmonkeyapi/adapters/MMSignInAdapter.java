@@ -29,7 +29,7 @@ public final class MMSignInAdapter {
 	 */
 	public static void signInUser(MMCallback mmCallback, String emailAddress, String password, String partnerId) {
 		signInURL = signInURL + "?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
-				MMGetDeviceUUID.getDeviceUUID().toString() + "&useOAuth=false";
+				MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=false";
 		
 		HttpPost httpPost = new HttpPost(signInURL);
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
@@ -44,22 +44,22 @@ public final class MMSignInAdapter {
 	/**
 	 * 
 	 */
-	public static void signInUserFacebook(MMCallback mmCallback, String accessToken, String emailAddress, String partnerId) {
+	public static void signInUserFacebook(MMCallback mmCallback, String oauthToken, String emailAddress, String partnerId) {
 		Log.d(TAG, TAG + "providerUserName: " + emailAddress);
-		Log.d(TAG, TAG + "access token: " + accessToken);
-		Log.d(TAG, TAG + "deviceId: " + MMGetDeviceUUID.getDeviceUUID().toString());
+		Log.d(TAG, TAG + "access token: " + oauthToken);
+		Log.d(TAG, TAG + "deviceId: " + MMDeviceUUID.getDeviceUUID().toString());
 		signInURL = signInURL + "?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
-				MMGetDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + "facebook" + 
-				"&oauthToken=" + accessToken + "&providerUserName=" + emailAddress;
+				MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + "facebook" + 
+				"&oauthToken=" + oauthToken + "&providerUserName=" + emailAddress;
 //		userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
 //		userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMGetDeviceUUID.getDeviceUUID().toString());
 	
 		HttpPost httpPost = new HttpPost(signInURL);
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader("OauthProviderUserName", emailAddress);
-		httpPost.setHeader("OauthToken", accessToken);
-		httpPost.setHeader("OatuthProvider", "facebook");
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, emailAddress);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
 		
 		new MMAsyncTask(mmCallback).execute(httpPost);
 	}
@@ -67,7 +67,18 @@ public final class MMSignInAdapter {
 	/**
 	 * 
 	 */
-	public static void signInUserTwitter() {
+	public static void signInUserTwitter(MMCallback mmCallback, String oauthToken, String providerUserName, String partnerId) {
+		signInURL = signInURL + "?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+				MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + "facebook" + 
+				"&oauthToken=" + oauthToken + "&providerUserName=" + providerUserName;
 		
+		HttpPost httpPost = new HttpPost(signInURL);
+		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER);
+		
+		new MMAsyncTask(mmCallback).execute(httpPost);
 	}
 }

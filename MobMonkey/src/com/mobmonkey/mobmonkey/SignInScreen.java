@@ -18,7 +18,7 @@ import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
-import com.mobmonkey.mobmonkeyapi.utils.MMGetDeviceUUID;
+import com.mobmonkey.mobmonkeyapi.utils.MMDeviceUUID;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -63,7 +63,7 @@ public class SignInScreen extends Activity {
 		
 		super.onCreate(savedInstanceState);
         // TODO: move this to the first screen of the app 
-        MMGetDeviceUUID.setContext(getApplicationContext());
+        MMDeviceUUID.setContext(getApplicationContext());
 		
 		setContentView(R.layout.signinscreen);
 		init();
