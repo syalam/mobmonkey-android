@@ -68,6 +68,8 @@ public final class MMSignUpAdapter {
 //			userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
 //			userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMGetDeviceUUID.getDeviceUUID().toString());
 		
+		Log.d(TAG, TAG + "signUpURL: " + signUpURL);
+		
 		HttpPost httpPost = new HttpPost(signUpURL);
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
@@ -85,7 +87,9 @@ public final class MMSignUpAdapter {
 		signUpURL = MMAPIConstants.URL + "signin/registeremail?deviceType=" + MMAPIConstants.DEVICE_TYPE +
 				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + "&oauthToken=" + (String) map.get(MMAPIConstants.KEY_OAUTH_TOKEN) + 
 				"&providerUserName=" + (String) map.get(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME) + "&eMailAddress=" + (String) map.get(MMAPIConstants.KEY_EMAIL_ADDRESS) +
-				"&provide=" + MMAPIConstants.OAUTH_PROVIDER_TWITTER;
+				"&provider=" + MMAPIConstants.OAUTH_PROVIDER_TWITTER;
+		
+		Log.d(TAG, TAG + "signUpURL: " + signUpURL);
 		
 		HttpPost httpPost = new HttpPost(signUpURL);
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);

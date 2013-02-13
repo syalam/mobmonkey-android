@@ -42,8 +42,6 @@ public final class MMAPIConstants {
 	public static final String KEY_NAME = "name";
 	public static final String KEY_CATEGORY_IDS = "categoryIds";
 	
-	public static final String MOB_MONKEY_PARTNER_ID = "aba0007c-ebee-42db-bd52-7c9f02e3d371";
-	
 	public static final String CONTENT_TYPE_APP_JSON = "application/json";
 	public static final String DEVICE_TYPE = "Android";
 	public static final String OAUTH_PROVIDER_FACEBOOK = "facebook";
@@ -53,4 +51,8 @@ public final class MMAPIConstants {
 	public static final String TEXT_FEMALE = "Female";
 	public static final int NUM_MALE = 1;
 	public static final int NUM_FEMALE = 0;
+	
+	public static final String TWITTER_CALLBACK_URL = "mobmonkey://com.mobmonkey.mobmonkey?";
+	public static final String TWITTER_OAUTH_TOKEN = "oauth_token";
+	public static final String TWITTER_OAUTH_VERIFIER = "oauth_verifier";
 }

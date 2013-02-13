@@ -57,7 +57,7 @@ public class SignInScreen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		if(connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting()) {
-			Toast.makeText(SignInScreen.this, "You have no internet access at the moment, canmnot start MobMonkey", Toast.LENGTH_LONG).show();
+			Toast.makeText(SignInScreen.this, "You have no internet access at the moment, cannot start MobMonkey", Toast.LENGTH_LONG).show();
 			finish();
 		}
 		
@@ -68,6 +68,20 @@ public class SignInScreen extends Activity {
 		setContentView(R.layout.signinscreen);
 		init();
 		userPrefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
+	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		// TODO: put the codes in Constants file
+		if(requestCode == 5000) {
+			if(resultCode == 50000) {
+				finish();
+			}
+		}
 	}
 
 	public void viewOnClick(View view) {
@@ -82,7 +96,7 @@ public class SignInScreen extends Activity {
 				signInTwitter();
 				break;
 			case R.id.btnsignup:
-				startActivity(new Intent(SignInScreen.this, SignUpScreen.class));
+				startActivityForResult(new Intent(SignInScreen.this, SignUpScreen.class), 5000);
 				break;
 		}
 	}

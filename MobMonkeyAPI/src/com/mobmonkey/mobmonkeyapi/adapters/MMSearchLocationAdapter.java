@@ -10,7 +10,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 public class MMSearchLocationAdapter {
 	
-	public static void searchTextWithLocation(MMCallback mmCallback, String searchText, String latitude, String longitude, String email, String password)
+	public static void searchTextWithLocation(MMCallback mmCallback, String searchText, String latitude, String longitude, String email, String password, String partnerId)
 	{
 		String searchLocationURL = "http://api.mobmonkey.com/rest/search/location";
 		
@@ -28,7 +28,7 @@ public class MMSearchLocationAdapter {
 			HttpPost httpPost = new HttpPost(searchLocationURL);
 			httpPost.setEntity(stringEntity);
 			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, MMAPIConstants.MOB_MONKEY_PARTNER_ID);
+			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
 			httpPost.setHeader(MMAPIConstants.KEY_USER, email);
 			httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
 			

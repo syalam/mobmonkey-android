@@ -240,40 +240,33 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
-    private void signUpTwitter() {
-    	String PREF_KEY_OAUTH_TOKEN = "oauth_token";
-    	String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
-    	String PREF_KEY_TWITTER_LOGIN = "isTwitterLoggedIn";
-    	
-    	String TWITTER_CALLBACK_URL = "mobmonkey://com.mobmonkey.mobmonkey?";
-    	
-    	String URL_TWITTER_AUTH = "auth_url";
-        String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
-        String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
-    	
+    private void signUpTwitter() {    	
     	if(checkAcceptedToS()) {
     		ConfigurationBuilder builder = new ConfigurationBuilder();
     		builder.setOAuthConsumerKey(MMConstants.TWITTER_CONSUMER_KEY);
     		builder.setOAuthConsumerSecret(MMConstants.TWITTER_CONSUMER_SECRET);
-    		builder.setOAuthAccessToken(userPrefs.getString("twitter_access_token", null));
-    		builder.setOAuthAccessTokenSecret(userPrefs.getString("twitter_access_token_secret", null));
+    		builder.setOAuthAccessToken(null);
+    		builder.setOAuthAccessTokenSecret(null);
     		Configuration configuration = builder.build();
     		
     		TwitterFactory factory = new TwitterFactory(configuration);
     		twitter = factory.getInstance();
     		
-    		try {
-				requestToken = twitter.getOAuthRequestToken(TWITTER_CALLBACK_URL);
-				Log.d(TAG, TAG + "authURL: " + requestToken.getAuthenticationURL());
-				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.getAuthenticationURL())));
-			} catch (TwitterException e) {
-				e.printStackTrace();
-			}
+    		if(userPrefs.contains(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME) && userPrefs.contains(MMAPIConstants.KEY_OAUTH_TOKEN)) {
+    			hasPrevTwitterUsername();
+    		} else {
+	    		try {
+					requestToken = twitter.getOAuthRequestToken(MMAPIConstants.TWITTER_CALLBACK_URL);
+					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.getAuthenticationURL())));
+				} catch (TwitterException e) {
+					e.printStackTrace();
+				}
+    		}
     	}
     }
     
     /**
-     * Handle the callback from authenticating user Twitter
+     * Handle the callback from online authentication of user via Twitter
      * Process - First sign user in to MobMonkey via Twitter, if success, go to user Settings screen, else go to RegisterUserTwitterDetails screen
      */
 	/* (non-Javadoc)
@@ -281,17 +274,21 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	 */
 	@Override
 	protected void onNewIntent(Intent intent) {
-		Log.d(TAG, TAG + "onNewIntent");
 		super.onNewIntent(intent);
 		Uri uri = intent.getData();
-		
-		Log.d(TAG, TAG + "oauth token: " + uri.getQueryParameter("oauth_token"));
-		
-		userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_TOKEN, uri.getQueryParameter("oauth_token"));
-		userPrefsEditor.commit();
-
-//		Log.d(TAG, TAG + "twitter: " + twitter.get)
-		MMSignInAdapter.signInUserTwitter(new SignUpCallback(), userPrefs.getString(MMAPIConstants.KEY_OAUTH_TOKEN, MMAPIConstants.DEFAULT_STRING), "@scumbaghank7", MMConstants.PARTNER_ID);
+		if(uri.getQueryParameter(MMAPIConstants.TWITTER_OAUTH_TOKEN) != null) {			
+			try {
+				AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, uri.getQueryParameter(MMAPIConstants.TWITTER_OAUTH_VERIFIER));
+				userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_TOKEN, accessToken.getToken());
+				userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_TOKEN_SECRET, accessToken.getTokenSecret());
+				userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, accessToken.getScreenName());
+				userPrefsEditor.commit();
+			} catch (TwitterException e) {
+				e.printStackTrace();
+			}
+	
+			MMSignInAdapter.signInUserTwitter(new SignUpCallback(), userPrefs.getString(MMAPIConstants.KEY_OAUTH_TOKEN, MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
+		}
 	}
 
 	/**
@@ -475,6 +472,32 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     		.setNegativeButton(R.string.btn_cancel, null)
     		.setCancelable(false)
     		.show();
+    }
+    
+    private void hasPrevTwitterUsername() {
+    	new AlertDialog.Builder(SignUpScreen.this)
+    		.setTitle("Existing Twitter Username")
+    		.setMessage("The twitter user: \'" + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, MMAPIConstants.DEFAULT_STRING) +
+    				"\' was previously used to sign in to MobMonkey. Would you like to sign in as \'" + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, MMAPIConstants.DEFAULT_STRING) + "\'")
+    		.setCancelable(false)
+    		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					MMSignInAdapter.signInUserTwitter(new SignUpCallback(), userPrefs.getString(MMAPIConstants.KEY_OAUTH_TOKEN, MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
+		    		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in), true, false);
+				}
+			})
+			.setNeutralButton("No", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					try {
+						requestToken = twitter.getOAuthRequestToken(MMAPIConstants.TWITTER_CALLBACK_URL);
+						startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.getAuthenticationURL())));
+					} catch (TwitterException e) {
+						e.printStackTrace();
+					}
+				}
+			})
+			.setNegativeButton(R.string.btn_cancel, null)
+			.show();
     }
     
     /**
