@@ -25,18 +25,15 @@
 			
         </activity>
 		
+		<activity android:name=".TwitterAuthScreen"
+		    android:screenOrientation="portrait">
+
+		</activity>
+		
 		<activity android:name=".SignUpScreen"
 		    android:windowSoftInputMode="stateHidden"
-		    android:screenOrientation="portrait"
-		    android:launchMode="singleTask">
-			
-   			<intent-filter>
-			    <action android:name="android.intent.action.VIEW"/>
-			    <category android:name="android.intent.category.BROWSABLE"/>
-			    <category android:name="android.intent.category.DEFAULT"/>
-			    <data android:scheme="mobmonkey" android:host="com.mobmonkey.mobmonkey"/>
-			</intent-filter>
-		    
+		    android:screenOrientation="portrait">
+
 		</activity>
 		
 		<activity android:name=".TermsofuseScreen"
@@ -44,7 +41,7 @@
 		    
 		</activity>
 		
-		<activity android:name=".SignUpTwitter"
+		<activity android:name="com.mobmonkey.mobmonkey.SignUpTwitterScreen"
 		    android:windowSoftInputMode="stateHidden"
 		    android:screenOrientation="portrait">
 		    

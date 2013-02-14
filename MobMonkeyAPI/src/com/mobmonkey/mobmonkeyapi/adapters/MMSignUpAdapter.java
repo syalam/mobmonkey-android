@@ -30,7 +30,7 @@ public final class MMSignUpAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signUpNewUser(MMCallback mmCallback, HashMap<String,Object> map, String partnerId) {
-		signUpURL = MMAPIConstants.URL + "signup/user";
+		signUpURL = MMAPIConstants.MOBMONKEY_URL + "signup/user";
 		try {
 			userInfo = new JSONObject(map);
 			// TODO: remove hardcoded values
@@ -62,7 +62,7 @@ public final class MMSignUpAdapter {
 	 * 
 	 */
 	public static void signUpNewUserFacebook(MMCallback mmCallback, String accessToken, String emailAddress, String partnerId) {
-		signUpURL = MMAPIConstants.URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+		signUpURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
 					MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + "facebook" + 
 					"&oauthToken=" + accessToken + "&providerUserName=" + emailAddress;
 //			userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
@@ -84,7 +84,7 @@ public final class MMSignUpAdapter {
 	 * 
 	 */
 	public static void signUpNewUserTwitter(MMCallback mmCallback, HashMap<String,Object> map, String partnerId) {
-		signUpURL = MMAPIConstants.URL + "signin/registeremail?deviceType=" + MMAPIConstants.DEVICE_TYPE +
+		signUpURL = MMAPIConstants.MOBMONKEY_URL + "signin/registeremail?deviceType=" + MMAPIConstants.DEVICE_TYPE +
 				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + "&oauthToken=" + (String) map.get(MMAPIConstants.KEY_OAUTH_TOKEN) + 
 				"&providerUserName=" + (String) map.get(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME) + "&eMailAddress=" + (String) map.get(MMAPIConstants.KEY_EMAIL_ADDRESS) +
 				"&provider=" + MMAPIConstants.OAUTH_PROVIDER_TWITTER;

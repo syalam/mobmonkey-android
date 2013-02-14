@@ -28,7 +28,7 @@ public final class MMSignInAdapter {
 	 * @param partnerId
 	 */
 	public static void signInUser(MMCallback mmCallback, String emailAddress, String password, String partnerId) {
-		signInURL = MMAPIConstants.URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+		signInURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
 				MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=false";
 		
 		HttpPost httpPost = new HttpPost(signInURL);
@@ -48,7 +48,7 @@ public final class MMSignInAdapter {
 		Log.d(TAG, TAG + "providerUserName: " + emailAddress);
 		Log.d(TAG, TAG + "access token: " + oauthToken);
 		Log.d(TAG, TAG + "deviceId: " + MMDeviceUUID.getDeviceUUID().toString());
-		signInURL = MMAPIConstants.URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+		signInURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
 				MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + MMAPIConstants.OAUTH_PROVIDER_FACEBOOK + 
 				"&oauthToken=" + oauthToken + "&providerUserName=" + emailAddress;
 //		userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
@@ -68,9 +68,11 @@ public final class MMSignInAdapter {
 	 * 
 	 */
 	public static void signInUserTwitter(MMCallback mmCallback, String oauthToken, String providerUserName, String partnerId) {
-		signInURL = MMAPIConstants.URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+		signInURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
 				MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + MMAPIConstants.OAUTH_PROVIDER_TWITTER + 
 				"&oauthToken=" + oauthToken + "&providerUserName=" + providerUserName;
+		
+		Log.d(TAG, TAG + "signInURL: " + signInURL);
 		
 		HttpPost httpPost = new HttpPost(signInURL);
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
@@ -78,8 +80,6 @@ public final class MMSignInAdapter {
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken);
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER);
-		
-		Log.d(TAG, TAG + "signInURL: " + signInURL);
 		
 		new MMAsyncTask(mmCallback).execute(httpPost);
 	}

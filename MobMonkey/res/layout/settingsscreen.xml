@@ -17,4 +17,13 @@
 	    
 	</RelativeLayout>
     
+	
+	<Button android:id="@+id/btnsignout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="20dp"
+	    android:layout_marginRight="20dp"
+	    android:text="@string/btn_sign_out"
+	    android:onClick="viewOnClick"/>
+	
 </LinearLayout>

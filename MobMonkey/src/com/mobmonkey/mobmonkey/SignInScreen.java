@@ -5,14 +5,18 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.RequestToken;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
+
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
@@ -27,7 +31,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -50,6 +56,10 @@ public class SignInScreen extends Activity {
 		
 	private String userEmail;
 	
+//	Twitter twitter;
+//	RequestToken requestToken;
+//	twitter4j.auth.AccessToken twitterAccessToken;
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -61,13 +71,19 @@ public class SignInScreen extends Activity {
 			finish();
 		}
 		
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+        	StrictMode.ThreadPolicy policy = 
+        		new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        	StrictMode.setThreadPolicy(policy);
+        }
+		
 		super.onCreate(savedInstanceState);
         // TODO: move this to the first screen of the app 
         MMDeviceUUID.setContext(getApplicationContext());
 		
 		setContentView(R.layout.signinscreen);
 		init();
-		userPrefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 	}
 
 	/* (non-Javadoc)
@@ -76,14 +92,16 @@ public class SignInScreen extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		// TODO: put the codes in Constants file
-		if(requestCode == 5000) {
-			if(resultCode == 50000) {
-				finish();
+		Log.d(TAG, TAG + "onActivityResult");
+		
+		if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
+			if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
+				Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
+				startActivity(new Intent(SignInScreen.this, MainScreen.class));
 			}
 		}
 	}
-
+	
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsignin:
@@ -96,7 +114,7 @@ public class SignInScreen extends Activity {
 				signInTwitter();
 				break;
 			case R.id.btnsignup:
-				startActivityForResult(new Intent(SignInScreen.this, SignUpScreen.class), 5000);
+				signUp();
 				break;
 		}
 	}
@@ -119,7 +137,7 @@ public class SignInScreen extends Activity {
 	
 //	private boolean requestEmail;
 	private void signInFacebook() {
-		MMSignInAdapter.signInUserFacebook(new SignInCallback(), "fakeone", userPrefs.getString("FBUserName", ""), MMConstants.PARTNER_ID);
+		MMSignInAdapter.signInUserFacebook(new SignInCallback(), "fakeone", userPrefs.getString("", ""), MMConstants.PARTNER_ID);
 //		Session.openActiveSession(SignInScreen.this, true, new Session.StatusCallback() {
 //			public void call(Session session, SessionState state, Exception exception) {
 //				if(session.isOpened() && requestEmail) {
@@ -137,12 +155,21 @@ public class SignInScreen extends Activity {
 //					});
 //				}
 //			}
-//		});
-		
+//		});		
 	}
 	
+	/**
+	 * 
+	 */
 	private void signInTwitter() {
-		
+		Intent twitterAuthIntent = new Intent(SignInScreen.this, TwitterAuthScreen.class);
+		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
+		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
+	}
+	
+	private void signUp() {
+		Log.d(TAG, TAG + "SignUp");
+		startActivity(new Intent(SignInScreen.this, SignUpScreen.class));
 	}
 	
     /**
@@ -191,12 +218,14 @@ public class SignInScreen extends Activity {
 			
 			try {
 				JSONObject response = new JSONObject((String) obj);
-				if(response.getString("status").equals("Success")) {
+				if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_SUCCESS)) {
 					Toast.makeText(SignInScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
-					startActivity(new Intent(SignInScreen.this, MainScreen.class));
-					finish();
+					Intent mainScreenIntent = new Intent(SignInScreen.this, MainScreen.class);
+					mainScreenIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+					startActivity(mainScreenIntent);
+//					startActivity(new Intent(SignInScreen.this, MainScreen.class));
 				} else {
-					// TODO: alert user
+					Toast.makeText(SignInScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
