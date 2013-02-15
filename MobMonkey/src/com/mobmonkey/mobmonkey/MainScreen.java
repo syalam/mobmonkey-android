@@ -31,12 +31,12 @@ public class MainScreen extends TabActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mainscreen);
 		 
-		LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
-		Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		double longitude = location.getLongitude();
-		double latitude = location.getLatitude();
-		
-		Log.d(TAG, TAG + "LOCATION Longitude: " + longitude + " Latitude: " + latitude);
+//		LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
+//		Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		double longitude = location.getLongitude();
+//		double latitude = location.getLatitude();
+//		
+//		Log.d(TAG, TAG + "LOCATION Longitude: " + longitude + " Latitude: " + latitude);
 		
 		tabWidget = getTabWidget();
 		tabHost = getTabHost();
