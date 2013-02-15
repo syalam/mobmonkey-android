@@ -65,43 +65,45 @@ public class TwitterAuthScreen extends Activity {
 		
 		try {
 			requestToken = twitter.getOAuthRequestToken(MMAPIConstants.TWITTER_CALLBACK_URL_SIGN_IN);
-			
-			wvTwitterAuth.setWebViewClient(new WebViewClient() {
-
-				/* (non-Javadoc)
-				 * @see android.webkit.WebViewClient#shouldOverrideUrlLoading(android.webkit.WebView, java.lang.String)
-				 */
-				@Override
-				public boolean shouldOverrideUrlLoading(WebView view, String url) {
-					Log.d(TAG, TAG + "url: " + url);
-					if(url.contains(MMAPIConstants.TWITTER_CALLBACK_URL_SIGN_IN)) {
-						try {
-							Uri uri = Uri.parse(url);
-							if(uri.getQueryParameter(MMAPIConstants.TWITTER_OAUTH_VERIFIER) != null) {
-								twitterAccessToken = twitter.getOAuthAccessToken(requestToken, uri.getQueryParameter(MMAPIConstants.TWITTER_OAUTH_VERIFIER));
-								MMSignInAdapter.signInUserTwitter(new TwitterAuthCallback(), twitterAccessToken.getToken(), twitterAccessToken.getScreenName(), MMConstants.PARTNER_ID);
-								
-								int requestCode = getIntent().getIntExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.DEFAULT_INT);
-								if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
-									progressDialog = ProgressDialog.show(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_twitter), true, false);
-								} else if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH) {
-									progressDialog = ProgressDialog.show(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_twitter), true, false);
-								}
-							} else {
-								finish();
-							}
-						} catch (TwitterException e) {
-							e.printStackTrace();
-						}
-						return true;
-					}
-					return false;
-				}				
-			});
-			
+			wvTwitterAuth.setWebViewClient(new MobMonkeyWebViewClient());
 			wvTwitterAuth.loadUrl(requestToken.getAuthenticationURL());
 		} catch (TwitterException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void parseUri(Uri uri) {
+		try {
+			if(uri.getQueryParameter(MMAPIConstants.TWITTER_OAUTH_VERIFIER) != null) {
+				twitterAccessToken = twitter.getOAuthAccessToken(requestToken, uri.getQueryParameter(MMAPIConstants.TWITTER_OAUTH_VERIFIER));
+				MMSignInAdapter.signInUserTwitter(new TwitterAuthCallback(), twitterAccessToken.getToken(), twitterAccessToken.getScreenName(), MMConstants.PARTNER_ID);
+				
+				int requestCode = getIntent().getIntExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.DEFAULT_INT);
+				
+				if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
+					progressDialog = ProgressDialog.show(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_twitter), true, false);
+				} else if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH) {
+					progressDialog = ProgressDialog.show(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_twitter), true, false);
+				}
+			} else {
+				finish();
+			}
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private class MobMonkeyWebViewClient extends WebViewClient {
+		/* (non-Javadoc)
+		 * @see android.webkit.WebViewClient#shouldOverrideUrlLoading(android.webkit.WebView, java.lang.String)
+		 */
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			if(url.contains(MMAPIConstants.TWITTER_CALLBACK_URL_SIGN_IN)) {
+				parseUri(Uri.parse(url));
+				return true;
+			}
+			return false;
 		}
 	}
 	

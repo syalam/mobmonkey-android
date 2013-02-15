@@ -341,6 +341,7 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     		
     		Session.openActiveSession(SignUpScreen.this, true, new Session.StatusCallback() {
 				public void call(Session session, SessionState state, Exception exception) {
+	    			Log.d(TAG, TAG + "open active facebook session");
 					if(session.isOpened() && requestEmail) {
 			    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList("email"));
 						session.requestNewReadPermissions(request);
