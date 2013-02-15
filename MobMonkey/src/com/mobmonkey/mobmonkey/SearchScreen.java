@@ -50,8 +50,7 @@ public class SearchScreen extends Activity {
 		String email = userPrefs.getString(MMAPIConstants.KEY_EMAIL_ADDRESS, MMAPIConstants.DEFAULT_STRING);
 		String password = userPrefs.getString(MMAPIConstants.KEY_PASSWORD, MMAPIConstants.DEFAULT_STRING);
 
-		MMSearchLocationAdapter.searchTextWithLocation(new SearchCallback(), "coffee", latitudeValue, longitudeValue, email, password);
-		
+		MMSearchLocationAdapter.searchTextWithLocation(new SearchCallback(), "coffee", Double.toString(latitudeValue), Double.toString(longitudeValue), email, password, MMAPIConstants.KEY_PARTNER_ID);	
 	}
 	
 	private class SearchCallback implements MMCallback {
