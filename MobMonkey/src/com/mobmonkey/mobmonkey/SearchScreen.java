@@ -34,7 +34,7 @@ public class SearchScreen extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		userPrefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		setContentView(R.layout.searchscreen);
 		
 		LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
@@ -69,5 +69,14 @@ public class SearchScreen extends Activity {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		moveTaskToBack(true);
+		return;
 	}
 }

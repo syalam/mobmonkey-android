@@ -19,17 +19,7 @@ import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
-import com.mobmonkey.mobmonkeyapi.utils.MMGetDeviceUUID;
 
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
-import twitter4j.auth.RequestToken;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
-
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.app.Activity;
@@ -80,11 +70,8 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	
 	Calendar birthdate;
 	
-	String userEmail;
-	
-	LoginActivity fbLogin;
-	Twitter twitter;
-	RequestToken requestToken;
+    boolean requestEmail;
+	GraphUser facebookUser;
 	
 	/*
 	 * (non-Javadoc)
@@ -93,18 +80,18 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, TAG + "onCreate");
         
         setContentView(R.layout.signupscreen);
         
         if (android.os.Build.VERSION.SDK_INT > 9) {
-        	StrictMode.ThreadPolicy policy = 
-        		new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        	StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         	StrictMode.setThreadPolicy(policy);
         }
         
         initUserInfoFields();
         
-        userPrefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
+        userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
         userPrefsEditor = userPrefs.edit();
     }
 
@@ -118,6 +105,82 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
         return true;
     }
     
+    /**
+     * {@link OnTouchListener} handler for birthdate and gender {@link EditText}. When the {@link EditText}s are touched, it will prompt the user to select his/her birthdate or gender.
+     */
+    /*
+     * (non-Javadoc)
+     * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
+     */
+	public boolean onTouch(View v, MotionEvent event) {
+		if(event.getAction() == MotionEvent.ACTION_DOWN) {
+			prevEvent = event;
+		}
+		
+		if(event.getAction() == MotionEvent.ACTION_UP) {
+			switch(v.getId()) {
+		    	case R.id.etbirthdate:
+		    		imm.hideSoftInputFromWindow(etBirthdate.getWindowToken(), 0);
+		    		promptUserBirthdate();
+		    		return true;
+		    	case R.id.etgender:
+		    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
+		    		promptUserGender();
+		    		return true;
+			}
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Handle events when the date changes on the {@link DatePicker}
+	 */
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.DatePicker.OnDateChangedListener#onDateChanged(android.widget.DatePicker, int, int, int)
+	 */
+	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+		
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.d(TAG, TAG + "onActivityResult");
+		
+		switch(requestCode) {
+			case MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH:
+				if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
+					Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_in_successful, Toast.LENGTH_LONG).show();
+					startActivity(new Intent(SignUpScreen.this, MainScreen.class));
+					finish();
+				} else if(resultCode == MMAPIConstants.RESULT_CODE_NOT_FOUND) {
+					Intent signUpTwitterIntent = (Intent) data.clone();
+					signUpTwitterIntent.setClass(SignUpScreen.this, SignUpTwitterScreen.class);
+					startActivityForResult(signUpTwitterIntent, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER);
+				}
+				break;
+			case MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER:
+				Log.d(TAG, TAG + "coming back from twitter sign up");
+				if(resultCode == RESULT_OK) {
+					startActivity(new Intent(SignUpScreen.this, MainScreen.class));
+					finish();
+				}
+				break;
+			default:
+				Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+				if(!requestEmail) {
+					userPrefsEditor.putString(MMAPIConstants.KEY_USER, Session.getActiveSession().getAccessToken());
+					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, (String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
+					MMSignUpAdapter.signUpNewUserFacebook(new SignUpCallback(), Session.getActiveSession().getAccessToken(), 
+							(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
+		    		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_facebook), true, false);
+				}
+				break;
+		}
+	}
+	
     /**
      * Handler for when {@link Button}s or any other {@link View}s are clicked.
      * @param view
@@ -159,6 +222,8 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	etBirthdate.setOnTouchListener(SignUpScreen.this);
     	etGender.setOnTouchListener(SignUpScreen.this);
     	
+    	requestEmail = true;
+    	
     	// TODO: Hardcoded values, to be removed
     	etFirstName.setText("Wilson");
     	etLastName.setText("Xie");
@@ -179,58 +244,31 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
      */
     private void signUpNormal() {
     	if(checkFirstName()) {
+			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
+			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
     		MMSignUpAdapter.signUpNewUser(new SignUpCallback(), userInfo, MMConstants.PARTNER_ID);
     		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up), true, false);
     	}
     }
     
-    boolean requestEmail = true;
+    /**
+     * 
+     */
     private void signUpFacebook() {
-    	if(checkAcceptedToS()) {
-//    		Session session = Session.getActiveSession();
-//    		if(session == null) {
-//    			session = new Session(this);
-//    		}
-//    		Session.setActiveSession(session);
-//    		Session.OpenRequest request = new Session.OpenRequest(this).setCallback(null);
-//    		request.setPermissions(Arrays.asList("email"));
-    		
-//    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList("email"));
-//    		Session session = Session.getActiveSession();
-//    		
-//    		if(session == null) {
-//    			session = new Session(this);
-//    		}
-//    		
-//    		session.requestNewReadPermissions(request);
-//    		Session.setActiveSession(session);
-////    		session.openForRead(new Session.OpenRequest(this).setCallback(new Session.StatusCallback() {
-////				public void call(Session session, SessionState state, Exception exception) {
-////					Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-////						public void onCompleted(GraphUser user, Response response) {
-////							if(user != null) {
-////								Log.d(TAG, TAG + "user: " + user.getUsername());
-////							}
-////						}
-////					});
-////				}
-////			}));
-    		
+    	if(checkAcceptedToS()) {    		
     		Session.openActiveSession(SignUpScreen.this, true, new Session.StatusCallback() {
 				public void call(Session session, SessionState state, Exception exception) {
+	    			Log.d(TAG, TAG + "open active facebook session");
+	    			Log.d(TAG, TAG + "sign up with facebook");
+	    			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
 					if(session.isOpened() && requestEmail) {
-			    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList("email"));
+			    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
 						session.requestNewReadPermissions(request);
-						requestEmail = false;
 						Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
 							public void onCompleted(GraphUser user, Response response) {
 								if(user != null) {
-									Log.d(TAG, TAG + "graphUser: " + user.getUsername());
-									Log.d(TAG, TAG + "user: " + user.getProperty("email"));
-									userPrefsEditor.putString("FBToken", Session.getActiveSession().getAccessToken());
-									userPrefsEditor.putString("FBUserName", (String) user.getProperty("email"));
-									userPrefsEditor.commit();
-//									userEmail = (String) user.getProperty("email");
+									requestEmail = false;
+									facebookUser = user;
 								}
 							}
 						});
@@ -239,52 +277,17 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 			});
     	}
     }
-    
-    private void signUpTwitter() {
-    	String PREF_KEY_OAUTH_TOKEN = "oauth_token";
-    	String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
-    	String PREF_KEY_TWITTER_LOGIN = "isTwitterLoggedIn";
-    	
-    	String TWITTER_CALLBACK_URL = "mobmonkey://com.mobmonkey.mobmonkey?";
-    	
-    	String URL_TWITTER_AUTH = "auth_url";
-        String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
-        String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
-    	
+
+    /**
+     * 
+     */
+    private void signUpTwitter() {    	
     	if(checkAcceptedToS()) {
-    		ConfigurationBuilder builder = new ConfigurationBuilder();
-    		builder.setOAuthConsumerKey(MMConstants.TWITTER_CONSUMER_KEY);
-    		builder.setOAuthConsumerSecret(MMConstants.TWITTER_CONSUMER_SECRET);
-    		builder.setOAuthAccessToken(userPrefs.getString("twitter_access_token", null));
-    		builder.setOAuthAccessTokenSecret(userPrefs.getString("twitter_access_token_secret", null));
-    		Configuration configuration = builder.build();
-    		
-    		TwitterFactory factory = new TwitterFactory(configuration);
-    		twitter = factory.getInstance();
-    		
-    		try {
-				requestToken = twitter.getOAuthRequestToken(TWITTER_CALLBACK_URL);
-				Log.d(TAG, TAG + "authURL: " + requestToken.getAuthenticationURL());
-				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.getAuthenticationURL())));
-			} catch (TwitterException e) {
-				e.printStackTrace();
-			}
+    		Intent twitterAuthIntent = new Intent(SignUpScreen.this, TwitterAuthScreen.class);
+    		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
+    		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
     	}
     }
-    
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onNewIntent(android.content.Intent)
-	 */
-	@Override
-	protected void onNewIntent(Intent intent) {
-		Log.d(TAG, TAG + "onNewIntent");
-		super.onNewIntent(intent);
-		Uri uri = intent.getData();
-		String oauthToken = uri.getQueryParameter("oauth_token");
-		String oauthVerifier = uri.getQueryParameter("oauth_verifier");
-		Log.d(TAG, TAG + "oauthToken: " + oauthToken);
-		Log.d(TAG, TAG + "oauthVerifier: " + oauthVerifier);
-	}
 
 	/**
      * Function that check if the first name {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
@@ -482,12 +485,13 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 			
 			try {
 				JSONObject response = new JSONObject((String) obj);
-				if(response.getString("status").equals("Success")) {
+				if(response.getString(MMAPIConstants.KEY_RESPONSE_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
 					Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
+					userPrefsEditor.commit();
 					startActivity(new Intent(SignUpScreen.this, MainScreen.class));
 					finish();
 				} else {
-					// TODO: alert user
+					Toast.makeText(SignUpScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -495,75 +499,4 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 			Log.d(TAG, TAG + "response: " + (String) obj);
 		}	
     }
-    
-    /**
-     * {@link OnTouchListener} handler for birthdate and gender {@link EditText}. When the {@link EditText}s are touched, it will prompt the user to select his/her birthdate or gender.
-     */
-    /*
-     * (non-Javadoc)
-     * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
-     */
-	public boolean onTouch(View v, MotionEvent event) {
-		if(event.getAction() == MotionEvent.ACTION_DOWN) {
-			prevEvent = event;
-		}
-		
-		if(event.getAction() == MotionEvent.ACTION_UP) {
-			switch(v.getId()) {
-		    	case R.id.etbirthdate:
-		    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
-		    		promptUserBirthdate();
-		    		return true;
-		    	case R.id.etgender:
-		    		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
-		    		promptUserGender();
-		    		return true;
-			}
-		}
-		
-		return false;
-	}
-
-	/**
-	 * Handle events when the date changes on the {@link DatePicker}
-	 */
-	/*
-	 * (non-Javadoc)
-	 * @see android.widget.DatePicker.OnDateChangedListener#onDateChanged(android.widget.DatePicker, int, int, int)
-	 */
-	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-		
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
-//		Log.d(TAG, TAG + "Access Token: " + Session.getActiveSession().getAccessToken());
-//		for(String perm : Session.getActiveSession().getPermissions()) {
-//			Log.d(TAG, TAG + "perm: " + perm);
-//		}
-//		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList("email"));
-//		Session session = Session.getActiveSession();
-//		
-//		if(session == null) {
-//			session = new Session(this);
-//		}
-//		
-//		session.requestNewReadPermissions(request);
-//		Session.setActiveSession(session);
-//		session.openForRead(new Session.OpenRequest(this).setCallback(new Session.StatusCallback() {
-//			public void call(Session session, SessionState state, Exception exception) {
-//				Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-//					public void onCompleted(GraphUser user, Response response) {
-//						if(user != null) {
-//							Log.d(TAG, TAG + "user: " + user.getUsername());
-//						}
-//					}
-//				});
-//			}
-//		}));
-		MMSignUpAdapter.signUpNewUserFacebook(new SignUpCallback(), userPrefs.getString("FBToken", ""), userPrefs.getString("FBUserName", ""), MMConstants.PARTNER_ID);
-	}
 }

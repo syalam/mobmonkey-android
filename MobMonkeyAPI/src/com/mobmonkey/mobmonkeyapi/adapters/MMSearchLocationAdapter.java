@@ -14,15 +14,15 @@ public class MMSearchLocationAdapter {
 	
 	private static final String TAG = "TAG";
 
-	public static void searchTextWithLocation(MMCallback mmCallBack,String searchText, double latitude, double longitude, String email, String password)
+	public static void searchTextWithLocation(MMCallback mmCallback, String searchText, String latitude, String longitude, String email, String password, String partnerId)
 	{
 		String searchLocationURL = "http://api.mobmonkey.com/rest/search/location/glob";
 		
 		JSONObject params = new JSONObject();
 		
 		try {
-			params.put(MMAPIConstants.KEY_LATITUDE, Double.toString(latitude));
-			params.put(MMAPIConstants.KEY_LONGITUDE, Double.toString(longitude));
+			params.put(MMAPIConstants.KEY_LATITUDE, latitude);
+			params.put(MMAPIConstants.KEY_LONGITUDE, longitude);
 			params.put(MMAPIConstants.KEY_RADIUS_IN_YARDS, 25);
 			//params.put(MMAPIConstants.KEY_NAME, searchText);
 			//params.put(MMAPIConstants.KEY_CATEGORY_IDS, "342");
@@ -34,11 +34,11 @@ public class MMSearchLocationAdapter {
 			HttpPost httpPost = new HttpPost(searchLocationURL);
 			httpPost.setEntity(stringEntity);
 			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, MMAPIConstants.MOB_MONKEY_PARTNER_ID);
+			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
 			httpPost.setHeader(MMAPIConstants.KEY_USER, email);
 			httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
 			
-			new MMAsyncTask(mmCallBack).execute(httpPost);
+			new MMAsyncTask(mmCallback).execute(httpPost);
 		}
 		catch (Exception e)
 		{

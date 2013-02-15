@@ -17,5 +17,13 @@ public class InboxScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.inboxscreen);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		moveTaskToBack(true);
+		return;
+	}
 }

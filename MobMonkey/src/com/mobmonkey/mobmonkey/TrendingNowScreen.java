@@ -2,6 +2,7 @@ package com.mobmonkey.mobmonkey;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 /**
  * @author Dezapp, LLC
@@ -17,4 +18,14 @@ public class TrendingNowScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.trendingnowscreen);
 	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		moveTaskToBack(true);
+		return;
+	}
+
 }

@@ -17,4 +17,13 @@ public class BookmarksScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bookmarksscreen);
 	}
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		moveTaskToBack(true);
+		return;
+	}
 }
