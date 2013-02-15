@@ -31,6 +31,8 @@ public final class MMSignInAdapter {
 		signInURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
 				MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=false";
 		
+		Log.d(TAG, TAG + "signInURL: " + signInURL);
+		
 		HttpPost httpPost = new HttpPost(signInURL);
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);

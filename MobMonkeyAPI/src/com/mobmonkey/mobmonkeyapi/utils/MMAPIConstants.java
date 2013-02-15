@@ -17,6 +17,13 @@ public final class MMAPIConstants {
 	
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	
+	public static final String TEXT_MALE = "Male";
+	public static final String TEXT_FEMALE = "Female";
+	public static final int NUM_MALE = 1;
+	public static final int NUM_FEMALE = 0;
+	
+	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
+	
 	public static final String KEY_FIRST_NAME = "firstName";
 	public static final String KEY_LAST_NAME = "lastName";
 	public static final String KEY_EMAIL_ADDRESS = "eMailAddress";
@@ -52,11 +59,6 @@ public final class MMAPIConstants {
 	public static final String DEVICE_TYPE = "Android";
 	public static final String OAUTH_PROVIDER_FACEBOOK = "facebook";
 	public static final String OAUTH_PROVIDER_TWITTER = "twitter";
-	
-	public static final String TEXT_MALE = "Male";
-	public static final String TEXT_FEMALE = "Female";
-	public static final int NUM_MALE = 1;
-	public static final int NUM_FEMALE = 0;
 	
 	public static final String TWITTER_CALLBACK_URL = "mobmonkey://com.mobmonkey.mobmonkey?";
 	public static final String TWITTER_CALLBACK_URL_SIGN_IN = "signin://com.mobmonkey.mobmonkey?";

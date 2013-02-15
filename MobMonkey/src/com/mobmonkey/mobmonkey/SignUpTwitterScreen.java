@@ -237,8 +237,8 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
     private boolean checkEmailAddress() {
     	if(!TextUtils.isEmpty(etEmailAddress.getText())) {
     		userInfo.put(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
-    		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
-    		userPrefsEditor.commit();
+//    		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+//    		userPrefsEditor.commit();
     		return checkBirthdate();
     	} else {
     		displayAlert(R.string.alert_invalid_email_address);
@@ -311,6 +311,9 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
 				if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_SUCCESS)) {
 					Toast.makeText(SignUpTwitterScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
 					setResult(Activity.RESULT_OK);
+					userPrefsEditor.putString(MMAPIConstants.KEY_USER, providerUserName);
+					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, getIntent().getStringExtra(MMAPIConstants.KEY_OAUTH_TOKEN));
+					userPrefsEditor.commit();
 					finish();
 				} else {
 					Toast.makeText(SignUpTwitterScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_SHORT).show();

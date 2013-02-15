@@ -1,17 +1,12 @@
 package com.mobmonkey.mobmonkey;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.RequestToken;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
-
+import com.facebook.LoginActivity;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -20,6 +15,7 @@ import com.facebook.model.GraphUser;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMDeviceUUID;
@@ -31,7 +27,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.TextUtils;
@@ -48,17 +43,14 @@ public class SignInScreen extends Activity {
 	private static final String TAG = "SignInScreen: ";
 	
 	SharedPreferences userPrefs;
-//	SharedPreferences.Editor userPrefsEditor;
+	SharedPreferences.Editor userPrefsEditor;
 	
 	ProgressDialog progressDialog;
 	EditText etEmailAddress;
 	EditText etPassword;
-		
-	private String userEmail;
 	
-//	Twitter twitter;
-//	RequestToken requestToken;
-//	twitter4j.auth.AccessToken twitterAccessToken;
+    boolean requestEmail;
+	GraphUser facebookUser;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -72,18 +64,15 @@ public class SignInScreen extends Activity {
 		}
 		
         if (android.os.Build.VERSION.SDK_INT > 9) {
-        	StrictMode.ThreadPolicy policy = 
-        		new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        	StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         	StrictMode.setThreadPolicy(policy);
         }
 		
 		super.onCreate(savedInstanceState);
-        // TODO: move this to the first screen of the app 
         MMDeviceUUID.setContext(getApplicationContext());
 		
 		setContentView(R.layout.signinscreen);
 		init();
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 	}
 
 	/* (non-Javadoc)
@@ -97,11 +86,28 @@ public class SignInScreen extends Activity {
 		if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
 			if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
 				Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
+				Log.d(TAG, TAG + "twitter provider username: " + userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING));
+				Log.d(TAG, TAG + "twitter oauth token: " + userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 				startActivity(new Intent(SignInScreen.this, MainScreen.class));
+			} else if(resultCode == MMAPIConstants.RESULT_CODE_NOT_FOUND) {
+				// TODO: inform user
+			}
+		} else {
+			Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+			if(!requestEmail) {
+				userPrefsEditor.putString(MMAPIConstants.KEY_USER, (String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
+				userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, 	Session.getActiveSession().getAccessToken());
+				MMSignUpAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
+						(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
+	    		progressDialog = ProgressDialog.show(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_facebook), true, false);
 			}
 		}
 	}
 	
+	/**
+	 * 
+	 * @param view
+	 */
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsignin:
@@ -119,43 +125,59 @@ public class SignInScreen extends Activity {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void init() {
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
+		
 		etEmailAddress = (EditText) findViewById(R.id.etemailaddress);
 		etPassword = (EditText) findViewById(R.id.etpassword);
+		
+		requestEmail = true;
 		
 		// TODO: hardcoded values, to be removed
 		etEmailAddress.setText("duds411@yahoo.com");
 		etPassword.setText("helloworld123");
 	}
 	
+	/**
+	 * 
+	 */
 	private void signInNormal() {
 		if(checkEmailAddress()) {
+			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
+			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
 			MMSignInAdapter.signInUser(new SignInCallback(), etEmailAddress.getText().toString(), etPassword.getText().toString(), MMConstants.PARTNER_ID);
     		progressDialog = ProgressDialog.show(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in), true, false);
 		}
 	}
 	
-//	private boolean requestEmail;
+	/**
+	 * 
+	 */
 	private void signInFacebook() {
-		MMSignInAdapter.signInUserFacebook(new SignInCallback(), "fakeone", userPrefs.getString("", ""), MMConstants.PARTNER_ID);
-//		Session.openActiveSession(SignInScreen.this, true, new Session.StatusCallback() {
-//			public void call(Session session, SessionState state, Exception exception) {
-//				if(session.isOpened() && requestEmail) {
-//		    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignInScreen.this, Arrays.asList("email"));
-//					session.requestNewReadPermissions(request);
-//					requestEmail = false;
-//					Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-//						public void onCompleted(GraphUser user, Response response) {
-//							if(user != null) {
-//								Log.d(TAG, TAG + "graphUser: " + user.getUsername());
-//								Log.d(TAG, TAG + "user: " + user.getProperty("email"));
-//								userEmail = (String) user.getProperty("email");
-//							}
-//						}
-//					});
-//				}
-//			}
-//		});		
+		Session.openActiveSession(SignInScreen.this, true, new Session.StatusCallback() {
+			public void call(Session session, SessionState state, Exception exception) {
+    			Log.d(TAG, TAG + "sign in with facebook");
+    			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
+    			Log.d(TAG, TAG + "session opened: " + session.isOpened());
+				if(session.isOpened() && requestEmail) {
+		    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignInScreen.this, Arrays.asList(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
+					session.requestNewReadPermissions(request);
+					Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+						public void onCompleted(GraphUser user, Response response) {
+							Log.d(TAG, TAG + "onCompleted");
+							if(user != null) {
+								requestEmail = false;
+								facebookUser = user;
+							}
+						}
+					});
+				}
+			}
+		});	
 	}
 	
 	/**
@@ -167,6 +189,9 @@ public class SignInScreen extends Activity {
 		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
 	}
 	
+	/**
+	 * 
+	 */
 	private void signUp() {
 		Log.d(TAG, TAG + "SignUp");
 		startActivity(new Intent(SignInScreen.this, SignUpScreen.class));
@@ -210,6 +235,11 @@ public class SignInScreen extends Activity {
 			.show();
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class SignInCallback implements MMCallback {
 		public void processCallback(Object obj) {
 			if(progressDialog != null) {
@@ -219,11 +249,12 @@ public class SignInScreen extends Activity {
 			try {
 				JSONObject response = new JSONObject((String) obj);
 				if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_SUCCESS)) {
-					Toast.makeText(SignInScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
-					Intent mainScreenIntent = new Intent(SignInScreen.this, MainScreen.class);
-					mainScreenIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-					startActivity(mainScreenIntent);
-//					startActivity(new Intent(SignInScreen.this, MainScreen.class));
+					Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
+					if(requestEmail == false) {
+						requestEmail = true;
+					}
+					userPrefsEditor.commit();
+					startActivity(new Intent(SignInScreen.this, MainScreen.class));
 				} else {
 					Toast.makeText(SignInScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 				}
@@ -233,35 +264,4 @@ public class SignInScreen extends Activity {
 			Log.d(TAG, TAG + "response: " + (String) obj);
 		}
 	}
-	
-//	@Override
-//	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		super.onActivityResult(requestCode, resultCode, data);
-//		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
-//		Log.d(TAG, TAG + "Access Token: " + Session.getActiveSession().getAccessToken());
-//		for(String perm : Session.getActiveSession().getPermissions()) {
-//			Log.d(TAG, TAG + "perm: " + perm);
-//		}
-//		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList("email"));
-//		Session session = Session.getActiveSession();
-//		
-//		if(session == null) {
-//			session = new Session(this);
-//		}
-//		
-//		session.requestNewReadPermissions(request);
-//		Session.setActiveSession(session);
-//		session.openForRead(new Session.OpenRequest(this).setCallback(new Session.StatusCallback() {
-//			public void call(Session session, SessionState state, Exception exception) {
-//				Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-//					public void onCompleted(GraphUser user, Response response) {
-//						if(user != null) {
-//							Log.d(TAG, TAG + "user: " + user.getUsername());
-//						}
-//					}
-//				});
-//			}
-//		}));
-//		MMSignInAdapter.signInUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), userEmail, MMConstants.PARTNER_ID);
-//	}
 }

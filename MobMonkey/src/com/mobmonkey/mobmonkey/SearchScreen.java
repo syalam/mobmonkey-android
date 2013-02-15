@@ -19,7 +19,7 @@ public class SearchScreen extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		userPrefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE);
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		setContentView(R.layout.searchscreen);
 		
 		userPrefs.getString(MMAPIConstants.KEY_EMAIL_ADDRESS, MMAPIConstants.DEFAULT_STRING);

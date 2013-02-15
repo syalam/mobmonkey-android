@@ -11,6 +11,7 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
+import com.facebook.Session;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -20,6 +21,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +35,9 @@ import android.widget.Toast;
  */
 public class TwitterAuthScreen extends Activity {
 	private static final String TAG = "TwitterAuthScreen: ";
+	
+	SharedPreferences userPrefs;
+	SharedPreferences.Editor userPrefsEditor;
 
 	ProgressDialog progressDialog;
 	
@@ -49,6 +54,10 @@ public class TwitterAuthScreen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreate");
 		super.onCreate(savedInstanceState);
+		
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
+		
 		setContentView(R.layout.twitterauthscreen);
 		wvTwitterAuth = (WebView) findViewById(R.id.wvtwitterauth); 
 		wvTwitterAuth.getSettings().setJavaScriptEnabled(true);
@@ -117,6 +126,9 @@ public class TwitterAuthScreen extends Activity {
 				JSONObject response = new JSONObject((String) obj);
 				if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_SUCCESS)) {
 					setResult(MMAPIConstants.RESULT_CODE_SUCCESS);
+					userPrefsEditor.putString(MMAPIConstants.KEY_USER, twitterAccessToken.getScreenName());
+					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, twitterAccessToken.getToken());
+					userPrefsEditor.commit();
 				} else if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_NOT_FOUND)) {
 					Intent resultIntent = new Intent();
 					resultIntent.putExtra(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, twitterAccessToken.getScreenName());
