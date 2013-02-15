@@ -1,9 +1,9 @@
 <resources>
 	
 	<string name="app_name">MobMonkey</string>
-	<string name="hello_world">Hello world!</string>
 	<string name="menu_settings">Settings</string>
-	<string name="title_activity_main">SignUpScreen</string>
+	<string name="app_id_facebook">509890709049518</string>
+	
 	
 	<!-- SignIn Screen -->
 	<string name="btn_sign_in">Sign In</string>
@@ -14,10 +14,7 @@
 	<string name="pd_signing_in_facebook">Signing in via Facebook&#8230;</string>
 	<string name="pd_signing_in_twitter">Signing in via Twitter&#8230;</string>
 	
-	<string name="toast_sign_in_successful">Sign in successful</string>
-	
-	<!-- TwitterAuthScreen -->
-	<string name="pd_signing_up_twitter">Signing up via Twitter&#8230;</string>
+	<string name="toast_sign_in_successful">Successfully signed in</string>
 	
 	<!-- SignUp Screen -->
 	<string name="et_firstname">First Name</string>
@@ -52,11 +49,13 @@
 	<string name="alert_invalid_tos">Terms of Service must be accepted before signing up.</string>
 
 	<string name="pd_signing_up">Signing up&#8230;</string>
+	<string name="pd_signing_up_facebook">Signing up with Facebook&#8230;</string>
 	
-	<string name="toast_sign_up_in_successful">User already exist, sign in successful</string>
-	<string name="toast_sign_up_successful">Sign up successful</string>
+	<string name="toast_sign_up_in_successful">User already exist, successfully signed in</string>
+	<string name="toast_sign_up_successful">Successfully signed up</string>
 	
-	<string name="app_id_facebook">509890709049518</string>
+	<!-- TwitterAuthScreen -->
+	<string name="pd_signing_up_twitter">Signing up via Twitter&#8230;</string>
 	
 	<!-- Trending Now Screen -->
 	<string name="title_trendingnow">What\'s Trending Now!</string>
@@ -74,6 +73,8 @@
 	<string name="title_settings">Settings</string>
 	
 	<string name="btn_sign_out">Sign Out</string>
+	
+	<string name="toast_sign_out_successful">Successfully signed out</string>
 	
 	<!-- Terms of use Screen -->
 	<string name="title_terms_of_use">Terms of use</string>

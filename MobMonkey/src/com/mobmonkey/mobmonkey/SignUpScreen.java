@@ -80,12 +80,9 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	
 	Calendar birthdate;
 	
-	String userEmail;
-	
+    boolean requestEmail;	
 	LoginActivity fbLogin;
-//	Twitter twitter;
-//	RequestToken requestToken;
-//	AccessToken accessToken;
+	GraphUser facebookUser;
 	
 	/*
 	 * (non-Javadoc)
@@ -185,7 +182,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 				break;
 			default:
 				Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
-				MMSignUpAdapter.signUpNewUserFacebook(new SignUpCallback(), userPrefs.getString("FBToken", ""), userPrefs.getString("FBUserName", ""), MMConstants.PARTNER_ID);
+				if(!requestEmail) {
+					MMSignUpAdapter.signUpNewUserFacebook(new SignUpCallback(), Session.getActiveSession().getAccessToken(), (String) facebookUser.getProperty("email"), MMConstants.PARTNER_ID);
+		    		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_facebook), true, false);
+				}
 				break;
 		}
 
@@ -279,6 +279,8 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	etBirthdate.setOnTouchListener(SignUpScreen.this);
     	etGender.setOnTouchListener(SignUpScreen.this);
     	
+    	requestEmail = true;
+    	
     	// TODO: Hardcoded values, to be removed
     	etFirstName.setText("Wilson");
     	etLastName.setText("Xie");
@@ -304,43 +306,15 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	}
     }
     
-    boolean requestEmail = true;
     /**
      * 
      */
     private void signUpFacebook() {
-    	if(checkAcceptedToS()) {
-//    		Session session = Session.getActiveSession();
-//    		if(session == null) {
-//    			session = new Session(this);
-//    		}
-//    		Session.setActiveSession(session);
-//    		Session.OpenRequest request = new Session.OpenRequest(this).setCallback(null);
-//    		request.setPermissions(Arrays.asList("email"));
-    		
-//    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList("email"));
-//    		Session session = Session.getActiveSession();
-//    		
-//    		if(session == null) {
-//    			session = new Session(this);
-//    		}
-//    		
-//    		session.requestNewReadPermissions(request);
-//    		Session.setActiveSession(session);
-////    		session.openForRead(new Session.OpenRequest(this).setCallback(new Session.StatusCallback() {
-////				public void call(Session session, SessionState state, Exception exception) {
-////					Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-////						public void onCompleted(GraphUser user, Response response) {
-////							if(user != null) {
-////								Log.d(TAG, TAG + "user: " + user.getUsername());
-////							}
-////						}
-////					});
-////				}
-////			}));
-    		
+    	if(checkAcceptedToS()) {    		
     		Session.openActiveSession(SignUpScreen.this, true, new Session.StatusCallback() {
 				public void call(Session session, SessionState state, Exception exception) {
+	    			Log.d(TAG, TAG + "sign up with facebook");
+	    			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
 					if(session.isOpened() && requestEmail) {
 			    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList("email"));
 						session.requestNewReadPermissions(request);
@@ -348,11 +322,12 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 						Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
 							public void onCompleted(GraphUser user, Response response) {
 								if(user != null) {
-									Log.d(TAG, TAG + "graphUser: " + user.getUsername());
-									Log.d(TAG, TAG + "user: " + user.getProperty("email"));
-									userPrefsEditor.putString("FBToken", Session.getActiveSession().getAccessToken());
-									userPrefsEditor.putString("FBUserName", (String) user.getProperty("email"));
-									userPrefsEditor.commit();
+									facebookUser = user;
+//									Log.d(TAG, TAG + "graphUser: " + user.getUsername());
+//									Log.d(TAG, TAG + "user: " + user.getProperty("email"));
+//									userPrefsEditor.putString("FBToken", Session.getActiveSession().getAccessToken());
+//									userPrefsEditor.putString("FBUserName", (String) user.getProperty("email"));
+//									userPrefsEditor.commit();
 //									userEmail = (String) user.getProperty("email");
 								}
 							}
