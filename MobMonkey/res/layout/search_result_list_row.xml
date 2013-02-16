@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+	
+	<RelativeLayout android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_weight="1"
+		android:padding="5dp">
+		
+		<TextView android:id="@+id/tvlocname"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textStyle="bold"/>
+		
+		<TextView android:id="@+id/tvlocdist"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:textStyle="bold"/>
+		
+		<TextView android:id="@+id/tvlocaddr"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/tvlocname"
+			android:lines="2"/>
+        
+    </RelativeLayout>
+	
+	<ImageView android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="right|center"
+	    android:layout_margin="5dp"
+	    android:src="@drawable/icon_search"/>
+    
+</LinearLayout>
