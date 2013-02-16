@@ -23,7 +23,7 @@ public final class MMSignOutAdapter {
 	}
 	
 	public static void signOut(MMCallback mmCallback, String user, String auth, String partnerId) {
-		signOutURL = MMAPIConstants.MOBMONKEY_URL + "signout/Android/" + MMDeviceUUID.getDeviceUUID().toString();
+		signOutURL = MMAPIConstants.MOBMONKEY_URL + "signout/" + MMAPIConstants.DEVICE_TYPE + "/" + MMDeviceUUID.getDeviceUUID().toString();
 		Log.d(TAG, TAG + "signOutURL: " + signOutURL);
 		
 		HttpPost httpPost = new HttpPost(signOutURL);
@@ -31,9 +31,11 @@ public final class MMSignOutAdapter {
 		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
 		httpPost.setHeader(MMAPIConstants.KEY_USER, user);
 		httpPost.setHeader(MMAPIConstants.KEY_AUTH, auth);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, auth);
 		
-		for(Header h : httpPost.getAllHeaders()) {
-			Log.d(TAG, TAG + "name: " + h.getName() + " value: " + h.getValue());
+		for(Header header : httpPost.getAllHeaders()) {
+			Log.d(TAG, TAG + "header name: " + header.getName());
+			Log.d(TAG, TAG + "header value: " + header.getValue());
 		}
 		
 		new MMAsyncTask(mmCallback).execute(httpPost);
