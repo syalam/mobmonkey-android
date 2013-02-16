@@ -54,7 +54,7 @@
 	<string name="toast_sign_up_in_successful">User already exist, successfully signed in</string>
 	<string name="toast_sign_up_successful">Successfully signed up</string>
 	
-	<!-- TwitterAuthScreen -->
+	<!-- TwitterAuth Screen -->
 	<string name="pd_signing_up_twitter">Signing up via Twitter&#8230;</string>
 	
 	<!-- Trending Now Screen -->
@@ -65,6 +65,28 @@
 	
 	<!-- Search Screen -->
 	<string name="title_search">Search</string>
+	
+	<string name="et_search_hint">Location, Category, Address</string>
+	
+	<string-array name="search_nocategory">
+	    <item>Show All Nearby</item>
+	    <item>History</item>
+	</string-array>
+	<string-array name="search_category">
+	    <item>Automotive</item>
+	    <item>Travel</item>
+	    <item>Sports and Recreation</item>
+	    <item>Healthcare</item>
+	    <item>Landmarks</item>
+	    <item>Social</item>
+	    <item>Community and Government</item>
+	    <item>Retail</item>
+	    <item>Services and Supplies</item>
+	    <item>Transportation</item>
+	</string-array>
+	
+	<!-- SearchResults Screen -->
+	<string name="miles">miles</string>
 	
 	<!-- Bookmarks Screen -->
 	<string name="title_bookmarks">Bookmarks</string>

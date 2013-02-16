@@ -82,7 +82,7 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
         super.onCreate(savedInstanceState);
         Log.d(TAG, TAG + "onCreate");
         
-        setContentView(R.layout.signupscreen);
+        setContentView(R.layout.signup_screen);
         
         if (android.os.Build.VERSION.SDK_INT > 9) {
         	StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();

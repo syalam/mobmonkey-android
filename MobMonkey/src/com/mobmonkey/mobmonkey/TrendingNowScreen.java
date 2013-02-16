@@ -16,7 +16,7 @@ public class TrendingNowScreen extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.trendingnowscreen);
+		setContentView(R.layout.trending_now_screen);
 	}
 
 	/* (non-Javadoc)

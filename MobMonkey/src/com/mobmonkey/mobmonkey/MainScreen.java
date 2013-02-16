@@ -29,7 +29,7 @@ public class MainScreen extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.mainscreen);
+		setContentView(R.layout.main_screen);
 		 
 //		LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
 //		Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);

@@ -66,7 +66,7 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.signuptwitter);
+		setContentView(R.layout.signup_twitter_screen);
 		
 		init();
 	}

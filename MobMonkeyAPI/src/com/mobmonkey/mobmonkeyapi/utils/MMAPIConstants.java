@@ -24,6 +24,10 @@ public final class MMAPIConstants {
 	
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
 	
+	public static final String INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
+	public static final String INTENT_EXTRA_SEARCH_LOCATION = "Location";
+	public static final String INTENT_EXTRA_SEARCH_RESULTS = "Search results";
+	
 	public static final String KEY_FIRST_NAME = "firstName";
 	public static final String KEY_LAST_NAME = "lastName";
 	public static final String KEY_EMAIL_ADDRESS = "eMailAddress";

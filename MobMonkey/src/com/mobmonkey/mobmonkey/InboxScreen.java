@@ -15,7 +15,7 @@ public class InboxScreen extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.inboxscreen);
+		setContentView(R.layout.inbox_screen);
 	}
 	
 	/* (non-Javadoc)

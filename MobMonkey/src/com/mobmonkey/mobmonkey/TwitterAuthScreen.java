@@ -58,7 +58,7 @@ public class TwitterAuthScreen extends Activity {
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
-		setContentView(R.layout.twitterauthscreen);
+		setContentView(R.layout.twitter_auth_screen);
 		wvTwitterAuth = (WebView) findViewById(R.id.wvtwitterauth); 
 		wvTwitterAuth.getSettings().setJavaScriptEnabled(true);
 		

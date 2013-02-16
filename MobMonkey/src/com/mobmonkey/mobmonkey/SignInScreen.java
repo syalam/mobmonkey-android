@@ -71,7 +71,7 @@ public class SignInScreen extends Activity {
 		super.onCreate(savedInstanceState);
         MMDeviceUUID.setContext(getApplicationContext());
 		
-		setContentView(R.layout.signinscreen);
+		setContentView(R.layout.signin_screen);
 		init();
 	}
 

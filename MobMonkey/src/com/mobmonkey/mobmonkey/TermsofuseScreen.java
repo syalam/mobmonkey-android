@@ -17,7 +17,7 @@ public class TermsofuseScreen extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.termsofusescreen);
+		setContentView(R.layout.terms_of_use_screen);
 		TextView tvToS = (TextView)findViewById(R.id.tvtos);
 		tvToS.setMovementMethod(new ScrollingMovementMethod());
 	}

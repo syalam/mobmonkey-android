@@ -15,7 +15,7 @@ public class BookmarksScreen extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.bookmarksscreen);
+		setContentView(R.layout.bookmarks_screen);
 	}
 	
 	/* (non-Javadoc)
