@@ -31,7 +31,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:hint="@string/et_search_hint"
-					android:imeOptions="actionDone"
+					android:imeOptions="actionSearch"
 					android:inputType="text"
 					android:paddingLeft="50dp"/>
 				

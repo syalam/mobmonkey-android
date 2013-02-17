@@ -58,6 +58,9 @@ public class SearchResultsScreen extends Activity {
 		});
 	}
 	
+	/**
+	 * 
+	 */
 	private void getLocations() {
 		try {
 			locations = new MMResultsLocation[searchResults.length()];
@@ -73,6 +76,11 @@ public class SearchResultsScreen extends Activity {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param distance
+	 * @return
+	 */
 	private String convertMetersToMiles(String distance) {
 		double dist = Double.valueOf(distance);
 		

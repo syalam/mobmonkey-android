@@ -16,6 +16,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMHashMap;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,9 +24,12 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +45,9 @@ public class SearchScreen extends Activity {
 	Location location;
 	double longitudeValue;
 	double latitudeValue;
+	
+	ProgressDialog progressDialog;
+	EditText etSearch;
 	
 	String searchCategory;
 	
@@ -63,6 +70,28 @@ public class SearchScreen extends Activity {
 		
 		Log.d(TAG, TAG + "LOCATION: Longitude: " + longitudeValue + " Latitude: " + latitudeValue);
 		
+		etSearch = (EditText) findViewById(R.id.etsearch);
+		etSearch.setImeActionLabel("Search", KeyEvent.KEYCODE_SEARCH);
+		etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				Log.d(TAG, TAG + "actionId: " + actionId);
+				if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+					searchCategory = etSearch.getText().toString();
+					
+					HashMap<String, Object> hashMap = MMHashMap.getInstance(MMConstants.PARTNER_ID);
+					hashMap.put(MMAPIConstants.KEY_USER, userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING));
+					hashMap.put(MMAPIConstants.KEY_AUTH, userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+					hashMap.put(MMAPIConstants.KEY_LATITUDE, Double.toString(latitudeValue));
+					hashMap.put(MMAPIConstants.KEY_LONGITUDE, Double.toString(longitudeValue));
+					hashMap.put(MMAPIConstants.KEY_NAME, searchCategory);
+					
+					MMSearchLocationAdapter.searchTextWithLocation(new SearchCallback(), hashMap);
+					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, "searching for " + searchCategory + "...", true, false);
+				}
+				return true;
+			}
+		});
+		
 		int[] categoryIcons = new int[]{R.drawable.icon_search, 
 										R.drawable.icon_search};
 		ExpandedListView lvSearchNoCategory = (ExpandedListView) findViewById(R.id.elvsearchnocategory);
@@ -79,7 +108,8 @@ public class SearchScreen extends Activity {
 					hashMap.put(MMAPIConstants.KEY_LATITUDE, Double.toString(latitudeValue));
 					hashMap.put(MMAPIConstants.KEY_LONGITUDE, Double.toString(longitudeValue));
 					
-					MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), hashMap);	
+					MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), hashMap);
+					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, "searching nearby...", true, false);
 				} else {
 					// TODO:
 				}
@@ -103,6 +133,10 @@ public class SearchScreen extends Activity {
 	
 	private class SearchCallback implements MMCallback {
 		public void processCallback(Object obj) {
+			if(progressDialog != null) {
+				progressDialog.dismiss();
+			}
+			
 			if(obj == null) {
 				Log.d(TAG, TAG + "The response object is empty");
 			} else {
