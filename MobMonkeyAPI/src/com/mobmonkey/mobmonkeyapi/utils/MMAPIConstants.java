@@ -10,6 +10,9 @@ public final class MMAPIConstants {
 	}
 	
 	public static final String DEFAULT_STRING = "";
+	public static final String DEFAULT_SPACE = " ";
+	public static final String DEFAULT_NEWLINE = "\n";
+	public static final String COMMA_SPACE = ", ";
 	public static final int DEFAULT_INT = -1;
 	public static final double DEFAULT_DOUBLE = 1.0d;
 	
@@ -25,8 +28,8 @@ public final class MMAPIConstants {
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
 	
 	public static final String INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
-	public static final String INTENT_EXTRA_SEARCH_LOCATION = "Location";
 	public static final String INTENT_EXTRA_SEARCH_RESULTS = "Search results";
+	public static final String INTENT_EXTRA_LOCATION_DETAILS = "Location details";
 	
 	public static final String KEY_FIRST_NAME = "firstName";
 	public static final String KEY_LAST_NAME = "lastName";
@@ -84,4 +87,13 @@ public final class MMAPIConstants {
 	
 	public static final int RESULT_CODE_SUCCESS = 200;
 	public static final int RESULT_CODE_NOT_FOUND = 404;
+	
+	public static final String JSON_KEY_NAME = "name";
+	public static final String JSON_KEY_DISTANCE = "distance";
+	public static final String JSON_KEY_ADDRESS = "address";
+	public static final String JSON_KEY_LOCALITY = "locality";
+	public static final String JSON_KEY_REGION = "region";
+	public static final String JSON_KEY_POSTCODE = "postcode";
+	public static final String JSON_KEY_MONKEYS = "monkeys";
+	public static final String JSON_KEY_PHONENUMBER = "phoneNumber";
 }

@@ -9,7 +9,7 @@ import org.json.JSONArray;
 
 import com.mobmonkey.mobmonkey.utils.ExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
-import com.mobmonkey.mobmonkey.utils.MMSearchCategoryArrayAdapter;
+import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMHashMap;
@@ -20,6 +20,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -95,7 +96,7 @@ public class SearchScreen extends Activity {
 		int[] categoryIcons = new int[]{R.drawable.icon_search, 
 										R.drawable.icon_search};
 		ExpandedListView lvSearchNoCategory = (ExpandedListView) findViewById(R.id.elvsearchnocategory);
-		ArrayAdapter<Object> arrayAdapter = new MMSearchCategoryArrayAdapter(SearchScreen.this, R.layout.search_category_list_row, categoryIcons, R.array.search_nocategory);
+		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_nocategory), android.R.style.TextAppearance_Large, Typeface.DEFAULT_BOLD);
 		lvSearchNoCategory.setAdapter(arrayAdapter);
 		lvSearchNoCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
@@ -127,7 +128,7 @@ public class SearchScreen extends Activity {
 								  R.drawable.icon_search, 
 								  R.drawable.icon_search};
 		ExpandedListView lvSearchCategory = (ExpandedListView) findViewById(R.id.elvsearchcategory);
-		arrayAdapter = new MMSearchCategoryArrayAdapter(SearchScreen.this, R.layout.search_category_list_row, categoryIcons, R.array.search_category);
+		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_category), android.R.style.TextAppearance_Large, Typeface.DEFAULT_BOLD);
 		lvSearchCategory.setAdapter(arrayAdapter);
 	}
 	
