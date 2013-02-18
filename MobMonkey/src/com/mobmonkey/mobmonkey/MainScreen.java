@@ -30,20 +30,16 @@ public class MainScreen extends TabActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);
-		 
-//		LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
-//		Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//		double longitude = location.getLongitude();
-//		double latitude = location.getLatitude();
-//		
-//		Log.d(TAG, TAG + "LOCATION Longitude: " + longitude + " Latitude: " + latitude);
 		
 		tabWidget = getTabWidget();
 		tabHost = getTabHost();
 		setTabs();
-		tabHost.setCurrentTab(4);
+		tabHost.setCurrentTab(0);
 	}
 
+	/**
+	 * 
+	 */
 	private void setTabs() {
 		addTab("Trending Now", R.drawable.tab_trendingnow, TrendingNowScreen.class);
 		addTab("Inbox", R.drawable.tab_inbox, InboxScreen.class);
@@ -52,6 +48,12 @@ public class MainScreen extends TabActivity {
 		addTab("Settings", R.drawable.tab_settings, SettingsScreen.class);
 	}
 	
+	/**
+	 * 
+	 * @param tabTitle
+	 * @param drawableIconId
+	 * @param c
+	 */
 	private void addTab(String tabTitle, int drawableIconId, Class<?> c) {
 		Intent intent = new Intent(MainScreen.this, c);
 		TabHost.TabSpec tabSpec = tabHost.newTabSpec("tab" + tabTitle);

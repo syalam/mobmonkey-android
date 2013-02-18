@@ -109,6 +109,13 @@
 	<!-- Settings Screen -->
 	<string name="title_settings">Settings</string>
 	
+	<string-array name="settings_category">
+	    <item>My Info</item>
+	    <item>Social Networks</item>
+	    <item>My Interests</item>
+	    <item>Subscribe</item>
+	</string-array>
+	
 	<string name="btn_sign_out">Sign Out</string>
 	
 	<string name="pd_signing_out">Signing out&#8230;</string>

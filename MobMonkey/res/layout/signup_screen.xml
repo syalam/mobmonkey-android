@@ -2,14 +2,16 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:background="@color/backgroundcolor"
 	android:orientation="vertical">
 	
 	<TextView android:layout_width="match_parent"
 		android:layout_height="50dp"
 		android:gravity="center"
 		android:text="@string/btn_sign_up"
-		android:textAppearance="@android:style/TextAppearance.Large"
+		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:textColor="@android:color/white"
+		android:textStyle="bold"
 		android:background="@drawable/navigation_bar"/>
 	
 	<ScrollView android:layout_width="match_parent"

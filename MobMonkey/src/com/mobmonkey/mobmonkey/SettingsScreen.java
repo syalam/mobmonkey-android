@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /**
@@ -40,6 +42,10 @@ public class SettingsScreen extends Activity {
 		
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
+		
+		ListView lvSettingsCategory = (ListView) findViewById(R.id.lvsettingscategory);
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(SettingsScreen.this, R.layout.settings_category_list_row, R.id.tvsettingscategory, getResources().getStringArray(R.array.settings_category));
+		lvSettingsCategory.setAdapter(arrayAdapter);
 	}
 
 	/* (non-Javadoc)
@@ -83,8 +89,8 @@ public class SettingsScreen extends Activity {
 						session.closeAndClearTokenInformation();
 					}
 					Toast.makeText(SettingsScreen.this, R.string.toast_sign_out_successful, Toast.LENGTH_SHORT).show();
-	 				finish();
 				}
+ 				finish();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
