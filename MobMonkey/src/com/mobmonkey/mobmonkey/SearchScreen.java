@@ -1,4 +1,4 @@
-package com.mobmonkey.mobmonkey;
+							package com.mobmonkey.mobmonkey;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -54,6 +54,7 @@ public class SearchScreen extends Activity {
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
