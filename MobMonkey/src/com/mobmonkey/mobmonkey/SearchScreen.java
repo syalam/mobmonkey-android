@@ -16,14 +16,17 @@ import com.mobmonkey.mobmonkeyapi.utils.MMHashMap;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -62,12 +65,36 @@ public class SearchScreen extends Activity {
 		setContentView(R.layout.search_screen);
 		
 		LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
+		
+		if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+			//Ask the user to enable GPS
+		    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		    builder.setTitle("Location Manager");
+		    builder.setMessage("Would you like to enable GPS?");
+		    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) {
+		            //Launch settings, allowing user to make a change
+		            Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		            startActivity(i);
+		        }
+		    });
+		    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) {
+		            //No location service, no Activity
+		            finish();
+		        }
+		    });
+		    builder.show();
+	    }
+		
 		location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		longitudeValue = location.getLongitude();
-		latitudeValue = location.getLatitude();
-		DecimalFormat twoDForm = new DecimalFormat("#.######");
-		latitudeValue = Double.valueOf(twoDForm.format(latitudeValue));
-		longitudeValue = Double.valueOf(twoDForm.format(longitudeValue));
+		if(location != null) {
+			longitudeValue = location.getLongitude();
+			latitudeValue = location.getLatitude();
+			DecimalFormat twoDForm = new DecimalFormat("#.######");
+			latitudeValue = Double.valueOf(twoDForm.format(latitudeValue));
+			longitudeValue = Double.valueOf(twoDForm.format(longitudeValue));
+		}
 		
 		Log.d(TAG, TAG + "LOCATION: Longitude: " + longitudeValue + " Latitude: " + latitudeValue);
 		
@@ -96,7 +123,7 @@ public class SearchScreen extends Activity {
 		int[] categoryIcons = new int[]{R.drawable.icon_search, 
 										R.drawable.icon_search};
 		ExpandedListView lvSearchNoCategory = (ExpandedListView) findViewById(R.id.elvsearchnocategory);
-		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_nocategory), android.R.style.TextAppearance_Large, Typeface.DEFAULT_BOLD);
+		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_nocategory), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
 		lvSearchNoCategory.setAdapter(arrayAdapter);
 		lvSearchNoCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
@@ -128,7 +155,7 @@ public class SearchScreen extends Activity {
 								  R.drawable.icon_search, 
 								  R.drawable.icon_search};
 		ExpandedListView lvSearchCategory = (ExpandedListView) findViewById(R.id.elvsearchcategory);
-		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_category), android.R.style.TextAppearance_Large, Typeface.DEFAULT_BOLD);
+		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_category), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
 		lvSearchCategory.setAdapter(arrayAdapter);
 	}
 	
@@ -159,4 +186,5 @@ public class SearchScreen extends Activity {
 		moveTaskToBack(true);
 		return;
 	}
+
 }

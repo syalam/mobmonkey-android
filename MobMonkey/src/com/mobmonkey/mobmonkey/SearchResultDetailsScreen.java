@@ -45,7 +45,7 @@ public class SearchResultDetailsScreen extends Activity {
 			details[1] = jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
 						 jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE);
 			details[2] = getString(R.string.tv_add_notifications);
-			ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchResultDetailsScreen.this, R.layout.expanded_listview_row, icons, details, android.R.style.TextAppearance_Medium,Typeface.DEFAULT);
+			ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchResultDetailsScreen.this, R.layout.expanded_listview_row, icons, details, android.R.style.TextAppearance_Small, Typeface.DEFAULT);
 			elvLocDetails.setAdapter(arrayAdapter);
 		} catch (JSONException e) {
 			e.printStackTrace();
