@@ -66,6 +66,12 @@
 	<!-- Search Screen -->
 	<string name="title_search">Search</string>
 	
+	<string name="title_enable_gps">Enable GPS</string>
+	<string name="message_enable_gps">Enable GPS to use this feature?</string>
+	<string name="btn_yes">Yes</string>
+	<string name="btn_no">No</string>
+	<string name="toast_not_enable_gps">GPS was not enabled</string>
+	
 	<string name="et_search_hint">Location, Category, Address</string>
 	
 	<string-array name="search_nocategory">
@@ -84,6 +90,8 @@
 	    <item>Services and Supplies</item>
 	    <item>Transportation</item>
 	</string-array>
+	
+	<string name="pd_search_all_nearby">Searching all nearby&#8230;</string>
 	
 	<!-- SearchResults Screen -->
 	<string name="miles">miles</string>

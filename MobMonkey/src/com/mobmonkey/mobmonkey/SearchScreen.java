@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -42,10 +43,11 @@ import android.widget.Toast;
  * @author Dezapp, LLC
  *
  */
-public class SearchScreen extends Activity {
+public class SearchScreen extends Activity implements LocationListener {
 	private static final String TAG = "SearchScreen: ";
 	SharedPreferences userPrefs;
 	
+	LocationManager locationManager;
 	Location location;
 	double longitudeValue;
 	double latitudeValue;
@@ -64,29 +66,91 @@ public class SearchScreen extends Activity {
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		setContentView(R.layout.search_screen);
 		
-		LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
+		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
 		
-		if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-			//Ask the user to enable GPS
-		    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		    builder.setTitle("Location Manager");
-		    builder.setMessage("Would you like to enable GPS?");
-		    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) {
-		            //Launch settings, allowing user to make a change
-		            Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-		            startActivity(i);
-		        }
-		    });
-		    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) {
-		            //No location service, no Activity
-		            finish();
-		        }
-		    });
-		    builder.show();
+		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			promptEnableGPS();
 	    }
 		
+		getCurrentLocation();
+		
+		init();
+		Log.d(TAG, TAG + "LOCATION: Longitude: " + longitudeValue + " Latitude: " + latitudeValue);
+	}
+	
+	/**
+	 * Does not close the current {@link Activity} when back button is pressed
+	 */
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		moveTaskToBack(true);
+		return;
+	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == 0) {
+			if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+				getCurrentLocation();
+			} else {
+				Toast.makeText(SearchScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
+			}
+		}
+		
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	public void onLocationChanged(Location location) {
+		
+	}
+
+	public void onProviderDisabled(String provider) {
+		
+	}
+
+	public void onProviderEnabled(String provider) {
+		
+	}
+
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		
+	}
+	
+	/**
+	 * Prompt the user to enable GPS on their device
+	 */
+	private void promptEnableGPS() {
+	    new AlertDialog.Builder(SearchScreen.this)
+	    	.setTitle(R.string.title_enable_gps)
+	    	.setMessage(R.string.message_enable_gps)
+	    	.setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) {
+		            // Launch settings, allowing user to make a change
+		            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+		        }
+	    	})
+	    	.setNegativeButton(R.string.btn_no, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) {
+		            // No location service, no Activity
+		        	Toast.makeText(SearchScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
+		            finish();
+		            // TODO: not close activity but return back to previous tab
+		        }
+	    	})
+	    	.show();
+	}
+	
+	/**
+	 * Function that get the latitude and longitude coordinates of the current location
+	 */
+	private void getCurrentLocation() {
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, SearchScreen.this);
 		location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		if(location != null) {
 			longitudeValue = location.getLongitude();
@@ -95,11 +159,16 @@ public class SearchScreen extends Activity {
 			latitudeValue = Double.valueOf(twoDForm.format(latitudeValue));
 			longitudeValue = Double.valueOf(twoDForm.format(longitudeValue));
 		}
-		
-		Log.d(TAG, TAG + "LOCATION: Longitude: " + longitudeValue + " Latitude: " + latitudeValue);
-		
+	}
+	
+	/**
+	 * Initialize all the variables and set the appropriate listeners
+	 */
+	private void init() {
 		etSearch = (EditText) findViewById(R.id.etsearch);
-		etSearch.setImeActionLabel("Search", KeyEvent.KEYCODE_SEARCH);
+		ExpandedListView elvSearchNoCategory = (ExpandedListView) findViewById(R.id.elvsearchnocategory);
+		ExpandedListView elvSearchCategory = (ExpandedListView) findViewById(R.id.elvsearchcategory);
+		
 		etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				Log.d(TAG, TAG + "actionId: " + actionId);
@@ -122,27 +191,8 @@ public class SearchScreen extends Activity {
 		
 		int[] categoryIcons = new int[]{R.drawable.icon_search, 
 										R.drawable.icon_search};
-		ExpandedListView lvSearchNoCategory = (ExpandedListView) findViewById(R.id.elvsearchnocategory);
 		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_nocategory), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
-		lvSearchNoCategory.setAdapter(arrayAdapter);
-		lvSearchNoCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				if(position == 0) {				
-					searchCategory = ((TextView) view.findViewById(R.id.tvcategory)).getText().toString();
-					
-					HashMap<String, Object> hashMap = MMHashMap.getInstance(MMConstants.PARTNER_ID);
-					hashMap.put(MMAPIConstants.KEY_USER, userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING));
-					hashMap.put(MMAPIConstants.KEY_AUTH, userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
-					hashMap.put(MMAPIConstants.KEY_LATITUDE, Double.toString(latitudeValue));
-					hashMap.put(MMAPIConstants.KEY_LONGITUDE, Double.toString(longitudeValue));
-					
-					MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), hashMap);
-					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, "searching nearby...", true, false);
-				} else {
-					// TODO:
-				}
-			}
-		});
+		elvSearchNoCategory.setAdapter(arrayAdapter);
 		
 		categoryIcons = new int[]{R.drawable.icon_search, 
 								  R.drawable.icon_search, 
@@ -154,11 +204,39 @@ public class SearchScreen extends Activity {
 								  R.drawable.icon_search, 
 								  R.drawable.icon_search, 
 								  R.drawable.icon_search};
-		ExpandedListView lvSearchCategory = (ExpandedListView) findViewById(R.id.elvsearchcategory);
 		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_category), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
-		lvSearchCategory.setAdapter(arrayAdapter);
+		elvSearchCategory.setAdapter(arrayAdapter);
+		
+		elvSearchNoCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+				if(position == 0) {				
+					searchCategory = ((TextView) view.findViewById(R.id.tvcategory)).getText().toString();
+					
+					HashMap<String, Object> hashMap = MMHashMap.getInstance(MMConstants.PARTNER_ID);
+					hashMap.put(MMAPIConstants.KEY_USER, userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING));
+					hashMap.put(MMAPIConstants.KEY_AUTH, userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+					hashMap.put(MMAPIConstants.KEY_LATITUDE, Double.toString(latitudeValue));
+					hashMap.put(MMAPIConstants.KEY_LONGITUDE, Double.toString(longitudeValue));
+					
+					MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), hashMap);
+					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_all_nearby), true, false);
+				} else {
+					// TODO:
+				}
+			}
+		});
+		
+		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+				
+			}
+		});
 	}
 	
+	/**
+	 * @author Dezapp, LLC
+	 * 
+	 */
 	private class SearchCallback implements MMCallback {
 		public void processCallback(Object obj) {
 			if(progressDialog != null) {
@@ -177,14 +255,4 @@ public class SearchScreen extends Activity {
 			Log.d(TAG, TAG + "response: " + (String) obj);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onBackPressed()
-	 */
-	@Override
-	public void onBackPressed() {
-		moveTaskToBack(true);
-		return;
-	}
-
 }
