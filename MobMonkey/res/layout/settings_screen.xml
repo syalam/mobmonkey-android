@@ -24,6 +24,9 @@
 	    android:layout_marginLeft="20dp"
 	    android:layout_marginRight="20dp"
 	    android:text="@string/btn_sign_out"
-	    android:onClick="viewOnClick"/>
+	    android:onClick="viewOnClick"
+	    android:background="@drawable/orange_button_background"
+		android:textColor="@android:color/white"
+		android:textStyle="bold"/>
 	
 </LinearLayout>

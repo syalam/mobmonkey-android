@@ -100,25 +100,38 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:text="@string/btn_sign_up"
+				android:layout_marginTop="10dp"
 				android:layout_marginLeft="20dp"
 				android:layout_marginRight="20dp"
-				android:onClick="viewOnClick"/>
+				android:onClick="viewOnClick"
+				android:background="@drawable/orange_button_background"
+				android:textColor="@android:color/white"
+				android:textStyle="bold"/>
 			
 			<Button android:id="@+id/btnsignupfacebook"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:text="@string/btn_sign_up_facebook"
+				android:layout_marginTop="10dp"
 				android:layout_marginLeft="20dp"
 				android:layout_marginRight="20dp"
-				android:onClick="viewOnClick"/>
+				android:onClick="viewOnClick"
+				android:background="@drawable/orange_button_background"
+				android:textColor="@android:color/white"
+				android:textStyle="bold"/>
 			
 			<Button android:id="@+id/btnsignuptwitter"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
 				android:layout_marginLeft="20dp"
 				android:layout_marginRight="20dp"
+				android:layout_marginBottom="10dp"
 				android:text="@string/btn_sign_up_twitter"
-				android:onClick="viewOnClick"/>
+				android:onClick="viewOnClick"
+				android:background="@drawable/orange_button_background"
+				android:textColor="@android:color/white"
+				android:textStyle="bold"/>
 		
 		</LinearLayout>
 	

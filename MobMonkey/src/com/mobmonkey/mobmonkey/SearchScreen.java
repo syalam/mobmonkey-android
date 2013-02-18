@@ -96,6 +96,7 @@ public class SearchScreen extends Activity {
 		
 		int[] categoryIcons = new int[]{R.drawable.icon_search, 
 										R.drawable.icon_search};
+		
 		ExpandedListView lvSearchNoCategory = (ExpandedListView) findViewById(R.id.elvsearchnocategory);
 		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_nocategory), android.R.style.TextAppearance_Large, Typeface.DEFAULT_BOLD);
 		lvSearchNoCategory.setAdapter(arrayAdapter);
@@ -118,16 +119,17 @@ public class SearchScreen extends Activity {
 			}
 		});
 		
-		categoryIcons = new int[]{R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search};
+		categoryIcons = new int[]{R.drawable.cat_icon_automotive, 
+								  R.drawable.cat_icon_travel, 
+								  R.drawable.cat_icon_sports, 
+								  R.drawable.cat_icon_healthcare, 
+								  R.drawable.cat_icon_landmarks, 
+								  R.drawable.cat_icon_social, 
+								  R.drawable.cat_icon_community_government, 
+								  R.drawable.cat_icon_retail, 
+								  R.drawable.cat_icon_services_supplies, 
+								  R.drawable.cat_icon_transportation};
+		
 		ExpandedListView lvSearchCategory = (ExpandedListView) findViewById(R.id.elvsearchcategory);
 		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_category), android.R.style.TextAppearance_Large, Typeface.DEFAULT_BOLD);
 		lvSearchCategory.setAdapter(arrayAdapter);
