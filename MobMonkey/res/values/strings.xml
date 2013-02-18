@@ -88,6 +88,13 @@
 	<!-- SearchResults Screen -->
 	<string name="miles">miles</string>
 	
+	<!-- SearchResultLocationDetails Screen -->
+	<string name="tv_make_request">Make Request</string>
+	<string name="tv_members_found">members found</string>
+	<string name="tv_add_notifications">Add Notifications</string>
+	<string name="tv_bookmark">Bookmark</string>
+	<string name="tv_remove_bookmark">Remove bookmark</string>
+	
 	<!-- Bookmarks Screen -->
 	<string name="title_bookmarks">Bookmarks</string>
 	

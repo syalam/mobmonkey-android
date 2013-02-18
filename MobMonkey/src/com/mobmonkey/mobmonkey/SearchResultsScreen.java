@@ -14,6 +14,7 @@ import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -43,37 +44,40 @@ public class SearchResultsScreen extends Activity {
 		tvSearchResultsTitle.setText(getIntent().getStringExtra(MMAPIConstants.INTENT_EXTRA_SEARCH_RESULT_TITLE));
 		try {
 			searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.INTENT_EXTRA_SEARCH_RESULTS));
+			getLocations();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
-		getLocations();
 		
 		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(SearchResultsScreen.this, R.layout.search_result_list_row, locations);
 		lvSearchResults.setAdapter(arrayAdapter);
 		lvSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-				//TODO:
+				try {
+					Intent locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
+					locDetailsIntent.putExtra(MMAPIConstants.INTENT_EXTRA_LOCATION_DETAILS, searchResults.getJSONObject(position).toString());
+					startActivity(locDetailsIntent);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}
 	
 	/**
+	 * @throws JSONException 
 	 * 
 	 */
-	private void getLocations() {
-		try {
+	private void getLocations() throws JSONException {
 			locations = new MMResultsLocation[searchResults.length()];
 			for(int i = 0; i < searchResults.length(); i++) {
 				JSONObject jObj = searchResults.getJSONObject(i);
 				locations[i] = new MMResultsLocation();
-				locations[i].setLocName(jObj.getString("name"));
-				locations[i].setLocDist(convertMetersToMiles(jObj.getString("distance")) + getString(R.string.miles));
-				locations[i].setLocAddr(jObj.getString("address") + "\n" + jObj.getString("locality") + ", " + jObj.getString("region") + ", " + jObj.getString("postcode"));
+				locations[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
+				locations[i].setLocDist(convertMetersToMiles(jObj.getString(MMAPIConstants.JSON_KEY_DISTANCE)) + getString(R.string.miles));
+				locations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
+										jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE));
 			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
