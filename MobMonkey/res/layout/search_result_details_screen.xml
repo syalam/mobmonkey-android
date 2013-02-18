@@ -6,7 +6,7 @@
     
 	<RelativeLayout android:layout_width="match_parent"
 		android:layout_height="50dp"
-		android:background="@android:color/black">
+		android:background="@drawable/navigation_bar">
 		
 		<TextView android:id="@+id/tvlocnametitle"
 		    android:layout_width="wrap_content"
@@ -40,7 +40,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
-	            android:background="@android:color/black"
+	            android:background="@drawable/orange_button_background"
 	            android:padding="10dp">
 	            
 	            <TextView android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
 				    android:layout_height="wrap_content"
 				    android:layout_gravity="left|center"
 				    android:layout_margin="5dp"
-				    android:src="@drawable/icon_search"/>
+				    android:src="@drawable/bookmark_icon"/>
 				
 				<TextView android:id="@+id/tvbookmark"
 				    android:layout_width="match_parent"

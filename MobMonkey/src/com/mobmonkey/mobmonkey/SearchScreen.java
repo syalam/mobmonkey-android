@@ -1,4 +1,4 @@
-package com.mobmonkey.mobmonkey;
+							package com.mobmonkey.mobmonkey;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -60,6 +60,7 @@ public class SearchScreen extends Activity implements LocationListener {
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -189,24 +190,10 @@ public class SearchScreen extends Activity implements LocationListener {
 			}
 		});
 		
-		int[] categoryIcons = new int[]{R.drawable.icon_search, 
-										R.drawable.icon_search};
+		int[] categoryIcons = new int[]{R.drawable.cat_icon_show_all_nearby, 
+										R.drawable.cat_icon_history};
 		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_nocategory), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
 		elvSearchNoCategory.setAdapter(arrayAdapter);
-		
-		categoryIcons = new int[]{R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search, 
-								  R.drawable.icon_search};
-		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_category), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
-		elvSearchCategory.setAdapter(arrayAdapter);
-		
 		elvSearchNoCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 				if(position == 0) {				
@@ -226,9 +213,21 @@ public class SearchScreen extends Activity implements LocationListener {
 			}
 		});
 		
+		categoryIcons = new int[]{R.drawable.cat_icon_automotive, 
+								  R.drawable.cat_icon_travel, 
+								  R.drawable.cat_icon_sports, 
+								  R.drawable.cat_icon_healthcare, 
+								  R.drawable.cat_icon_landmarks, 
+								  R.drawable.cat_icon_social, 
+								  R.drawable.cat_icon_community_government, 
+								  R.drawable.cat_icon_retail, 
+								  R.drawable.cat_icon_services_supplies, 
+								  R.drawable.cat_icon_transportation};
+		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_category), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
+		elvSearchCategory.setAdapter(arrayAdapter);
 		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				
+				// TODO: 
 			}
 		});
 	}

@@ -10,7 +10,7 @@
 		android:text="@string/title_terms_of_use"
 		android:textAppearance="@android:style/TextAppearance.Large"
 		android:textColor="@android:color/white"
-		android:background="@android:color/black"/>
+		android:background="@drawable/navigation_bar"/>
 
 	<LinearLayout
 	    android:layout_width="match_parent"

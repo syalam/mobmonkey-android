@@ -6,7 +6,7 @@
     
    	<RelativeLayout android:layout_width="match_parent"
 		android:layout_height="50dp"
-		android:background="@android:color/black">
+		android:background="@drawable/navigation_bar">
 	    
 	    <TextView android:id="@+id/tvproviderusername"
 	        android:layout_width="wrap_content"
