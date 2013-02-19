@@ -24,6 +24,9 @@ public final class MMAPIConstants {
 	
 	public static final String USER_PREFS = "User Preferences";
 	
+	// SharePreferences Key
+	public static final String SHARED_PREFS_KEY_HISTORY = "history";
+	
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	
 	public static final String TEXT_MALE = "Male";
