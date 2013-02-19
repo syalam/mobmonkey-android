@@ -15,6 +15,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +30,10 @@ import android.widget.TextView;
 public class SearchResultsScreen extends Activity {
 	JSONArray searchResults;
 	MMResultsLocation[] locations;
+	SharedPreferences userPrefs;
+	SharedPreferences.Editor userPrefsEditor;
+	JSONArray history;
+	int index = 0;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -38,6 +43,19 @@ public class SearchResultsScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search_results_screen);
 		
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
+		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_HISTORY))
+		{
+			try{
+				history = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, ""));
+				index = history.length();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		else
+			history = new JSONArray();
 		TextView tvSearchResultsTitle = (TextView) findViewById(R.id.tvsearchresultstitle);
 		ListView lvSearchResults = (ListView) findViewById(R.id.lvsearchresults);
 		
@@ -56,6 +74,21 @@ public class SearchResultsScreen extends Activity {
 				try {
 					Intent locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
 					locDetailsIntent.putExtra(MMAPIConstants.INTENT_EXTRA_LOCATION_DETAILS, searchResults.getJSONObject(position).toString());
+					if(index != 9)
+					{
+						history.put(searchResults.getJSONObject(position));
+						index++;
+					}
+					else
+					{
+						for(int i=1; i<9; i++)
+						{
+							history.put(i, history.get(i+1));
+						}
+						history.put(9, searchResults.getJSONObject(position));
+					}
+					userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, history.toString());
+					userPrefsEditor.commit();
 					startActivity(locDetailsIntent);
 				} catch (JSONException e) {
 					e.printStackTrace();
