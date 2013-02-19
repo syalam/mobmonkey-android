@@ -11,6 +11,7 @@
 	
 	<color name="lightblue">#00BFFF</color>
 	<color name="orange">#FFA500</color>
+	<color name="backgroundViewColor">#e5e5e5</color>
 	
 	
 </resources>
