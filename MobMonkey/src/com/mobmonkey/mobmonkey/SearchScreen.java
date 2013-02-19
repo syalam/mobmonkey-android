@@ -175,6 +175,35 @@ public class SearchScreen extends Activity implements LocationListener {
 		}
 	}
 	
+	
+	private int getCategoryId(long rowNumber)
+	{
+		int catID = 0;
+		
+		if(rowNumber == 0)
+			catID = 2;
+		else if(rowNumber == 1)
+			catID = 430;
+		else if(rowNumber == 2)
+			catID = 372;
+		else if(rowNumber == 3)
+			catID = 62;
+		else if(rowNumber == 4)
+			catID = 107;
+		else if(rowNumber == 5)
+			catID = 308;
+		else if(rowNumber == 6)
+			catID = 20;
+		else if(rowNumber == 7)
+			catID = 123;
+		else if(rowNumber == 8)
+			catID = 177;
+		else if(rowNumber == 9)
+			catID = 415;
+			
+		return catID;
+	}
+	
 	/**
 	 * Initialize all the variables and set the appropriate listeners
 	 */
@@ -230,7 +259,10 @@ public class SearchScreen extends Activity implements LocationListener {
 		elvSearchCategory.setAdapter(arrayAdapter);
 		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				// TODO: 
+				int categoryID = getCategoryId(arg3);
+				Intent subCategoriesIntent = new Intent(SearchScreen.this, SubCategoryScreen.class);
+				subCategoriesIntent.putExtra("category_id", categoryID);
+				startActivity(subCategoriesIntent);
 			}
 		});
 	}
