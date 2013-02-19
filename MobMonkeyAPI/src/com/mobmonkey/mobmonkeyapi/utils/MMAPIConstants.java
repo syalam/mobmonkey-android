@@ -23,7 +23,7 @@ public final class MMAPIConstants {
 	public static final double DEFAULT_DOUBLE = 1.0d;
 	
 	public static final String USER_PREFS = "User Preferences";
-	
+
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	
 	public static final String TEXT_MALE = "Male";

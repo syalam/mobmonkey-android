@@ -8,8 +8,12 @@ import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -47,6 +51,19 @@ public class SearchResultDetailsScreen extends Activity {
 			details[2] = getString(R.string.tv_add_notifications);
 			ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchResultDetailsScreen.this, R.layout.expanded_listview_row, icons, details, android.R.style.TextAppearance_Small, Typeface.DEFAULT);
 			elvLocDetails.setAdapter(arrayAdapter);
+			elvLocDetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+					if(position == 0) {
+						Intent dialerIntent = new Intent(Intent.ACTION_DIAL);
+						dialerIntent.setData(Uri.parse("tel:" + ((TextView)view.findViewById(R.id.tvcategory)).getText().toString()));
+						startActivity(dialerIntent);
+					} else if(position == 1) {
+						Intent mapIntent = new Intent(SearchResultDetailsScreen.this, SearchLocationResultMapScreen.class);
+						startActivity(mapIntent);
+					}
+				}
+			});
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

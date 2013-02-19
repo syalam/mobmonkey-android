@@ -47,7 +47,7 @@ public class MMAsyncTask extends AsyncTask<HttpPost, Void, String> {
 			String line = MMAPIConstants.DEFAULT_STRING;
 			stringBuilder = new StringBuilder();
 			while((line = bufferedReader.readLine()) != null) {
-				stringBuilder.append(line + "\n");
+				stringBuilder.append(line + MMAPIConstants.DEFAULT_NEWLINE);
 			}
 			inStream.close();
 		} catch (ClientProtocolException e) {
