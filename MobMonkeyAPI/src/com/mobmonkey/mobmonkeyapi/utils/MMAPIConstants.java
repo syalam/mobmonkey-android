@@ -21,8 +21,6 @@ public final class MMAPIConstants {
 	public static final String COMMA_SPACE = ", ";
 	public static final int DEFAULT_INT = -1;
 	public static final double DEFAULT_DOUBLE = 1.0d;
-	
-	public static final String USER_PREFS = "User Preferences";
 
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	
@@ -32,6 +30,10 @@ public final class MMAPIConstants {
 	public static final int NUM_FEMALE = 0;
 	
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
+		
+	// SharePreferences Key
+	public static final String USER_PREFS = "User Preferences";
+	public static final String SHARED_PREFS_KEY_HISTORY = "history";
 	
 	// Intent extra key values
 	public static final String INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
