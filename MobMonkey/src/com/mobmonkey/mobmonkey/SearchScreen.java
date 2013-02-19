@@ -1,18 +1,12 @@
-							package com.mobmonkey.mobmonkey;
+package com.mobmonkey.mobmonkey;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONArray;
 
 import com.mobmonkey.mobmonkey.utils.ExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
-import com.mobmonkey.mobmonkeyapi.utils.MMHashMap;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 
 import android.app.Activity;
@@ -35,11 +29,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 /**
+ * Android {@link Activity} screen displays search locations for the user
  * @author Dezapp, LLC
  *
  */
@@ -60,7 +54,6 @@ public class SearchScreen extends Activity implements LocationListener {
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,7 +73,7 @@ public class SearchScreen extends Activity implements LocationListener {
 	}
 	
 	/**
-	 * Does not close the current {@link Activity} when back button is pressed
+	 * Handler when back button is pressed, it will not close and destroy the current {@link Activity} but instead it will remain on the current {@link Activity}
 	 */
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onBackPressed()
@@ -107,18 +100,38 @@ public class SearchScreen extends Activity implements LocationListener {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.location.LocationListener#onLocationChanged(android.location.Location)
+	 */
+	@Override
 	public void onLocationChanged(Location location) {
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.location.LocationListener#onLocationChanged(android.location.Location)
+	 */
+	@Override
 	public void onProviderDisabled(String provider) {
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.location.LocationListener#onLocationChanged(android.location.Location)
+	 */
+	@Override
 	public void onProviderEnabled(String provider) {
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.location.LocationListener#onLocationChanged(android.location.Location)
+	 */
+	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		
 	}
@@ -176,15 +189,10 @@ public class SearchScreen extends Activity implements LocationListener {
 				if(actionId == EditorInfo.IME_ACTION_SEARCH) {
 					searchCategory = etSearch.getText().toString();
 					
-					HashMap<String, Object> hashMap = MMHashMap.getInstance(MMConstants.PARTNER_ID);
-					hashMap.put(MMAPIConstants.KEY_USER, userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING));
-					hashMap.put(MMAPIConstants.KEY_AUTH, userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
-					hashMap.put(MMAPIConstants.KEY_LATITUDE, Double.toString(latitudeValue));
-					hashMap.put(MMAPIConstants.KEY_LONGITUDE, Double.toString(longitudeValue));
-					hashMap.put(MMAPIConstants.KEY_NAME, searchCategory);
-					
-					MMSearchLocationAdapter.searchTextWithLocation(new SearchCallback(), hashMap);
-					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, "searching for " + searchCategory + "...", true, false);
+					MMSearchLocationAdapter.searchLocationWithText(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), searchCategory, 
+							userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
+					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + 
+							searchCategory + getString(R.string.pd_ellipses), true, false);
 				}
 				return true;
 			}
@@ -199,13 +207,8 @@ public class SearchScreen extends Activity implements LocationListener {
 				if(position == 0) {				
 					searchCategory = ((TextView) view.findViewById(R.id.tvcategory)).getText().toString();
 					
-					HashMap<String, Object> hashMap = MMHashMap.getInstance(MMConstants.PARTNER_ID);
-					hashMap.put(MMAPIConstants.KEY_USER, userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING));
-					hashMap.put(MMAPIConstants.KEY_AUTH, userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
-					hashMap.put(MMAPIConstants.KEY_LATITUDE, Double.toString(latitudeValue));
-					hashMap.put(MMAPIConstants.KEY_LONGITUDE, Double.toString(longitudeValue));
-					
-					MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), hashMap);
+					MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), userPrefs.getString(MMAPIConstants.KEY_USER, 
+							MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
 					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_all_nearby), true, false);
 				} else {
 					// TODO:
@@ -232,10 +235,11 @@ public class SearchScreen extends Activity implements LocationListener {
 		});
 	}
 	
-	/**
-	 * @author Dezapp, LLC
-	 * 
-	 */
+    /**
+     * Custom {@link MMCallback} specifically for {@link SearchScreen} to be processed after receiving response from MobMonkey server.
+     * @author Dezapp, LLC
+     *
+     */
 	private class SearchCallback implements MMCallback {
 		public void processCallback(Object obj) {
 			if(progressDialog != null) {

@@ -1,6 +1,5 @@
 package com.mobmonkey.mobmonkey;
 
-import java.io.ObjectOutputStream.PutField;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,16 +18,18 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,10 +37,11 @@ import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
 
 /**
+ * Android {@link Activity} screen that allows the user to sign up with Twitter with Twitter credentials and entered information
  * @author Dezapp, LLC
  *
  */
-public class SignUpTwitterScreen extends Activity implements OnTouchListener, OnDateChangedListener {
+public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTouchListener, OnDateChangedListener {
 	private static final String TAG = "SignUpTwitter: ";
 	
 	SharedPreferences userPrefs;
@@ -50,8 +52,6 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
 	MotionEvent prevEvent;
 	ProgressDialog progressDialog;
 	InputMethodManager inputMethodManager;
-	
-	HashMap<String,Object> userInfo;
 	
 	TextView tvProviderUserName;
 	EditText etFirstName;
@@ -70,7 +70,7 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
 		
 		init();
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onBackPressed()
 	 */
@@ -81,6 +81,29 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
 		setResult(Activity.RESULT_CANCELED);
 	}
 
+    /**
+     * {@link OnKeyListener} handle when user finished entering email address and go to the birthdate {@link EditText}, removes the soft keyboard
+     */
+	/* (non-Javadoc)
+	 * @see android.view.View.OnKeyListener#onKey(android.view.View, int, android.view.KeyEvent)
+	 */
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+			inputMethodManager.hideSoftInputFromWindow(etEmailAddress.getWindowToken(), 0);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+     * {@link OnTouchListener} handler for birthdate and gender {@link EditText}. When the {@link EditText}s are touched, it will prompt the user to select his/her birthdate or gender.
+     */
+	/*
+	 * (non-Javadoc)
+	 * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
+	 */
+	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if(event.getAction() == MotionEvent.ACTION_DOWN) {
 			prevEvent = event;
@@ -102,10 +125,22 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
 		return false;
 	}
 
+	/**
+	 * Handle events when the date changes on the {@link DatePicker}
+	 */
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.DatePicker.OnDateChangedListener#onDateChanged(android.widget.DatePicker, int, int, int)
+	 */
+	@Override
 	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		
 	}
 	
+    /**
+     * Handler for when {@link Button}s or any other {@link View}s are clicked.
+     * @param view {@link View} that is clicked
+     */
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsignup:
@@ -114,16 +149,15 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
 		}
 	}
 	
+    /**
+     * Initialize all the variables to be used in {@link SignUpTwitterScreen}.
+     */
 	private void init() {
     	userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
     	userPrefsEditor = userPrefs.edit();
 		inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		
 		providerUserName = getIntent().getStringExtra(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME);
-		
-    	userInfo = new HashMap<String,Object>();
-    	userInfo.put(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
-    	userInfo.put(MMAPIConstants.KEY_OAUTH_TOKEN, getIntent().getStringExtra(MMAPIConstants.KEY_OAUTH_TOKEN));
     	
     	tvProviderUserName = (TextView) findViewById(R.id.tvproviderusername);
     	etFirstName = (EditText) findViewById(R.id.etfirstname);
@@ -133,6 +167,7 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
     	etGender = (EditText) findViewById(R.id.etgender);
     	
     	tvProviderUserName.setText("@" + providerUserName + " user info");
+    	etEmailAddress.setOnKeyListener(SignUpTwitterScreen.this);
     	etBirthdate.setOnTouchListener(SignUpTwitterScreen.this);
     	etGender.setOnTouchListener(SignUpTwitterScreen.this);
     	
@@ -193,11 +228,19 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
     }
 
     /**
-     * 
+     * Function that handles the user sign up with Twitter with Twitter credentials and user entered information
      */
     private void signUpTwitter() {
     	if(checkFirstName()) {
-    		MMSignUpAdapter.signUpNewUserTwitter(new SignUpTwitterCallback(), userInfo, MMConstants.PARTNER_ID);
+    		MMSignUpAdapter.signUpNewUserTwitter(new SignUpTwitterCallback(), 
+    				etFirstName.getText().toString(), 
+    				etLastName.getText().toString(), 
+    				getIntent().getStringExtra(MMAPIConstants.KEY_OAUTH_TOKEN), 
+    				providerUserName, 
+    				etEmailAddress.getText().toString(), 
+    				Long.toString(birthdate.getTimeInMillis()), 
+    				convertGender(), 
+    				MMConstants.PARTNER_ID);
     		progressDialog = ProgressDialog.show(SignUpTwitterScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up), true, false);
     	}
     }
@@ -208,7 +251,7 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
      */
     private boolean checkFirstName() {
     	if(!TextUtils.isEmpty(etFirstName.getText())) {
-    		userInfo.put(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
+//    		userInfo.put(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
     		return checkLastName();
     	} else {
     		displayAlert(R.string.alert_invalid_first_name);
@@ -222,7 +265,7 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
      */
     private boolean checkLastName() {
     	if(!TextUtils.isEmpty(etLastName.getText().toString())) {
-    		userInfo.put(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
+//    		userInfo.put(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
     		return checkEmailAddress();
     	} else {
     		displayAlert(R.string.alert_invalid_last_name);
@@ -236,7 +279,7 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
      */
     private boolean checkEmailAddress() {
     	if(!TextUtils.isEmpty(etEmailAddress.getText())) {
-    		userInfo.put(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+//    		userInfo.put(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
 //    		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
 //    		userPrefsEditor.commit();
     		return checkBirthdate();
@@ -252,7 +295,7 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
      */
     private boolean checkBirthdate() {
     	if(!TextUtils.isEmpty(etBirthdate.getText())) {
-    		userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
+//    		userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
     		return checkGender();
     	} else {
     		displayAlert(R.string.alert_invalid_birthdate);
@@ -266,7 +309,7 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
      */
     private boolean checkGender() {
     	if(!TextUtils.isEmpty(etGender.getText())) {
-    		userInfo.put(MMAPIConstants.KEY_GENDER, convertGender());
+//    		userInfo.put(MMAPIConstants.KEY_GENDER, convertGender());
     		return true;
     	} else {
     		displayAlert(R.string.alert_invalid_gender);
@@ -300,6 +343,11 @@ public class SignUpTwitterScreen extends Activity implements OnTouchListener, On
     		.show();
     }
     
+    /**
+     * Custom {@link MMCallback} specifically for {@link SignUpTwitterScreen} to be processed after receiving response from MobMonkey server.
+     * @author Dezapp, LLC
+     *
+     */
     private class SignUpTwitterCallback implements MMCallback {
 		public void processCallback(Object obj) {
 			if(progressDialog != null) {

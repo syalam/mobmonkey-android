@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 
 /**
+ * Android {@link Activity} screen displays what's trending now for the user
  * @author Dezapp, LLC
  *
  */
@@ -19,6 +20,9 @@ public class TrendingNowScreen extends Activity {
 		setContentView(R.layout.trending_now_screen);
 	}
 
+	/**
+	 * Handler when back button is pressed, it will not close and destroy the current {@link Activity} but instead it will remain on the current {@link Activity}
+	 */
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onBackPressed()
 	 */

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.mobmonkey.mobmonkeyapi.utils;
 
 import java.io.BufferedReader;
@@ -18,17 +15,26 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.os.AsyncTask;
 
 /**
+ * Custom {@link AsyncTask} for MobMonkey to do a {@link HttpPost} to the MobMonkey server as a background task on the Android device
  * @author Dezapp, LLC
  *
  */
 public class MMAsyncTask extends AsyncTask<HttpPost, Void, String> {
-	StringBuilder stringBuilder;
-	MMCallback mmCallback;
+	private StringBuilder stringBuilder;
+	private MMCallback mmCallback;
 	
-	public MMAsyncTask(MMCallback mmc) {
-		mmCallback = mmc;
+	/**
+	 * Constructor that takes in a {@link MMCallback} to be invoke after the background task is finished
+	 * @param mmc
+	 */
+	public MMAsyncTask(MMCallback mmCallback) {
+		this.mmCallback = mmCallback;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.os.AsyncTask#doInBackground(Params[])
+	 */
 	@Override
 	protected String doInBackground(HttpPost... params) {
 		try {
@@ -52,6 +58,10 @@ public class MMAsyncTask extends AsyncTask<HttpPost, Void, String> {
 		return stringBuilder.toString();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+	 */
 	@Override
 	protected void onPostExecute(String result) {
 		mmCallback.processCallback(result);

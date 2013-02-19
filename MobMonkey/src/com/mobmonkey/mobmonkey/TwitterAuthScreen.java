@@ -11,7 +11,6 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-import com.facebook.Session;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -50,18 +49,30 @@ public class TwitterAuthScreen extends Activity {
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
-	@SuppressLint("SetJavaScriptEnabled") @Override
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG, TAG + "onCreate");
 		super.onCreate(savedInstanceState);
-		
+		setContentView(R.layout.twitter_auth_screen);
+		init();
+		startTwitterAuth();
+	}
+	
+	/**
+	 * Initialize all the variables to be used in {@link TwitterAuthScreen}
+	 */
+	private void init() {
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
-		
-		setContentView(R.layout.twitter_auth_screen);
-		wvTwitterAuth = (WebView) findViewById(R.id.wvtwitterauth); 
-		wvTwitterAuth.getSettings().setJavaScriptEnabled(true);
-		
+		wvTwitterAuth = (WebView) findViewById(R.id.wvtwitterauth);
+	}
+	
+	/**
+	 * Function creates the {@link Twitter} object with the Twitter consumer key and consumer secret. It creates {@link RequestToken} to obtain the url for authentication and load the url in a {@link WebView}.
+	 * NOTE: Not launching a browser with the authentication url due to the fact the current {@link Activity} need to have launchMode=singleTask in the manifest to handle callback url from Twitter. The 
+	 * 		{@link WebViewClient} will handle the callback url for Twitter authentication.
+	 */
+	@SuppressLint("SetJavaScriptEnabled")
+	private void startTwitterAuth() {		
 		ConfigurationBuilder builder = new ConfigurationBuilder();
 		builder.setOAuthConsumerKey(MMConstants.TWITTER_CONSUMER_KEY);
 		builder.setOAuthConsumerSecret(MMConstants.TWITTER_CONSUMER_SECRET);
@@ -73,7 +84,8 @@ public class TwitterAuthScreen extends Activity {
 		twitter = factory.getInstance();
 		
 		try {
-			requestToken = twitter.getOAuthRequestToken(MMAPIConstants.TWITTER_CALLBACK_URL_SIGN_IN);
+			requestToken = twitter.getOAuthRequestToken(MMAPIConstants.TWITTER_CALLBACK_URL);
+			wvTwitterAuth.getSettings().setJavaScriptEnabled(true);
 			wvTwitterAuth.setWebViewClient(new MobMonkeyWebViewClient());
 			wvTwitterAuth.loadUrl(requestToken.getAuthenticationURL());
 		} catch (TwitterException e) {
@@ -81,6 +93,10 @@ public class TwitterAuthScreen extends Activity {
 		}
 	}
 	
+	/**
+	 * Function that parse Uri converted Twitter authentication callback url. It will obtain the {@link AccessToken} for {@link Twitter} from the OAuth_verifier it will receive after authentication. 
+	 * @param uri
+	 */
 	private void parseUri(Uri uri) {
 		try {
 			if(uri.getQueryParameter(MMAPIConstants.TWITTER_OAUTH_VERIFIER) != null) {
@@ -89,6 +105,7 @@ public class TwitterAuthScreen extends Activity {
 				
 				int requestCode = getIntent().getIntExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.DEFAULT_INT);
 				
+				// Depend on which Activity it was called from, it will display the appropriate signin/signup message
 				if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
 					progressDialog = ProgressDialog.show(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_twitter), true, false);
 				} else if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH) {
@@ -102,13 +119,18 @@ public class TwitterAuthScreen extends Activity {
 		}
 	}
 	
+	/**
+	 * Custom {@link WebViewClient} specifically to handle the callback url of Twitter
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class MobMonkeyWebViewClient extends WebViewClient {
 		/* (non-Javadoc)
 		 * @see android.webkit.WebViewClient#shouldOverrideUrlLoading(android.webkit.WebView, java.lang.String)
 		 */
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			if(url.contains(MMAPIConstants.TWITTER_CALLBACK_URL_SIGN_IN)) {
+			if(url.contains(MMAPIConstants.TWITTER_CALLBACK_URL)) {
 				parseUri(Uri.parse(url));
 				return true;
 			}
@@ -116,6 +138,11 @@ public class TwitterAuthScreen extends Activity {
 		}
 	}
 	
+    /**
+     * Custom {@link MMCallback} specifically for {@link TwitterAuthScreen} to be processed after receiving response from MobMonkey server.
+     * @author Dezapp, LLC
+     *
+     */
 	private class TwitterAuthCallback implements MMCallback {
 		public void processCallback(Object obj) {
 			if(progressDialog != null) {

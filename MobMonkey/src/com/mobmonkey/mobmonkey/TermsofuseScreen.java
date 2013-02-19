@@ -6,6 +6,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 
 /**
+ * Android {@link Activity} displays the Term of Use agreement to the user
  * @author Dezapp, LLC
  *
  */

@@ -1,14 +1,20 @@
 package com.mobmonkey.mobmonkeyapi.utils;
 
 /**
+ * Constants class that stores all the data values for MobMonkeyAPI
  * @author Dezapp, LLC
  *
  */
 public final class MMAPIConstants {
+	
+	/**
+	 * Private class to prevent the instantiation of this class outside the scope of this class
+	 */
 	private MMAPIConstants() {
 		throw new AssertionError();
 	}
 	
+	// MobMonkey default data values
 	public static final String DEFAULT_STRING = "";
 	public static final String DEFAULT_SPACE = " ";
 	public static final String DEFAULT_NEWLINE = "\n";
@@ -27,10 +33,12 @@ public final class MMAPIConstants {
 	
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
 	
+	// Intent extra key values
 	public static final String INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
 	public static final String INTENT_EXTRA_SEARCH_RESULTS = "Search results";
 	public static final String INTENT_EXTRA_LOCATION_DETAILS = "Location details";
 	
+	// MobMonkey server call key values
 	public static final String KEY_FIRST_NAME = "firstName";
 	public static final String KEY_LAST_NAME = "lastName";
 	public static final String KEY_EMAIL_ADDRESS = "eMailAddress";
@@ -58,6 +66,7 @@ public final class MMAPIConstants {
 	public static final String KEY_NAME = "name";
 	public static final String KEY_CATEGORY_IDS = "categoryIds";
 	
+	// MobMonkey server response key values
 	public static final String KEY_RESPONSE_STATUS = "status";
 	public static final String KEY_RESPONSE_DESC = "description";
 	public static final String KEY_RESPONSE_ID = "id";
@@ -67,27 +76,30 @@ public final class MMAPIConstants {
 	public static final String OAUTH_PROVIDER_FACEBOOK = "facebook";
 	public static final String OAUTH_PROVIDER_TWITTER = "twitter";
 	
+	// Twitter authentication with twitter4j values
 	public static final String TWITTER_CALLBACK_URL = "mobmonkey://com.mobmonkey.mobmonkey?";
-	public static final String TWITTER_CALLBACK_URL_SIGN_IN = "signin://com.mobmonkey.mobmonkey?";
-	public static final String TWITTER_CALLBACK_URL_SIGN_UP = "signup://com.mobmonkey.mobmonkey?";
 	public static final String TWITTER_OAUTH_TOKEN = "oauth_token";
 	public static final String TWITTER_OAUTH_VERIFIER = "oauth_verifier";
 	
+	// MobMonkey server response status values
 	public static final String RESPONSE_STATUS_SUCCESS = "Success";
 	public static final String RESPONSE_STATUS_FAILURE = "Failure";
 	public static final String RESPONSE_ID_SUCCESS = "200";
 	public static final String RESPONSE_ID_NOT_FOUND = "404";
 	public static final String RESPONSE_ID_BAD_REQUEST = "500";	
 	
+	// Request code values
 	public static final String REQUEST_CODE = "Request code";
 	
 	public static final int REQUEST_CODE_SIGN_IN_TWITTER_AUTH = 1000;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER_AUTH = 1001;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2000;
 	
+	// Result code values
 	public static final int RESULT_CODE_SUCCESS = 200;
 	public static final int RESULT_CODE_NOT_FOUND = 404;
 	
+	// JSON key values
 	public static final String JSON_KEY_NAME = "name";
 	public static final String JSON_KEY_DISTANCE = "distance";
 	public static final String JSON_KEY_ADDRESS = "address";

@@ -2,7 +2,6 @@ package com.mobmonkey.mobmonkeyapi.adapters;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.UUID;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -14,7 +13,7 @@ import android.util.Log;
 import com.mobmonkey.mobmonkeyapi.utils.*;
 
 /**
- * TODO: add desc of this class
+ * Final adapter class that handles all the sign up functionalities of MobMonkey Android
  * @author Dezapp, LLC
  *
  */
@@ -24,21 +23,43 @@ public final class MMSignUpAdapter {
 	private static JSONObject userInfo;
 	
 	/**
-	 * Function that converts the user info from a {@link HashMap} to {@link JSONObject}, add it to the {@link HttpPost} and set the necessary headers before it is pushed to the server.
-	 * @param mmCallback {@link MMCallback} to be sent back to the invoking Activity
-	 * @param map {@link HashMap} of user info
+	 * Private class to prevent the instantiation of this class outside the scope of this class
+	 */
+	private MMSignUpAdapter() {
+		throw new AssertionError();
+	}
+	
+	/**
+	 * Function that signs user up normally to MobMonkey with entered information
+	 * @param mmCallback The {@link MMCallback} to handle the response from MobMonkey server after posting the sign up url
+	 * @param firstName User first name
+	 * @param lastName User last name
+	 * @param emailAddress User email address
+	 * @param password User password
+	 * @param birthdate User birth date
+	 * @param gender User gender
+	 * @param checkedToS User accepted Term of Use flag
 	 * @param partnerId MobMonkey unique partner id
 	 */
-	public static void signUpNewUser(MMCallback mmCallback, HashMap<String,Object> map, String partnerId) {
+	public static void signUpNewUser(MMCallback mmCallback, String firstName, String lastName, String emailAddress, String password, String birthdate, int gender, boolean checkedToS, String partnerId) {
 		signUpURL = MMAPIConstants.MOBMONKEY_URL + "signup/user";
 		try {
-			userInfo = new JSONObject(map);
+			userInfo = new JSONObject();
+			userInfo.put(MMAPIConstants.KEY_FIRST_NAME, firstName);
+			userInfo.put(MMAPIConstants.KEY_LAST_NAME, lastName);
+			userInfo.put(MMAPIConstants.KEY_EMAIL_ADDRESS, emailAddress);
+			userInfo.put(MMAPIConstants.KEY_PASSWORD, password);
+			userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate);
+			userInfo.put(MMAPIConstants.KEY_GENDER, gender);
+			userInfo.put(MMAPIConstants.KEY_ACCEPTEDTOS, checkedToS);
+			
 			// TODO: remove hardcoded values
 			userInfo.put(MMAPIConstants.KEY_CITY, "Tempe");
 			userInfo.put(MMAPIConstants.KEY_STATE, "Arizona");
 			userInfo.put(MMAPIConstants.KEY_ZIP, "85283");
 			userInfo.put(MMAPIConstants.KEY_PHONE_NUMBER, "480-555-5555");
 			// end TODO:
+			
 			userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
 			userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString());
 			
@@ -59,34 +80,49 @@ public final class MMSignUpAdapter {
 	}
 	
 	/**
-	 * 
+	 * Function that signs user in to MobMonkey with Facebook credentials
+	 * @param mmCallback The {@link MMCallback} to handle the response from MobMonkey server after posting the sign up url
+	 * @param oauthToken Facebook OAuth access token
+	 * @param providerUserName Facebook provider username
+	 * @param partnerId MobMonkey unique partner id
 	 */
-	public static void signUpNewUserFacebook(MMCallback mmCallback, String accessToken, String emailAddress, String partnerId) {
-		signUpURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
-					MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=true&provider=" + "facebook" + 
-					"&oauthToken=" + accessToken + "&providerUserName=" + emailAddress;
-//			userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
-//			userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMGetDeviceUUID.getDeviceUUID().toString());
+	public static void signUpNewUserFacebook(MMCallback mmCallback, String oauthToken, String providerUserName, String partnerId) {
+		signUpURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + 
+				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + 
+				"&useOAuth=true&provider=" + MMAPIConstants.OAUTH_PROVIDER_FACEBOOK + 
+				"&oauthToken=" + oauthToken + 
+				"&providerUserName=" + providerUserName;
 		
 		Log.d(TAG, TAG + "signUpURL: " + signUpURL);
 		
 		HttpPost httpPost = new HttpPost(signUpURL);
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, emailAddress);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, accessToken);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken);
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
 		
 		new MMAsyncTask(mmCallback).execute(httpPost);
 	}
 	
 	/**
-	 * 
+	 * Function that signs user up to MobMonkey with Twitter credentials and user entered info
+	 * @param mmCallback The {@link MMCallback} to handle the response from MobMonkey server after posting the sign up url
+	 * @param firstName User first name
+	 * @param lastName User last name
+	 * @param oauthToken Twitter OAuth access token
+	 * @param providerUserName Twitter provider username
+	 * @param emailAddress User email address
+	 * @param birthdate User birth date
+	 * @param gender User gender
+	 * @param partnerId MobMonkey unique partner id
 	 */
-	public static void signUpNewUserTwitter(MMCallback mmCallback, HashMap<String,Object> map, String partnerId) {
+	public static void signUpNewUserTwitter(MMCallback mmCallback, String firstName, String lastName, String oauthToken, String providerUserName, String emailAddress, String birthdate, int gender, String partnerId) {
 		signUpURL = MMAPIConstants.MOBMONKEY_URL + "signin/registeremail?deviceType=" + MMAPIConstants.DEVICE_TYPE +
-				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + "&oauthToken=" + (String) map.get(MMAPIConstants.KEY_OAUTH_TOKEN) + 
-				"&providerUserName=" + (String) map.get(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME) + "&eMailAddress=" + (String) map.get(MMAPIConstants.KEY_EMAIL_ADDRESS) +
+				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + 
+				"&oauthToken=" + oauthToken + 
+				"&providerUserName=" + providerUserName + 
+				"&eMailAddress=" + emailAddress +
 				"&provider=" + MMAPIConstants.OAUTH_PROVIDER_TWITTER;
 		
 		Log.d(TAG, TAG + "signUpURL: " + signUpURL);
@@ -94,8 +130,8 @@ public final class MMSignUpAdapter {
 		HttpPost httpPost = new HttpPost(signUpURL);
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, (String) map.get(MMAPIConstants.KEY_EMAIL_ADDRESS));
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, (String) map.get(MMAPIConstants.KEY_OAUTH_TOKEN));
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
+		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, (String) oauthToken);
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER);
 		
 		new MMAsyncTask(mmCallback).execute(httpPost);

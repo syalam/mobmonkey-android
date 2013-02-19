@@ -1,11 +1,8 @@
 package com.mobmonkey.mobmonkey;
 
+import android.app.Activity;
 import android.app.TabActivity;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,11 +12,12 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 
 /**
+ * Android {@link Activity} screen displays the signed in user portion of the application with different tabs.
  * @author Dezapp, LLC
  *
  */
 public class MainScreen extends TabActivity {
-	protected static final String TAG = "TAG ";
+	protected static final String TAG = "MainScreen: ";
 	TabWidget tabWidget;
 	TabHost tabHost;
 	
@@ -28,6 +26,7 @@ public class MainScreen extends TabActivity {
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d(TAG, TAG + "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);
 		
@@ -38,7 +37,7 @@ public class MainScreen extends TabActivity {
 	}
 
 	/**
-	 * 
+	 * Function that set the tabs and the corresponding {@link Activity} for the {@link TabHost}
 	 */
 	private void setTabs() {
 		addTab("Trending Now", R.drawable.tab_trendingnow, TrendingNowScreen.class);
@@ -49,10 +48,10 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * 
-	 * @param tabTitle
-	 * @param drawableIconId
-	 * @param c
+	 * Add the tab to the existing {@link TabHost} object
+	 * @param tabTitle Title of the tab
+	 * @param drawableIconId Tab icon drawable resource id
+	 * @param c {@link Class} instance of the screen to be displayed for the tab
 	 */
 	private void addTab(String tabTitle, int drawableIconId, Class<?> c) {
 		Intent intent = new Intent(MainScreen.this, c);
