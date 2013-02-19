@@ -6,7 +6,6 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.facebook.LoginActivity;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -32,10 +31,13 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 /**
+ * Android {@link Activity} screen that allows user to sign with his/her account through MobMonkey, Facebook, Twitter or go sign up.
+ * Also, it is the first {@link Activity} that the user will see when the application launches.
  * @author Dezapp, LLC
  *
  */
@@ -57,12 +59,9 @@ public class SignInScreen extends Activity {
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		if(connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting()) {
-			Toast.makeText(SignInScreen.this, "You have no internet access at the moment, cannot start MobMonkey", Toast.LENGTH_LONG).show();
-			finish();
-		}
+		checkForInternetAccess();
 		
+		// TODO: check if this is still needed...
         if (android.os.Build.VERSION.SDK_INT > 9) {
         	StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         	StrictMode.setThreadPolicy(policy);
@@ -84,10 +83,12 @@ public class SignInScreen extends Activity {
 		Log.d(TAG, TAG + "onActivityResult");
 		
 		if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
+			if(progressDialog != null) {
+				progressDialog.dismiss();
+			}
+			
 			if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
 				Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
-				Log.d(TAG, TAG + "twitter provider username: " + userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING));
-				Log.d(TAG, TAG + "twitter oauth token: " + userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 				startActivity(new Intent(SignInScreen.this, MainScreen.class));
 			} else if(resultCode == MMAPIConstants.RESULT_CODE_NOT_FOUND) {
 				// TODO: inform user
@@ -105,8 +106,8 @@ public class SignInScreen extends Activity {
 	}
 	
 	/**
-	 * 
-	 * @param view
+	 * Handler for when {@link Button}s or any other {@link View}s are clicked.
+	 * @param view {@link View} that is clicked
 	 */
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
@@ -126,7 +127,18 @@ public class SignInScreen extends Activity {
 	}
 
 	/**
-	 * 
+	 * Function that check if user's device has Internet access. Display a {@link Toast} message informing the user if these is no Internet access.
+	 */
+	private void checkForInternetAccess() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		if(connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting()) {
+			Toast.makeText(SignInScreen.this, getString(R.string.toast_no_internet_access), Toast.LENGTH_LONG).show();
+			finish();
+		}
+	}
+	
+	/**
+	 * Initialize all the variables to be used in {@link SignInScreen}
 	 */
 	private void init() {
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
@@ -143,7 +155,7 @@ public class SignInScreen extends Activity {
 	}
 	
 	/**
-	 * 
+	 * Functional that handles the normal user sign in with email through MobMonkey
 	 */
 	private void signInNormal() {
 		if(checkEmailAddress()) {
@@ -154,46 +166,31 @@ public class SignInScreen extends Activity {
 		}
 	}
 	
-	/**
-	 * 
-	 */
+    /**
+     * Function that handles the user sign in with Facebook API
+     */
 	private void signInFacebook() {
-		Session.openActiveSession(SignInScreen.this, true, new Session.StatusCallback() {
-			public void call(Session session, SessionState state, Exception exception) {
-    			Log.d(TAG, TAG + "sign in with facebook");
-    			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
-    			Log.d(TAG, TAG + "session opened: " + session.isOpened());
-				if(session.isOpened() && requestEmail) {
-		    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignInScreen.this, Arrays.asList(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
-					session.requestNewReadPermissions(request);
-					Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-						public void onCompleted(GraphUser user, Response response) {
-							Log.d(TAG, TAG + "onCompleted");
-							if(user != null) {
-								requestEmail = false;
-								facebookUser = user;
-							}
-						}
-					});
-				}
-			}
-		});	
+		Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());	
 	}
 	
-	/**
-	 * 
-	 */
+    /**
+     * Function that handles the user sign in with Twitter. Go to the {@link TwitterAuthScreen} and allows the user there to authenticate himself/herself call the MM SignIn with Twitter on that screen.
+     * 		If user already exist in MobMonkey database, it will sign user in to the application.
+     * NOTE: Not launching the browser on this screen because the app need to authenticate the user via Twitter on two different instance, SignIn and SignUp. Normal procedure requires current {@link Activity} on 
+     * 		the Manifest to have launchMode 'singleTask'. This causes the {@link SignInScreen} onActivityResult callback handling to be invoked before this {@link Activity} is even created. Another problem with 
+     * 		launchMode singleTask is that this {@link Activity} can only be created once, if it was destroyed and recreated, it will cause an {@link IllegalStateException} error.
+     */
 	private void signInTwitter() {
+		progressDialog = ProgressDialog.show(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_launch_twitter_auth_screen), true, false);
 		Intent twitterAuthIntent = new Intent(SignInScreen.this, TwitterAuthScreen.class);
 		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
 		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
 	}
 	
 	/**
-	 * 
+	 * Function that launches the {@link SignUpScreen} {@link Activity}
 	 */
 	private void signUp() {
-		Log.d(TAG, TAG + "SignUp");
 		startActivity(new Intent(SignInScreen.this, SignUpScreen.class));
 	}
 	
@@ -236,11 +233,47 @@ public class SignInScreen extends Activity {
 	}
 	
 	/**
-	 * 
+	 * Custom {@link Session.StatusCallback} specifically for {@link SignInScreen} to handle the {@link Session} state change.
 	 * @author Dezapp, LLC
 	 *
 	 */
+	private class SessionStatusCallback implements Session.StatusCallback {
+		@Override
+		public void call(Session session, SessionState state, Exception exception) {
+			Log.d(TAG, TAG + "sign in with facebook");
+			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
+			Log.d(TAG, TAG + "session opened: " + session.isOpened());
+			if(session.isOpened() && requestEmail) {
+	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignInScreen.this, Arrays.asList(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
+				session.requestNewReadPermissions(request);
+				Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
+			}
+		}
+	}
+	
+	/**
+	 * Custom {@link Request.GraphUserCallback} specifically for {@link SignInScreen} to the completion of the {@link Request}.executeMeRequestAsync({@link Session}, {@link Request.GraphUserCallback}).
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class RequestGraphUserCallback implements Request.GraphUserCallback {
+		@Override
+		public void onCompleted(GraphUser user, Response response) {
+			Log.d(TAG, TAG + "onCompleted");
+			if(user != null) {
+				requestEmail = false;
+				facebookUser = user;
+			}
+		}
+	}
+	
+    /**
+     * Custom {@link MMCallback} specifically for {@link SignInScreen} to be processed after receiving response from MobMonkey server.
+     * @author Dezapp, LLC
+     *
+     */
 	private class SignInCallback implements MMCallback {
+		@Override
 		public void processCallback(Object obj) {
 			if(progressDialog != null) {
 				progressDialog.dismiss();

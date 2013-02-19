@@ -6,9 +6,13 @@
 	
 	
 	<!-- SignIn Screen -->
+	<string name="toast_no_internet_access">You have no internet access at the moment, cannot start MobMonkey</string>
+	
 	<string name="btn_sign_in">Sign In</string>
 	<string name="btn_sign_in_facebook">Sign In with Facebook</string>
 	<string name="btn_sign_in_twitter">Sign In with Twitter</string>
+	
+	<string name="pd_launch_twitter_auth_screen">Launching Twitter authentication screen&#8230;</string>
 	
 	<string name="pd_signing_in">Signing in&#8230;</string>
 	<string name="pd_signing_in_facebook">Signing in via Facebook&#8230;</string>
@@ -92,6 +96,8 @@
 	</string-array>
 	
 	<string name="pd_search_all_nearby">Searching all nearby&#8230;</string>
+	<string name="pd_search_for">Searching for</string>
+	<string name="pd_ellipses">&#8230;</string>
 	
 	<!-- SearchResults Screen -->
 	<string name="miles">miles</string>
@@ -108,6 +114,13 @@
 	
 	<!-- Settings Screen -->
 	<string name="title_settings">Settings</string>
+	
+	<string-array name="settings_category">
+	    <item>My Info</item>
+	    <item>Social Networks</item>
+	    <item>My Interests</item>
+	    <item>Subscribe</item>
+	</string-array>
 	
 	<string name="btn_sign_out">Sign Out</string>
 	

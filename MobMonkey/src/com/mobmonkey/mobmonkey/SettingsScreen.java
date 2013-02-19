@@ -14,11 +14,14 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /**
+ * Android {@link Activity} screen displays the user settings
  * @author Dezapp, LLC
  *
  */
@@ -29,6 +32,7 @@ public class SettingsScreen extends Activity {
 	SharedPreferences.Editor userPrefsEditor;
 	
 	ProgressDialog progressDialog;
+	ListView lvSettingsCategory;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -38,10 +42,12 @@ public class SettingsScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings_screen);
 		
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-		userPrefsEditor = userPrefs.edit();
+		init();
 	}
 
+	/**
+	 * Handler when back button is pressed, it will not close and destroy the current {@link Activity} but instead it will remain on the current {@link Activity}
+	 */
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onBackPressed()
 	 */
@@ -51,10 +57,13 @@ public class SettingsScreen extends Activity {
 		return;
 	}
 
+	/**
+	 * Handler for when {@link Button}s or any other {@link View}s are clicked.
+	 * @param view {@link View} that is clicked
+	 */
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsignout:
-				// TODO: Logout from what ever login
 				MMSignOutAdapter.signOut(new SignOutCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
 				progressDialog = ProgressDialog.show(SettingsScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_out), true, false);
@@ -63,10 +72,22 @@ public class SettingsScreen extends Activity {
 	}
 	
 	/**
-	 * 
-	 * @author Dezapp, LLC
-	 *
+	 * Initialize all the variables to be used in {@link SettingsScreen}
 	 */
+	private void init() {
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
+		
+		lvSettingsCategory = (ListView) findViewById(R.id.lvsettingscategory);
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(SettingsScreen.this, R.layout.settings_category_list_row, R.id.tvsettingscategory, getResources().getStringArray(R.array.settings_category));
+		lvSettingsCategory.setAdapter(arrayAdapter);
+	}
+	
+    /**
+     * Custom {@link MMCallback} specifically for {@link SettingsScreen} to be processed after receiving response from MobMonkey server.
+     * @author Dezapp, LLC
+     *
+     */
 	private class SignOutCallback implements MMCallback {
 		public void processCallback(Object obj) {
 			if(progressDialog != null) {
@@ -83,8 +104,8 @@ public class SettingsScreen extends Activity {
 						session.closeAndClearTokenInformation();
 					}
 					Toast.makeText(SettingsScreen.this, R.string.toast_sign_out_successful, Toast.LENGTH_SHORT).show();
-	 				finish();
 				}
+ 				finish();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

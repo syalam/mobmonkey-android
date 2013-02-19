@@ -9,7 +9,6 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.facebook.LoginActivity;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -30,10 +29,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -45,18 +46,17 @@ import android.widget.DatePicker.OnDateChangedListener;
 import android.text.TextUtils;
 
 /**
- * Android activity screen that allows user to sign up his/her account through MobMonkey, Facebook or twitter.
+ * Android {@link Activity} screen that allows user to sign up his/her account through MobMonkey, Facebook or Twitter.
  * @author Dezapp, LLC
  *
  */
-public class SignUpScreen extends Activity implements OnDateChangedListener, OnTouchListener {
+public class SignUpScreen extends Activity implements OnKeyListener, OnDateChangedListener, OnTouchListener {
 	private static final String TAG = "SignUpScreen: ";
+	
 	SharedPreferences userPrefs;
 	SharedPreferences.Editor userPrefsEditor;
 	
-	HashMap<String,Object> userInfo;
-	
-	InputMethodManager imm;
+	InputMethodManager inputMethodManager;
 	ProgressDialog progressDialog;
 	EditText etFirstName;
 	EditText etLastName;
@@ -89,10 +89,7 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
         	StrictMode.setThreadPolicy(policy);
         }
         
-        initUserInfoFields();
-        
-        userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-        userPrefsEditor = userPrefs.edit();
+        init();
     }
 
     /*
@@ -106,12 +103,28 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     }
     
     /**
+     * {@link OnKeyListener} handle when user finished entering confirmed password and go to the birthdate {@link EditText}, removes the soft keyboard
+     */
+    /* (non-Javadoc)
+	 * @see android.view.View.OnKeyListener#onKey(android.view.View, int, android.view.KeyEvent)
+	 */
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+			inputMethodManager.hideSoftInputFromWindow(etPasswordConfirm.getWindowToken(), 0);
+			return true;
+		}
+		return false;
+	}
+
+	/**
      * {@link OnTouchListener} handler for birthdate and gender {@link EditText}. When the {@link EditText}s are touched, it will prompt the user to select his/her birthdate or gender.
      */
     /*
      * (non-Javadoc)
      * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
      */
+    @Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if(event.getAction() == MotionEvent.ACTION_DOWN) {
 			prevEvent = event;
@@ -120,11 +133,11 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 		if(event.getAction() == MotionEvent.ACTION_UP) {
 			switch(v.getId()) {
 		    	case R.id.etbirthdate:
-		    		imm.hideSoftInputFromWindow(etBirthdate.getWindowToken(), 0);
+		    		inputMethodManager.hideSoftInputFromWindow(etBirthdate.getWindowToken(), 0);
 		    		promptUserBirthdate();
 		    		return true;
 		    	case R.id.etgender:
-		    		imm.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
+		    		inputMethodManager.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
 		    		promptUserGender();
 		    		return true;
 			}
@@ -140,10 +153,15 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	 * (non-Javadoc)
 	 * @see android.widget.DatePicker.OnDateChangedListener#onDateChanged(android.widget.DatePicker, int, int, int)
 	 */
+    @Override
 	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -151,6 +169,10 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 		
 		switch(requestCode) {
 			case MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH:
+				if(progressDialog != null) {
+					progressDialog.dismiss();
+				}
+				
 				if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
 					Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_in_successful, Toast.LENGTH_LONG).show();
 					startActivity(new Intent(SignUpScreen.this, MainScreen.class));
@@ -169,6 +191,7 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 				}
 				break;
 			default:
+				// TODO: Find the Facebook requestCode
 				Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 				if(!requestEmail) {
 					userPrefsEditor.putString(MMAPIConstants.KEY_USER, Session.getActiveSession().getAccessToken());
@@ -183,7 +206,7 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
 	
     /**
      * Handler for when {@link Button}s or any other {@link View}s are clicked.
-     * @param view
+     * @param view {@link View} that is clicked
      */
     public void viewOnClick(View view) {
     	switch(view.getId()) {
@@ -205,10 +228,11 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     /**
      * Initialize all the variables to be used in {@link SignUpScreen}.
      */
-    private void initUserInfoFields() {
-    	userInfo = new HashMap<String, Object>();
+    private void init() {
+        userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+        userPrefsEditor = userPrefs.edit();
     	
-    	imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    	inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     	
     	etFirstName = (EditText) findViewById(R.id.etfirstname);
     	etLastName = (EditText) findViewById(R.id.etlastname);
@@ -219,6 +243,7 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	etGender = (EditText) findViewById(R.id.etgender);
     	cbAcceptedToS = (CheckBox) findViewById(R.id.cbagreetos);
     	
+    	etPasswordConfirm.setOnKeyListener(SignUpScreen.this);
     	etBirthdate.setOnTouchListener(SignUpScreen.this);
     	etGender.setOnTouchListener(SignUpScreen.this);
     	
@@ -233,56 +258,52 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     }
     
     /**
-     * 
+     * Function that opens the Terms of Use {@link Activity}
      */
     private void openToS() {
     	startActivity(new Intent(SignUpScreen.this, TermsofuseScreen.class));
     }
     
     /**
-     * Function that handles user sign up through MobMonkey
+     * Function that handles normal user sign up with email through MobMonkey
      */
     private void signUpNormal() {
     	if(checkFirstName()) {
 			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
 			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
-    		MMSignUpAdapter.signUpNewUser(new SignUpCallback(), userInfo, MMConstants.PARTNER_ID);
+    		MMSignUpAdapter.signUpNewUser(new SignUpCallback(), 
+    				etFirstName.getText().toString(), 
+    				etLastName.getText().toString(), 
+    				etEmailAddress.getText().toString(), 
+    				etPassword.getText().toString(), 
+    				Long.toString(birthdate.getTimeInMillis()), 
+    				convertGender(),
+    				cbAcceptedToS.isChecked(), 
+    				MMConstants.PARTNER_ID);
     		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up), true, false);
     	}
     }
     
     /**
-     * 
+     * Function that handles the user sign up with Facebook API
      */
     private void signUpFacebook() {
     	if(checkAcceptedToS()) {    		
-    		Session.openActiveSession(SignUpScreen.this, true, new Session.StatusCallback() {
-				public void call(Session session, SessionState state, Exception exception) {
-	    			Log.d(TAG, TAG + "open active facebook session");
-	    			Log.d(TAG, TAG + "sign up with facebook");
-	    			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
-					if(session.isOpened() && requestEmail) {
-			    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
-						session.requestNewReadPermissions(request);
-						Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-							public void onCompleted(GraphUser user, Response response) {
-								if(user != null) {
-									requestEmail = false;
-									facebookUser = user;
-								}
-							}
-						});
-					}
-				}
-			});
+    		Session.openActiveSession(SignUpScreen.this, true, new SessionStatusCallback());
     	}
     }
 
     /**
-     * 
+     * Function that handles the user sign up with Twitter. Go to the {@link TwitterAuthScreen} and allows the user there to authenticate himself/herself call the MM SignUp with Twitter on that screen.
+     * 		If user already exist in MobMonkey database, it will sign user in to the application. If not, it will come back to this screen and be transported to the {@link SignUpTwitterScreen} for user to enter
+     * 		his or her information.
+     * NOTE: Not launching the browser on this screen because the app need to authenticate the user via Twitter on two different instance, SignIn and SignUp. Normal procedure requires current {@link Activity} on 
+     * 		the Manifest to have launchMode 'singleTask'. This causes the {@link SignInScreen} onActivityResult callback handling to be invoked before this {@link Activity} is even created. Another problem with 
+     * 		launchMode singleTask is that this {@link Activity} can only be created once, if it was destroyed and recreated, it will cause an {@link IllegalStateException} error.
      */
     private void signUpTwitter() {    	
     	if(checkAcceptedToS()) {
+    		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_launch_twitter_auth_screen), true, false);
     		Intent twitterAuthIntent = new Intent(SignUpScreen.this, TwitterAuthScreen.class);
     		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
     		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
@@ -295,7 +316,6 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
      */
     private boolean checkFirstName() {
     	if(!TextUtils.isEmpty(etFirstName.getText())) {
-    		userInfo.put(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
     		return checkLastName();
     	} else {
     		displayAlert(R.string.alert_invalid_first_name);
@@ -309,7 +329,6 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
      */
     private boolean checkLastName() {
     	if(!TextUtils.isEmpty(etLastName.getText().toString())) {
-    		userInfo.put(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
     		return checkEmailAddress();
     	} else {
     		displayAlert(R.string.alert_invalid_last_name);
@@ -323,7 +342,6 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
      */
     private boolean checkEmailAddress() {
     	if(!TextUtils.isEmpty(etEmailAddress.getText())) {
-    		userInfo.put(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
     		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
     		userPrefsEditor.commit();
     		return checkPassword();
@@ -340,7 +358,6 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     private boolean checkPassword() {
     	if(!TextUtils.isEmpty(etPassword.getText()) && !TextUtils.isEmpty(etPasswordConfirm.getText())) {
     		if(etPassword.getText().toString().equals(etPasswordConfirm.getText().toString())) {
-    			userInfo.put(MMAPIConstants.KEY_PASSWORD, etPassword.getText().toString());
     			userPrefsEditor.putString(MMAPIConstants.KEY_PASSWORD, etPassword.getText().toString());
     			userPrefsEditor.commit();
     			return checkBirthdate();
@@ -360,7 +377,6 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
      */
     private boolean checkBirthdate() {
     	if(!TextUtils.isEmpty(etBirthdate.getText())) {
-    		userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
     		return checkGender();
     	} else {
     		displayAlert(R.string.alert_invalid_birthdate);
@@ -374,7 +390,6 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
      */
     private boolean checkGender() {
     	if(!TextUtils.isEmpty(etGender.getText())) {
-    		userInfo.put(MMAPIConstants.KEY_GENDER, convertGender());
     		return checkAcceptedToS();
     	} else {
     		displayAlert(R.string.alert_invalid_gender);
@@ -388,7 +403,6 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
      */
     private boolean checkAcceptedToS() {
     	if(cbAcceptedToS.isChecked()) {
-    		userInfo.put(MMAPIConstants.KEY_ACCEPTEDTOS, cbAcceptedToS.isChecked());
     		return true;
     	} else {
     		displayAlert(R.string.alert_invalid_tos);
@@ -445,6 +459,7 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     		.setView(vBirthdate)
     		.setCancelable(false)
     		.setPositiveButton(R.string.btn_choose, new DialogInterface.OnClickListener() {
+    			@Override
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
 					Date tempDate = new Date(birthdate.get(Calendar.YEAR) - 1900, birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH));
@@ -463,6 +478,7 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     	new AlertDialog.Builder(SignUpScreen.this)
     		.setTitle(R.string.title_gender)
     		.setItems(R.array.alert_gender, new DialogInterface.OnClickListener() {
+    			@Override
 				public void onClick(DialogInterface dialog, int which) {
 					etGender.setText(getResources().getStringArray(R.array.alert_gender)[which]);
 				}
@@ -472,12 +488,48 @@ public class SignUpScreen extends Activity implements OnDateChangedListener, OnT
     		.show();
     }
     
+	/**
+	 * Custom {@link Session.StatusCallback} specifically for {@link SignInScreen} to handle the {@link Session} state change.
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class SessionStatusCallback implements Session.StatusCallback {
+		@Override
+		public void call(Session session, SessionState state, Exception exception) {
+			Log.d(TAG, TAG + "sign in with facebook");
+			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
+			Log.d(TAG, TAG + "session opened: " + session.isOpened());
+			if(session.isOpened() && requestEmail) {
+	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
+				session.requestNewReadPermissions(request);
+				Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
+			}
+		}
+	}
+	
+	/**
+	 * Custom {@link Request.GraphUserCallback} specifically for {@link SignInScreen} to the completion of the {@link Request}.executeMeRequestAsync({@link Session}, {@link Request.GraphUserCallback}).
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class RequestGraphUserCallback implements Request.GraphUserCallback {
+		@Override
+		public void onCompleted(GraphUser user, Response response) {
+			Log.d(TAG, TAG + "onCompleted");
+			if(user != null) {
+				requestEmail = false;
+				facebookUser = user;
+			}
+		}
+	}
+    
     /**
-     * Custom {@link MMCallback} specifically for SignUpScreen to be processed after receiving response from server.
+     * Custom {@link MMCallback} specifically for {@link SignUpScreen} to be processed after receiving response from MobMonkey server.
      * @author Dezapp, LLC
      *
      */
     private class SignUpCallback implements MMCallback {
+    	@Override
 		public void processCallback(Object obj) {
 			if(progressDialog != null) {
 				progressDialog.dismiss();
