@@ -38,7 +38,7 @@ public class SearchResultDetailsScreen extends Activity {
 		TextView tvBookmark = (TextView) findViewById(R.id.tvbookmark);
 		
 		try {
-			JSONObject jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.INTENT_EXTRA_LOCATION_DETAILS));
+			JSONObject jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 			tvLocNameTitle.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvLocName.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvMembersFound.setText(jObj.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));

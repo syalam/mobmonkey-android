@@ -56,7 +56,7 @@ public final class MMSearchLocationAdapter {
 				Log.d(TAG, TAG + "name: " + header.getName() + " value: " + header.getValue());
 			}
 			
-			new MMAsyncTask(mmCallback).execute(httpPost);
+			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

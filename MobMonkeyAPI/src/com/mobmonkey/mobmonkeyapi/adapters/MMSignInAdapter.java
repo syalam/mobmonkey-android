@@ -42,7 +42,7 @@ public final class MMSignInAdapter {
 		// TODO: encrypt password??
 		httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
 		
-		new MMAsyncTask(mmCallback).execute(httpPost);
+		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public final class MMSignInAdapter {
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken);
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
 		
-		new MMAsyncTask(mmCallback).execute(httpPost);
+		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
 	
 	/**
@@ -92,6 +92,6 @@ public final class MMSignInAdapter {
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken);
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER);
 		
-		new MMAsyncTask(mmCallback).execute(httpPost);
+		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
 }

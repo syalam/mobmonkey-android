@@ -1,8 +1,14 @@
 package com.mobmonkey.mobmonkey;
 
+import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
+import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
+
 import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +24,10 @@ import android.widget.TabWidget;
  */
 public class MainScreen extends TabActivity {
 	protected static final String TAG = "MainScreen: ";
+	
+	SharedPreferences userPrefs;
+	SharedPreferences.Editor userPrefsEditor;
+	
 	TabWidget tabWidget;
 	TabHost tabHost;
 	
@@ -30,12 +40,28 @@ public class MainScreen extends TabActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);
 		
-		tabWidget = getTabWidget();
-		tabHost = getTabHost();
+		init();
+		getTopLevelCategories();
 		setTabs();
 		tabHost.setCurrentTab(0);
 	}
 
+	private void init() {
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
+		tabWidget = getTabWidget();
+		tabHost = getTabHost();
+	}
+	
+	private void getTopLevelCategories() {
+		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES)) {
+			MMCategoryAdapter.getTopLevelCategories(new MainCallback(), 
+					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+					MMConstants.PARTNER_ID);
+		}
+	}
+	
 	/**
 	 * Function that set the tabs and the corresponding {@link Activity} for the {@link TabHost}
 	 */
@@ -65,5 +91,21 @@ public class MainScreen extends TabActivity {
 		tabSpec.setIndicator(tabIndicator);
 		tabSpec.setContent(intent);
 		tabHost.addTab(tabSpec);
+	}
+	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class MainCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES, (String) obj);
+				userPrefsEditor.commit();
+			}
+			Log.d(TAG, TAG + "response: " + (String) obj);
+		}
 	}
 }

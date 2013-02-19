@@ -34,11 +34,13 @@ public final class MMAPIConstants {
 	// SharePreferences Key
 	public static final String USER_PREFS = "User Preferences";
 	public static final String SHARED_PREFS_KEY_HISTORY = "history";
+	public static final String SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES = "Top level categories";
 	
 	// Intent extra key values
-	public static final String INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
-	public static final String INTENT_EXTRA_SEARCH_RESULTS = "Search results";
-	public static final String INTENT_EXTRA_LOCATION_DETAILS = "Location details";
+	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
+	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
+	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
+	public static final String KEY_INTENT_EXTRA_LOCATION_DETAILS = "Location details";
 	
 	// MobMonkey server call key values
 	public static final String KEY_FIRST_NAME = "firstName";

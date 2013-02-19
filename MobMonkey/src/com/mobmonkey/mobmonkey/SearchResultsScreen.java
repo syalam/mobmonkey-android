@@ -57,9 +57,9 @@ public class SearchResultsScreen extends Activity {
 		TextView tvSearchResultsTitle = (TextView) findViewById(R.id.tvsearchresultstitle);
 		ListView lvSearchResults = (ListView) findViewById(R.id.lvsearchresults);
 		
-		tvSearchResultsTitle.setText(getIntent().getStringExtra(MMAPIConstants.INTENT_EXTRA_SEARCH_RESULT_TITLE));
+		tvSearchResultsTitle.setText(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
 		try {
-			searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.INTENT_EXTRA_SEARCH_RESULTS));
+			searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
 			getLocations();
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -71,7 +71,7 @@ public class SearchResultsScreen extends Activity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 				try {
 					Intent locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
-					locDetailsIntent.putExtra(MMAPIConstants.INTENT_EXTRA_LOCATION_DETAILS, searchResults.getJSONObject(position).toString());
+					locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, searchResults.getJSONObject(position).toString());
 					if(history.length() < 10) {
 						history.put(searchResults.getJSONObject(position));
 					} else {

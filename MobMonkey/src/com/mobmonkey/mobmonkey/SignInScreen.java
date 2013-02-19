@@ -279,20 +279,22 @@ public class SignInScreen extends Activity {
 				progressDialog.dismiss();
 			}
 			
-			try {
-				JSONObject response = new JSONObject((String) obj);
-				if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_SUCCESS)) {
-					Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
-					if(requestEmail == false) {
-						requestEmail = true;
+			if(obj != null) {
+				try {
+					JSONObject response = new JSONObject((String) obj);
+					if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_SUCCESS)) {
+						Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
+						if(requestEmail == false) {
+							requestEmail = true;
+						}
+						userPrefsEditor.commit();
+						startActivity(new Intent(SignInScreen.this, MainScreen.class));
+					} else {
+						Toast.makeText(SignInScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 					}
-					userPrefsEditor.commit();
-					startActivity(new Intent(SignInScreen.this, MainScreen.class));
-				} else {
-					Toast.makeText(SignInScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 			Log.d(TAG, TAG + "response: " + (String) obj);
 		}

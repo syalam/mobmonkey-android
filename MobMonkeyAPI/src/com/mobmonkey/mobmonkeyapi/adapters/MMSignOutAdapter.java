@@ -6,7 +6,7 @@ import org.apache.http.client.methods.HttpPost;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
-import com.mobmonkey.mobmonkeyapi.utils.MMAsyncTask;
+import com.mobmonkey.mobmonkeyapi.utils.MMPostAsyncTask;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMDeviceUUID;
 
@@ -49,6 +49,6 @@ public final class MMSignOutAdapter {
 			Log.d(TAG, TAG + "header value: " + header.getValue());
 		}
 		
-		new MMAsyncTask(mmCallback).execute(httpPost);
+		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
 }

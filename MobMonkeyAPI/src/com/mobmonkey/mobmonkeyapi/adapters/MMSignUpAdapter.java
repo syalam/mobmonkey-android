@@ -71,7 +71,7 @@ public final class MMSignUpAdapter {
 			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
 			
-			new MMAsyncTask(mmCallback).execute(httpPost);
+			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
@@ -102,7 +102,7 @@ public final class MMSignUpAdapter {
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken);
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
 		
-		new MMAsyncTask(mmCallback).execute(httpPost);
+		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
 	
 	/**
@@ -134,6 +134,6 @@ public final class MMSignUpAdapter {
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, (String) oauthToken);
 		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER);
 		
-		new MMAsyncTask(mmCallback).execute(httpPost);
+		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
 }

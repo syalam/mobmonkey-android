@@ -1,12 +1,17 @@
 package com.mobmonkey.mobmonkey;
 
 import java.text.DecimalFormat;
+import java.util.Locale;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import com.mobmonkey.mobmonkey.utils.ExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
+import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 
 import android.app.Activity;
@@ -39,12 +44,14 @@ import android.widget.Toast;
  */
 public class SearchScreen extends Activity implements LocationListener {
 	private static final String TAG = "SearchScreen: ";
-	SharedPreferences userPrefs;
 	
 	LocationManager locationManager;
 	Location location;
 	double longitudeValue;
 	double latitudeValue;
+
+	SharedPreferences userPrefs;
+	JSONArray topLevelCategories;
 	
 	ProgressDialog progressDialog;
 	EditText etSearch;
@@ -57,7 +64,6 @@ public class SearchScreen extends Activity implements LocationListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		setContentView(R.layout.search_screen);
 		
 		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
@@ -179,6 +185,13 @@ public class SearchScreen extends Activity implements LocationListener {
 	 * Initialize all the variables and set the appropriate listeners
 	 */
 	private void init() {
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		try {
+			topLevelCategories = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
 		etSearch = (EditText) findViewById(R.id.etsearch);
 		ExpandedListView elvSearchNoCategory = (ExpandedListView) findViewById(R.id.elvsearchnocategory);
 		ExpandedListView elvSearchCategory = (ExpandedListView) findViewById(R.id.elvsearchcategory);
@@ -212,8 +225,8 @@ public class SearchScreen extends Activity implements LocationListener {
 					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_all_nearby), true, false);
 				} else {
 					Intent searchResultsIntent = new Intent(SearchScreen.this, SearchResultsScreen.class);
-					searchResultsIntent.putExtra(MMAPIConstants.INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
-					searchResultsIntent.putExtra(MMAPIConstants.INTENT_EXTRA_SEARCH_RESULTS, userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
+					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
+					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
 					startActivity(searchResultsIntent);
 				}
 			}
@@ -229,13 +242,41 @@ public class SearchScreen extends Activity implements LocationListener {
 								  R.drawable.cat_icon_retail, 
 								  R.drawable.cat_icon_services_supplies, 
 								  R.drawable.cat_icon_transportation};
-		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_category), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
+		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getTopLevelCategories(), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
 		elvSearchCategory.setAdapter(arrayAdapter);
 		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				// TODO: 
+				try {
+					Log.d(TAG, TAG + "category id: " + topLevelCategories.getJSONObject(position).getString("categoryId"));
+					MMCategoryAdapter.getCategories(new SearchCategoryCallback(), 
+							topLevelCategories.getJSONObject(position).getString("categoryId"), 
+							userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+							userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+							MMConstants.PARTNER_ID);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				// MMCategory.getSubCategories(mmcallback, user, auth, categoryid, partnerId);
+				
+//				Intent subCategoriesIntent = new Intent(SearchScreen.this, SubCategoryScreen.class);
+//				subCategoriesIntent.putExtra("category_id", );
+//				startActivity(subCategoriesIntent);
 			}
 		});
+	}
+	
+	private String[] getTopLevelCategories() {
+		String[] topLevelCats = new String[topLevelCategories.length()];
+		
+		try {
+			for(int i = 0; i < topLevelCategories.length(); i++) {
+				topLevelCats[i] = topLevelCategories.getJSONObject(i).getString(Locale.getDefault().getLanguage());
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return topLevelCats;
 	}
 	
     /**
@@ -253,9 +294,28 @@ public class SearchScreen extends Activity implements LocationListener {
 				Log.d(TAG, TAG + "The response object is empty");
 			} else {
 				Intent searchResultsIntent = new Intent(SearchScreen.this, SearchResultsScreen.class);
-				searchResultsIntent.putExtra(MMAPIConstants.INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
-				searchResultsIntent.putExtra(MMAPIConstants.INTENT_EXTRA_SEARCH_RESULTS, (String) obj);
+				searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
+				searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, (String) obj);
 				startActivity(searchResultsIntent);
+			}
+			
+			Log.d(TAG, TAG + "response: " + (String) obj);
+		}
+	}
+	
+	private class SearchCategoryCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			if(progressDialog != null) {
+				progressDialog.dismiss();
+			}
+			
+			if(obj == null) {
+				Log.d(TAG, TAG + "The response object is empty");
+			} else {
+				Intent categoryScreenIntent = new Intent(SearchScreen.this, CategoryScreen.class);
+				categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, (String) obj);
+				
 			}
 			
 			Log.d(TAG, TAG + "response: " + (String) obj);
