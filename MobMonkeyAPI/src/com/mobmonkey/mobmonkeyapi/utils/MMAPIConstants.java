@@ -106,6 +106,8 @@ public final class MMAPIConstants {
 	// JSON key values
 	public static final String JSON_KEY_NAME = "name";
 	public static final String JSON_KEY_DISTANCE = "distance";
+	public static final String JSON_KEY_LATITUDE = "latitude";
+	public static final String JSON_KEY_LONGITUDE = "longitude";
 	public static final String JSON_KEY_ADDRESS = "address";
 	public static final String JSON_KEY_LOCALITY = "locality";
 	public static final String JSON_KEY_REGION = "region";

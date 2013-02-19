@@ -22,7 +22,8 @@ import android.widget.TextView;
  *
  */
 public class SearchResultDetailsScreen extends Activity {
-
+	JSONObject jObj;
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -38,7 +39,7 @@ public class SearchResultDetailsScreen extends Activity {
 		TextView tvBookmark = (TextView) findViewById(R.id.tvbookmark);
 		
 		try {
-			JSONObject jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 			tvLocNameTitle.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvLocName.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvMembersFound.setText(jObj.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));
@@ -60,6 +61,7 @@ public class SearchResultDetailsScreen extends Activity {
 						startActivity(dialerIntent);
 					} else if(position == 1) {
 						Intent mapIntent = new Intent(SearchResultDetailsScreen.this, SearchLocationResultMapScreen.class);
+						mapIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
 						startActivity(mapIntent);
 					}
 				}
