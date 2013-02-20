@@ -17,15 +17,44 @@
 			android:textColor="@android:color/white"
 			android:textStyle="bold"/>
 		
+		<ImageButton android:id="@+id/ibmap"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_toLeftOf="@+id/ibaddlocation"
+		    android:layout_centerVertical="true"
+		    android:src="@drawable/icon_search"
+		    android:onClick="viewOnClick"/>
+		
+		<ImageButton android:id="@+id/ibaddlocation"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerVertical="true"
+		    android:layout_alignParentRight="true"
+		    android:src="@drawable/icon_search"
+		    android:onClick="viewOnClick"/>
+		
 	</RelativeLayout>
 	
-	<ListView android:id="@+id/lvsearchresults"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:layout_margin="10dp"
-	    android:scrollbars="none"
-	    android:background="@drawable/listview_border"
-		android:divider="@drawable/listview_divider"
-		android:dividerHeight="1dp"/>
+	<FrameLayout android:layout_width="match_parent"
+	    android:layout_height="match_parent">
+	
+		<ListView android:id="@+id/lvsearchresults"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:layout_margin="10dp"
+		    android:scrollbars="none"
+		    android:background="@drawable/listview_border"
+			android:divider="@drawable/listview_divider"
+			android:dividerHeight="1dp"
+			android:visibility="visible"/>
+		
+	   	<com.google.android.maps.MapView android:id="@+id/mvlocationsresult"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="match_parent"
+	   	    android:clickable="true"
+	   	    android:apiKey="04DA-JlwAeMI9lznHkdAWPnHoyFRflsE1EsAUWA"
+	   	    android:visibility="invisible"/>
+	
+	</FrameLayout>
 	
 </LinearLayout>

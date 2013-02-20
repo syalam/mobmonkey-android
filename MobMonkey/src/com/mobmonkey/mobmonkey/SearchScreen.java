@@ -149,6 +149,7 @@ public class SearchScreen extends Activity implements LocationListener {
 	    new AlertDialog.Builder(SearchScreen.this)
 	    	.setTitle(R.string.title_enable_gps)
 	    	.setMessage(R.string.message_enable_gps)
+	    	.setCancelable(false)
 	    	.setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int which) {
 		            // Launch settings, allowing user to make a change
