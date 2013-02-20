@@ -44,7 +44,7 @@ public class SearchResultDetailsScreen extends Activity {
 			tvLocName.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvMembersFound.setText(jObj.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));
 			
-			int[] icons = new int[]{R.drawable.telephone_icon, R.drawable.map_pin_icon, R.drawable.alarm_clock};
+			int[] icons = new int[]{R.drawable.cat_icon_telephone, R.drawable.cat_icon_map_pin, R.drawable.cat_icon_alarm_clock};
 			String[] details = new String[3];
 			details[0] = jObj.getString(MMAPIConstants.JSON_KEY_PHONENUMBER);
 			details[1] = jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 

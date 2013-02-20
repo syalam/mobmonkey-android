@@ -295,6 +295,7 @@ public class SearchScreen extends Activity implements LocationListener {
 				Log.d(TAG, TAG + "The response object is empty");
 			} else {
 				Intent searchResultsIntent = new Intent(SearchScreen.this, SearchResultsScreen.class);
+				searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
 				searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
 				searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, (String) obj);
 				startActivity(searchResultsIntent);

@@ -19,6 +19,7 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
+import com.mobmonkey.mobmonkey.utils.MMLocationItemizedOverlay;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
 /**
@@ -45,7 +46,7 @@ public class SearchLocationResultMapScreen extends MapActivity {
 		try {
 			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 			
-			LocationItemizedOverlay locationItemizedOverlay = new LocationItemizedOverlay(getResources().getDrawable(R.drawable.icon_search), SearchLocationResultMapScreen.this);
+			MMLocationItemizedOverlay locationItemizedOverlay = new MMLocationItemizedOverlay(getResources().getDrawable(R.drawable.cat_icon_map_pin), SearchLocationResultMapScreen.this);
 			
 			double latitude = jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE);
 			double longitude = jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE);
@@ -59,6 +60,7 @@ public class SearchLocationResultMapScreen extends MapActivity {
 			
 			locationItemizedOverlay.addOverlay(overlayItem);
 			mapOverlays.add(locationItemizedOverlay);
+			locationItemizedOverlay.addLocationResult(jObj);
 			
 			MapController mcLocationResult = mvLocationResult.getController();
 			mcLocationResult.animateTo(geoPoint);
@@ -71,48 +73,5 @@ public class SearchLocationResultMapScreen extends MapActivity {
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
-	}
-	
-	private class LocationItemizedOverlay extends ItemizedOverlay<OverlayItem> {
-		private ArrayList<OverlayItem> overlayItems = new ArrayList<OverlayItem>();
-		Context context;
-		
-		public LocationItemizedOverlay(Drawable defaultMarker) {
-			super(defaultMarker);
-		}
-		
-		public LocationItemizedOverlay(Drawable defaultMarker, Context context) {
-			super(boundCenterBottom(defaultMarker));
-			this.context = context;
-		}
-		
-		public void addOverlay(OverlayItem overlay) {
-			overlayItems.add(overlay);
-			populate();
-		}
-		
-		@Override
-		protected OverlayItem createItem(int i) {
-			return overlayItems.get(i);
-		}
-
-		@Override
-		public int size() {
-			return overlayItems.size();
-		}
-
-		/* (non-Javadoc)
-		 * @see com.google.android.maps.ItemizedOverlay#onTap(int)
-		 */
-		@Override
-		protected boolean onTap(int index) {
-			OverlayItem item = overlayItems.get(index);
-			new AlertDialog.Builder(context)
-				.setTitle(item.getTitle())
-				.setMessage(item.getSnippet())
-				.show();
-			
-			return true;
-		}
 	}
 }

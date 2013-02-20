@@ -89,7 +89,7 @@
 				    android:layout_height="wrap_content"
 				    android:layout_gravity="left|center"
 				    android:layout_margin="5dp"
-				    android:src="@drawable/bookmark_icon"/>
+				    android:src="@drawable/cat_icon_bookmark_icon"/>
 				
 				<TextView android:id="@+id/tvbookmark"
 				    android:layout_width="match_parent"

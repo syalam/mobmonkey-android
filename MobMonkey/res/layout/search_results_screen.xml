@@ -22,7 +22,7 @@
 		    android:layout_height="wrap_content"
 		    android:layout_toLeftOf="@+id/ibaddlocation"
 		    android:layout_centerVertical="true"
-		    android:src="@drawable/icon_search"
+		    android:src="@android:drawable/ic_menu_mapmode"
 		    android:onClick="viewOnClick"/>
 		
 		<ImageButton android:id="@+id/ibaddlocation"

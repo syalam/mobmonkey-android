@@ -4,13 +4,19 @@
 package com.mobmonkey.mobmonkey;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
+import com.mobmonkey.mobmonkey.utils.MMLocationItemizedOverlay;
 import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -18,6 +24,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +42,7 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 	private static final String TAG = "SearchResultsScreen: ";
 	
 	JSONArray searchResults;
+	Location location;
 	MMResultsLocation[] locations;
 	SharedPreferences userPrefs;
 	SharedPreferences.Editor userPrefsEditor;
@@ -42,7 +50,7 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 	
 	TextView tvSearchResultsTitle;
 	ListView lvSearchResults;
-	MapView mvLocationsResult;
+	MapView mvLocationResults;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -83,10 +91,10 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 			case R.id.ibmap:
 				if(lvSearchResults.getVisibility() == View.VISIBLE) {
 					lvSearchResults.setVisibility(View.INVISIBLE);
-					mvLocationsResult.setVisibility(View.VISIBLE);
+					mvLocationResults.setVisibility(View.VISIBLE);
 				} else if(lvSearchResults.getVisibility() == View.INVISIBLE) {
 					lvSearchResults.setVisibility(View.VISIBLE);
-					mvLocationsResult.setVisibility(View.INVISIBLE);
+					mvLocationResults.setVisibility(View.INVISIBLE);
 				}
 				break;
 			case R.id.ibaddlocation:
@@ -100,16 +108,37 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 		
 		tvSearchResultsTitle = (TextView) findViewById(R.id.tvsearchresultstitle);
 		lvSearchResults = (ListView) findViewById(R.id.lvsearchresults);
-		mvLocationsResult = (MapView) findViewById(R.id.mvlocationsresult);
-		
-		tvSearchResultsTitle.setText(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
+		mvLocationResults = (MapView) findViewById(R.id.mvlocationsresult);
 		
 		searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
+		location = getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION);
+		
 		getLocations();
+		
+		tvSearchResultsTitle.setText(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
+		mvLocationResults.setBuiltInZoomControls(true);		
 		
 		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(SearchResultsScreen.this, R.layout.search_result_list_row, locations);
 		lvSearchResults.setAdapter(arrayAdapter);
 		lvSearchResults.setOnItemClickListener(SearchResultsScreen.this);
+		
+		List<Overlay> mapOverlays = mvLocationResults.getOverlays();
+		MMLocationItemizedOverlay locationItemizedOverlay = new MMLocationItemizedOverlay(getResources().getDrawable(R.drawable.cat_icon_map_pin), SearchResultsScreen.this);
+		
+		for(int i = 0; i < searchResults.length(); i++) {
+			JSONObject jObj = searchResults.getJSONObject(i);
+			
+			GeoPoint geoPoint = new GeoPoint((int) (jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE) * 1E6), (int) (jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE) * 1E6));
+			OverlayItem overlayItem = new OverlayItem(geoPoint, jObj.getString(MMAPIConstants.JSON_KEY_NAME), "");
+			locationItemizedOverlay.addOverlay(overlayItem);
+			locationItemizedOverlay.addLocationResult(jObj);
+		}
+		
+		mapOverlays.add(locationItemizedOverlay);
+		MapController mcLocationResults = mvLocationResults.getController();
+		GeoPoint geoPoint = new GeoPoint((int) (location.getLatitude() * 1E6), (int) (location.getLongitude() * 1E6));
+		mcLocationResults.animateTo(geoPoint);
+		mcLocationResults.setZoom(18);
 		
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_HISTORY)) {
 			history = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
@@ -128,7 +157,7 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 				JSONObject jObj = searchResults.getJSONObject(i);
 				locations[i] = new MMResultsLocation();
 				locations[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
-				locations[i].setLocDist(convertMetersToMiles(jObj.getString(MMAPIConstants.JSON_KEY_DISTANCE)) + getString(R.string.miles));
+				locations[i].setLocDist(calcDist(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles));
 				locations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
 										jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE));
 			}
@@ -136,12 +165,26 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 	
 	/**
 	 * 
+	 * @param lati
+	 * @param longi
+	 * @return
+	 */
+	private String calcDist(double latitude, double longitude) {
+		Location resultLocation = new Location(location);
+		resultLocation.setLatitude(latitude);
+		resultLocation.setLongitude(longitude);
+		
+		Log.d(TAG, TAG + "dist: " + location.distanceTo(resultLocation));
+		
+		return convertMetersToMiles(location.distanceTo(resultLocation));
+	}
+	
+	/**
+	 * 
 	 * @param distance
 	 * @return
 	 */
-	private String convertMetersToMiles(String distance) {
-		double dist = Double.valueOf(distance);
-		
+	private String convertMetersToMiles(double dist) {
 		dist = dist * 0.000621371f;
 		
 		return new DecimalFormat("#.##").format(dist) + MMAPIConstants.DEFAULT_SPACE;
