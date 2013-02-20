@@ -21,14 +21,12 @@ import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -46,11 +44,11 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 	MMResultsLocation[] locations;
 	SharedPreferences userPrefs;
 	SharedPreferences.Editor userPrefsEditor;
-	JSONArray history;
+	JSONArray locationHistory;
 	
 	TextView tvSearchResultsTitle;
 	ListView lvSearchResults;
-	MapView mvLocationResults;
+	MapView mvResultLocations;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -91,10 +89,10 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 			case R.id.ibmap:
 				if(lvSearchResults.getVisibility() == View.VISIBLE) {
 					lvSearchResults.setVisibility(View.INVISIBLE);
-					mvLocationResults.setVisibility(View.VISIBLE);
+					mvResultLocations.setVisibility(View.VISIBLE);
 				} else if(lvSearchResults.getVisibility() == View.INVISIBLE) {
 					lvSearchResults.setVisibility(View.VISIBLE);
-					mvLocationResults.setVisibility(View.INVISIBLE);
+					mvResultLocations.setVisibility(View.INVISIBLE);
 				}
 				break;
 			case R.id.ibaddlocation:
@@ -108,7 +106,7 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 		
 		tvSearchResultsTitle = (TextView) findViewById(R.id.tvsearchresultstitle);
 		lvSearchResults = (ListView) findViewById(R.id.lvsearchresults);
-		mvLocationResults = (MapView) findViewById(R.id.mvlocationsresult);
+		mvResultLocations = (MapView) findViewById(R.id.mvlocationsresult);
 		
 		searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
 		location = getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION);
@@ -116,34 +114,18 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 		getLocations();
 		
 		tvSearchResultsTitle.setText(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
-		mvLocationResults.setBuiltInZoomControls(true);		
+		mvResultLocations.setBuiltInZoomControls(true);		
 		
 		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(SearchResultsScreen.this, R.layout.search_result_list_row, locations);
 		lvSearchResults.setAdapter(arrayAdapter);
 		lvSearchResults.setOnItemClickListener(SearchResultsScreen.this);
 		
-		List<Overlay> mapOverlays = mvLocationResults.getOverlays();
-		MMLocationItemizedOverlay locationItemizedOverlay = new MMLocationItemizedOverlay(getResources().getDrawable(R.drawable.cat_icon_map_pin), SearchResultsScreen.this);
-		
-		for(int i = 0; i < searchResults.length(); i++) {
-			JSONObject jObj = searchResults.getJSONObject(i);
-			
-			GeoPoint geoPoint = new GeoPoint((int) (jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE) * 1E6), (int) (jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE) * 1E6));
-			OverlayItem overlayItem = new OverlayItem(geoPoint, jObj.getString(MMAPIConstants.JSON_KEY_NAME), "");
-			locationItemizedOverlay.addOverlay(overlayItem);
-			locationItemizedOverlay.addLocationResult(jObj);
-		}
-		
-		mapOverlays.add(locationItemizedOverlay);
-		MapController mcLocationResults = mvLocationResults.getController();
-		GeoPoint geoPoint = new GeoPoint((int) (location.getLatitude() * 1E6), (int) (location.getLongitude() * 1E6));
-		mcLocationResults.animateTo(geoPoint);
-		mcLocationResults.setZoom(18);
+		addToMapView();
 		
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_HISTORY)) {
-			history = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
+			locationHistory = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
 		} else {
-			history = new JSONArray();
+			locationHistory = new JSONArray();
 		}
 	}
 	
@@ -192,6 +174,30 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 	
 	/**
 	 * 
+	 * @throws JSONException
+	 */
+	private void addToMapView() throws JSONException {
+		List<Overlay> mapOverlays = mvResultLocations.getOverlays();
+		MMLocationItemizedOverlay locationItemizedOverlay = new MMLocationItemizedOverlay(getResources().getDrawable(R.drawable.cat_icon_map_pin), SearchResultsScreen.this);
+		
+		for(int i = 0; i < searchResults.length(); i++) {
+			JSONObject jObj = searchResults.getJSONObject(i);
+			
+			GeoPoint geoPoint = new GeoPoint((int) (jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE) * 1E6), (int) (jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE) * 1E6));
+			OverlayItem overlayItem = new OverlayItem(geoPoint, jObj.getString(MMAPIConstants.JSON_KEY_NAME), "");
+			locationItemizedOverlay.addOverlay(overlayItem);
+			locationItemizedOverlay.addLocationResult(jObj);
+		}
+		
+		mapOverlays.add(locationItemizedOverlay);
+		MapController mcLocationResults = mvResultLocations.getController();
+		GeoPoint geoPoint = new GeoPoint((int) (location.getLatitude() * 1E6), (int) (location.getLongitude() * 1E6));
+		mcLocationResults.animateTo(geoPoint);
+		mcLocationResults.setZoom(18);
+	}
+	
+	/**
+	 * 
 	 * @param position
 	 * @throws JSONException
 	 */
@@ -199,15 +205,15 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 		JSONObject loc = searchResults.getJSONObject(position);
 		Log.d(TAG, TAG + "loc: " + loc);
 		if(!locationExistsInHistory(loc)) {
-			if(history.length() < 10) {
-				history.put(loc);
+			if(locationHistory.length() < 10) {
+				locationHistory.put(loc);
 			} else {
 				for(int i = 0; i < 8; i++) {
-					history.put(i, history.get(i+1));
+					locationHistory.put(i, locationHistory.get(i+1));
 				}
-				history.put(9, loc);
+				locationHistory.put(9, loc);
 			}
-			userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, history.toString());
+			userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
 			userPrefsEditor.commit();
 		}
 	}
@@ -219,13 +225,18 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 	 * @throws JSONException
 	 */
 	private boolean locationExistsInHistory(JSONObject loc) throws JSONException {
-		Log.d(TAG, TAG + "history length: " + history.length());
+		Log.d(TAG, TAG + "history length: " + locationHistory.length());
 		
-		if(history.length() <= 0) {
+		if(locationHistory.length() <= 0) {
 			return false;
 		}
 		
-		// TODO: Search through history and see if the loc exists, return true if it does
+		for(int i = 0; i < locationHistory.length(); i++) {
+			if(locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LATITUDE).equals(loc.getString(MMAPIConstants.JSON_KEY_LATITUDE)) &&
+					locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LONGITUDE).equals(loc.getString(MMAPIConstants.JSON_KEY_LONGITUDE))) {
+				return true;
+			}
+		}
 		
 		return false;
 	}
