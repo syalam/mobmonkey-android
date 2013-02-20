@@ -183,6 +183,11 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 		}
 		
 		// TODO: Search through history and see if the loc exists, return true if it does
+		for(int i=0; i<history.length(); i++)
+		{
+			if(history.getJSONObject(i).getString("name").equals(loc.getString("name")))
+				return true;
+		}
 		
 		return false;
 	}
