@@ -227,7 +227,7 @@ public class SearchScreen extends Activity implements LocationListener {
 				} else {
 					Intent searchResultsIntent = new Intent(SearchScreen.this, SearchResultsScreen.class);
 					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
-					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
+					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, ((TextView) view.findViewById(R.id.tvcategory)).getText().toString());
 					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
 					startActivity(searchResultsIntent);
 				}
