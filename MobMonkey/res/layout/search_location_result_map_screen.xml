@@ -14,10 +14,9 @@
 		android:textStyle="bold"
 		android:background="@drawable/navigation_bar"/>
 
-   	<com.google.android.maps.MapView android:id="@+id/mvlocationresult"
-   	    android:layout_width="match_parent"
-   	    android:layout_height="match_parent"
-   	    android:clickable="true"
-   	    android:apiKey="04DA-JlwAeMI9lznHkdAWPnHoyFRflsE1EsAUWA"/>
+	<fragment android:id="@+id/fragmap"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    class="com.google.android.gms.maps.SupportMapFragment"/>
    	
 </LinearLayout>

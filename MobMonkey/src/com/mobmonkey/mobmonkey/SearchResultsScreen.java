@@ -1,22 +1,21 @@
-/**
- * 
- */
 package com.mobmonkey.mobmonkey;
 
 import java.text.DecimalFormat;
-import java.util.List;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
-import com.mobmonkey.mobmonkey.utils.MMLocationItemizedOverlay;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -25,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,7 +36,7 @@ import android.widget.TextView;
  * @author Dezapp, LLC
  *
  */
-public class SearchResultsScreen extends MapActivity implements AdapterView.OnItemClickListener {
+public class SearchResultsScreen extends FragmentActivity implements AdapterView.OnItemClickListener, OnInfoWindowClickListener {
 	private static final String TAG = "SearchResultsScreen: ";
 	
 	JSONArray searchResults;
@@ -48,7 +48,11 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 	
 	TextView tvSearchResultsTitle;
 	ListView lvSearchResults;
-	MapView mvResultLocations;
+	SupportMapFragment smfResultLocations;
+	GoogleMap googleMap;
+	
+	HashMap<Marker, JSONObject> markerHashMap;
+	Intent locDetailsIntent;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -65,34 +69,52 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 		}
 	}
 	
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
-	
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
+	 */
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 		try {
 			Log.d(TAG, TAG + "onItemClick");
 			addToHistory(position);
 			
-			Intent locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
+			locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
+			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
 			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, searchResults.getJSONObject(position).toString());
 			startActivity(locDetailsIntent);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener#onInfoWindowClick(com.google.android.gms.maps.model.Marker)
+	 */
+	@Override
+	public void onInfoWindowClick(Marker marker) {
+		JSONObject jObj = markerHashMap.get((Marker) marker);
+		Log.d(TAG, TAG + "marker: " + jObj.toString());
+		
+		locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
+		locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
+		locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+		startActivity(locDetailsIntent);
+	}
+
+	/**
+	 * 
+	 * @param view
+	 */
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.ibmap:
 				if(lvSearchResults.getVisibility() == View.VISIBLE) {
 					lvSearchResults.setVisibility(View.INVISIBLE);
-					mvResultLocations.setVisibility(View.VISIBLE);
+					smfResultLocations.getView().setVisibility(View.VISIBLE);
 				} else if(lvSearchResults.getVisibility() == View.INVISIBLE) {
 					lvSearchResults.setVisibility(View.VISIBLE);
-					mvResultLocations.setVisibility(View.INVISIBLE);
+					smfResultLocations.getView().setVisibility(View.INVISIBLE);
 				}
 				break;
 			case R.id.ibaddlocation:
@@ -100,27 +122,33 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 		}
 	}
 	
+	/**
+	 * 
+	 * @throws JSONException
+	 */
 	private void init() throws JSONException {
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
 		tvSearchResultsTitle = (TextView) findViewById(R.id.tvsearchresultstitle);
 		lvSearchResults = (ListView) findViewById(R.id.lvsearchresults);
-		mvResultLocations = (MapView) findViewById(R.id.mvlocationsresult);
+		smfResultLocations = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragmap);
+		googleMap = smfResultLocations.getMap();
+		markerHashMap = new HashMap<Marker, JSONObject>();
 		
 		searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
 		location = getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION);
 		
 		getLocations();
 		
-		tvSearchResultsTitle.setText(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
-		mvResultLocations.setBuiltInZoomControls(true);		
+		tvSearchResultsTitle.setText(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));	
+		smfResultLocations.getView().setVisibility(View.INVISIBLE);
 		
 		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(SearchResultsScreen.this, R.layout.search_result_list_row, locations);
 		lvSearchResults.setAdapter(arrayAdapter);
 		lvSearchResults.setOnItemClickListener(SearchResultsScreen.this);
 		
-		addToMapView();
+		addToGoogleMap();
 		
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_HISTORY)) {
 			locationHistory = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
@@ -147,8 +175,8 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 	
 	/**
 	 * 
-	 * @param lati
-	 * @param longi
+	 * @param latitude
+	 * @param longitude
 	 * @return
 	 */
 	private String calcDist(double latitude, double longitude) {
@@ -156,14 +184,12 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 		resultLocation.setLatitude(latitude);
 		resultLocation.setLongitude(longitude);
 		
-		Log.d(TAG, TAG + "dist: " + location.distanceTo(resultLocation));
-		
 		return convertMetersToMiles(location.distanceTo(resultLocation));
 	}
 	
 	/**
 	 * 
-	 * @param distance
+	 * @param dist
 	 * @return
 	 */
 	private String convertMetersToMiles(double dist) {
@@ -172,28 +198,25 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 		return new DecimalFormat("#.##").format(dist) + MMAPIConstants.DEFAULT_SPACE;
 	}
 	
-	/**
-	 * 
-	 * @throws JSONException
-	 */
-	private void addToMapView() throws JSONException {
-		List<Overlay> mapOverlays = mvResultLocations.getOverlays();
-		MMLocationItemizedOverlay locationItemizedOverlay = new MMLocationItemizedOverlay(getResources().getDrawable(R.drawable.cat_icon_map_pin), SearchResultsScreen.this);
-		
+	private void addToGoogleMap() throws JSONException {		
 		for(int i = 0; i < searchResults.length(); i++) {
 			JSONObject jObj = searchResults.getJSONObject(i);
 			
-			GeoPoint geoPoint = new GeoPoint((int) (jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE) * 1E6), (int) (jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE) * 1E6));
-			OverlayItem overlayItem = new OverlayItem(geoPoint, jObj.getString(MMAPIConstants.JSON_KEY_NAME), "");
-			locationItemizedOverlay.addOverlay(overlayItem);
-			locationItemizedOverlay.addLocationResult(jObj);
+			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE));
+			
+			Marker locationResultMarker = googleMap.addMarker(new MarkerOptions().
+					position(resultLocLatLng).
+					title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
+					.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
+			
+			markerHashMap.put(locationResultMarker, jObj);
 		}
 		
-		mapOverlays.add(locationItemizedOverlay);
-		MapController mcLocationResults = mvResultLocations.getController();
-		GeoPoint geoPoint = new GeoPoint((int) (location.getLatitude() * 1E6), (int) (location.getLongitude() * 1E6));
-		mcLocationResults.animateTo(geoPoint);
-		mcLocationResults.setZoom(18);
+		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
+		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+		googleMap.setOnInfoWindowClickListener(SearchResultsScreen.this);
+		googleMap.setMyLocationEnabled(true);
 	}
 	
 	/**
@@ -203,7 +226,7 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 	 */
 	private void addToHistory(int position) throws JSONException {
 		JSONObject loc = searchResults.getJSONObject(position);
-		Log.d(TAG, TAG + "loc: " + loc);
+
 		if(!locationExistsInHistory(loc)) {
 			if(locationHistory.length() < 10) {
 				locationHistory.put(loc);
@@ -225,8 +248,6 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 	 * @throws JSONException
 	 */
 	private boolean locationExistsInHistory(JSONObject loc) throws JSONException {
-		Log.d(TAG, TAG + "history length: " + locationHistory.length());
-		
 		if(locationHistory.length() <= 0) {
 			return false;
 		}
@@ -240,4 +261,49 @@ public class SearchResultsScreen extends MapActivity implements AdapterView.OnIt
 		
 		return false;
 	}
+	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class CustomInfoWindowAdapter implements InfoWindowAdapter {
+        private final View mWindow;
+        private final View mContents;
+
+        public CustomInfoWindowAdapter() {
+            mWindow = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+            mContents = getLayoutInflater().inflate(R.layout.custom_info_contents, null);
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            render(marker, mWindow);
+            return mWindow;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            render(marker, mContents);
+            return mContents;
+        }
+
+        private void render(Marker marker, View view) {
+            String title = marker.getTitle();
+            TextView titleUi = ((TextView) view.findViewById(R.id.title));
+            if (title != null) {
+                titleUi.setText(title);
+            } else {
+                titleUi.setText(MMAPIConstants.DEFAULT_STRING);
+            }
+
+            String snippet = marker.getSnippet();
+            TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
+            if (snippet != null) {
+                snippetUi.setText(snippet);
+            } else {
+                snippetUi.setText(MMAPIConstants.DEFAULT_STRING);
+            }
+        }
+    }
 }

@@ -48,12 +48,10 @@
 			android:dividerHeight="1dp"
 			android:visibility="visible"/>
 		
-	   	<com.google.android.maps.MapView android:id="@+id/mvlocationsresult"
-	   	    android:layout_width="match_parent"
-	   	    android:layout_height="match_parent"
-	   	    android:clickable="true"
-	   	    android:apiKey="04DA-JlwAeMI9lznHkdAWPnHoyFRflsE1EsAUWA"
-	   	    android:visibility="invisible"/>
+		<fragment android:id="@+id/fragmap"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			class="com.google.android.gms.maps.SupportMapFragment"/>
 	
 	</FrameLayout>
 	

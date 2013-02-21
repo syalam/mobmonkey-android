@@ -61,6 +61,7 @@ public class SearchResultDetailsScreen extends Activity {
 						startActivity(dialerIntent);
 					} else if(position == 1) {
 						Intent mapIntent = new Intent(SearchResultDetailsScreen.this, SearchLocationResultMapScreen.class);
+						mapIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION));
 						mapIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
 						startActivity(mapIntent);
 					}
