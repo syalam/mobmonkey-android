@@ -29,6 +29,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -45,8 +47,11 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 	SharedPreferences userPrefs;
 	SharedPreferences.Editor userPrefsEditor;
 	JSONArray locationHistory;
+	int index;
 	
 	TextView tvSearchResultsTitle;
+	ImageButton ibmap;
+	Button btnAddLocClear;
 	ListView lvSearchResults;
 	SupportMapFragment smfResultLocations;
 	GoogleMap googleMap;
@@ -77,7 +82,7 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 		try {
 			Log.d(TAG, TAG + "onItemClick");
-			addToHistory(position);
+			addToHistory(searchResults.getJSONObject(position));
 			
 			locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
 			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
@@ -93,13 +98,17 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 	 */
 	@Override
 	public void onInfoWindowClick(Marker marker) {
-		JSONObject jObj = markerHashMap.get((Marker) marker);
-		Log.d(TAG, TAG + "marker: " + jObj.toString());
-		
-		locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
-		locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
-		locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
-		startActivity(locDetailsIntent);
+		try {
+			JSONObject jObj = markerHashMap.get((Marker) marker);
+			addToHistory(jObj);
+			
+			locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
+			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
+			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+			startActivity(locDetailsIntent);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -117,7 +126,7 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 					smfResultLocations.getView().setVisibility(View.INVISIBLE);
 				}
 				break;
-			case R.id.ibaddlocation:
+			case R.id.btnaddlocclear:
 				break;
 		}
 	}
@@ -131,10 +140,10 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		userPrefsEditor = userPrefs.edit();
 		
 		tvSearchResultsTitle = (TextView) findViewById(R.id.tvsearchresultstitle);
-		lvSearchResults = (ListView) findViewById(R.id.lvsearchresults);
+		ibmap = (ImageButton) findViewById(R.id.ibmap);
+		btnAddLocClear = (Button) findViewById(R.id.btnaddlocclear);
 		smfResultLocations = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragmap);
-		googleMap = smfResultLocations.getMap();
-		markerHashMap = new HashMap<Marker, JSONObject>();
+		lvSearchResults = (ListView) findViewById(R.id.lvsearchresults);
 		
 		searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
 		location = getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION);
@@ -142,18 +151,29 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		getLocations();
 		
 		tvSearchResultsTitle.setText(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));	
+		
+		if(getIntent().getBooleanExtra(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, true)) {
+			googleMap = smfResultLocations.getMap();
+			markerHashMap = new HashMap<Marker, JSONObject>();
+			addToGoogleMap();
+		} else {
+			ibmap.setVisibility(View.GONE);
+			btnAddLocClear.setBackgroundResource(R.drawable.orange_button_background);
+			btnAddLocClear.setText(R.string.btn_clear);
+		}
+		
 		smfResultLocations.getView().setVisibility(View.INVISIBLE);
 		
 		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(SearchResultsScreen.this, R.layout.search_result_list_row, locations);
 		lvSearchResults.setAdapter(arrayAdapter);
 		lvSearchResults.setOnItemClickListener(SearchResultsScreen.this);
 		
-		addToGoogleMap();
-		
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_HISTORY)) {
 			locationHistory = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
+			index = locationHistory.length();
 		} else {
 			locationHistory = new JSONArray();
+			index = 9;
 		}
 	}
 	
@@ -224,17 +244,18 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 	 * @param position
 	 * @throws JSONException
 	 */
-	private void addToHistory(int position) throws JSONException {
-		JSONObject loc = searchResults.getJSONObject(position);
+	private void addToHistory(JSONObject loc) throws JSONException {
+//		JSONObject loc = searchResults.getJSONObject(position);
 
 		if(!locationExistsInHistory(loc)) {
-			if(locationHistory.length() < 10) {
-				locationHistory.put(loc);
+			if(index < 0) {
+				locationHistory.put(index, loc);
+				index--;
 			} else {
-				for(int i = 0; i < 8; i++) {
-					locationHistory.put(i, locationHistory.get(i+1));
+				for(int i = 9; i > 0; i--) {
+					locationHistory.put(i, locationHistory.get(i-1));
 				}
-				locationHistory.put(9, loc);
+				locationHistory.put(0, loc);
 			}
 			userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
 			userPrefsEditor.commit();
@@ -253,7 +274,7 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		}
 		
 		for(int i = 0; i < locationHistory.length(); i++) {
-			if(locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME).equals(MMAPIConstants.JSON_KEY_NAME) &&
+			if(locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME).equals(loc.getString(MMAPIConstants.JSON_KEY_NAME)) &&
 					locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LATITUDE).equals(loc.getString(MMAPIConstants.JSON_KEY_LATITUDE)) &&
 					locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LONGITUDE).equals(loc.getString(MMAPIConstants.JSON_KEY_LONGITUDE))) {
 				return true;

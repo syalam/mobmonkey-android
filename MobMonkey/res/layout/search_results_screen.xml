@@ -20,17 +20,19 @@
 		<ImageButton android:id="@+id/ibmap"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:layout_toLeftOf="@+id/ibaddlocation"
+		    android:layout_toLeftOf="@+id/btnaddlocclear"
 		    android:layout_centerVertical="true"
 		    android:src="@android:drawable/ic_menu_mapmode"
 		    android:onClick="viewOnClick"/>
 		
-		<ImageButton android:id="@+id/ibaddlocation"
+		<Button android:id="@+id/btnaddlocclear"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_centerVertical="true"
 		    android:layout_alignParentRight="true"
-		    android:src="@drawable/icon_search"
+		    android:layout_marginRight="3dp"
+		    android:background="@drawable/icon_search"
+			android:textColor="@android:color/white"
 		    android:onClick="viewOnClick"/>
 		
 	</RelativeLayout>
@@ -38,6 +40,11 @@
 	<FrameLayout android:layout_width="match_parent"
 	    android:layout_height="match_parent">
 	
+   		<fragment android:id="@+id/fragmap"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			class="com.google.android.gms.maps.SupportMapFragment"/>
+	    
 		<ListView android:id="@+id/lvsearchresults"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
@@ -45,13 +52,7 @@
 		    android:scrollbars="none"
 		    android:background="@drawable/listview_border"
 			android:divider="@drawable/listview_divider"
-			android:dividerHeight="1dp"
-			android:visibility="visible"/>
-		
-		<fragment android:id="@+id/fragmap"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			class="com.google.android.gms.maps.SupportMapFragment"/>
+			android:dividerHeight="1dp"/>
 	
 	</FrameLayout>
 	

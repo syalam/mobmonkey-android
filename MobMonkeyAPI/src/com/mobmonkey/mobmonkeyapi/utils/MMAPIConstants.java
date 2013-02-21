@@ -40,6 +40,7 @@ public final class MMAPIConstants {
 	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
+	public static final String KEY_INTENT_EXTRA_DISPLAY_MAP = "Display map";
 	public static final String KEY_INTENT_EXTRA_LOCATION = "Location";
 	public static final String KEY_INTENT_EXTRA_LOCATION_DETAILS = "Location details";
 	
