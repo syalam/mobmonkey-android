@@ -148,6 +148,7 @@ public class SearchScreen extends Activity implements LocationListener {
 				startActivity(new Intent(SearchScreen.this, FilterScreen.class));
 				break;
 			case R.id.ibaddloc:
+				startActivity(new Intent(SearchScreen.this, AddLocationScreen.class));
 				break;
 		}
 	}

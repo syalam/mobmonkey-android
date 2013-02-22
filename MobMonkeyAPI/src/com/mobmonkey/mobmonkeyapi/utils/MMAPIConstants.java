@@ -30,6 +30,8 @@ public final class MMAPIConstants {
 	public static final int NUM_FEMALE = 0;
 	
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
+	
+	public static final int HISTORY_SIZE = 10;
 		
 	// SharePreferences Key
 	public static final String USER_PREFS = "User Preferences";
