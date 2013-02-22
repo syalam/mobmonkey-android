@@ -61,6 +61,9 @@
 	<!-- TwitterAuth Screen -->
 	<string name="pd_signing_up_twitter">Signing up via Twitter&#8230;</string>
 	
+	<!-- Main Screen -->
+	<string name="pd_loading_categories">Loading categories&#8230;</string>
+	
 	<!-- Trending Now Screen -->
 	<string name="title_trendingnow">What\'s Trending Now!</string>
 	
@@ -132,5 +135,16 @@
 	
 	<!-- Terms of use Screen -->
 	<string name="title_terms_of_use">Terms of use</string>
+	
+	<!-- Add Location Screen -->
+	<string name="et_location_name">Name</string>
+	<string name="et_location_categories">Categories</string>
+	<string name="et_location_street">Street</string>
+	<string name="et_location_city">City</string>
+	<string name="et_location_state">State</string>
+	<string name="et_location_zip">Zip</string>
+	<string name="et_location_phone">Phone Number (optional)</string>
+	<string name="btn_add_location">Add Location</string>
+	
 	
 </resources>
