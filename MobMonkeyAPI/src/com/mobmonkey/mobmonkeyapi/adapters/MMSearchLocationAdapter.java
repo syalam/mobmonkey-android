@@ -39,7 +39,7 @@ public final class MMSearchLocationAdapter {
 			JSONObject params = new JSONObject();
 			params.put(MMAPIConstants.KEY_LONGITUDE, longitude);
 			params.put(MMAPIConstants.KEY_LATITUDE, latitude);
-			params.put(MMAPIConstants.KEY_RADIUS_IN_YARDS, 1000);
+			params.put(MMAPIConstants.KEY_RADIUS_IN_YARDS, searchRadius);
 			params.put(MMAPIConstants.KEY_NAME, name);
 			
 			Log.d(TAG, TAG + "PARAMS: " + params);

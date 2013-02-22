@@ -100,6 +100,15 @@
 	<string name="pd_search_for">Searching for</string>
 	<string name="pd_ellipses">&#8230;</string>
 	
+	<!-- Filter Screen -->
+	<string name="tv_narrow_by_distance">Narrow by Distance</string>
+	<string name="rb_halfmile">1/2 mi</string>
+	<string name="rb_onemile">1 mi</string>
+	<string name="rb_fivemile">5 mi</string>
+	<string name="rb_tenmile">10 mi</string>
+	<string name="rb_twentymile">20 mi</string>
+	<string name="tv_narrow_by_live_video">Narrow by Live Video</string>
+	
 	<!-- SearchResults Screen -->
 	<string name="btn_clear">Clear</string>
 	<string name="miles">miles</string>

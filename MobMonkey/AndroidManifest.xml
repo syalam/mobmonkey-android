@@ -99,6 +99,11 @@
 		    
 		</activity>
 		
+		<activity android:name=".MakeRequestScreen"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
+		
 		<activity android:name=".BookmarksScreen"
 		    android:screenOrientation="portrait">
 		    

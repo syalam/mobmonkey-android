@@ -33,7 +33,7 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_marginRight="4dp"
-		    android:src="@drawable/icon_search"
+		    android:src="@android:drawable/ic_menu_add"
 			android:textColor="@android:color/white"
 		    android:onClick="viewOnClick"/>
 		
