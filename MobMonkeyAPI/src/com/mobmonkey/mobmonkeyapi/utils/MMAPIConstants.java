@@ -35,6 +35,7 @@ public final class MMAPIConstants {
 	public static final String USER_PREFS = "User Preferences";
 	public static final String SHARED_PREFS_KEY_HISTORY = "history";
 	public static final String SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES = "Top level categories";
+	public static final String SHARED_PREFS_KEY_SEARCH_RADIUS = "Search radius";
 	
 	// Intent extra key values
 	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
@@ -116,4 +117,11 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_POSTCODE = "postcode";
 	public static final String JSON_KEY_MONKEYS = "monkeys";
 	public static final String JSON_KEY_PHONENUMBER = "phoneNumber";
+	
+	// Search Radius (in yards)
+	public static final int SEARCH_RADIUS_HALF_MILE = 880;
+	public static final int SEARCH_RADIUS_ONE_MILE = 1760;
+	public static final int SEARCH_RADIUS_FIVE_MILE = 8800;
+	public static final int SEARCH_RADIUS_TEN_MILE = 17600;
+	public static final int SEARCH_RADIUS_TWENTY_MILE = 35200;
 }

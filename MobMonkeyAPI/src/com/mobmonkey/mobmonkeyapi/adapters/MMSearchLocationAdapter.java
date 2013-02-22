@@ -24,12 +24,13 @@ public final class MMSearchLocationAdapter {
 	 * @param mmCallback The {@link MMCallback} to handle the response from MobMonkey server after posting the search location url
 	 * @param longitude Longitude value of user's current location
 	 * @param latitude Latitude value of user's current location
+	 * @param searchRadius Search radius from user's current location
 	 * @param name The specific input text to be search
 	 * @param user The email of the user if signed in normally with email or the provider username if signed in through social networks
 	 * @param auth The password of the user if signed in normally with email or the provider OAuth token if signed in through social networks
 	 * @param partnerId MobMonkey unique partner id
 	 */
-	public static void searchLocationWithText(MMCallback mmCallback, String longitude, String latitude, String name, String user, String auth, String partnerId) {
+	public static void searchLocationWithText(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String user, String auth, String partnerId) {
 		searchLocationURL = MMAPIConstants.MOBMONKEY_URL + "search/location";
 		
 		Log.d(TAG, TAG + "searchLocationURL: " + searchLocationURL);
@@ -67,12 +68,13 @@ public final class MMSearchLocationAdapter {
 	 * @param mmCallback The {@link MMCallback} to handle the response from MobMonkey server after posting the search location url
 	 * @param longitude Longitude value of user's current location
 	 * @param latitude Latitude value of user's current location
+	 * @param searchRadius Search radius from user's current location
 	 * @param user The email of the user if signed in normally with email or the provider username if signed in through social networks
 	 * @param auth The password of the user if signed in normally with email or the provider OAuth token if signed in through social networks
 	 * @param partnerId MobMonkey unique partner id
 	 */
-	public static void searchAllNearby(MMCallback mmCallback, String longitude, String latitude, String user, String auth, String partnerId) {
+	public static void searchAllNearby(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String user, String auth, String partnerId) {
 		Log.d(TAG, TAG + "searchAllNearby");
-		searchLocationWithText(mmCallback, longitude, latitude, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
+		searchLocationWithText(mmCallback, longitude, latitude, searchRadius, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
 	}
 }

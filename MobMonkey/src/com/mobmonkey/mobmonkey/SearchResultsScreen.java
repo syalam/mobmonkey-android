@@ -47,7 +47,7 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 	SharedPreferences userPrefs;
 	SharedPreferences.Editor userPrefsEditor;
 	JSONArray locationHistory;
-	int index;
+//	int index;
 	
 	TextView tvSearchResultsTitle;
 	ImageButton ibmap;
@@ -145,7 +145,11 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		smfResultLocations = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragmap);
 		lvSearchResults = (ListView) findViewById(R.id.lvsearchresults);
 		
-		searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
+		if(!getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS).equals(MMAPIConstants.DEFAULT_STRING)) {
+			searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
+		} else {
+			searchResults = new JSONArray();
+		}
 		location = getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION);
 		
 		getLocations();
@@ -168,12 +172,11 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		lvSearchResults.setAdapter(arrayAdapter);
 		lvSearchResults.setOnItemClickListener(SearchResultsScreen.this);
 		
-		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_HISTORY)) {
-			locationHistory = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
-			index = locationHistory.length();
+		String history = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING);
+		if(!history.equals(MMAPIConstants.DEFAULT_STRING)) {
+				locationHistory = new JSONArray(history);
 		} else {
 			locationHistory = new JSONArray();
-			index = 9;
 		}
 	}
 	
@@ -248,14 +251,14 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 //		JSONObject loc = searchResults.getJSONObject(position);
 
 		if(!locationExistsInHistory(loc)) {
-			if(index < 0) {
-				locationHistory.put(index, loc);
-				index--;
+			if(locationHistory.length() < 10) {
+				locationHistory.put(loc);
 			} else {
-				for(int i = 9; i > 0; i--) {
-					locationHistory.put(i, locationHistory.get(i-1));
+				int index;
+				for(index = 0; index < 9; index++) {
+					locationHistory.put(index, locationHistory.get(index+1));
 				}
-				locationHistory.put(0, loc);
+				locationHistory.put(index, loc);
 			}
 			userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
 			userPrefsEditor.commit();

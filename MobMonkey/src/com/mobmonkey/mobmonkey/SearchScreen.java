@@ -142,6 +142,16 @@ public class SearchScreen extends Activity implements LocationListener {
 		
 	}
 	
+	public void viewOnClick(View view) {
+		switch(view.getId()) {
+			case R.id.btnfilter:
+				startActivity(new Intent(SearchScreen.this, FilterScreen.class));
+				break;
+			case R.id.ibaddloc:
+				break;
+		}
+	}
+	
 	/**
 	 * Prompt the user to enable GPS on their device
 	 */
@@ -203,7 +213,8 @@ public class SearchScreen extends Activity implements LocationListener {
 				if(actionId == EditorInfo.IME_ACTION_SEARCH) {
 					searchCategory = etSearch.getText().toString();
 					
-					MMSearchLocationAdapter.searchLocationWithText(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), searchCategory, 
+					MMSearchLocationAdapter.searchLocationWithText(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 
+							userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), searchCategory, 
 							userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
 					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + 
 							searchCategory + getString(R.string.pd_ellipses), true, false);
@@ -221,7 +232,8 @@ public class SearchScreen extends Activity implements LocationListener {
 				if(position == 0) {				
 					searchCategory = ((TextView) view.findViewById(R.id.tvcategory)).getText().toString();
 					
-					MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), userPrefs.getString(MMAPIConstants.KEY_USER, 
+					MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 
+							userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), userPrefs.getString(MMAPIConstants.KEY_USER, 
 							MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
 					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_all_nearby), true, false);
 				} else {

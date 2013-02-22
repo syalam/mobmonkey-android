@@ -68,6 +68,7 @@
 	<string name="title_inbox">Inbox</string>
 	
 	<!-- Search Screen -->
+	<string name="btn_filter">Filter</string>
 	<string name="title_search">Search</string>
 	
 	<string name="title_enable_gps">Enable GPS</string>

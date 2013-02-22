@@ -5,19 +5,39 @@
 	android:background="@color/backgroundcolor"
 	android:orientation="vertical" >
 	
-	<RelativeLayout android:layout_width="match_parent"
+	<LinearLayout android:layout_width="match_parent"
 		android:layout_height="50dp"
+		android:orientation="horizontal"
+		android:gravity="center_vertical"
 		android:background="@drawable/navigation_bar">
 		
-		<TextView android:layout_width="wrap_content"
+	    <Button android:id="@+id/btnfilter"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+		    android:layout_marginLeft="5dp"
+	        android:text="@string/btn_filter"
+	        android:textColor="@android:color/white"
+	        android:onClick="viewOnClick"/>
+	    
+		<TextView android:layout_width="0dip"
 			android:layout_height="wrap_content"
-			android:layout_centerInParent="true"
+			android:layout_gravity="center"
+			android:layout_weight="1"
+			android:gravity="center"
 			android:text="@string/title_search"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textColor="@android:color/white"
 			android:textStyle="bold"/>
 		
-	</RelativeLayout>
+		<ImageButton android:id="@+id/ibaddloc"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginRight="4dp"
+		    android:src="@drawable/icon_search"
+			android:textColor="@android:color/white"
+		    android:onClick="viewOnClick"/>
+		
+	</LinearLayout>
 		
 	<ScrollView android:layout_width="match_parent"
 		android:layout_height="match_parent">
