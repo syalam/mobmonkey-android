@@ -1,13 +1,10 @@
-/**
- * 
- */
 package com.mobmonkey.mobmonkey;
 
 import android.app.Activity;
 import android.os.Bundle;
 
 /**
- * @author Dezapp LLC.
+ * @author Dezapp, LLC
  *
  */
 public class AddLocationScreen extends Activity {

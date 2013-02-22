@@ -104,6 +104,10 @@ public final class MMAPIConstants {
 	public static final int REQUEST_CODE_SIGN_IN_TWITTER_AUTH = 1000;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER_AUTH = 1001;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2000;
+	public static final int REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION = 10000;
+	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_ALL_NEARBY = 10001;
+	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_TEXT = 10002;
+	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_CATEGORY = 10003;
 	
 	// Result code values
 	public static final int RESULT_CODE_SUCCESS = 200;

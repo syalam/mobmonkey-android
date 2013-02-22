@@ -3,7 +3,7 @@
 	<string name="app_name">MobMonkey</string>
 	<string name="menu_settings">Settings</string>
 	<string name="app_id_facebook">509890709049518</string>
-	<string name="app_google_api_key">AIzaSyCFU-ib8Zlva7HAgB1YGUIeBdq8wwAYVQQ</string>
+	<string name="app_google_api_key">AIzaSyB5Ppc5De5M7R2_U4RiCmOrHE07gcRhIZ4</string>
 	
 	<!-- SignIn Screen -->
 	<string name="toast_no_internet_access">You have no internet access at the moment, cannot start MobMonkey</string>
@@ -146,6 +146,7 @@
 	<string name="title_terms_of_use">Terms of use</string>
 	
 	<!-- Add Location Screen -->
+	<string name="tv_add_location">Add Location</string>
 	<string name="et_location_name">Name</string>
 	<string name="et_location_categories">Categories</string>
 	<string name="et_location_street">Street</string>

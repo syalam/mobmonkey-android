@@ -66,16 +66,11 @@ public class SearchScreen extends Activity implements LocationListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search_screen);
 		
-		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
-		
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			promptEnableGPS();
-	    }
-		
-		getCurrentLocation();
-		
-		init();
-		Log.d(TAG, TAG + "LOCATION: Longitude: " + longitudeValue + " Latitude: " + latitudeValue);
+		try {
+			init();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -95,12 +90,11 @@ public class SearchScreen extends Activity implements LocationListener {
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == 0) {
-			if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-				getCurrentLocation();
-			} else {
-				Toast.makeText(SearchScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
-			}
+		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			getCurrentLocation();
+			searchLocation(requestCode);
+		} else {
+			Toast.makeText(SearchScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
 		}
 		
 		super.onActivityResult(requestCode, resultCode, data);
@@ -148,15 +142,28 @@ public class SearchScreen extends Activity implements LocationListener {
 				startActivity(new Intent(SearchScreen.this, FilterScreen.class));
 				break;
 			case R.id.ibaddloc:
-				startActivity(new Intent(SearchScreen.this, AddLocationScreen.class));
+				checkForGPS(MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION);
 				break;
 		}
 	}
 	
 	/**
-	 * Prompt the user to enable GPS on their device
+	 * Check if GPS is enabled on user device
+	 * @param requestCode
 	 */
-	private void promptEnableGPS() {
+	private void checkForGPS(int requestCode) {
+		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			promptEnableGPS(requestCode);
+	    } else {
+	    	getCurrentLocation();
+	    	searchLocation(requestCode);	    	
+	    }
+	}
+	
+	/**
+	 * Prompt the user to enable GPS on the device
+	 */
+	private void promptEnableGPS(final int requestCode) {
 	    new AlertDialog.Builder(SearchScreen.this)
 	    	.setTitle(R.string.title_enable_gps)
 	    	.setMessage(R.string.message_enable_gps)
@@ -164,14 +171,14 @@ public class SearchScreen extends Activity implements LocationListener {
 	    	.setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int which) {
 		            // Launch settings, allowing user to make a change
-		            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+		            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), requestCode);
 		        }
 	    	})
 	    	.setNegativeButton(R.string.btn_no, new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int which) {
 		            // No location service, no Activity
 		        	Toast.makeText(SearchScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
-		            finish();
+//		            finish();
 		            // TODO: not close activity but return back to previous tab
 		        }
 	    	})
@@ -190,19 +197,19 @@ public class SearchScreen extends Activity implements LocationListener {
 			DecimalFormat twoDForm = new DecimalFormat("#.######");
 			latitudeValue = Double.valueOf(twoDForm.format(latitudeValue));
 			longitudeValue = Double.valueOf(twoDForm.format(longitudeValue));
+			Log.d(TAG, TAG + "lat: " + latitudeValue + " longitude: " + longitudeValue);
 		}
 	}
 	
 	/**
 	 * Initialize all the variables and set the appropriate listeners
+	 * @throws JSONException 
 	 */
-	private void init() {
+	private void init() throws JSONException {
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-		try {
-			topLevelCategories = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		topLevelCategories = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+		
+		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
 		
 		etSearch = (EditText) findViewById(R.id.etsearch);
 		ExpandedListView elvSearchNoCategory = (ExpandedListView) findViewById(R.id.elvsearchnocategory);
@@ -213,12 +220,7 @@ public class SearchScreen extends Activity implements LocationListener {
 				Log.d(TAG, TAG + "actionId: " + actionId);
 				if(actionId == EditorInfo.IME_ACTION_SEARCH) {
 					searchCategory = etSearch.getText().toString();
-					
-					MMSearchLocationAdapter.searchLocationWithText(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 
-							userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), searchCategory, 
-							userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
-					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + 
-							searchCategory + getString(R.string.pd_ellipses), true, false);
+					checkForGPS(MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_SEARCH_TEXT);
 				}
 				return true;
 			}
@@ -230,13 +232,10 @@ public class SearchScreen extends Activity implements LocationListener {
 		elvSearchNoCategory.setAdapter(arrayAdapter);
 		elvSearchNoCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+//				checkForGPS();
 				if(position == 0) {				
 					searchCategory = ((TextView) view.findViewById(R.id.tvcategory)).getText().toString();
-					
-					MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 
-							userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), userPrefs.getString(MMAPIConstants.KEY_USER, 
-							MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
-					progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_all_nearby), true, false);
+					checkForGPS(MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_SEARCH_ALL_NEARBY);
 				} else {
 					Intent searchResultsIntent = new Intent(SearchScreen.this, SearchResultsScreen.class);
 					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, false);
@@ -281,15 +280,48 @@ public class SearchScreen extends Activity implements LocationListener {
 		});
 	}
 	
-	private String[] getTopLevelCategories() {
+	private void searchLocation(int requestCode) {
+		switch(requestCode) {
+			case MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION:
+				startAddLocationMapScreen();
+				break;
+			case MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_SEARCH_ALL_NEARBY:
+				searchAllNearbyLocations();
+				break;
+			case MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_SEARCH_TEXT:
+				searchByText();
+				break;
+		}
+	}
+	
+	private void startAddLocationMapScreen() {
+		Intent addLocMapIntent = new Intent(SearchScreen.this, AddLocationMapScreen.class);
+		addLocMapIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
+		startActivity(addLocMapIntent);
+	}
+	
+	private void searchAllNearbyLocations() {
+		Log.d(TAG, TAG + "search radius: " + userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE));
+		
+		MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 
+				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), userPrefs.getString(MMAPIConstants.KEY_USER, 
+				MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
+		progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_all_nearby), true, false);
+	}
+	
+	private void searchByText() {
+		MMSearchLocationAdapter.searchLocationWithText(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 
+				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), searchCategory, 
+				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
+		progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + 
+				searchCategory + getString(R.string.pd_ellipses), true, false);
+	}
+	
+	private String[] getTopLevelCategories() throws JSONException {
 		String[] topLevelCats = new String[topLevelCategories.length()];
 		
-		try {
-			for(int i = 0; i < topLevelCategories.length(); i++) {
-				topLevelCats[i] = topLevelCategories.getJSONObject(i).getString(Locale.getDefault().getLanguage());
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+		for(int i = 0; i < topLevelCategories.length(); i++) {
+			topLevelCats[i] = topLevelCategories.getJSONObject(i).getString(Locale.getDefault().getLanguage());
 		}
 		
 		return topLevelCats;
