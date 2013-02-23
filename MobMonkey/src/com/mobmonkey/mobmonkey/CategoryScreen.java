@@ -50,6 +50,7 @@ public class CategoryScreen extends Activity implements LocationListener {
 	JSONArray categoriesArray;
 	
 	String searchCategory;
+	String categoryId;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -106,6 +107,7 @@ public class CategoryScreen extends Activity implements LocationListener {
 							userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 							MMConstants.PARTNER_ID);
 					searchCategory = category.getString("en");
+					categoryId = category.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
 				} 
 				catch (JSONException e) 
 				{
@@ -158,7 +160,7 @@ public class CategoryScreen extends Activity implements LocationListener {
 				
 					if(subCategories.isNull(0))
 					{
-						MMSearchLocationAdapter.searchLocationWithText(new SearchResultsCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), searchCategory, 
+						MMSearchLocationAdapter.searchLocationWithText(new SearchResultsCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 1000, "", 
 								userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
 					}
 					else

@@ -6,6 +6,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +31,8 @@ public class MainScreen extends TabActivity {
 	
 	TabWidget tabWidget;
 	TabHost tabHost;
+	
+	ProgressDialog progressDialog;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -59,6 +62,7 @@ public class MainScreen extends TabActivity {
 					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 					MMConstants.PARTNER_ID);
+			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading_categories), true, false);
 		}
 	}
 	
@@ -101,6 +105,10 @@ public class MainScreen extends TabActivity {
 	private class MainCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
+			if(progressDialog != null) {
+				progressDialog.dismiss();
+			}
+			
 			if(obj != null) {
 				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES, (String) obj);
 				userPrefsEditor.commit();

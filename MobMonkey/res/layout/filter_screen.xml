@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   	android:background="@color/backgroundcolor"
+    android:orientation="vertical">
+    
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="50dip"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:text="@string/btn_filter"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textColor="@android:color/white"
+		android:textStyle="bold"
+		android:background="@drawable/navigation_bar"/>
+    
+	<TextView android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Narrow by Distance"
+	    android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:textStyle="bold"
+	    android:padding="10dp"/>
+
+	<RadioGroup android:id="@+id/rgdist"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:checkedButton="@+id/rbhalfmile"
+	    android:orientation="horizontal"
+	    android:padding="10dp">
+	    
+    	<RadioButton android:id="@+id/rbhalfmile"
+    	    android:minWidth="40dp"
+    	    android:minHeight="40dp"
+   	    	android:layout_weight="1"
+    	    android:button="@null"
+    	    android:gravity="center"
+    	    android:text="@string/rb_halfmile"
+    	    android:textAppearance="?android:attr/textAppearanceSmall"
+    	    android:textColor="@color/radio_colors"
+    	    android:background="@drawable/segment_radio_left"/>
+	    
+    	<RadioButton android:id="@+id/rbonemile"
+			android:minWidth="40dp"
+			android:minHeight="40dp"
+			android:layout_weight="1"
+			android:button="@null"
+			android:gravity="center"
+			android:text="@string/rb_onemile"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/radio_colors"
+			android:background="@drawable/segment_radio_middle"/>
+    	
+    	<RadioButton android:id="@+id/rbfivemile"
+			android:minWidth="40dp"
+			android:minHeight="40dp"
+			android:layout_weight="1"
+			android:button="@null"
+			android:gravity="center"
+			android:text="@string/rb_fivemile"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/radio_colors"
+			android:background="@drawable/segment_radio_middle"/>
+    	
+    	<RadioButton android:id="@+id/rbtenmile"
+			android:minWidth="40dp"
+			android:minHeight="40dp"
+			android:layout_weight="1"
+			android:button="@null"
+			android:gravity="center"
+			android:text="@string/rb_tenmile"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/radio_colors"
+			android:background="@drawable/segment_radio_middle"/>
+    	
+		<RadioButton android:id="@+id/rbtwentymile"
+			android:minWidth="40dp"
+			android:minHeight="40dp"
+			android:layout_weight="1"
+			android:button="@null"
+			android:gravity="center"
+			android:text="@string/rb_twentymile"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/radio_colors"
+			android:background="@drawable/segment_radio_right"/>
+    	
+	</RadioGroup>
+	
+	<LinearLayout android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal">
+	    
+		<TextView android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:text="@string/tv_narrow_by_live_video"
+		    android:textAppearance="?android:attr/textAppearanceMedium"
+		    android:textStyle="bold"
+		    android:padding="10dp"/>
+		
+		<ToggleButton android:id="@+id/tbnarrowbylivevideo"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center|right"
+		    android:layout_marginRight="10dp"/>	    
+	</LinearLayout>
+	
+</LinearLayout>

@@ -1,6 +1,7 @@
 package com.mobmonkey.mobmonkey;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -47,7 +48,6 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 	SharedPreferences userPrefs;
 	SharedPreferences.Editor userPrefsEditor;
 	JSONArray locationHistory;
-	int index;
 	
 	TextView tvSearchResultsTitle;
 	ImageButton ibmap;
@@ -145,7 +145,11 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		smfResultLocations = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragmap);
 		lvSearchResults = (ListView) findViewById(R.id.lvsearchresults);
 		
-		searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
+		if(!getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS).equals(MMAPIConstants.DEFAULT_STRING)) {
+			searchResults = new JSONArray(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
+		} else {
+			searchResults = new JSONArray();
+		}
 		location = getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION);
 		
 		getLocations();
@@ -168,12 +172,11 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		lvSearchResults.setAdapter(arrayAdapter);
 		lvSearchResults.setOnItemClickListener(SearchResultsScreen.this);
 		
-		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_HISTORY)) {
-			locationHistory = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
-			index = locationHistory.length();
+		String history = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING);
+		if(!history.equals(MMAPIConstants.DEFAULT_STRING)) {
+				locationHistory = new JSONArray(history);
 		} else {
 			locationHistory = new JSONArray();
-			index = 9;
 		}
 	}
 	
@@ -248,18 +251,25 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 //		JSONObject loc = searchResults.getJSONObject(position);
 
 		if(!locationExistsInHistory(loc)) {
-			if(index < 0) {
-				locationHistory.put(index, loc);
-				index--;
+			if(locationHistory.length() < MMAPIConstants.HISTORY_SIZE) {
+				ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
+				//Convert to ArrayList so that you can add last item view to front of array
+				for (int i=0; i<locationHistory.length(); i++)
+					temp.add(locationHistory.getJSONObject(i));
+				temp.add(0, loc);
+				locationHistory = new JSONArray(temp);
 			} else {
-				for(int i = 9; i > 0; i--) {
-					locationHistory.put(i, locationHistory.get(i-1));
-				}
-				locationHistory.put(0, loc);
+				ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
+				//Convert to ArrayList so that you can add last item view to front of array
+				for (int i=0; i<locationHistory.length(); i++)
+					temp.add(locationHistory.getJSONObject(i));
+				temp.add(0, loc);
+				temp.remove(MMAPIConstants.HISTORY_SIZE);
+				locationHistory = new JSONArray(temp);
 			}
-			userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
-			userPrefsEditor.commit();
 		}
+		userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
+		userPrefsEditor.commit();
 	}
 	
 	/**
@@ -277,6 +287,13 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 			if(locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME).equals(loc.getString(MMAPIConstants.JSON_KEY_NAME)) &&
 					locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LATITUDE).equals(loc.getString(MMAPIConstants.JSON_KEY_LATITUDE)) &&
 					locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LONGITUDE).equals(loc.getString(MMAPIConstants.JSON_KEY_LONGITUDE))) {
+				ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
+				//Convert to ArrayList so that you can add last item view to front of array
+				for (int j=0; j<locationHistory.length(); j++)
+					temp.add(locationHistory.getJSONObject(j));
+				JSONObject tempObj = temp.remove(i);
+				temp.add(0, tempObj);
+				locationHistory = new JSONArray(temp);
 				return true;
 			}
 		}

@@ -24,6 +24,8 @@ import android.widget.TextView;
 public class SearchResultDetailsScreen extends Activity {
 	JSONObject jObj;
 	
+	TextView tvBookmark;
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -36,7 +38,7 @@ public class SearchResultDetailsScreen extends Activity {
 		TextView tvLocName = (TextView) findViewById(R.id.tvlocname);
 		TextView tvMembersFound = (TextView) findViewById(R.id.tvmembersfound);
 		ExpandedListView elvLocDetails = (ExpandedListView) findViewById(R.id.elvlocdetails);
-		TextView tvBookmark = (TextView) findViewById(R.id.tvbookmark);
+		tvBookmark = (TextView) findViewById(R.id.tvbookmark);
 		
 		try {
 			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
@@ -72,4 +74,22 @@ public class SearchResultDetailsScreen extends Activity {
 		}
 	}
 
+	public void viewOnClick(View view) {
+		switch(view.getId()) {
+			case R.id.llmakerequest:
+				startActivity(new Intent(SearchResultDetailsScreen.this, MakeRequestScreen.class));
+				break;
+			case R.id.llbookmark:
+				bookmarkClicked();
+				break;
+		}
+	}
+	
+	private void bookmarkClicked() {
+		if(tvBookmark.getText().toString().equals(getString(R.string.tv_bookmark))) {
+			tvBookmark.setText(R.string.tv_remove_bookmark);
+		} else if(tvBookmark.getText().toString().equals(getString(R.string.tv_remove_bookmark))) {
+			tvBookmark.setText(R.string.tv_bookmark);
+		}
+	}
 }

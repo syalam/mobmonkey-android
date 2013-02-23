@@ -1,7 +1,6 @@
 package com.mobmonkey.mobmonkeyapi.adapters;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;

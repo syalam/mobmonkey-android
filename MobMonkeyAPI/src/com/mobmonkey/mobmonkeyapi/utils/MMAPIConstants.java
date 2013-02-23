@@ -30,12 +30,16 @@ public final class MMAPIConstants {
 	public static final int NUM_FEMALE = 0;
 	
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
+	
+	public static final int HISTORY_SIZE = 10;
 		
 	// SharePreferences Key
 	public static final String USER_PREFS = "User Preferences";
 	public static final String SHARED_PREFS_KEY_HISTORY = "history";
 	public static final String SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES = "Top level categories";
 	public static final String SHARED_PREFS_KEY_ALL_CATEGORIES = "All categories";
+	public static final String SHARED_PREFS_KEY_SEARCH_RADIUS = "Search radius";
+	public static final String SHARED_PREFS_KEY_NARROW_BY_LIVE_VIDEO = "Narrow by live video";
 	
 	// Intent extra key values
 	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
@@ -101,6 +105,10 @@ public final class MMAPIConstants {
 	public static final int REQUEST_CODE_SIGN_IN_TWITTER_AUTH = 1000;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER_AUTH = 1001;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2000;
+	public static final int REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION = 10000;
+	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_ALL_NEARBY = 10001;
+	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_TEXT = 10002;
+	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_CATEGORY = 10003;
 	
 	// Result code values
 	public static final int RESULT_CODE_SUCCESS = 200;
@@ -118,4 +126,11 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_POSTCODE = "postcode";
 	public static final String JSON_KEY_MONKEYS = "monkeys";
 	public static final String JSON_KEY_PHONENUMBER = "phoneNumber";
+	
+	// Search Radius (in yards)
+	public static final int SEARCH_RADIUS_HALF_MILE = 880;
+	public static final int SEARCH_RADIUS_ONE_MILE = 1760;
+	public static final int SEARCH_RADIUS_FIVE_MILE = 8800;
+	public static final int SEARCH_RADIUS_TEN_MILE = 17600;
+	public static final int SEARCH_RADIUS_TWENTY_MILE = 35200;
 }
