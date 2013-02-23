@@ -37,6 +37,7 @@ public final class MMAPIConstants {
 	public static final String USER_PREFS = "User Preferences";
 	public static final String SHARED_PREFS_KEY_HISTORY = "history";
 	public static final String SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES = "Top level categories";
+	public static final String SHARED_PREFS_KEY_ALL_CATEGORIES = "All categories";
 	public static final String SHARED_PREFS_KEY_SEARCH_RADIUS = "Search radius";
 	public static final String SHARED_PREFS_KEY_NARROW_BY_LIVE_VIDEO = "Narrow by live video";
 	
@@ -115,6 +116,7 @@ public final class MMAPIConstants {
 	
 	// JSON key values
 	public static final String JSON_KEY_NAME = "name";
+	public static final String JSON_KEY_CATEGORY_ID = "categoryId";
 	public static final String JSON_KEY_DISTANCE = "distance";
 	public static final String JSON_KEY_LATITUDE = "latitude";
 	public static final String JSON_KEY_LONGITUDE = "longitude";

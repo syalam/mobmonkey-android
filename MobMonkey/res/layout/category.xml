@@ -1,13 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/lvsubcategory"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:layout_margin="10dp"
-	android:cacheColorHint="@android:color/transparent"
-	android:scrollbars="none"
-	android:background="@drawable/listview_border"
-	android:divider="@drawable/listview_divider"
-	android:dividerHeight="1dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/backgroundcolor"
+	android:orientation="vertical">
+	
+    <RelativeLayout android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:background="@drawable/navigation_bar">
+		
+		<TextView
+		    android:id="@+id/navtitle"
+		    android:editable="true"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerInParent="true"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
+		    android:textColor="@android:color/white"
+		    android:textStyle="bold" />
+		
+	</RelativeLayout>
+    
+    <LinearLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+		
+        <FrameLayout android:layout_width="match_parent"
+			    android:layout_height="wrap_content">
+			    
+				<EditText android:id="@+id/etsearch"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/et_search_hint"
+					android:imeOptions="actionSearch"
+					android:inputType="text"
+					android:paddingLeft="50dp"/>
+				
+			    <ImageView android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:background="@drawable/icon_search"
+			        android:layout_marginLeft="10dp"
+			        android:layout_gravity="left|center"/>
+				
+		</FrameLayout>
+			
+		<ListView
+		    xmlns:android="http://schemas.android.com/apk/res/android"
+		    android:id="@+id/lvsubcategory"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:layout_margin="10dp"
+		    android:background="@drawable/listview_border"
+		    android:cacheColorHint="@android:color/transparent"
+		    android:divider="@drawable/listview_divider"
+		    android:dividerHeight="1dp"
+		    android:scrollbars="none">
+		</ListView>
+		
+	</LinearLayout>
+	
 
-</ListView>
+</LinearLayout>
+
