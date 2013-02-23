@@ -6,7 +6,7 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.mobmonkey.mobmonkey.utils.ExpandedListView;
+import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -55,6 +55,9 @@ public class SearchScreen extends Activity implements LocationListener {
 	
 	ProgressDialog progressDialog;
 	EditText etSearch;
+	
+	int[] categoryIcons;
+	int[] categoryIndicatorIcons;
 	
 	String searchCategory;
 	
@@ -212,8 +215,8 @@ public class SearchScreen extends Activity implements LocationListener {
 		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
 		
 		etSearch = (EditText) findViewById(R.id.etsearch);
-		ExpandedListView elvSearchNoCategory = (ExpandedListView) findViewById(R.id.elvsearchnocategory);
-		ExpandedListView elvSearchCategory = (ExpandedListView) findViewById(R.id.elvsearchcategory);
+		MMExpandedListView elvSearchNoCategory = (MMExpandedListView) findViewById(R.id.elvsearchnocategory);
+		MMExpandedListView elvSearchCategory = (MMExpandedListView) findViewById(R.id.elvsearchcategory);
 		
 		etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -226,38 +229,28 @@ public class SearchScreen extends Activity implements LocationListener {
 			}
 		});
 		
-		int[] categoryIcons = new int[]{R.drawable.cat_icon_show_all_nearby, 
-										R.drawable.cat_icon_history};
-		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getResources().getStringArray(R.array.search_nocategory), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
+		getSearchNoCategoryIcons();
+		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, categoryIcons, getResources().getStringArray(R.array.search_nocategory), categoryIndicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
 		elvSearchNoCategory.setAdapter(arrayAdapter);
 		elvSearchNoCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 //				checkForGPS();
 				if(position == 0) {				
-					searchCategory = ((TextView) view.findViewById(R.id.tvcategory)).getText().toString();
+					searchCategory = ((TextView) view.findViewById(R.id.tvlabel)).getText().toString();
 					checkForGPS(MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_SEARCH_ALL_NEARBY);
 				} else {
 					Intent searchResultsIntent = new Intent(SearchScreen.this, SearchResultsScreen.class);
 					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, false);
 					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
-					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, ((TextView) view.findViewById(R.id.tvcategory)).getText().toString());
+					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, ((TextView) view.findViewById(R.id.tvlabel)).getText().toString());
 					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
 					startActivity(searchResultsIntent);
 				}
 			}
 		});
 		
-		categoryIcons = new int[]{R.drawable.cat_icon_automotive, 
-								  R.drawable.cat_icon_travel, 
-								  R.drawable.cat_icon_sports, 
-								  R.drawable.cat_icon_healthcare, 
-								  R.drawable.cat_icon_landmarks, 
-								  R.drawable.cat_icon_social, 
-								  R.drawable.cat_icon_community_government, 
-								  R.drawable.cat_icon_retail, 
-								  R.drawable.cat_icon_services_supplies, 
-								  R.drawable.cat_icon_transportation};
-		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.expanded_listview_row, categoryIcons, getTopLevelCategories(), android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
+		getSearchCategoryIcons();
+		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, categoryIcons, getTopLevelCategories(), categoryIndicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
 		elvSearchCategory.setAdapter(arrayAdapter);
 		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
@@ -325,6 +318,38 @@ public class SearchScreen extends Activity implements LocationListener {
 		}
 		
 		return topLevelCats;
+	}
+	
+	private void getSearchNoCategoryIcons() {
+		categoryIcons = new int[]{R.drawable.cat_icon_show_all_nearby, R.drawable.cat_icon_history};
+		categoryIndicatorIcons = new int[]{R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator};				
+	}
+	
+	private void getSearchCategoryIcons() {
+		categoryIcons = new int[] {
+			R.drawable.cat_icon_automotive, 
+			R.drawable.cat_icon_travel, 
+			R.drawable.cat_icon_sports, 
+			R.drawable.cat_icon_healthcare, 
+			R.drawable.cat_icon_landmarks, 
+			R.drawable.cat_icon_social, 
+			R.drawable.cat_icon_community_government, 
+			R.drawable.cat_icon_retail, 
+			R.drawable.cat_icon_services_supplies, 
+			R.drawable.cat_icon_transportation
+		};
+		categoryIndicatorIcons = new int[] {
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator
+		};
 	}
 	
     /**

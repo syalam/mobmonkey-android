@@ -117,7 +117,7 @@
 	<string name="miles">miles</string>
 	
 	<!-- SearchResultLocationDetails Screen -->
-	<string name="tv_make_request">Make Request</string>
+	<string name="tv_make_request">Make a Request</string>
 	<string name="tv_members_found">members found</string>
 	<string name="tv_add_notifications">Add Notifications</string>
 	<string name="tv_bookmark">Bookmark</string>
@@ -156,5 +156,17 @@
 	<string name="et_location_phone">Phone Number (optional)</string>
 	<string name="btn_add_location">Add Location</string>
 	
+	<!-- Make a Request Screen -->
+	<string name="tv_add_message">Add Message</string>
+	<string name="tv_schedule_request">Schedule Request</string>
+	<string name="tv_stay_active_for">Stay Active For</string>
 	
+	<string name="rb_fifteenmin">15m</string>
+	<string name="rb_thirtymin">30m</string>
+	<string name="rb_onehour">1h</string>
+	<string name="rb_threehour">3h</string>
+	
+	<string name="btn_send_video_request">Send Video Request</string>
+	<string name="btn_send_photo_request">Send Photo Request</string>
+	<string name="btn_send_text_request">Send Text Request</string>
 </resources>

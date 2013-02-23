@@ -15,12 +15,12 @@ import android.widget.TextView;
  * @author Dezapp, LLC
  *
  */
-public class ExpandedListView extends ListView {
+public class MMExpandedListView extends ListView {
     private static final String TAG = "ExpandedListView: ";
     private ViewGroup.LayoutParams params;
     private int old_count = 0;
 	
-	public ExpandedListView(Context context, AttributeSet attrs) {
+	public MMExpandedListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
@@ -42,7 +42,7 @@ public class ExpandedListView extends ListView {
 	                for(int i = 0; i < adapter.getCount(); i++) {
 	                        View view = adapter.getView(i, null, this);
 	                        view.measure(desiredWidth, MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.UNSPECIFIED));
-	                        TextView textView = (TextView) view.findViewById(R.id.tvcategory);
+	                        TextView textView = (TextView) view.findViewById(R.id.tvlabel);
 	                        textView.measure(desiredWidth, MeasureSpec.UNSPECIFIED);
 	                        height += view.getMeasuredHeight();
 	                }
