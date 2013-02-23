@@ -105,7 +105,7 @@ public class MainScreen extends TabActivity {
 				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES, (String) obj);
 				userPrefsEditor.commit();
 			}
-			Log.d(TAG, TAG + "response: " + (String) obj);
+			Log.d(TAG, TAG + "Categories response: " + (String) obj);
 		}
 	}
 }

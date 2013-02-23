@@ -57,6 +57,7 @@ public class SearchScreen extends Activity implements LocationListener {
 	EditText etSearch;
 	
 	String searchCategory;
+	String selectedCategory;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -251,19 +252,18 @@ public class SearchScreen extends Activity implements LocationListener {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 				try {
 					Log.d(TAG, TAG + "category id: " + topLevelCategories.getJSONObject(position).getString("categoryId"));
+					
+					selectedCategory = ((TextView) view.findViewById(R.id.tvcategory)).getText().toString();
 					MMCategoryAdapter.getCategories(new SearchCategoryCallback(), 
-							topLevelCategories.getJSONObject(position).getString("categoryId"), 
+							topLevelCategories.getJSONObject(position).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID), 
 							userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 							userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 							MMConstants.PARTNER_ID);
+					
+					
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				// MMCategory.getSubCategories(mmcallback, user, auth, categoryid, partnerId);
-				
-//				Intent subCategoriesIntent = new Intent(SearchScreen.this, SubCategoryScreen.class);
-//				subCategoriesIntent.putExtra("category_id", );
-//				startActivity(subCategoriesIntent);
 			}
 		});
 	}
@@ -303,7 +303,6 @@ public class SearchScreen extends Activity implements LocationListener {
 				searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, (String) obj);
 				startActivity(searchResultsIntent);
 			}
-			
 			Log.d(TAG, TAG + "response: " + (String) obj);
 		}
 	}
@@ -320,10 +319,9 @@ public class SearchScreen extends Activity implements LocationListener {
 			} else {
 				Intent categoryScreenIntent = new Intent(SearchScreen.this, CategoryScreen.class);
 				categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, (String) obj);
-				
-			}
-			
-			Log.d(TAG, TAG + "response: " + (String) obj);
+				categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
+				startActivity(categoryScreenIntent);
+			}			
 		}
 	}
 }
