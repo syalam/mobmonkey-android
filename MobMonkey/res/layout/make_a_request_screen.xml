@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+	
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="50dip"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:text="@string/tv_make_request"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textColor="@android:color/white"
+		android:textStyle="bold"
+		android:background="@drawable/navigation_bar"/>
+	
+	<ScrollView android:layout_width="match_parent"
+	    android:layout_height="match_parent">
+	    
+	    <LinearLayout android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical">
+					
+	        	<com.mobmonkey.mobmonkey.utils.MMSegmentedRadioGroup android:id="@+id/rgrequests"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_margin="10dip"
+					android:orientation="horizontal"
+					android:checkedButton="@+id/rbvideorequest">
+					
+					<com.mobmonkey.mobmonkey.utils.MMCenteredRadioImageButton
+						android:id="@id/rbvideorequest"
+						android:minWidth="40dip"
+						android:minHeight="60dip"
+						android:layout_weight="1"
+						android:button="@android:drawable/ic_menu_camera"/>
+					
+					<com.mobmonkey.mobmonkey.utils.MMCenteredRadioImageButton
+						android:id="@+id/rbphotorequest"
+						android:minWidth="40dip"
+						android:minHeight="60dip"
+						android:layout_weight="1"
+						android:button="@android:drawable/ic_menu_gallery"/>
+					
+					<com.mobmonkey.mobmonkey.utils.MMCenteredRadioImageButton
+						android:id="@+id/rbtextrequest"
+						android:minWidth="40dip"
+						android:minHeight="60dip"
+						android:layout_weight="1"
+						android:button="@android:drawable/ic_menu_send"/>
+			
+				</com.mobmonkey.mobmonkey.utils.MMSegmentedRadioGroup>
+				
+				<com.mobmonkey.mobmonkey.utils.MMExpandedListView android:id="@+id/mmelvaddmessage"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_margin="10dp"
+					android:cacheColorHint="@android:color/transparent"
+					android:scrollbars="none"
+					android:background="@drawable/listview_border"
+					android:divider="@drawable/listview_divider"
+					android:dividerHeight="1dp"/>
+				
+				<com.mobmonkey.mobmonkey.utils.MMExpandedListView android:id="@+id/mmelvschedulerequest"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_margin="10dp"
+					android:cacheColorHint="@android:color/transparent"
+					android:scrollbars="none"
+					android:background="@drawable/listview_border"
+					android:divider="@drawable/listview_divider"
+					android:dividerHeight="1dp"/>
+				
+				<TextView android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_margin="10dp"
+				    android:text="@string/tv_stay_active_for"/>
+				
+				<RadioGroup android:id="@+id/rgstayactivefor"
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:checkedButton="@+id/rbfifteenmin"
+				    android:orientation="horizontal"
+				    android:padding="10dp">
+				    
+			    	<RadioButton android:id="@+id/rbfifteenmin"
+			    	    android:minWidth="40dp"
+			    	    android:minHeight="40dp"
+			   	    	android:layout_weight="1"
+			    	    android:button="@null"
+			    	    android:gravity="center"
+			    	    android:text="@string/rb_fifteenmin"
+			    	    android:textAppearance="?android:attr/textAppearanceSmall"
+			    	    android:textColor="@color/radio_colors"
+			    	    android:background="@drawable/segment_radio_left"/>
+				    
+			    	<RadioButton android:id="@+id/rbthirtymin"
+						android:minWidth="40dp"
+						android:minHeight="40dp"
+						android:layout_weight="1"
+						android:button="@null"
+						android:gravity="center"
+						android:text="@string/rb_thirtymin"
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textColor="@color/radio_colors"
+						android:background="@drawable/segment_radio_middle"/>
+			    	
+			    	<RadioButton android:id="@+id/rbonehour"
+						android:minWidth="40dp"
+						android:minHeight="40dp"
+						android:layout_weight="1"
+						android:button="@null"
+						android:gravity="center"
+						android:text="@string/rb_onehour"
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textColor="@color/radio_colors"
+						android:background="@drawable/segment_radio_middle"/>
+			    	
+					<RadioButton android:id="@+id/rbthreehour"
+						android:minWidth="40dp"
+						android:minHeight="40dp"
+						android:layout_weight="1"
+						android:button="@null"
+						android:gravity="center"
+						android:text="@string/rb_threehour"
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textColor="@color/radio_colors"
+						android:background="@drawable/segment_radio_right"/>
+			    	
+				</RadioGroup>
+				
+				<Button android:id="@+id/btnsentrequest"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_margin="10dp"
+					android:padding="20dp"
+					android:background="@drawable/orange_button_background"
+					android:text="@string/btn_send_video_request"
+					android:textAppearance="@android:style/TextAppearance.Medium"
+					android:textStyle="bold"
+					android:textColor="@android:color/white"/>
+	        
+	    </LinearLayout>
+	    
+	</ScrollView>
+	
+</LinearLayout>

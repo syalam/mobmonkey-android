@@ -54,7 +54,7 @@ public class CategoryScreen extends Activity implements LocationListener {
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.category);
+		setContentView(R.layout.category_screen);
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		lvSubCategories = (ListView) findViewById(R.id.lvsubcategory);
 		tvNavigationBarText = (TextView) findViewById(R.id.navtitle);

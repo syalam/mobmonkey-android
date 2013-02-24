@@ -169,16 +169,16 @@ public class SearchScreen extends Activity implements LocationListener {
 	 */
 	private void promptEnableGPS(final int requestCode) {
 	    new AlertDialog.Builder(SearchScreen.this)
-	    	.setTitle(R.string.title_enable_gps)
-	    	.setMessage(R.string.message_enable_gps)
+	    	.setTitle(R.string.ad_title_enable_gps)
+	    	.setMessage(R.string.ad_message_enable_gps)
 	    	.setCancelable(false)
-	    	.setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener() {
+	    	.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int which) {
 		            // Launch settings, allowing user to make a change
 		            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), requestCode);
 		        }
 	    	})
-	    	.setNegativeButton(R.string.btn_no, new DialogInterface.OnClickListener() {
+	    	.setNegativeButton(R.string.ad_btn_no, new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int which) {
 		            // No location service, no Activity
 		        	Toast.makeText(SearchScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
@@ -231,41 +231,37 @@ public class SearchScreen extends Activity implements LocationListener {
 		});
 		
 		getSearchNoCategoryIcons();
-		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, categoryIcons, getResources().getStringArray(R.array.search_nocategory), categoryIndicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
+		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, 
+				categoryIcons, getResources().getStringArray(R.array.lv_search_nocategory), categoryIndicatorIcons, 
+				android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
 		elvSearchNoCategory.setAdapter(arrayAdapter);
 		elvSearchNoCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-//				checkForGPS();
+				searchCategory = ((TextView) view.findViewById(R.id.tvlabel)).getText().toString();
 				if(position == 0) {				
-					searchCategory = ((TextView) view.findViewById(R.id.tvlabel)).getText().toString();
 					checkForGPS(MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_SEARCH_ALL_NEARBY);
-				} else {
-					Intent searchResultsIntent = new Intent(SearchScreen.this, SearchResultsScreen.class);
-					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, false);
-					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
-					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, ((TextView) view.findViewById(R.id.tvlabel)).getText().toString());
-					searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
-					startActivity(searchResultsIntent);
+				} else if(position == 1) {
+					checkForGPS(MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_HISTORY);
 				}
 			}
 		});
 		
 		getSearchCategoryIcons();
-		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, categoryIcons, getTopLevelCategories(), categoryIndicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD);
+		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, categoryIcons, 
+				getTopLevelCategories(), categoryIndicatorIcons, android.R.style.TextAppearance_Medium, 
+				Typeface.DEFAULT_BOLD, null);
 		elvSearchCategory.setAdapter(arrayAdapter);
 		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 				try {
 					Log.d(TAG, TAG + "category id: " + topLevelCategories.getJSONObject(position).getString("categoryId"));
 					
-					selectedCategory = ((TextView) view.findViewById(R.id.tvcategory)).getText().toString();
+					selectedCategory = ((TextView) view.findViewById(R.id.tvlabel)).getText().toString();
 					MMCategoryAdapter.getCategories(new SearchCategoryCallback(), 
 							topLevelCategories.getJSONObject(position).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID), 
 							userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 							userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 							MMConstants.PARTNER_ID);
-					
-					
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -283,6 +279,9 @@ public class SearchScreen extends Activity implements LocationListener {
 				break;
 			case MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_SEARCH_TEXT:
 				searchByText();
+				break;
+			case MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_HISTORY:
+				showHistory();
 				break;
 		}
 	}
@@ -308,6 +307,15 @@ public class SearchScreen extends Activity implements LocationListener {
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
 		progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + 
 				searchCategory + getString(R.string.pd_ellipses), true, false);
+	}
+	
+	private void showHistory() {
+		Intent searchResultsIntent = new Intent(SearchScreen.this, SearchResultsScreen.class);
+		searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, false);
+		searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
+		searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
+		searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
+		startActivity(searchResultsIntent);
 	}
 	
 	private String[] getTopLevelCategories() throws JSONException {

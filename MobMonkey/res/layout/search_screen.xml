@@ -24,7 +24,7 @@
 			android:layout_gravity="center"
 			android:layout_weight="1"
 			android:gravity="center"
-			android:text="@string/title_search"
+			android:text="@string/tv_title_search"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textColor="@android:color/white"
 			android:textStyle="bold"/>
@@ -52,7 +52,7 @@
 				<EditText android:id="@+id/etsearch"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:hint="@string/et_search_hint"
+					android:hint="@string/et_hint_search"
 					android:imeOptions="actionSearch"
 					android:inputType="text"
 					android:paddingLeft="50dp"/>

@@ -12,7 +12,7 @@
 		    android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_centerInParent="true"
-			android:text="@string/tv_add_location"
+			android:text="@string/tv_title_add_location"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textColor="@android:color/white"
 			android:textStyle="bold"/>

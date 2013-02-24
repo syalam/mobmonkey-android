@@ -202,7 +202,7 @@ public class SignInScreen extends Activity {
     	if(!TextUtils.isEmpty(etEmailAddress.getText())) {
     		return checkPassword();
     	} else {
-    		displayAlert(R.string.alert_invalid_email_address);
+    		displayAlert(R.string.ad_message_invalid_email_address);
     		return false;
     	}
     }
@@ -215,7 +215,7 @@ public class SignInScreen extends Activity {
     	if(!TextUtils.isEmpty(etPassword.getText())) {
     		return true;
     	} else {
-    		displayAlert(R.string.alert_invalid_password);
+    		displayAlert(R.string.ad_message_invalid_password);
     		return false;
     	}
     }

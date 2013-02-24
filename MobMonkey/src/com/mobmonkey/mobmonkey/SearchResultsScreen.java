@@ -21,6 +21,8 @@ import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -160,10 +162,15 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 			googleMap = smfResultLocations.getMap();
 			markerHashMap = new HashMap<Marker, JSONObject>();
 			addToGoogleMap();
+			getLocationHistory();
 		} else {
 			ibmap.setVisibility(View.GONE);
 			btnAddLocClear.setBackgroundResource(R.drawable.orange_button_background);
 			btnAddLocClear.setText(R.string.btn_clear);
+			
+			if(!getLocationHistory()) {
+				displayNoHistoryAlert();
+			}
 		}
 		
 		smfResultLocations.getView().setVisibility(View.INVISIBLE);
@@ -171,13 +178,6 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(SearchResultsScreen.this, R.layout.search_result_list_row, locations);
 		lvSearchResults.setAdapter(arrayAdapter);
 		lvSearchResults.setOnItemClickListener(SearchResultsScreen.this);
-		
-		String history = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING);
-		if(!history.equals(MMAPIConstants.DEFAULT_STRING)) {
-				locationHistory = new JSONArray(history);
-		} else {
-			locationHistory = new JSONArray();
-		}
 	}
 	
 	/**
@@ -240,6 +240,30 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 		googleMap.setOnInfoWindowClickListener(SearchResultsScreen.this);
 		googleMap.setMyLocationEnabled(true);
+	}
+	
+	private boolean getLocationHistory() throws JSONException {
+		String history = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING);
+		if(!history.equals(MMAPIConstants.DEFAULT_STRING)) {
+			locationHistory = new JSONArray(history);
+			return true;
+		} else {
+			locationHistory = new JSONArray();
+			return false;
+		}
+	}
+	
+	private void displayNoHistoryAlert() {
+		new AlertDialog.Builder(SearchResultsScreen.this)
+			.setTitle(R.string.ad_title_no_history)
+			.setMessage(R.string.ad_message_no_history)
+			.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			})
+			.show();
 	}
 	
 	/**

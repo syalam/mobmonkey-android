@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.mobmonkey.mobmonkey.utils;
 
 import com.mobmonkey.mobmonkey.R;
@@ -10,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -29,8 +27,9 @@ public class MMArrayAdapter extends ArrayAdapter<Object> {
     private int[] indicatorIcons;
     private int textAppearanceId;
     private Typeface textTypeface;
+    private OnClickListener indicatorIconOnClickListener;
 	
-	public MMArrayAdapter(Context context, int listRowLayout, int[] icons, String[] items, int[] indicatorIcons, int textAppearanceId, Typeface textTypeface) {
+	public MMArrayAdapter(Context context, int listRowLayout, int[] icons, String[] items, int[] indicatorIcons, int textAppearanceId, Typeface textTypeface, OnClickListener indicatorIconOnClickListener) {
 		super(context, listRowLayout, items);
 		this.context = context;
         layoutInflater = LayoutInflater.from(context);
@@ -40,6 +39,7 @@ public class MMArrayAdapter extends ArrayAdapter<Object> {
         this.indicatorIcons = indicatorIcons;
         this.textAppearanceId = textAppearanceId;
         this.textTypeface = textTypeface;
+        this.indicatorIconOnClickListener = indicatorIconOnClickListener;
 	}
 
 	/* (non-Javadoc)
@@ -66,6 +66,12 @@ public class MMArrayAdapter extends ArrayAdapter<Object> {
         viewHolder.ivIcon.setImageResource(icons[position]);
         viewHolder.tvLabel.setText(items[position]);
         viewHolder.ivIndicatorIcon.setImageResource(indicatorIcons[position]);
+        
+        if(indicatorIconOnClickListener != null && position == 1) {
+        	viewHolder.ivIndicatorIcon.setClickable(true);
+        	viewHolder.ivIndicatorIcon.setOnClickListener(indicatorIconOnClickListener);
+        }
+        
         convertView.setBackgroundColor(Color.TRANSPARENT);
         return convertView;
 	}

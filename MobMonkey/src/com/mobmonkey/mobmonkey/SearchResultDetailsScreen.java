@@ -53,7 +53,7 @@ public class SearchResultDetailsScreen extends Activity {
 			details[1] = jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
 						 jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE);
 			details[2] = getString(R.string.tv_add_notifications);
-			ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchResultDetailsScreen.this, R.layout.mm_listview_row, icons, details, indicatorIcons, android.R.style.TextAppearance_Small, Typeface.DEFAULT);
+			ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchResultDetailsScreen.this, R.layout.mm_listview_row, icons, details, indicatorIcons, android.R.style.TextAppearance_Small, Typeface.DEFAULT, null);
 			elvLocDetails.setAdapter(arrayAdapter);
 			elvLocDetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				@Override
@@ -78,7 +78,7 @@ public class SearchResultDetailsScreen extends Activity {
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.llmakerequest:
-				startActivity(new Intent(SearchResultDetailsScreen.this, MakeRequestScreen.class));
+				startActivity(new Intent(SearchResultDetailsScreen.this, MakeARequestScreen.class));
 				break;
 			case R.id.llbookmark:
 				bookmarkClicked();
