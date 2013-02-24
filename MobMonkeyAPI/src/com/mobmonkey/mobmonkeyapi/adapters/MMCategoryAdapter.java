@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
-import com.mobmonkey.mobmonkeyapi.utils.MMGETAsyncTask;
+import com.mobmonkey.mobmonkeyapi.utils.MMAsyncTask;
 
 public class MMCategoryAdapter {
 	private static final String TAG = "MMCategories: ";
@@ -27,7 +27,7 @@ public class MMCategoryAdapter {
 		httpGet.setHeader(MMAPIConstants.KEY_USER, user);
 		httpGet.setHeader(MMAPIConstants.KEY_AUTH, auth);
 		
-		new MMGETAsyncTask(mmCallback).execute(httpGet);
+		new MMAsyncTask(mmCallback).execute(httpGet);
 	}
 	
 	public static void getAllCategories(MMCallback mmCallback, String user, String auth, String partnerId)
@@ -42,6 +42,6 @@ public class MMCategoryAdapter {
 		httpGet.setHeader(MMAPIConstants.KEY_USER, user);
 		httpGet.setHeader(MMAPIConstants.KEY_AUTH, auth);
 		
-		new MMGETAsyncTask(mmCallback).execute(httpGet);
+		new MMAsyncTask(mmCallback).execute(httpGet);
 	}
 }
