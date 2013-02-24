@@ -179,4 +179,15 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 		<item>Do they serve Coke&#174; or Pepsi&#174; here?</item>
 		<item>I want to see a picture of the wings.</item>
 	</string-array>
+	
+	<!-- Schedule Request Screen -->
+	<string name="tv_today">Today</string>
+	
+	<string name="tv_repeating">Repeating</string>
+	
+	<string name="rb_daily">Daily</string>
+	<string name="rb_weekly">Weekly</string>
+	<string name="rb_monthly">Monthly</string>
+	
+	<string name="btn_set_schedule">Set Schedule</string>
 </resources>
