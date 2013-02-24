@@ -14,7 +14,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.os.AsyncTask;
 
-public class MMAsyncTask extends AsyncTask<HttpGet, Void, String>{
+public class MMGetAsyncTask extends AsyncTask<HttpGet, Void, String>{
 	private StringBuilder stringBuilder;
 	private MMCallback mmCallback;
 	
@@ -22,7 +22,7 @@ public class MMAsyncTask extends AsyncTask<HttpGet, Void, String>{
 	 * Constructor that takes in a {@link MMCallback} to be invoke after the background task is finished
 	 * @param mmc
 	 */
-	public MMAsyncTask(MMCallback mmCallback) {
+	public MMGetAsyncTask(MMCallback mmCallback) {
 		this.mmCallback = mmCallback;
 	}
 	
