@@ -50,7 +50,9 @@ public final class MMAPIConstants {
 	public static final String KEY_INTENT_EXTRA_LOCATION = "Location";
 	public static final String KEY_INTENT_EXTRA_LOCATION_DETAILS = "Location details";
 	public static final String KEY_INTENT_EXTRA_MESSAGE = "Message";
-	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST = "Schedule request";
+	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
+	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING = "Repeating";
+	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
 	
 	// MobMonkey server call key values
 	public static final String KEY_FIRST_NAME = "firstName";

@@ -257,6 +257,7 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		new AlertDialog.Builder(SearchResultsScreen.this)
 			.setTitle(R.string.ad_title_no_history)
 			.setMessage(R.string.ad_message_no_history)
+			.setCancelable(false)
 			.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -272,7 +273,6 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 	 * @throws JSONException
 	 */
 	private void addToHistory(JSONObject loc) throws JSONException {
-//		JSONObject loc = searchResults.getJSONObject(position);
 
 		if(!locationExistsInHistory(loc)) {
 			if(locationHistory.length() < MMAPIConstants.HISTORY_SIZE) {

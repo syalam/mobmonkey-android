@@ -1,5 +1,8 @@
 package com.mobmonkey.mobmonkey;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMSegmentedRadioGroup;
@@ -187,6 +190,23 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	 * @param data
 	 */
 	private void processScheduleRequestResult(int resultCode, Intent data) {
+		if(resultCode == RESULT_CANCELED) {
+			
+		} else if(resultCode == RESULT_OK) {
+			SimpleDateFormat sdfTime = new SimpleDateFormat("KK:mm a");
+			SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
+			
+			Calendar requestCal = (Calendar) data.getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
+			
+			String scheduleMessage = sdfTime.format(requestCal.getTime()) + " on " + sdfDate.format(requestCal.getTime());
+			
+			icons = new int[] {android.R.drawable.ic_menu_today, android.R.drawable.ic_menu_today};
+			labels = new String[] {getString(R.string.tv_schedule_request), scheduleMessage};
+			indicatorIcons = new int[] {R.drawable.listview_accessory_indicator, android.R.drawable.ic_menu_close_clear_cancel};
+			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, MakeARequestScreen.this);
+		}
 		
+		mmelvAddMessage.setAdapter(mmArrayAdapter);
+		mmelvAddMessage.invalidate();
 	}
 }
