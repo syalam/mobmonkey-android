@@ -190,7 +190,10 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		
 		Intent scheduleRequestIntent = new Intent();
 		
-		if(requestCal.getTimeInMillis() < System.currentTimeMillis()) {
+		Log.d(TAG, TAG + "requestCal time: " + requestCal.getTimeInMillis());
+		Log.d(TAG, TAG + "current time: " + System.currentTimeMillis());
+		
+		if(requestCal.getTimeInMillis() <= System.currentTimeMillis()) {
 			Toast.makeText(ScheduleRequestScreen.this, R.string.toast_current_or_past_current_time, Toast.LENGTH_LONG).show();
 		} else {
 			scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME, requestCal);
@@ -199,13 +202,10 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 				// TODO: Might have to change this depends on the server call and what it accepts
 				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, repeatRate);
 			}
+			
+			setResult(RESULT_OK, scheduleRequestIntent);
+			finish();
 		}
-		
-		setResult(RESULT_OK, scheduleRequestIntent);
-		
-//		SimpleDateFormat sdf = new SimpleDateFormat("KK:mm a");
-//		SimpleDateFormat sdf1 = new SimpleDateFormat("MM/dd/yyyy");
-//		Log.d(TAG, TAG + "date: " + sdf.format(requestCal.getTime()) + " on " + sdf1.format(requestCal.getTime()));
 	}
 	
 	private class DayArrayAdapter extends AbstractWheelTextAdapter {

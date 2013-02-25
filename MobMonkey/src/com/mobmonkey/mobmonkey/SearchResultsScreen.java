@@ -129,6 +129,7 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 				}
 				break;
 			case R.id.btnaddlocclear:
+				startActivity(new Intent(SearchResultsScreen.this, AddLocationScreen.class));
 				break;
 		}
 	}

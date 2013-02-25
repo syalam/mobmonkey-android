@@ -115,6 +115,7 @@
 		</activity>
 		
 		<activity android:name=".AddLocationScreen"
+		    android:windowSoftInputMode="stateHidden"
 		    android:screenOrientation="portrait">
 		    
 		</activity>

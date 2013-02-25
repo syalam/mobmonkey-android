@@ -196,7 +196,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			SimpleDateFormat sdfTime = new SimpleDateFormat("KK:mm a");
 			SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
 			
-			Calendar requestCal = (Calendar) data.getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
+			Calendar requestCal = (Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
 			
 			String scheduleMessage = sdfTime.format(requestCal.getTime()) + " on " + sdfDate.format(requestCal.getTime());
 			
@@ -206,7 +206,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, MakeARequestScreen.this);
 		}
 		
-		mmelvAddMessage.setAdapter(mmArrayAdapter);
-		mmelvAddMessage.invalidate();
+		mmelvScheduleRequest.setAdapter(mmArrayAdapter);
+		mmelvScheduleRequest.invalidate();
 	}
 }
