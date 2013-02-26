@@ -5,13 +5,13 @@
 	android:orientation="horizontal"
 	android:padding="10dp">
 	
-	<ImageView android:id="@+id/ivcategoryicon"
+	<ImageView android:id="@+id/ivicon"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="left|center"
 	    android:layout_margin="5dp"/>
 	
-	<TextView android:id="@+id/tvcategory"
+	<TextView android:id="@+id/tvlabel"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_weight="1"
@@ -20,7 +20,8 @@
 	    android:textAppearance="?android:attr/textAppearanceLarge"
 	    android:textStyle="bold"/>
 	
-	<ImageView android:layout_width="wrap_content"
+	<ImageView android:id="@+id/ivindicatoricon"
+	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="right|center"
 	    android:layout_margin="5dp"

@@ -318,7 +318,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	if(!TextUtils.isEmpty(etFirstName.getText())) {
     		return checkLastName();
     	} else {
-    		displayAlert(R.string.alert_invalid_first_name);
+    		displayAlert(R.string.ad_message_invalid_first_name);
     		return false;
     	}
     }
@@ -331,7 +331,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	if(!TextUtils.isEmpty(etLastName.getText().toString())) {
     		return checkEmailAddress();
     	} else {
-    		displayAlert(R.string.alert_invalid_last_name);
+    		displayAlert(R.string.ad_message_invalid_last_name);
     		return false;
     	}
     }
@@ -346,7 +346,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     		userPrefsEditor.commit();
     		return checkPassword();
     	} else {
-    		displayAlert(R.string.alert_invalid_email_address);
+    		displayAlert(R.string.ad_message_invalid_email_address);
     		return false;
     	}
     }
@@ -362,11 +362,11 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     			userPrefsEditor.commit();
     			return checkBirthdate();
     		} else {
-    			displayAlert(R.string.alert_invalid_password_not_match);
+    			displayAlert(R.string.ad_message_invalid_password_not_match);
     			return false;
     		}
     	} else {
-    		displayAlert(R.string.alert_invalid_password);
+    		displayAlert(R.string.ad_message_invalid_password);
     		return false;
     	}
     }
@@ -379,7 +379,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	if(!TextUtils.isEmpty(etBirthdate.getText())) {
     		return checkGender();
     	} else {
-    		displayAlert(R.string.alert_invalid_birthdate);
+    		displayAlert(R.string.ad_message_invalid_birthdate);
     		return false;
     	}
     }
@@ -392,7 +392,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	if(!TextUtils.isEmpty(etGender.getText())) {
     		return checkAcceptedToS();
     	} else {
-    		displayAlert(R.string.alert_invalid_gender);
+    		displayAlert(R.string.ad_message_invalid_gender);
     		return false;
     	}
     }
@@ -405,7 +405,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	if(cbAcceptedToS.isChecked()) {
     		return true;
     	} else {
-    		displayAlert(R.string.alert_invalid_tos);
+    		displayAlert(R.string.ad_message_invalid_tos);
     		return false;
     	}
     }
@@ -455,10 +455,10 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	}
     	
     	new AlertDialog.Builder(SignUpScreen.this)
-    		.setTitle(R.string.title_birthdate)
+    		.setTitle(R.string.ad_title_birthdate)
     		.setView(vBirthdate)
     		.setCancelable(false)
-    		.setPositiveButton(R.string.btn_choose, new DialogInterface.OnClickListener() {
+    		.setPositiveButton(R.string.ad_btn_choose, new DialogInterface.OnClickListener() {
     			@Override
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
@@ -467,7 +467,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 					etBirthdate.setText(simpleDateFormat.format(tempDate));
 				}
 			})
-			.setNegativeButton(R.string.btn_cancel, null)
+			.setNegativeButton(R.string.ad_btn_cancel, null)
 			.show();
     }
     
@@ -476,14 +476,14 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      */
     private void promptUserGender() {
     	new AlertDialog.Builder(SignUpScreen.this)
-    		.setTitle(R.string.title_gender)
-    		.setItems(R.array.alert_gender, new DialogInterface.OnClickListener() {
+    		.setTitle(R.string.ad_title_gender)
+    		.setItems(R.array.ad_list_gender, new DialogInterface.OnClickListener() {
     			@Override
 				public void onClick(DialogInterface dialog, int which) {
-					etGender.setText(getResources().getStringArray(R.array.alert_gender)[which]);
+					etGender.setText(getResources().getStringArray(R.array.ad_list_gender)[which]);
 				}
 			})
-    		.setNegativeButton(R.string.btn_cancel, null)
+    		.setNegativeButton(R.string.ad_btn_cancel, null)
     		.setCancelable(false)
     		.show();
     }

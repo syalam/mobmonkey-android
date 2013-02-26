@@ -62,7 +62,7 @@ public class AddLocationMapScreen extends FragmentActivity {
 	private void getLocation() {
 		if(addLocClicked) {
 			Toast.makeText(AddLocationMapScreen.this, "Tap on the location you'd like to add on the map", Toast.LENGTH_LONG).show();
-			btnAddLoc.setText(R.string.btn_cancel);
+			btnAddLoc.setText(R.string.ad_btn_cancel);
 			addLocClicked = false;
 			// TODO: start up something to listen for user click on x,y pixel
 		} else {

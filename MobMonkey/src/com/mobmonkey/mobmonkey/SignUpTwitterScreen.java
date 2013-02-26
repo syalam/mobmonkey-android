@@ -196,10 +196,10 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
     	}
     	
     	new AlertDialog.Builder(SignUpTwitterScreen.this)
-    		.setTitle(R.string.title_birthdate)
+    		.setTitle(R.string.ad_title_birthdate)
     		.setView(vBirthdate)
     		.setCancelable(false)
-    		.setPositiveButton(R.string.btn_choose, new DialogInterface.OnClickListener() {
+    		.setPositiveButton(R.string.ad_btn_choose, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
 					Date tempDate = new Date(birthdate.get(Calendar.YEAR) - 1900, birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH));
@@ -207,7 +207,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 					etBirthdate.setText(simpleDateFormat.format(tempDate));
 				}
 			})
-			.setNegativeButton(R.string.btn_cancel, null)
+			.setNegativeButton(R.string.ad_btn_cancel, null)
 			.show();
     }
     
@@ -216,13 +216,13 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
      */
     private void promptUserGender() {
     	new AlertDialog.Builder(SignUpTwitterScreen.this)
-    		.setTitle(R.string.title_gender)
-    		.setItems(R.array.alert_gender, new DialogInterface.OnClickListener() {
+    		.setTitle(R.string.ad_title_gender)
+    		.setItems(R.array.ad_list_gender, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					etGender.setText(getResources().getStringArray(R.array.alert_gender)[which]);
+					etGender.setText(getResources().getStringArray(R.array.ad_list_gender)[which]);
 				}
 			})
-    		.setNegativeButton(R.string.btn_cancel, null)
+    		.setNegativeButton(R.string.ad_btn_cancel, null)
     		.setCancelable(false)
     		.show();
     }
@@ -254,7 +254,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 //    		userInfo.put(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
     		return checkLastName();
     	} else {
-    		displayAlert(R.string.alert_invalid_first_name);
+    		displayAlert(R.string.ad_message_invalid_first_name);
     		return false;
     	}
     }
@@ -268,7 +268,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 //    		userInfo.put(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
     		return checkEmailAddress();
     	} else {
-    		displayAlert(R.string.alert_invalid_last_name);
+    		displayAlert(R.string.ad_message_invalid_last_name);
     		return false;
     	}
     }
@@ -284,7 +284,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 //    		userPrefsEditor.commit();
     		return checkBirthdate();
     	} else {
-    		displayAlert(R.string.alert_invalid_email_address);
+    		displayAlert(R.string.ad_message_invalid_email_address);
     		return false;
     	}
     }
@@ -298,7 +298,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 //    		userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
     		return checkGender();
     	} else {
-    		displayAlert(R.string.alert_invalid_birthdate);
+    		displayAlert(R.string.ad_message_invalid_birthdate);
     		return false;
     	}
     }
@@ -312,7 +312,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 //    		userInfo.put(MMAPIConstants.KEY_GENDER, convertGender());
     		return true;
     	} else {
-    		displayAlert(R.string.alert_invalid_gender);
+    		displayAlert(R.string.ad_message_invalid_gender);
     		return false;
     	}
     }

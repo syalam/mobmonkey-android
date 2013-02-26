@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/backgroundcolor"
+	android:orientation="vertical">
+	
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="50dip"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:text="@string/tv_schedule_request"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textColor="@android:color/white"
+		android:textStyle="bold"
+		android:background="@drawable/navigation_bar"/>
+	
+	<ScrollView android:layout_width="match_parent"
+	    android:layout_height="match_parent">
+	    
+	    <LinearLayout android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical"
+	        android:padding="10dp">
+			
+			<LinearLayout android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_gravity="center_horizontal"
+			    android:paddingLeft="12dp"
+		        android:paddingRight="12dp"
+		        android:paddingTop="20dp">
+			    
+				<kankan.wheel.widget.WheelView android:id="@+id/wheelday"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+				
+				<kankan.wheel.widget.WheelView android:id="@+id/wheelhour"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+				
+				<kankan.wheel.widget.WheelView android:id="@+id/wheelmins"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+				
+				<kankan.wheel.widget.WheelView android:id="@+id/wheelampm"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+		
+			</LinearLayout>
+			
+			<LinearLayout android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_marginTop="10dp"
+			    android:orientation="horizontal">
+			    
+			    <TextView android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="1"
+			        android:layout_gravity="center"
+			        android:text="@string/tv_repeating"
+			        android:textStyle="bold"/>
+			    
+		   		<ToggleButton android:id="@+id/tbrepeating"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center|right"
+				    android:checked="true"/>	    
+			    
+			</LinearLayout>
+			
+			<RadioGroup android:id="@+id/rgrepeating"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_marginTop="10dp"
+			    android:checkedButton="@+id/rbdaily"
+			    android:orientation="horizontal">
+			    
+		    	<RadioButton android:id="@+id/rbdaily"
+		    	    android:minWidth="40dp"
+		    	    android:minHeight="40dp"
+		   	    	android:layout_weight="1"
+		    	    android:button="@null"
+		    	    android:gravity="center"
+		    	    android:text="@string/rb_daily"
+		    	    android:textAppearance="?android:attr/textAppearanceSmall"
+		    	    android:textColor="@color/radio_colors"
+		    	    android:background="@drawable/segment_radio_left"/>
+			    
+		    	<RadioButton android:id="@+id/rbweekly"
+					android:minWidth="40dp"
+					android:minHeight="40dp"
+					android:layout_weight="1"
+					android:button="@null"
+					android:gravity="center"
+					android:text="@string/rb_weekly"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="@color/radio_colors"
+					android:background="@drawable/segment_radio_middle"/>
+		    	
+				<RadioButton android:id="@+id/rbmonthly"
+					android:minWidth="40dp"
+					android:minHeight="40dp"
+					android:layout_weight="1"
+					android:button="@null"
+					android:gravity="center"
+					android:text="@string/rb_monthly"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="@color/radio_colors"
+					android:background="@drawable/segment_radio_right"/>
+		    	
+			</RadioGroup>
+			
+			<Button android:id="@+id/btnsetschedule"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_marginTop="10dp"
+			    android:text="@string/btn_set_schedule"
+			    android:textColor="@android:color/white"
+			    android:textStyle="bold"
+			    android:background="@drawable/orange_button_background"
+			    android:onClick="viewOnClick"/>"
+		
+		</LinearLayout>
+	
+	</ScrollView>
+	
+</LinearLayout>

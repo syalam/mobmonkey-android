@@ -3,14 +3,19 @@
 	<string name="app_name">MobMonkey</string>
 	<string name="menu_settings">Settings</string>
 	<string name="app_id_facebook">509890709049518</string>
-	<string name="app_google_api_key">AIzaSyB5Ppc5De5M7R2_U4RiCmOrHE07gcRhIZ4</string>
+	<string name="app_google_api_key">AIzaSyCFU-ib8Zlva7HAgB1YGUIeBdq8wwAYVQQ</string>
 	
 	<!-- SignIn Screen -->
 	<string name="toast_no_internet_access">You have no internet access at the moment, cannot start MobMonkey</string>
 	
-	<string name="btn_sign_in">Sign In</string>
+	<string name="tv_title_sign_in">Sign In</string>
+	
+	<string name="et_hint_emailaddress">Email Address</string>
+	<string name="et_hint_password">Password</string>
+	
 	<string name="btn_sign_in_facebook">Sign In with Facebook</string>
 	<string name="btn_sign_in_twitter">Sign In with Twitter</string>
+	<string name="btn_sign_up">Sign Up</string>
 	
 	<string name="pd_launch_twitter_auth_screen">Launching Twitter authentication screen&#8230;</string>
 	
@@ -21,36 +26,33 @@
 	<string name="toast_sign_in_successful">Successfully signed in</string>
 	
 	<!-- SignUp Screen -->
-	<string name="et_firstname">First Name</string>
-	<string name="et_lastname">Last Name</string>
-	<string name="et_emailaddress">Email Address</string>
-	<string name="et_password">Password</string>
-	<string name="et_passwordconfirm">Confirm Password</string>
-	<string name="et_birthdate">Birthdate</string>
-	<string name="et_gender">Gender</string>
+	<string name="et_hint_firstname">First Name</string>
+	<string name="et_hint_lastname">Last Name</string>
+	<string name="et_hint_passwordconfirm">Confirm Password</string>
+	<string name="et_hint_birthdate">Birthdate</string>
+	<string name="et_hint_gender">Gender</string>
 	<string name="cb_agree_tos">I accept the terms of use</string>
-	<string name="btn_sign_up">Sign Up</string>
 	<string name="btn_sign_up_facebook">Sign Up With Facebook</string>
 	<string name="btn_sign_up_twitter">Sign Up With Twitter</string>
 	
-	<string name="title_birthdate">Please select your birthdate</string>
-	<string name="title_gender">Gender</string>
-	<string name="btn_choose">Choose</string>
-	<string name="btn_cancel">Cancel</string>
+	<string name="ad_title_birthdate">Please select your birthdate</string>
+	<string name="ad_title_gender">Gender</string>
+	<string name="ad_btn_choose">Choose</string>
+	<string name="ad_btn_cancel">Cancel</string>
 	
-	<string-array name="alert_gender">
+	<string-array name="ad_list_gender">
 	    <item>Male</item>
 	    <item>Female</item>
 	</string-array>
 	
-	<string name="alert_invalid_first_name">Please enter your first name.</string>
-	<string name="alert_invalid_last_name">Please enter your last name.</string>
-	<string name="alert_invalid_email_address">Please enter your email address.</string>
-	<string name="alert_invalid_password">Please enter your password</string>
-	<string name="alert_invalid_password_not_match">The passwords you have entered do not match, please re-enter your password.</string>
-	<string name="alert_invalid_birthdate">Please enter your birthdate.</string>
-	<string name="alert_invalid_gender">Please select your gender.</string>
-	<string name="alert_invalid_tos">Terms of Service must be accepted before signing up.</string>
+	<string name="ad_message_invalid_first_name">Please enter your first name.</string>
+	<string name="ad_message_invalid_last_name">Please enter your last name.</string>
+	<string name="ad_message_invalid_email_address">Please enter your email address.</string>
+	<string name="ad_message_invalid_password">Please enter your password</string>
+	<string name="ad_message_invalid_password_not_match">The passwords you have entered do not match, please re-enter your password.</string>
+	<string name="ad_message_invalid_birthdate">Please enter your birthdate.</string>
+	<string name="ad_message_invalid_gender">Please select your gender.</string>
+	<string name="ad_message_invalid_tos">Terms of Service must be accepted before signing up.</string>
 
 	<string name="pd_signing_up">Signing up&#8230;</string>
 	<string name="pd_signing_up_facebook">Signing up with Facebook&#8230;</string>
@@ -65,38 +67,27 @@
 	<string name="pd_loading_categories">Loading categories&#8230;</string>
 	
 	<!-- Trending Now Screen -->
-	<string name="title_trendingnow">What\'s Trending Now!</string>
+	<string name="tv_title_trendingnow">What\'s Trending Now!</string>
 	
 	<!--  Inbox Screen -->
-	<string name="title_inbox">Inbox</string>
+	<string name="tv_title_inbox">Inbox</string>
 	
 	<!-- Search Screen -->
 	<string name="btn_filter">Filter</string>
-	<string name="title_search">Search</string>
+	<string name="btn_add_loc">+</string>
+	<string name="tv_title_search">Search</string>
 	
-	<string name="title_enable_gps">Enable GPS</string>
-	<string name="message_enable_gps">Enable GPS to use this feature?</string>
-	<string name="btn_yes">Yes</string>
-	<string name="btn_no">No</string>
+	<string name="ad_title_enable_gps">Enable GPS</string>
+	<string name="ad_message_enable_gps">Enable GPS to use this feature?</string>
+	<string name="ad_btn_yes">Yes</string>
+	<string name="ad_btn_no">No</string>
 	<string name="toast_not_enable_gps">GPS was not enabled</string>
 	
-	<string name="et_search_hint">Location, Category, Address</string>
+	<string name="et_hint_search">Location, Category, Address</string>
 	
-	<string-array name="search_nocategory">
+	<string-array name="lv_search_nocategory">
 	    <item>Show All Nearby</item>
 	    <item>History</item>
-	</string-array>
-	<string-array name="search_category">
-	    <item>Automotive</item>
-	    <item>Travel</item>
-	    <item>Sports and Recreation</item>
-	    <item>Healthcare</item>
-	    <item>Landmarks</item>
-	    <item>Social</item>
-	    <item>Community and Government</item>
-	    <item>Retail</item>
-	    <item>Services and Supplies</item>
-	    <item>Transportation</item>
 	</string-array>
 	
 	<string name="pd_search_all_nearby">Searching all nearby&#8230;</string>
@@ -105,7 +96,7 @@
 	
 	<!-- Filter Screen -->
 	<string name="tv_narrow_by_distance">Narrow by Distance</string>
-	<string name="rb_halfmile">1/2 mi</string>
+	<string name="rb_halfmile">&#189; mi</string>
 	<string name="rb_onemile">1 mi</string>
 	<string name="rb_fivemile">5 mi</string>
 	<string name="rb_tenmile">10 mi</string>
@@ -116,18 +107,22 @@
 	<string name="btn_clear">Clear</string>
 	<string name="miles">miles</string>
 	
+	<string name="ad_title_no_history">No history</string>
+	<string name="ad_message_no_history">No history available</string>
+	<string name="ad_btn_ok">OK</string>
+	
 	<!-- SearchResultLocationDetails Screen -->
-	<string name="tv_make_request">Make Request</string>
+	<string name="tv_make_request">Make a Request</string>
 	<string name="tv_members_found">members found</string>
 	<string name="tv_add_notifications">Add Notifications</string>
 	<string name="tv_bookmark">Bookmark</string>
 	<string name="tv_remove_bookmark">Remove bookmark</string>
 	
 	<!-- Bookmarks Screen -->
-	<string name="title_bookmarks">Bookmarks</string>
+	<string name="tv_title_bookmarks">Bookmarks</string>
 	
 	<!-- Settings Screen -->
-	<string name="title_settings">Settings</string>
+	<string name="tv_title_settings">Settings</string>
 	
 	<string-array name="settings_category">
 	    <item>My Info</item>
@@ -143,18 +138,59 @@
 	<string name="toast_sign_out_successful">Successfully signed out</string>
 	
 	<!-- Terms of use Screen -->
-	<string name="title_terms_of_use">Terms of use</string>
+	<string name="tv_title_terms_of_use">Terms of use</string>
+	<string name="tv_terms_of_use">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim, mi tristique sollicitudin malesuada, velit nisi cursus magna, et interdum mauris turpis eget leo. Maecenas adipiscing, nunc ac consectetur dictum, risus mi ultrices nulla, sed pellentesque dui elit a diam. Morbi rhoncus ante ut justo tempus tristique eleifend quam rutrum. Nulla pulvinar, sem non ultricies tristique, lectus magna sodales ligula, non dignissim nibh nulla at nunc. Vivamus vestibulum ornare ipsum in mattis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Cras tempus imperdiet leo, ut faucibus risus pulvinar vitae. Donec lobortis odio ut tellus bibendum elementum. Donec pretium varius nisl. Donec nibh ipsum, dictum commodo vestibulum sed, vestibulum sit amet sem. Pellentesque facilisis odio vel nisl scelerisque vitae blandit mi mattis. Vivamus ac mi eget sapien lacinia cursus.
+
+Quisque vel orci enim, a dapibus sem. Etiam nisl diam, tristique quis eleifend quis, rhoncus id leo. Ut nunc urna, semper et auctor ac, porttitor sollicitudin eros. Cras purus libero, tempor ut euismod et, luctus eu urna. Sed ut magna nulla. Mauris cursus vestibulum ante a sollicitudin. Fusce sit amet libero et lorem ultricies iaculis.
+
+Nam ornare consequat leo eget tincidunt. Mauris vulputate molestie congue. Aliquam nec lobortis eros. Quisque nunc ante, iaculis vel ultricies ut, facilisis eu nibh. Nam vitae lorem sed odio faucibus adipiscing at hendrerit nunc. Vivamus gravida dui a ligula hendrerit tincidunt. Nulla sagittis, tellus sit amet feugiat aliquet, augue sem sollicitudin nibh, id placerat libero nisi ac mi. Phasellus eget volutpat sapien. Integer neque sem, porta eu malesuada vitae, ultricies eu ipsum. Fusce faucibus scelerisque sapien, sit amet tincidunt odio hendrerit et. Aliquam erat volutpat.
+
+Duis leo quam, faucibus vitae aliquet vitae, sagittis sed augue. Nunc sit amet magna vitae massa semper consectetur laoreet in justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel quam est, sit amet adipiscing leo. Donec tellus justo, egestas dignissim molestie a, pretium eget nisl. Duis mollis metus eget mauris ullamcorper auctor. In hac habitasse platea dictumst. Mauris interdum dignissim viverra. Suspendisse ac ipsum nisl. Sed sagittis posuere nulla. Mauris id eros nec diam porttitor posuere vitae eget orci.
+
+Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis et auctor diam aliquet. Maecenas ligula tellus, suscipit sed eleifend at, condimentum dictum augue. Aliquam vel urna neque, sit amet malesuada massa. In fringilla facilisis dictum. Aliquam a erat at sem iaculis sollicitudin eu gravida mauris. Mauris eu sapien risus, vel laoreet metus. Pellentesque quis velit lacus. Aliquam sit amet dolor nisi, sed aliquet erat.</string>
 	
 	<!-- Add Location Screen -->
-	<string name="tv_add_location">Add Location</string>
-	<string name="et_location_name">Name</string>
-	<string name="et_location_categories">Categories</string>
-	<string name="et_location_street">Street</string>
-	<string name="et_location_city">City</string>
-	<string name="et_location_state">State</string>
-	<string name="et_location_zip">Zip</string>
-	<string name="et_location_phone">Phone Number (optional)</string>
+	<string name="tv_title_add_location">Add Location</string>
+	<string name="et_hint_location_name">Name</string>
+	<string name="et_hint_location_categories">Categories</string>
+	<string name="et_hint_location_street">Street</string>
+	<string name="et_hint_location_city">City</string>
+	<string name="et_hint_location_state">State</string>
+	<string name="et_hint_location_zip">Zip</string>
+	<string name="et_hint_location_phone">Phone Number (optional)</string>
 	<string name="btn_add_location">Add Location</string>
 	
+	<!-- Make a Request Screen -->
+	<string name="tv_add_message">Add Message</string>
+	<string name="tv_schedule_request">Schedule Request</string>
+	<string name="tv_stay_active_for">Stay Active For</string>
 	
+	<string name="rb_fifteenmin">15m</string>
+	<string name="rb_thirtymin">30m</string>
+	<string name="rb_onehour">1h</string>
+	<string name="rb_threehour">3h</string>
+	
+	<string name="btn_send_video_request">Send Video Request</string>
+	<string name="btn_send_photo_request">Send Photo Request</string>
+	<string name="btn_send_text_request">Send Text Request</string>
+	
+	<!-- Add Message Screen -->
+	<string name="tv_message">Message</string>
+	<string-array name="tv_default_message">
+		<item>Do they serve Coke&#174; or Pepsi&#174; here?</item>
+		<item>I want to see a picture of the wings.</item>
+	</string-array>
+	
+	<!-- Schedule Request Screen -->
+	<string name="tv_today">Today</string>
+	
+	<string name="tv_repeating">Repeating</string>
+	
+	<string name="rb_daily">Daily</string>
+	<string name="rb_weekly">Weekly</string>
+	<string name="rb_monthly">Monthly</string>
+	
+	<string name="btn_set_schedule">Set Schedule</string>
+	
+	<string name="toast_current_or_past_current_time">The time you have selected is the current time or past the current time, please select a time in the future.</string>
 </resources>

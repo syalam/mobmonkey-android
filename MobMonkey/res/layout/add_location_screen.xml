@@ -9,7 +9,7 @@
 		android:layout_height="50dip"
 		android:layout_gravity="center"
 		android:gravity="center"
-		android:text="@string/tv_add_location"
+		android:text="@string/tv_title_add_location"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:textColor="@android:color/white"
 		android:textStyle="bold"
@@ -28,7 +28,7 @@
 						android:layout_marginTop="15dp"
 						android:layout_marginLeft="20dp"
 						android:layout_marginRight="20dp"
-						android:hint="@string/et_location_name"
+						android:hint="@string/et_hint_location_name"
 						android:inputType="text"/>
 		    <EditText android:id="@+id/etcategories"
 						android:layout_width="match_parent"
@@ -36,7 +36,7 @@
 						android:layout_marginTop="10dp"
 						android:layout_marginLeft="20dp"
 						android:layout_marginRight="20dp"
-						android:hint="@string/et_location_categories"
+						android:hint="@string/et_hint_location_categories"
 						android:inputType="text"/>
 		    <EditText android:id="@+id/etstreet"
 						android:layout_width="match_parent"
@@ -44,7 +44,7 @@
 						android:layout_marginTop="10dp"
 						android:layout_marginLeft="20dp"
 						android:layout_marginRight="20dp"
-						android:hint="@string/et_location_street"
+						android:hint="@string/et_hint_location_street"
 						android:inputType="text"/>
 		    <EditText android:id="@+id/etcity"
 						android:layout_width="match_parent"
@@ -52,7 +52,7 @@
 						android:layout_marginTop="10dp"
 						android:layout_marginLeft="20dp"
 						android:layout_marginRight="20dp"
-						android:hint="@string/et_location_city"
+						android:hint="@string/et_hint_location_city"
 						android:inputType="text"/>
 		    <EditText android:id="@+id/etstate"
 						android:layout_width="match_parent"
@@ -60,7 +60,7 @@
 						android:layout_marginTop="10dp"
 						android:layout_marginLeft="20dp"
 						android:layout_marginRight="20dp"
-						android:hint="@string/et_location_state"
+						android:hint="@string/et_hint_location_state"
 						android:inputType="text"/>
 		    <EditText android:id="@+id/etzip"
 						android:layout_width="match_parent"
@@ -68,7 +68,7 @@
 						android:layout_marginTop="10dp"
 						android:layout_marginLeft="20dp"
 						android:layout_marginRight="20dp"
-						android:hint="@string/et_location_zip"
+						android:hint="@string/et_hint_location_zip"
 						android:inputType="text"/>
 		    <EditText android:id="@+id/etphone"
 						android:layout_width="match_parent"
@@ -76,7 +76,7 @@
 						android:layout_marginTop="10dp"
 						android:layout_marginLeft="20dp"
 						android:layout_marginRight="20dp"
-						android:hint="@string/et_location_phone"
+						android:hint="@string/et_hint_location_phone"
 						android:inputType="phone"/>
 		    
 		    <Button android:id="@+id/btnaddlocation"

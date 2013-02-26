@@ -99,7 +99,7 @@
 		    
 		</activity>
 		
-		<activity android:name=".MakeRequestScreen"
+		<activity android:name=".MakeARequestScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
@@ -115,11 +115,22 @@
 		</activity>
 		
 		<activity android:name=".AddLocationScreen"
+		    android:windowSoftInputMode="stateHidden"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 
 		<activity android:name=".AddLocationMapScreen"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
+		
+		<activity android:name=".AddMessageScreen"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
+		
+		<activity android:name=".ScheduleRequestScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>

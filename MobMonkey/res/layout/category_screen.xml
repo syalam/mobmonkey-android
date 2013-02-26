@@ -31,7 +31,7 @@
 				<EditText android:id="@+id/etsearch"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:hint="@string/et_search_hint"
+					android:hint="@string/et_hint_search"
 					android:imeOptions="actionSearch"
 					android:inputType="text"
 					android:paddingLeft="50dp"/>
@@ -44,9 +44,7 @@
 				
 		</FrameLayout>
 			
-		<ListView
-		    xmlns:android="http://schemas.android.com/apk/res/android"
-		    android:id="@+id/lvsubcategory"
+		<ListView android:id="@+id/lvsubcategory"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
 		    android:layout_margin="10dp"

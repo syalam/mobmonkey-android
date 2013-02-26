@@ -32,7 +32,8 @@ public final class MMAPIConstants {
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
 	
 	public static final int HISTORY_SIZE = 10;
-		
+	public static final int DAYS_PREVIOUS = 6;
+	
 	// SharePreferences Key
 	public static final String USER_PREFS = "User Preferences";
 	public static final String SHARED_PREFS_KEY_HISTORY = "history";
@@ -48,6 +49,10 @@ public final class MMAPIConstants {
 	public static final String KEY_INTENT_EXTRA_DISPLAY_MAP = "Display map";
 	public static final String KEY_INTENT_EXTRA_LOCATION = "Location";
 	public static final String KEY_INTENT_EXTRA_LOCATION_DETAILS = "Location details";
+	public static final String KEY_INTENT_EXTRA_MESSAGE = "Message";
+	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
+	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING = "Repeating";
+	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
 	
 	// MobMonkey server call key values
 	public static final String KEY_FIRST_NAME = "firstName";
@@ -106,9 +111,12 @@ public final class MMAPIConstants {
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER_AUTH = 1001;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2000;
 	public static final int REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION = 10000;
-	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_ALL_NEARBY = 10001;
-	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_TEXT = 10002;
-	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_CATEGORY = 10003;
+	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_TEXT = 10001;
+	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_ALL_NEARBY = 10002;
+	public static final int REQUEST_CODE_TURN_ON_GPS_HISTORY = 10003;
+	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_CATEGORY = 10004;
+	public static final int REQUEST_CODE_ADD_MESSAGE = 100000;
+	public static final int REQUEST_CODE_SCHEDULE_REQUEST = 100001;
 	
 	// Result code values
 	public static final int RESULT_CODE_SUCCESS = 200;

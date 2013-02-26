@@ -3,7 +3,7 @@ package com.mobmonkey.mobmonkey;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.mobmonkey.mobmonkey.utils.ExpandedListView;
+import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
@@ -37,7 +37,7 @@ public class SearchResultDetailsScreen extends Activity {
 		TextView tvLocNameTitle = (TextView) findViewById(R.id.tvlocnametitle);
 		TextView tvLocName = (TextView) findViewById(R.id.tvlocname);
 		TextView tvMembersFound = (TextView) findViewById(R.id.tvmembersfound);
-		ExpandedListView elvLocDetails = (ExpandedListView) findViewById(R.id.elvlocdetails);
+		MMExpandedListView elvLocDetails = (MMExpandedListView) findViewById(R.id.elvlocdetails);
 		tvBookmark = (TextView) findViewById(R.id.tvbookmark);
 		
 		try {
@@ -47,19 +47,20 @@ public class SearchResultDetailsScreen extends Activity {
 			tvMembersFound.setText(jObj.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));
 			
 			int[] icons = new int[]{R.drawable.cat_icon_telephone, R.drawable.cat_icon_map_pin, R.drawable.cat_icon_alarm_clock};
+			int[] indicatorIcons = new int[]{R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator};
 			String[] details = new String[3];
 			details[0] = jObj.getString(MMAPIConstants.JSON_KEY_PHONENUMBER);
 			details[1] = jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
 						 jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE);
 			details[2] = getString(R.string.tv_add_notifications);
-			ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchResultDetailsScreen.this, R.layout.expanded_listview_row, icons, details, android.R.style.TextAppearance_Small, Typeface.DEFAULT);
+			ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(SearchResultDetailsScreen.this, R.layout.mm_listview_row, icons, details, indicatorIcons, android.R.style.TextAppearance_Small, Typeface.DEFAULT, null);
 			elvLocDetails.setAdapter(arrayAdapter);
 			elvLocDetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 					if(position == 0) {
 						Intent dialerIntent = new Intent(Intent.ACTION_DIAL);
-						dialerIntent.setData(Uri.parse("tel:" + ((TextView)view.findViewById(R.id.tvcategory)).getText().toString()));
+						dialerIntent.setData(Uri.parse("tel:" + ((TextView)view.findViewById(R.id.tvlabel)).getText().toString()));
 						startActivity(dialerIntent);
 					} else if(position == 1) {
 						Intent mapIntent = new Intent(SearchResultDetailsScreen.this, SearchLocationResultMapScreen.class);
@@ -77,7 +78,7 @@ public class SearchResultDetailsScreen extends Activity {
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.llmakerequest:
-				startActivity(new Intent(SearchResultDetailsScreen.this, MakeRequestScreen.class));
+				startActivity(new Intent(SearchResultDetailsScreen.this, MakeARequestScreen.class));
 				break;
 			case R.id.llbookmark:
 				bookmarkClicked();

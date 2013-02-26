@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/backgroundcolor"
+	android:orientation="vertical" >
+	
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="50dip"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:text="@string/tv_message"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textColor="@android:color/white"
+		android:textStyle="bold"
+		android:background="@drawable/navigation_bar"/>
+	
+	<ScrollView android:layout_width="match_parent"
+		android:layout_height="match_parent">
+	    
+		<LinearLayout android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical">
+			
+	    	<EditText android:id="@+id/etmessage"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_margin="10dp"
+			    android:gravity="top|left"
+			    android:inputType="textMultiLine"
+			    android:imeOptions="actionDone"
+			    android:maxLength="63"
+			    android:minLines="3"
+			    android:maxLines="3"
+			    android:lines="3"/>
+			
+			<com.mobmonkey.mobmonkey.utils.MMExpandedListView android:id="@+id/mmelvdefaultmessage"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_margin="10dp"
+			    android:scrollbars="none"
+			    android:background="@drawable/listview_border"
+				android:divider="@drawable/listview_divider"
+				android:dividerHeight="1dp"/>
+		    
+		</LinearLayout>
+	    
+	</ScrollView>
+		
+</LinearLayout>

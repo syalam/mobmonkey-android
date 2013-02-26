@@ -1,27 +1,16 @@
 package com.mobmonkey.mobmonkeyapi.adapters;
 
-import java.util.ArrayList;
-
 import org.apache.http.client.methods.HttpGet;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
-import com.mobmonkey.mobmonkeyapi.utils.MMGETAsyncTask;
+import com.mobmonkey.mobmonkeyapi.utils.MMGetAsyncTask;
 
 public class MMCategoryAdapter {
 	private static final String TAG = "MMCategories: ";
 	private static String categoryURL;
-	static SharedPreferences userPrefs;
-
-	public static ArrayList getTopCategories()
-	{
-		ArrayList topLevelCategories = new ArrayList();
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-		return topLevelCategories;
-	}
 	
 	public static void getTopLevelCategories(MMCallback mmCallback, String user, String auth, String partnerId) {
 		getCategories(mmCallback, "1", user, auth, partnerId);
@@ -38,7 +27,7 @@ public class MMCategoryAdapter {
 		httpGet.setHeader(MMAPIConstants.KEY_USER, user);
 		httpGet.setHeader(MMAPIConstants.KEY_AUTH, auth);
 		
-		new MMGETAsyncTask(mmCallback).execute(httpGet);
+		new MMGetAsyncTask(mmCallback).execute(httpGet);
 	}
 	
 	public static void getAllCategories(MMCallback mmCallback, String user, String auth, String partnerId)
@@ -53,6 +42,6 @@ public class MMCategoryAdapter {
 		httpGet.setHeader(MMAPIConstants.KEY_USER, user);
 		httpGet.setHeader(MMAPIConstants.KEY_AUTH, auth);
 		
-		new MMGETAsyncTask(mmCallback).execute(httpGet);
+		new MMGetAsyncTask(mmCallback).execute(httpGet);
 	}
 }

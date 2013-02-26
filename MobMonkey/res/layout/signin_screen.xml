@@ -8,7 +8,7 @@
     	<TextView android:layout_width="match_parent"
 			android:layout_height="50dp"
 			android:gravity="center"
-			android:text="@string/btn_sign_in"
+			android:text="@string/tv_title_sign_in"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textColor="@android:color/white"
 			android:textStyle="bold"
@@ -27,7 +27,7 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="20dp"
 					android:layout_marginRight="20dp"
-					android:hint="@string/et_emailaddress"
+					android:hint="@string/et_hint_emailaddress"
 					android:inputType="text"/>
 				
 				<EditText android:id="@+id/etpassword"
@@ -35,13 +35,13 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="20dp"
 					android:layout_marginRight="20dp"
-					android:hint="@string/et_password"
+					android:hint="@string/et_hint_password"
 					android:inputType="textPassword"/>
 				
 				<Button android:id="@+id/btnsignin"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:text="@string/btn_sign_in"
+					android:text="@string/tv_title_sign_in"
 					android:layout_marginTop="10dp"
 					android:layout_marginLeft="20dp"
 					android:layout_marginRight="20dp"

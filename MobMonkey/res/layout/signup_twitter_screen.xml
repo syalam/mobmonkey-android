@@ -32,7 +32,7 @@
 				android:layout_marginTop="15dp"
 				android:layout_marginLeft="20dp"
 				android:layout_marginRight="20dp"
-				android:hint="@string/et_firstname"
+				android:hint="@string/et_hint_firstname"
 				android:inputType="text"/>
 				
 			<EditText android:id="@+id/etlastname"
@@ -40,7 +40,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
 				android:layout_marginRight="20dp"
-				android:hint="@string/et_lastname"
+				android:hint="@string/et_hint_lastname"
 				android:inputType="text"/>
 				
 			<EditText android:id="@+id/etemailaddress"
@@ -48,7 +48,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
 				android:layout_marginRight="20dp"
-				android:hint="@string/et_emailaddress"
+				android:hint="@string/et_hint_emailaddress"
 				android:inputType="text"/>
 			
 					
@@ -57,21 +57,21 @@
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
 				android:layout_marginRight="20dp"
-				android:hint="@string/et_birthdate"
-				android:editable="false"/>
+				android:hint="@string/et_hint_birthdate"
+				android:inputType="none"/>
 			
 			<EditText android:id="@+id/etgender"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
 				android:layout_marginRight="20dp"
-				android:hint="@string/et_gender"
-				android:editable="false"/>
+				android:hint="@string/et_hint_gender"
+				android:inputType="none"/>
 
-			
 			<Button android:id="@+id/btnsignup"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
+				android:layout_height="wrap_content"				
+				android:layout_marginTop="10dp"
 				android:text="@string/btn_sign_up"
 				android:layout_marginLeft="20dp"
 				android:layout_marginRight="20dp"
