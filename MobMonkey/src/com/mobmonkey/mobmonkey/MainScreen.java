@@ -1,5 +1,7 @@
 package com.mobmonkey.mobmonkey;
 
+import java.lang.Object;
+
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -44,7 +46,7 @@ public class MainScreen extends TabActivity {
 		setContentView(R.layout.main_screen);
 		
 		init();
-		getTopLevelCategories();
+		getAllCategories();
 		setTabs();
 		tabHost.setCurrentTab(0);
 	}
@@ -56,14 +58,21 @@ public class MainScreen extends TabActivity {
 		tabHost = getTabHost();
 	}
 	
-	private void getTopLevelCategories() {
-		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES)) {
-			MMCategoryAdapter.getTopLevelCategories(new MainCallback(), 
+	/**
+	 * Function that gets all the categories from the server
+	 */
+	private void getAllCategories() 
+	{	
+		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
+		{			
+			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...");
+
+			MMCategoryAdapter.getAllCategories(
+					new MainCallback(), 
 					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 					MMConstants.PARTNER_ID);
-			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading_categories), true, false);
-		}
+		} 
 	}
 	
 	/**
@@ -96,24 +105,18 @@ public class MainScreen extends TabActivity {
 		tabSpec.setContent(intent);
 		tabHost.addTab(tabSpec);
 	}
-	
+		 
 	/**
-	 * 
+	 * Callback that gets all the category information
 	 * @author Dezapp, LLC
-	 *
-	 */
+	 * @param obj obj is the JSON response from the server
+	 */ 
 	private class MainCallback implements MMCallback {
 		@Override
-		public void processCallback(Object obj) {
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
-			
-			if(obj != null) {
-				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES, (String) obj);
-				userPrefsEditor.commit();
-			}
-			Log.d(TAG, TAG + "Categories response: " + (String) obj);
+		public void processCallback(Object obj){
+			userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
+			userPrefsEditor.commit();
+			progressDialog.dismiss();
 		}
 	}
 }

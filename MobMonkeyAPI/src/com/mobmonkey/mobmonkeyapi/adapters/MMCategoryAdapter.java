@@ -1,7 +1,10 @@
 package com.mobmonkey.mobmonkeyapi.adapters;
 
+import java.util.ArrayList;
+
 import org.apache.http.client.methods.HttpGet;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -11,6 +14,14 @@ import com.mobmonkey.mobmonkeyapi.utils.MMGETAsyncTask;
 public class MMCategoryAdapter {
 	private static final String TAG = "MMCategories: ";
 	private static String categoryURL;
+	static SharedPreferences userPrefs;
+
+	public static ArrayList getTopCategories()
+	{
+		ArrayList topLevelCategories = new ArrayList();
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		return topLevelCategories;
+	}
 	
 	public static void getTopLevelCategories(MMCallback mmCallback, String user, String auth, String partnerId) {
 		getCategories(mmCallback, "1", user, auth, partnerId);
