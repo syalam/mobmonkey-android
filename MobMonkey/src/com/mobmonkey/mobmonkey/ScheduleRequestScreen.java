@@ -134,13 +134,13 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		switch(checkedId) {
 			case R.id.rbdaily:
-				repeatRate = ((RadioButton) findViewById(R.id.rbdaily)).getText().toString();
+				repeatRate = ((RadioButton) findViewById(R.id.rbdaily)).getText().toString().toLowerCase();
 				break;
 			case R.id.rbweekly:
-				repeatRate = ((RadioButton) findViewById(R.id.rbweekly)).getText().toString();
+				repeatRate = ((RadioButton) findViewById(R.id.rbweekly)).getText().toString().toLowerCase();
 				break;
 			case R.id.rbmonthly:
-				repeatRate = ((RadioButton) findViewById(R.id.rbmonthly)).getText().toString();
+				repeatRate = ((RadioButton) findViewById(R.id.rbmonthly)).getText().toString().toLowerCase();
 				break;
 			}
 	}

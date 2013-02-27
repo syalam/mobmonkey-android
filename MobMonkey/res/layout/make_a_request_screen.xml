@@ -80,7 +80,7 @@
 				<RadioGroup android:id="@+id/rgstayactivefor"
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
-				    android:checkedButton="@+id/rbfifteenmin"
+				    android:checkedButton="@+id/rbthirtymin"
 				    android:orientation="horizontal"
 				    android:padding="10dp">
 				    

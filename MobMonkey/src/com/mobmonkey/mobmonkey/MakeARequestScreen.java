@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RadioGroup.OnCheckedChangeListener;
@@ -35,6 +36,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	
 	String message;
 	String scheduleRequest;
+	String mediaType;
 	
 	int[] icons;
 	String[] labels;
@@ -63,12 +65,15 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			switch(checkedId) {
 				case R.id.rbvideorequest:
 					btnSendRequest.setText(R.string.btn_send_video_request);
+					mediaType = MMAPIConstants.MEDIA_TYPE_VIDEO;
 					break;
 				case R.id.rbphotorequest:
 					btnSendRequest.setText(R.string.btn_send_photo_request);
+					mediaType = MMAPIConstants.MEDIA_TYPE_IMAGE;
 					break;
 				case R.id.rbtextrequest:
 					btnSendRequest.setText(R.string.btn_send_text_request);
+					mediaType = MMAPIConstants.MEDIA_TYPE_TEXT;
 					break;
 			}
 		} else if(group == rgStayActive) {
@@ -137,6 +142,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		
 		message = MMAPIConstants.DEFAULT_STRING;
 		scheduleRequest = MMAPIConstants.DEFAULT_STRING;
+		mediaType = MMAPIConstants.MEDIA_TYPE_VIDEO;
 		
 		rgRequests.setOnCheckedChangeListener(MakeARequestScreen.this);
 		rgStayActive.setOnCheckedChangeListener(MakeARequestScreen.this);
