@@ -7,11 +7,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
+import com.mobmonkey.mobmonkey.utils.MMCategories;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
-import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 
 import android.app.Activity;
@@ -211,7 +211,9 @@ public class SearchScreen extends Activity implements LocationListener {
 	 */
 	private void init() throws JSONException {
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-		topLevelCategories = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+		
+		topLevelCategories = MMCategories.getTopLevelCategories(SearchScreen.this.getApplicationContext());
+		//topLevelCategories = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
 		
 		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
 		
@@ -254,15 +256,18 @@ public class SearchScreen extends Activity implements LocationListener {
 		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 				try {
-					Log.d(TAG, TAG + "category id: " + topLevelCategories.getJSONObject(position).getString("categoryId"));
+					String catId = topLevelCategories.getJSONObject(position).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
+					selectedCategory = topLevelCategories.getJSONObject(position).getString("en");
+					JSONArray subCategories = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(SearchScreen.this.getApplicationContext(), catId));
 					
-					selectedCategory = ((TextView) view.findViewById(R.id.tvlabel)).getText().toString();
-					MMCategoryAdapter.getCategories(new SearchCategoryCallback(), 
-							topLevelCategories.getJSONObject(position).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID), 
-							userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-							userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
-							MMConstants.PARTNER_ID);
-				} catch (JSONException e) {
+					if(!subCategories.isNull(0))
+					{	
+						Intent categoryScreenIntent = new Intent(SearchScreen.this, CategoryScreen.class);					
+						categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, (String) subCategories.toString());
+						categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
+						startActivity(categoryScreenIntent);
+					}
+				} catch (JSONException e) { 
 					e.printStackTrace();
 				}
 			}
@@ -302,10 +307,17 @@ public class SearchScreen extends Activity implements LocationListener {
 	}
 	
 	private void searchByText() {
-		MMSearchLocationAdapter.searchLocationWithText(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 
-				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), searchCategory, 
-				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
-		progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + 
+		MMSearchLocationAdapter.searchLocationWithText(
+				new SearchCallback(), 
+				Double.toString(longitudeValue), 
+				Double.toString(latitudeValue), 
+				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
+				searchCategory,
+				"",
+				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+				MMConstants.PARTNER_ID);
+				progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + 
 				searchCategory + getString(R.string.pd_ellipses), true, false);
 	}
 	
@@ -382,24 +394,6 @@ public class SearchScreen extends Activity implements LocationListener {
 				startActivity(searchResultsIntent);
 			}
 			Log.d(TAG, TAG + "response: " + (String) obj);
-		}
-	}
-	
-	private class SearchCategoryCallback implements MMCallback {
-		@Override
-		public void processCallback(Object obj) {
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
-			
-			if(obj == null) {
-				Log.d(TAG, TAG + "The response object is empty");
-			} else {
-				Intent categoryScreenIntent = new Intent(SearchScreen.this, CategoryScreen.class);
-				categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, (String) obj);
-				categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
-				startActivity(categoryScreenIntent);
-			}			
 		}
 	}
 }

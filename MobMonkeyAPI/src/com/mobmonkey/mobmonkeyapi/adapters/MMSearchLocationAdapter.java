@@ -30,7 +30,7 @@ public final class MMSearchLocationAdapter {
 	 * @param auth The password of the user if signed in normally with email or the provider OAuth token if signed in through social networks
 	 * @param partnerId MobMonkey unique partner id
 	 */
-	public static void searchLocationWithText(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String user, String auth, String partnerId) {
+	public static void searchLocationWithText(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String categoryID, String user, String auth, String partnerId) {
 		searchLocationURL = MMAPIConstants.MOBMONKEY_URL + "search/location";
 		
 		Log.d(TAG, TAG + "searchLocationURL: " + searchLocationURL);
@@ -41,9 +41,9 @@ public final class MMSearchLocationAdapter {
 			params.put(MMAPIConstants.KEY_LATITUDE, latitude);
 			params.put(MMAPIConstants.KEY_RADIUS_IN_YARDS, searchRadius);
 			params.put(MMAPIConstants.KEY_NAME, name);
-			
-			Log.d(TAG, TAG + "PARAMS: " + params);
-			
+			if(categoryID != "")
+				params.put(MMAPIConstants.KEY_CATEGORY_IDS, categoryID);
+						
 			StringEntity stringEntity = new StringEntity(params.toString());
 			
 			HttpPost httpPost = new HttpPost(searchLocationURL);
@@ -75,6 +75,6 @@ public final class MMSearchLocationAdapter {
 	 */
 	public static void searchAllNearby(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String user, String auth, String partnerId) {
 		Log.d(TAG, TAG + "searchAllNearby");
-		searchLocationWithText(mmCallback, longitude, latitude, searchRadius, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
+		searchLocationWithText(mmCallback, longitude, latitude, searchRadius, MMAPIConstants.DEFAULT_STRING, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
 	}
 }

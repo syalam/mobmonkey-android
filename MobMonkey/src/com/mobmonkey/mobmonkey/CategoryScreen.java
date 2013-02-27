@@ -7,8 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mobmonkey.mobmonkey.utils.MMCategories;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
-import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -50,8 +51,9 @@ public class CategoryScreen extends Activity implements LocationListener {
 	JSONArray categoriesArray;
 	
 	String searchCategory;
-	String categoryId;
-	
+
+	ProgressDialog progressDialog;
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.category_screen);
@@ -101,13 +103,31 @@ public class CategoryScreen extends Activity implements LocationListener {
 				try 
 				{
 					JSONObject category = categoriesArray.getJSONObject(position);
-					MMCategoryAdapter.getCategories(new CategoryCallback(), 
-							category.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID), 
-							userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-							userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
-							MMConstants.PARTNER_ID);
-					searchCategory = category.getString("en");
-					categoryId = category.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
+					JSONArray subCategoriesArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(CategoryScreen.this.getApplicationContext(), category.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)));
+					String categorySelected = category.getString("en");
+					
+					if(!subCategoriesArray.isNull(0))
+					{
+						Intent subCategoriesIntent = new Intent(CategoryScreen.this, CategoryScreen.class);
+						subCategoriesIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, subCategoriesArray.toString());
+						subCategoriesIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, categorySelected);
+						startActivity(subCategoriesIntent);
+					}
+					else
+					{
+						progressDialog = ProgressDialog.show(CategoryScreen.this, MMAPIConstants.DEFAULT_STRING, "Locating " + categorySelected);
+
+						MMSearchLocationAdapter.searchLocationWithText(
+								new SearchResultsCallback(), 
+								Double.toString(longitudeValue), 
+								Double.toString(latitudeValue), 
+								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
+								MMAPIConstants.DEFAULT_STRING,
+								category.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID),
+								userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+								userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+								MMConstants.PARTNER_ID);
+					}
 				} 
 				catch (JSONException e) 
 				{
@@ -143,43 +163,6 @@ public class CategoryScreen extends Activity implements LocationListener {
 		alertDialog.show();
 	}
 	
-	private class CategoryCallback implements MMCallback 
-	{
-		@Override
-		public void processCallback(Object obj) 
-		{
-			if(obj == null)
-			{
-				Log.d(TAG, TAG + "CategoryCallback object is null");
-			}
-			else
-			{
-				try 
-				{
-					JSONArray subCategories = new JSONArray((String) obj);
-				
-					if(subCategories.isNull(0))
-					{
-						MMSearchLocationAdapter.searchLocationWithText(new SearchResultsCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 1000, "", 
-								userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
-					}
-					else
-					{
-						Intent subCategoriesIntent = new Intent(CategoryScreen.this, CategoryScreen.class);
-						subCategoriesIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, (String) obj);
-						subCategoriesIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
-						startActivity(subCategoriesIntent);
-					}
-				} 
-				catch (JSONException e) 
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-		
-	}
-	
 	private class SearchResultsCallback implements MMCallback 
 	{
 		@Override
@@ -191,6 +174,7 @@ public class CategoryScreen extends Activity implements LocationListener {
 			{
 				try {
 					JSONArray searchResults = new JSONArray((String) obj);
+					progressDialog.dismiss();
 					if(searchResults.isNull(0))
 					{
 						displayAlertDialog();

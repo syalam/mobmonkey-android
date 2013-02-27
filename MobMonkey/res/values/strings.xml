@@ -74,6 +74,7 @@
 	
 	<!-- Search Screen -->
 	<string name="btn_filter">Filter</string>
+	<string name="btn_add_loc">+</string>
 	<string name="tv_title_search">Search</string>
 	
 	<string name="ad_title_enable_gps">Enable GPS</string>
