@@ -1,6 +1,7 @@
 package com.mobmonkey.mobmonkey;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -43,8 +44,17 @@ public class AddLocationScreen extends Activity {
 	    	case R.id.btnaddlocation:
 	    		addLocation();
 	    		break;
+	    	case R.id.etcategories:
+	    		loadCategory();
+	    		break;
     	}
     }
+
+	private void loadCategory() {
+		Intent intent = new Intent(this, CategoryListScreen.class);
+		startActivityForResult(intent, RESULT_OK);
+		
+	}
 
 	private void addLocation() {
 		

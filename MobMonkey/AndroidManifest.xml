@@ -135,6 +135,11 @@
 		    
 		</activity>
 		
+		<activity android:name=".CategoryListScreen"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
+		
 		<meta-data android:value="@string/app_id_facebook" android:name="com.facebook.sdk.ApplicationId"/>
 		<meta-data android:value="@string/app_google_api_key" android:name="com.google.android.maps.v2.API_KEY"/>
 		<activity android:label="@string/app_name" android:name="com.facebook.LoginActivity"></activity>
