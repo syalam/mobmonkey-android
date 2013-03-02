@@ -138,6 +138,13 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_POSTCODE = "postcode";
 	public static final String JSON_KEY_MONKEYS = "monkeys";
 	public static final String JSON_KEY_PHONENUMBER = "phoneNumber";
+	public static final String JSON_KEY_CATEGORY_IDS = "categoryIds";
+	public static final String JSON_KEY_DESCRIPTION = "description";
+	public static final String JSON_KEY_ADDRESS_EXT = "address_ext";
+	public static final String JSON_KEY_COUNTRY_CODE = "countryCode";
+	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
+	public static final String JSON_KEY_PROVIDER_ID = "providerId";
+	public static final String JSON_KEY_WEBSITE = "website";
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;
