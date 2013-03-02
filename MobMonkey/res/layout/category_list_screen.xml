@@ -25,7 +25,7 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
 			
-		<ListView android:id="@+id/lvcategorylist"
+		<com.mobmonkey.mobmonkey.utils.MMExpandedListView android:id="@+id/elvcategorylist"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
 		    android:layout_margin="10dp"
@@ -34,7 +34,7 @@
 		    android:divider="@drawable/listview_divider"
 		    android:dividerHeight="1dp"
 		    android:scrollbars="none">
-		</ListView>
+		</com.mobmonkey.mobmonkey.utils.MMExpandedListView>
 		
 	</LinearLayout>
 	

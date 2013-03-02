@@ -1,5 +1,7 @@
 package com.mobmonkey.mobmonkey;
 
+import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,6 +39,9 @@ public class AddLocationScreen extends Activity {
 		etZip = (EditText)findViewById(R.id.etzip);
 		etPhone = (EditText)findViewById(R.id.etphone);
 		
+		// check for bundle (location)
+		checkLocationInfo();
+		
 	}
 
 	public void viewOnClick(View view) {
@@ -59,5 +64,15 @@ public class AddLocationScreen extends Activity {
 	private void addLocation() {
 		
 		
+	}
+	
+	private void checkLocationInfo() {
+		if(this.getIntent().getExtras() != null) {
+			Bundle bundle = getIntent().getExtras();
+			etStreet.setText(bundle.getString(MMAPIConstants.JSON_KEY_ADDRESS));
+			etCity.setText(bundle.getString(MMAPIConstants.JSON_KEY_LOCALITY));
+			etState.setText(bundle.getString(MMAPIConstants.JSON_KEY_REGION));
+			etZip.setText(bundle.getString(MMAPIConstants.JSON_KEY_POSTCODE));
+		}
 	}
 }
