@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 public class MMCategories extends Activity{
 	
 	private static SharedPreferences userPrefs;
+	private static SharedPreferences.Editor editPrefs;
 	Context context;
 	
 	public static JSONArray getTopLevelCategories(Context context) throws JSONException
@@ -61,5 +62,10 @@ public class MMCategories extends Activity{
 			return null;
 		
 		return subCategoriesList.toString();
+	}
+	
+	public static void addCategory(String categoryId)
+	{
+		
 	}
 }

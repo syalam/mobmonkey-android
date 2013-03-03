@@ -100,7 +100,7 @@ public class CategoryScreen extends Activity implements LocationListener {
 		{
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) 
 			{
-				try 
+				try
 				{
 					JSONObject category = categoriesArray.getJSONObject(position);
 					JSONArray subCategoriesArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(CategoryScreen.this.getApplicationContext(), category.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)));
