@@ -82,6 +82,9 @@ public class AddLocationMapScreen extends FragmentActivity {
 						bundle.putString(MMAPIConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
 						bundle.putString(MMAPIConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
 						bundle.putString(MMAPIConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+						bundle.putString(MMAPIConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude()+"");
+						bundle.putString(MMAPIConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude()+"");
+						
 						Intent intent = new Intent(AddLocationMapScreen.this, AddLocationScreen.class);
 						
 						intent.putExtras(bundle);

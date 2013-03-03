@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundcolor"
+    android:onClick="viewOnClick()"
     android:orientation="vertical" >
     
    	<TextView android:layout_width="wrap_content"
@@ -79,17 +80,18 @@
 						android:hint="@string/et_hint_location_phone"
 						android:inputType="phone"/>
 		    
-		    <Button android:id="@+id/btnaddlocation"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/btn_add_location"
-					android:layout_marginTop="10dp"
-					android:layout_marginLeft="20dp"
-					android:layout_marginRight="20dp"
-					android:onClick=""
-					android:background="@drawable/orange_button_background"
-					android:textColor="@android:color/white"
-					android:textStyle="bold"/>
+		    <Button
+		        android:id="@+id/btnaddlocation"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="20dp"
+		        android:layout_marginRight="20dp"
+		        android:layout_marginTop="10dp"
+		        android:background="@drawable/orange_button_background"
+		        android:onClick="viewOnClick"
+		        android:text="@string/btn_add_location"
+		        android:textColor="@android:color/white"
+		        android:textStyle="bold" />
 		    
 	    </LinearLayout>
 		    

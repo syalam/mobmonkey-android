@@ -160,6 +160,12 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	<string name="et_hint_location_zip">Zip</string>
 	<string name="et_hint_location_phone">Phone Number (optional)</string>
 	<string name="btn_add_location">Add Location</string>
+	<string name="ad_no_name">Please enter a name</string>
+	<string name="ad_no_categories">Please select categories</string>
+	<string name="ad_no_street">Please enter an address</string>
+	<string name="ad_no_city">Please enter a city</string>
+	<string name="ad_no_state">Please enter a state</string>
+	<string name="ad_no_zip">Please enter a zip code</string>
 	
 	<!-- Make a Request Screen -->
 	<string name="tv_add_message">Add Message</string>
