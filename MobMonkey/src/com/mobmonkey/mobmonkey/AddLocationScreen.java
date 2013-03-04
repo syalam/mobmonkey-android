@@ -77,6 +77,7 @@ public class AddLocationScreen extends Activity {
 						categories = categories + "," + selectedCategoriesList.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
 				}
 				etCats.setText(displayCategoriesSelected);
+				
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
