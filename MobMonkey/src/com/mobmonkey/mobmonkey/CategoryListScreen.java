@@ -4,6 +4,7 @@ import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.widget.ListView;
 
 public class CategoryListScreen extends ListActivity{
 
@@ -17,7 +18,8 @@ public class CategoryListScreen extends ListActivity{
 
 	private void init() {
 		MMExpandedListView elvCategories = (MMExpandedListView) findViewById(R.id.elvcategorylist);
-		
+		elvCategories.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		elvCategories.setItemsCanFocus(false);
 	}
 	
 	

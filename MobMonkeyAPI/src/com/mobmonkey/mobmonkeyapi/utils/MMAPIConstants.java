@@ -8,7 +8,7 @@ package com.mobmonkey.mobmonkeyapi.utils;
 public final class MMAPIConstants {
 	
 	/**
-	 * Private class to prevent the instantiation of this class outside the scope of this class
+	 * Private class to prevent the instantiation of this class outfside the scope of this class
 	 */
 	private MMAPIConstants() {
 		throw new AssertionError();

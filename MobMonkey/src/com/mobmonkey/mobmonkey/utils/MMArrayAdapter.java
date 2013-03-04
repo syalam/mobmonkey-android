@@ -63,9 +63,11 @@ public class MMArrayAdapter extends ArrayAdapter<Object> {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		
-        viewHolder.ivIcon.setImageResource(icons[position]);
+		if(icons.length!=0)
+			viewHolder.ivIcon.setImageResource(icons[position]);
         viewHolder.tvLabel.setText(items[position]);
-        viewHolder.ivIndicatorIcon.setImageResource(indicatorIcons[position]);
+        if(indicatorIcons.length!=0)
+        	viewHolder.ivIndicatorIcon.setImageResource(indicatorIcons[position]);
         
         if(indicatorIconOnClickListener != null && position == 1) {
         	viewHolder.ivIndicatorIcon.setClickable(true);
