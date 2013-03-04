@@ -2,7 +2,6 @@ package com.mobmonkey.mobmonkey;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkey.utils.MMCategories;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -11,15 +10,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMAddLocationAdapter;
-import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 /**
@@ -39,6 +38,9 @@ public class AddLocationScreen extends Activity {
 	
 	JSONArray topLevelCats;
 	
+	Location location;
+	LocationManager locationManager;
+	
 	SharedPreferences userPrefs;
 	SharedPreferences.Editor editPrefs;
 	
@@ -49,6 +51,7 @@ public class AddLocationScreen extends Activity {
 		editPrefs = userPrefs.edit();
 		editPrefs.remove(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
 		editPrefs.commit();
+		location = new Location(LocationManager.NETWORK_PROVIDER);
 		init();
 	}
 	
@@ -60,10 +63,18 @@ public class AddLocationScreen extends Activity {
 			String displayCategoriesSelected = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMAPIConstants.DEFAULT_STRING);
 			try {
 				JSONArray selectedCategoriesList = new JSONArray(displayCategoriesSelected);
-				displayCategoriesSelected = "";
+				displayCategoriesSelected = null;
 				for(int i=0; i < selectedCategoriesList.length(); i++)
 				{
-					displayCategoriesSelected = displayCategoriesSelected + ", " + selectedCategoriesList.getJSONObject(i).getString("en");
+					if(displayCategoriesSelected == null)
+						displayCategoriesSelected = selectedCategoriesList.getJSONObject(i).getString("en");
+					else
+						displayCategoriesSelected = displayCategoriesSelected + ", " + selectedCategoriesList.getJSONObject(i).getString("en");
+					
+					if(categories == null)
+						categories = selectedCategoriesList.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
+					else
+						categories = categories + "," + selectedCategoriesList.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
 				}
 				etCats.setText(displayCategoriesSelected);
 			} catch (JSONException e) {
@@ -79,8 +90,9 @@ public class AddLocationScreen extends Activity {
 	    {
 	    	editPrefs.remove(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
 	    }
-	    return;
+	    super.onBackPressed();
 	}
+	
 	private void init(){
 		
 		//Initialize all of the text fields
@@ -123,36 +135,24 @@ public class AddLocationScreen extends Activity {
 		});
 	}
 
-	public void viewOnClick(View view) {
+	public void viewOnClick(View view) throws JSONException {
     	switch(view.getId()) {
 	    	case R.id.btnaddlocation:
 	    		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST))
 	    	    {
-	    	    	editPrefs.remove(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
+	    	     	editPrefs.remove(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
 	    	    }
 	    		addLocation();
-	    		break;
-	    	case R.id.etcategories:
-	    		loadCategory();
 	    		break;
     	}
     }
 
-	private void loadCategory() {
-		Intent intent = new Intent(this, CategoryListScreen.class);
-		startActivityForResult(intent, RESULT_OK);	
-	}
-
-	private void addLocation() {
+	private void addLocation() throws JSONException {
 		if(checkValues())
 		{
-			// dummy categories
-			categories = "342";
-			String a = userPrefs.getString(MMAPIConstants.KEY_USER, null); 
-			String b = userPrefs.getString(MMAPIConstants.KEY_AUTH, null);
-			MMAddLocationAdapter.addLocation(new AddLocationCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, null), 
-					userPrefs.getString(MMAPIConstants.KEY_AUTH, null), MMConstants.PARTNER_ID, street, "", "", 
-					categories, "US", latitude, city, longitude, name, "", 
+			MMAddLocationAdapter.addLocation(new AddLocationCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID, street, "", "", 
+					categories, "United States", latitude, city, longitude, name, "", 
 					phone, postalCode, "", state, "");
 		}
 	}
@@ -189,15 +189,12 @@ public class AddLocationScreen extends Activity {
 			return false;
 		}
 		name = etLocName.getText().toString();
-		categories = etCats.getText().toString();
 		street = etStreet.getText().toString();
 		city = etCity.getText().toString();
 		state = etState.getText().toString();
 		postalCode = etZip.getText().toString();
 		if(!etPhone.getText().toString().isEmpty())
-		{
 			phone =  etPhone.getText().toString();
-		}
 		else
 			phone = "";
 		return true;
@@ -220,32 +217,24 @@ public class AddLocationScreen extends Activity {
 			etZip.setText(bundle.getString(MMAPIConstants.JSON_KEY_POSTCODE));
 			latitude = bundle.getString(MMAPIConstants.JSON_KEY_LATITUDE);
 			longitude = bundle.getString(MMAPIConstants.JSON_KEY_LONGITUDE);
+			
+			location.setLatitude(Double.parseDouble(bundle.getString(MMAPIConstants.JSON_KEY_LATITUDE)));
+			location.setLongitude(Double.parseDouble(bundle.getString(MMAPIConstants.JSON_KEY_LONGITUDE)));
 		}
 	}
 	
 	private class AddLocationCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
-			/*
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
-			*/
 			
 			if(obj != null) {
 				try {
-					JSONObject response = new JSONObject((String) obj);
-					
-					if(response.getString(MMAPIConstants.KEY_RESPONSE_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
-						Toast.makeText(AddLocationScreen.this, "Location Added.", Toast.LENGTH_SHORT).show();
-						finish();
-					}
-					else {
-						Toast.makeText(AddLocationScreen.this, "FAIL.", Toast.LENGTH_SHORT).show();
-					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
+					Intent locationDetailsScreenIntent = new Intent(AddLocationScreen.this, SearchResultDetailsScreen.class);				
+					locationDetailsScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, (String) obj);
+					locationDetailsScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
+					startActivity(locationDetailsScreenIntent);
+					finish();
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				

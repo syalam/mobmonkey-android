@@ -40,7 +40,7 @@ public class AddLocationMapScreen extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_location_map_screen);
 		
-		init();
+		init(); 
 	}
 	
 	public void viewOnClick(View view) {
@@ -66,7 +66,6 @@ public class AddLocationMapScreen extends FragmentActivity {
 		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
 		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
 		googleMap.setMyLocationEnabled(true);
-		//googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 		googleMap.setOnMapClickListener(new OnMapClickListener(){
 			@Override
 			public void onMapClick(LatLng pointClicked) {
@@ -86,11 +85,9 @@ public class AddLocationMapScreen extends FragmentActivity {
 						bundle.putString(MMAPIConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude()+"");
 						
 						Intent intent = new Intent(AddLocationMapScreen.this, AddLocationScreen.class);
-						
 						intent.putExtras(bundle);
-						
 						startActivity(intent);
-						
+						finish();
 					}catch(IOException e)
 					{
 						e.printStackTrace();
@@ -106,7 +103,6 @@ public class AddLocationMapScreen extends FragmentActivity {
 			btnAddLoc.setText(R.string.ad_btn_cancel);
 			addLocClicked = false;
 		} else {
-//			btnAddLoc.setBackgroundResource(R.id.title_bar_icon_plus);
 			btnAddLoc.setText("");
 			addLocClicked = true;
 		}

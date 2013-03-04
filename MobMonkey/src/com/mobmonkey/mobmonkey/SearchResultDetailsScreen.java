@@ -45,7 +45,7 @@ public class SearchResultDetailsScreen extends Activity {
 			tvLocNameTitle.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvLocName.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvMembersFound.setText(jObj.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));
-			
+			 
 			int[] icons = new int[]{R.drawable.cat_icon_telephone, R.drawable.cat_icon_map_pin, R.drawable.cat_icon_alarm_clock};
 			int[] indicatorIcons = new int[]{R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator};
 			String[] details = new String[3];
@@ -75,6 +75,11 @@ public class SearchResultDetailsScreen extends Activity {
 		}
 	}
 
+	@Override
+	public void onBackPressed() {
+	    super.onBackPressed();
+	}
+	
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.llmakerequest:
