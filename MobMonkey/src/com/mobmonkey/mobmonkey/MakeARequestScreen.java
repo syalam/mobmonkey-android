@@ -3,23 +3,29 @@ package com.mobmonkey.mobmonkey;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
-import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
-import com.mobmonkey.mobmonkey.utils.MMSegmentedRadioGroup;
-import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+
+import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
+import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
+import com.mobmonkey.mobmonkey.utils.MMSegmentedRadioGroup;
+import com.mobmonkey.mobmonkeyapi.adapters.MMSendRequestAdapter;
+import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 /**
  * @author Dezapp, LLC
@@ -43,6 +49,13 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	int[] indicatorIcons;
 	MMArrayAdapter mmArrayAdapter;
 	
+	private String scheduleDate;
+	private String duration = "15";
+	JSONObject jObj;
+	boolean repeating;
+	
+	SharedPreferences userPrefs;
+	String locationId;
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -77,7 +90,20 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 					break;
 			}
 		} else if(group == rgStayActive) {
-			
+			switch(checkedId) {
+				case R.id.rbfifteenmin:
+					duration = "15";
+					break;
+				case R.id.rbthirtymin:
+					duration = "30";
+					break;
+				case R.id.rbonehour:
+					duration = "60";
+					break;
+				case R.id.rbthreehour:
+					duration = "180";
+					break;
+			}
 		}
 	}
 
@@ -114,6 +140,27 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			mmelvAddMessage.setAdapter(mmArrayAdapter);
 			mmelvAddMessage.invalidate();
 		}
+		
+		// clicked on sendRequestButton
+		if(view.getId() == R.id.btnsentrequest) {
+			Log.d(TAG, "sent request");
+			
+			// TODO: provider is hard coded in
+			//MMSendRequestAdapter.sendRequest(mmCallback, scheduleDate, providerId, locationId, duration, radiusInYards, repeating, mediaType, partnerId);
+			//MMSendRequestAdapter.sendRequest(mmCallback, message, scheduleDate, providerId, locationId, duration, repeating, mediaType, partnerId, emailAddress, password)
+			
+			MMSendRequestAdapter.sendRequest(new SendRequestCallback(), 
+											 message,
+											 scheduleDate, 
+											 "", 
+											 locationId, 
+											 duration+"",
+											 false, // TODO: hard coded boolean value.(repeate) 
+											 mediaType, 
+											 MMConstants.PARTNER_ID,
+											 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+											 userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING));
+		}
 	}
 	
 	/*
@@ -127,6 +174,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			processAddMessageResult(resultCode, data);
 		} else if(requestCode == MMAPIConstants.REQUEST_CODE_SCHEDULE_REQUEST) {
 			processScheduleRequestResult(resultCode, data);
+			scheduleDate = ((Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME)).getTimeInMillis() +"";
 		}
 	}
 	
@@ -158,6 +206,23 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
 		mmelvScheduleRequest.setAdapter(mmArrayAdapter);
 		mmelvScheduleRequest.setOnItemClickListener(MakeARequestScreen.this);
+		
+		try {
+			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		repeating = getIntent().getBooleanExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, false);
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		
+		try {
+			locationId = jObj.getString("locationId");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -203,6 +268,8 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
 			
 			Calendar requestCal = (Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
+			//Log.d(TAG, requestCal.toString());
+			
 			
 			String scheduleMessage = sdfTime.format(requestCal.getTime()) + " on " + sdfDate.format(requestCal.getTime());
 			
@@ -214,5 +281,20 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		
 		mmelvScheduleRequest.setAdapter(mmArrayAdapter);
 		mmelvScheduleRequest.invalidate();
+	}
+	
+	private class SendRequestCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			// TODO Auto-generated method stub
+			if(obj != null) {
+				
+				Log.d(TAG, (String) obj);
+				
+				finish();
+			}
+		}
+		
 	}
 }

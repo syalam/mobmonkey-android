@@ -83,7 +83,10 @@ public class SearchResultDetailsScreen extends Activity {
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.llmakerequest:
-				startActivity(new Intent(SearchResultDetailsScreen.this, MakeARequestScreen.class));
+				//startActivity(new Intent());
+				Intent intent = new Intent(SearchResultDetailsScreen.this, MakeARequestScreen.class);
+				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+				startActivity(intent);
 				break;
 			case R.id.llbookmark:
 				bookmarkClicked();
