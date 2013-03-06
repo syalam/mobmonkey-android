@@ -40,9 +40,12 @@ public class MMSendRequestAdapter {
 		try {
 			requestInfo = new JSONObject();
 			requestInfo.put(MMAPIConstants.JSON_KEY_MESSAGE, message);
-			requestInfo.put(MMAPIConstants.JSON_KEY_DURATION, 250);
+			requestInfo.put(MMAPIConstants.JSON_KEY_SCHEDULEDATE, scheduleDate);
 			requestInfo.put(MMAPIConstants.JSON_KEY_PROVIDER_ID, "e048acf0-9e61-4794-b901-6a4bb49c3181"); //TODO: Provider ID is hard coded, change in future
+			requestInfo.put(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId);
+			requestInfo.put(MMAPIConstants.JSON_KEY_DURATION, 250);
 			requestInfo.put(MMAPIConstants.JSON_KEY_RECURRING, repeating);
+			
 			//requestInfo.put(MMAPIConstants.JSON_KEY_LATITUDE, latitude);
 			//requestInfo.put(MMAPIConstants.JSON_KEY_LONGITUDE, longitude);
 			//requestInfo.put(MMAPIConstants.JSON_KEY_RADIUS_IN_YARDS, radiusInYards);

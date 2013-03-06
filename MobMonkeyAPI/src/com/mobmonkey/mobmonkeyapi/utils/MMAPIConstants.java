@@ -47,6 +47,8 @@ public final class MMAPIConstants {
 	public static final String SHARED_PREFS_KEY_SEARCH_RADIUS = "Search radius";
 	public static final String SHARED_PREFS_KEY_NARROW_BY_LIVE_VIDEO = "Narrow by live video";
 	public static final String SHARED_PREFS_KEY_CATEGORY_LIST = "categoryList";
+	public static final String SHARED_PREFS_KEY_BOOKMARKS = "bookmarks";
+	
 	// Intent extra key values
 	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";

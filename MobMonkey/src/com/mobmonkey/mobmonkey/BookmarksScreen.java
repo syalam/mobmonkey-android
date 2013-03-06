@@ -1,6 +1,9 @@
 package com.mobmonkey.mobmonkey;
 
+import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 /**
@@ -10,6 +13,8 @@ import android.os.Bundle;
  */
 public class BookmarksScreen extends Activity {
 
+	private SharedPreferences userPrefs;
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -17,6 +22,15 @@ public class BookmarksScreen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bookmarks_screen);
+		
+		init();
+	}
+
+	private void init() {
+		// TODO Auto-generated method stub
+		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS)) {
+			
+		}
 	}
 
 	/**
