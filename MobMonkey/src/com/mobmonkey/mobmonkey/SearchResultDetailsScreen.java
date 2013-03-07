@@ -48,12 +48,27 @@ public class SearchResultDetailsScreen extends Activity {
 		MMExpandedListView elvLocDetails = (MMExpandedListView) findViewById(R.id.elvlocdetails);
 		tvBookmark = (TextView) findViewById(R.id.tvbookmark);
 		
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
+		
 		try {
 			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 			tvLocNameTitle.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvLocName.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvMembersFound.setText(jObj.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));
-			tvBookmark.setText(jObj.getBoolean("bookmark")? getString(R.string.tv_remove_bookmark):getString(R.string.tv_bookmark));
+			
+			// check if this location is alreayd in bookmark
+			tvBookmark.setText(getString(R.string.tv_bookmark));
+			
+			JSONArray ja = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, ""));
+			isInBookmark:
+				for(int i = 0; i < ja.length(); i++) {
+					if(((JSONObject)ja.get(i)).getString("name").compareTo(tvLocNameTitle.getText().toString()) == 0) {
+						tvBookmark.setText(getString(R.string.tv_remove_bookmark));
+						break isInBookmark;
+					}
+				}
+			
 			 
 			int[] icons = new int[]{R.drawable.cat_icon_telephone, R.drawable.cat_icon_map_pin, R.drawable.cat_icon_alarm_clock};
 			int[] indicatorIcons = new int[]{R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator};
@@ -83,8 +98,7 @@ public class SearchResultDetailsScreen extends Activity {
 			e.printStackTrace();
 		}
 		
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-		userPrefsEditor = userPrefs.edit();
+		
 	}
 
 	@Override
@@ -143,9 +157,10 @@ public class SearchResultDetailsScreen extends Activity {
 				userPrefsEditor.commit();
 				
 				// set "bookmark" to true
+				/*
 				JSONObject newLocationInfo = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 				newLocationInfo.put("bookmark", true);
-				
+				*/
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -175,10 +190,11 @@ public class SearchResultDetailsScreen extends Activity {
 				userPrefsEditor.commit();
 				
 				// set "bookmark" to false
+				/*
 				JSONObject newLocationInfo = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 				newLocationInfo.put("bookmark", false);
 				getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS);
-				
+				*/
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
