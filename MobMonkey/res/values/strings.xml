@@ -116,11 +116,11 @@
 	<string name="tv_make_request">Make a Request</string>
 	<string name="tv_members_found">members found</string>
 	<string name="tv_add_notifications">Add Notifications</string>
-	<string name="tv_bookmark">Bookmark</string>
-	<string name="tv_remove_bookmark">Remove bookmark</string>
+	<string name="tv_favorite">Favorite</string>
+	<string name="tv_remove_favorite">Remove favorite</string>
 	
 	<!-- Bookmarks Screen -->
-	<string name="tv_title_bookmarks">Bookmarks</string>
+	<string name="tv_title_favorites">Favorites</string>
 	
 	<!-- Settings Screen -->
 	<string name="tv_title_settings">Settings</string>

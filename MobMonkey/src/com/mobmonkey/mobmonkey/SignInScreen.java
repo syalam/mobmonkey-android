@@ -3,6 +3,7 @@ package com.mobmonkey.mobmonkey;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,6 +14,8 @@ import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
+import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -31,6 +34,7 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
