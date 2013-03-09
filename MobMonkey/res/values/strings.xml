@@ -73,6 +73,9 @@
 	<!--  Inbox Screen -->
 	<string name="tv_title_inbox">Inbox</string>
 	
+	<!-- Send Request Screen -->
+	<string name="toast_request_successful">Successfully sent request</string>
+	
 	<!-- Search Screen -->
 	<string name="btn_filter">Filter</string>
 	<string name="btn_add_loc">+</string>

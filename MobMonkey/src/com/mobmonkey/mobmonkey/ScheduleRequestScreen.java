@@ -155,10 +155,16 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		switch(view.getId()) {
 			case R.id.btnsetschedule:
 				getDateAndTime();
+				getRepeating();
 				break;
 		}
 	}
 	
+	private void getRepeating() {
+		
+		
+	}
+
 	private void getDateAndTime() {
 		Log.d(TAG, TAG + "day: " + (wvDay.getCurrentItem() - MMAPIConstants.DAYS_PREVIOUS));
 		Log.d(TAG, TAG + "hour: " + (wvHours.getCurrentItem() + 1));
@@ -199,7 +205,6 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 			scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME, requestCal);
 			scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, tbRepeating.isChecked());
 			if(tbRepeating.isChecked()) {
-				// TODO: Might have to change this depends on the server call and what it accepts
 				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, repeatRate);
 			}
 			

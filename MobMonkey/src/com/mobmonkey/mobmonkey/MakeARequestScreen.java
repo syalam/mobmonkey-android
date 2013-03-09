@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
@@ -50,9 +51,10 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	MMArrayAdapter mmArrayAdapter;
 	
 	private String scheduleDate;
-	private String duration = "15";
+	private int duration;
 	JSONObject jObj;
-	boolean repeating;
+	String repeating = "none";
+	private int radiusInYards = 50; //TODO: Remove hard-coded value for radius
 	
 	SharedPreferences userPrefs;
 	String locationId;
@@ -92,16 +94,16 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		} else if(group == rgStayActive) {
 			switch(checkedId) {
 				case R.id.rbfifteenmin:
-					duration = "15";
+					duration = 15;
 					break;
 				case R.id.rbthirtymin:
-					duration = "30";
+					duration = 30;
 					break;
 				case R.id.rbonehour:
-					duration = "60";
+					duration = 60;
 					break;
 				case R.id.rbthreehour:
-					duration = "180";
+					duration = 180;
 					break;
 			}
 		}
@@ -145,17 +147,14 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		if(view.getId() == R.id.btnsentrequest) {
 			Log.d(TAG, "sent request");
 			
-			// TODO: provider is hard coded in
-			//MMSendRequestAdapter.sendRequest(mmCallback, scheduleDate, providerId, locationId, duration, radiusInYards, repeating, mediaType, partnerId);
-			//MMSendRequestAdapter.sendRequest(mmCallback, message, scheduleDate, providerId, locationId, duration, repeating, mediaType, partnerId, emailAddress, password)
-			
 			MMSendRequestAdapter.sendRequest(new SendRequestCallback(), 
 											 message,
 											 scheduleDate, 
-											 "", // TODO: provider id hard coded.
-											 locationId, 
-											 duration+"",
-											 false, // TODO: hard coded boolean value.(repeate) 
+											 "",  // TODO: provider id hard coded.
+											 "995ab88f-4c0d-40e3-b5e6-a1c74ac3ad4d", //TODO: Hard coded locationId
+											 duration,
+											 radiusInYards,
+											 repeating,
 											 mediaType, 
 											 MMConstants.PARTNER_ID,
 											 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
@@ -175,6 +174,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		} else if(requestCode == MMAPIConstants.REQUEST_CODE_SCHEDULE_REQUEST) {
 			processScheduleRequestResult(resultCode, data);
 			scheduleDate = ((Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME)).getTimeInMillis() +"";
+			repeating = data.getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
 		}
 	}
 	
@@ -207,6 +207,20 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		mmelvScheduleRequest.setAdapter(mmArrayAdapter);
 		mmelvScheduleRequest.setOnItemClickListener(MakeARequestScreen.this);
 		
+		switch(rgStayActive.getCheckedRadioButtonId()) {
+			case R.id.rbfifteenmin:
+				duration = 15;
+				break;
+			case R.id.rbthirtymin:
+				duration = 30;
+				break;
+			case R.id.rbonehour:
+				duration = 60;
+				break;
+			case R.id.rbthreehour:
+				duration = 180;
+				break;
+		}
 		try {
 			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 		} catch (JSONException e) {
@@ -214,7 +228,6 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			e.printStackTrace();
 		}
 		
-		repeating = getIntent().getBooleanExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, false);
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		
 		try {
@@ -289,10 +302,15 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		public void processCallback(Object obj) {
 			// TODO Auto-generated method stub
 			if(obj != null) {
-				
-				Log.d(TAG, (String) obj);
-				
-				finish();
+				try {
+					JSONObject response = new JSONObject((String)obj);
+					if(response.getString(MMAPIConstants.KEY_RESPONSE_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+						Toast.makeText(MakeARequestScreen.this, R.string.toast_request_successful, Toast.LENGTH_SHORT).show();
+					}
+					finish();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		

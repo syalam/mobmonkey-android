@@ -74,7 +74,7 @@ public class SettingsScreen extends Activity {
 	/**
 	 * Initialize all the variables to be used in {@link SettingsScreen}
 	 */
-	private void init() {
+	private void init() { 
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
