@@ -203,4 +203,10 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	<string name="btn_set_schedule">Set Schedule</string>
 	
 	<string name="toast_current_or_past_current_time">The time you have selected is the current time or past the current time, please select a time in the future.</string>
+	<string-array name="trending_category">
+		<item >Bookmarks</item>
+		<item >My Interests</item>
+		<item >Top Viewed</item>
+		<item >Near Me</item>
+	</string-array>
 </resources>
