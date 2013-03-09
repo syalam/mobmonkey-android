@@ -23,9 +23,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 /**
  * Android {@link Activity} screen displays search locations for the user
@@ -51,8 +54,7 @@ public class BookmarksScreen extends Activity implements AdapterView.OnItemClick
 		
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		
-		// refresh bookmark list
-		refreshList();
+		onCreateBookmarks();
 	}
 
 	@Override
@@ -64,19 +66,30 @@ public class BookmarksScreen extends Activity implements AdapterView.OnItemClick
 
 	private void refreshList() {
 		
+		// refresh bookmark list
+		MMBookmarksAdapter.getBookmarks(new bookmarksCallback(), 
+										"bookmarks", 
+										MMConstants.PARTNER_ID, 
+										userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+										userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+	}
+	
+	private void onCreateBookmarks() {
 		try {
-			bookmarkList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, ""));
-			getLocations();
-			ArrayAdapter<MMResultsLocation> arrayAdapter 
-				= new MMSearchResultsArrayAdapter(BookmarksScreen.this, R.layout.search_result_list_row, locations);
-			lvBookmark.setAdapter(arrayAdapter);
-			
-			arrayAdapter.notifyDataSetChanged();
-			
-			lvBookmark.setOnItemClickListener(this);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+				bookmarkList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, ""));
+				getLocations();
+				ArrayAdapter<MMResultsLocation> arrayAdapter 
+					= new MMSearchResultsArrayAdapter(BookmarksScreen.this, R.layout.search_result_list_row, locations);
+				lvBookmark.setAdapter(arrayAdapter);
+				
+				arrayAdapter.notifyDataSetChanged();
+				
+				lvBookmark.setOnItemClickListener(BookmarksScreen.this);
+				
+			} catch (JSONException e) {
+				
+				e.printStackTrace();
+			}
 	}
 	
 	private void getLocations() throws JSONException {
@@ -154,5 +167,30 @@ public class BookmarksScreen extends Activity implements AdapterView.OnItemClick
 		}
 	}
 	
+	// callback for bookmark list
 	
+	private class bookmarksCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			
+			if(obj != null) {
+				try {
+					bookmarkList = new JSONArray((String) obj);
+					getLocations();
+					ArrayAdapter<MMResultsLocation> arrayAdapter 
+						= new MMSearchResultsArrayAdapter(BookmarksScreen.this, R.layout.search_result_list_row, locations);
+					lvBookmark.setAdapter(arrayAdapter);
+					
+					//arrayAdapter.notifyDataSetChanged();
+					
+					lvBookmark.setOnItemClickListener(BookmarksScreen.this);
+					
+				} catch (JSONException e) {
+					
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }

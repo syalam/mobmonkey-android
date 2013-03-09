@@ -17,7 +17,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMPostAsyncTask;
 import com.mobmonkey.mobmonkeyapi.utils.MMPutAsyncTask;
 
 public class MMAddLocationAdapter {
-	private final static String TAG = "MMSignIn: ";
+	private final static String TAG = "MMAddLocation: ";
 	private static String addLocationURL;
 	private static JSONObject userInfo;
 	

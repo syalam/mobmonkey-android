@@ -98,7 +98,7 @@
 				    android:layout_height="wrap_content"
 				    android:layout_gravity="center"
 				    android:layout_marginLeft="5dp"
-				    android:text="@string/tv_bookmark"
+				    android:text="@string/tv_favorite"
    	                android:textAppearance="@android:style/TextAppearance.Medium"/>
 	
 			</LinearLayout>

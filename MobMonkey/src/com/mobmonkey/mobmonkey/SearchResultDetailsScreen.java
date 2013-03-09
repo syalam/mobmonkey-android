@@ -17,10 +17,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
+import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
+import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 /**
  * @author Dezapp, LLC
@@ -58,17 +62,12 @@ public class SearchResultDetailsScreen extends Activity {
 			tvMembersFound.setText(jObj.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));
 			
 			// check if this location is alreayd in bookmark
-			tvBookmark.setText(getString(R.string.tv_bookmark));
-			
-			JSONArray ja = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, ""));
-			isInBookmark:
-				for(int i = 0; i < ja.length(); i++) {
-					if(((JSONObject)ja.get(i)).getString("name").compareTo(tvLocNameTitle.getText().toString()) == 0) {
-						tvBookmark.setText(getString(R.string.tv_remove_bookmark));
-						break isInBookmark;
-					}
-				}
-			
+			//tvBookmark.setText(jObj.getBoolean("bookmark")? getString(R.string.tv_remove_bookmark):getString(R.string.tv_bookmark));
+			MMBookmarksAdapter.getBookmarks(new getBookmarkCallback(), 
+											"bookmarks", 
+											MMConstants.PARTNER_ID, 
+											userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+											userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 			 
 			int[] icons = new int[]{R.drawable.cat_icon_telephone, R.drawable.cat_icon_map_pin, R.drawable.cat_icon_alarm_clock};
 			int[] indicatorIcons = new int[]{R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator};
@@ -141,34 +140,38 @@ public class SearchResultDetailsScreen extends Activity {
 			
 		}
 		
-		// TODO: check how to set the bookmark textview
-		// add current location information to bookmark
-		if(tvBookmark.getText().toString().equals(getString(R.string.tv_bookmark))) {
-			tvBookmark.setText(R.string.tv_remove_bookmark);
+		// TODO: check how to set the favorite textview
+		// add current location information to favorite
+		if(tvBookmark.getText().toString().equals(getString(R.string.tv_favorite))) {
+			tvBookmark.setText(R.string.tv_remove_favorite);
 			
 			// add to share preferences 
 			try {
 				JSONObject jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 				bookmarkList.add(jObj);
 				
-				// update bookmark list in share preference 
-				JSONArray newBookMark = new JSONArray(bookmarkList);
-				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, newBookMark.toString());
-				userPrefsEditor.commit();
+				// update favorite list in share preference 
+				//JSONArray newBookMark = new JSONArray(bookmarkList);
+				//userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, newBookMark.toString());
+				//userPrefsEditor.commit();
 				
-				// set "bookmark" to true
-				/*
-				JSONObject newLocationInfo = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
-				newLocationInfo.put("bookmark", true);
-				*/
+				//new MMBookmarksAdapter();
+				MMBookmarksAdapter.createBookmark(new addBookmarkCallback(), 
+												"bookmarks", 
+												jObj.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
+												jObj.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
+												MMConstants.PARTNER_ID, 
+												userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+												userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+				
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 		// remove current location information from bookmark
-		} else if(tvBookmark.getText().toString().equals(getString(R.string.tv_remove_bookmark))) {
-			tvBookmark.setText(R.string.tv_bookmark);
+		} else if(tvBookmark.getText().toString().equals(getString(R.string.tv_remove_favorite))) {
+			tvBookmark.setText(R.string.tv_favorite);
 			
 			// remove to share preferences 
 			try {
@@ -185,16 +188,18 @@ public class SearchResultDetailsScreen extends Activity {
 				}
 				
 				// update bookmark list in share preference 
-				JSONArray newBookMark = new JSONArray(bookmarkList);
-				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, newBookMark.toString());
-				userPrefsEditor.commit();
+//				JSONArray newBookMark = new JSONArray(bookmarkList);
+//				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, newBookMark.toString());
+//				userPrefsEditor.commit();
 				
-				// set "bookmark" to false
-				/*
-				JSONObject newLocationInfo = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
-				newLocationInfo.put("bookmark", false);
-				getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS);
-				*/
+				MMBookmarksAdapter.deleteBookmark(new removeBookmarkCallback(), 
+												  "bookmarks", 
+												  jObj.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
+												  jObj.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
+												  MMConstants.PARTNER_ID, 
+												  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+												  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+				
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -209,5 +214,50 @@ public class SearchResultDetailsScreen extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private class addBookmarkCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			Log.d("SearchResultDetailsScreen", obj.toString());
+			Toast.makeText(getApplicationContext(), "Bookmark added.", Toast.LENGTH_SHORT).show();
+		}
+	}
+	
+	private class removeBookmarkCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			Log.d("SearchResultDetailsScreen", obj.toString());
+			Toast.makeText(getApplicationContext(), "Bookmark removed.", Toast.LENGTH_SHORT).show();
+		}
+	}
+	
+	private class getBookmarkCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			// check if this location existed in bookmark
+			try {
+				JSONArray ja = new JSONArray((String) obj);
+				FindBookmark:
+					for(int i = 0; i < ja.length(); i++) {
+						if(((JSONObject) ja.get(i)).getString(MMAPIConstants.JSON_KEY_LOCATION_ID).compareTo(jObj.getString(MMAPIConstants.JSON_KEY_LOCATION_ID)) == 0) {
+							//String a = ((JSONObject) ja.get(i)).getString(MMAPIConstants.JSON_KEY_LOCATION_ID);
+							//String b = jObj.getString(MMAPIConstants.JSON_KEY_LOCATION_ID);
+							
+							tvBookmark.setText(getString(R.string.tv_remove_favorite));
+							return;
+						}
+					}
+				tvBookmark.setText(getString(R.string.tv_favorite));
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
 	}
 }
