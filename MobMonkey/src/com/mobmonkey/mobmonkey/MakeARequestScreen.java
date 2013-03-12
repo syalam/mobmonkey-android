@@ -58,6 +58,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	
 	SharedPreferences userPrefs;
 	String locationId;
+	String providerId;
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -150,8 +151,8 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			MMSendRequestAdapter.sendRequest(new SendRequestCallback(), 
 											 message,
 											 scheduleDate, 
-											 "",  // TODO: provider id hard coded.
-											 "995ab88f-4c0d-40e3-b5e6-a1c74ac3ad4d", //TODO: Hard coded locationId
+											 providerId,
+											 locationId, //TODO: Hard coded locationId
 											 duration,
 											 radiusInYards,
 											 repeating,
@@ -223,19 +224,14 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		}
 		try {
 			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			locationId = jObj.getString("locationId");
+			providerId = jObj.getString("providerId");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-		
-		try {
-			locationId = jObj.getString("locationId");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	/**

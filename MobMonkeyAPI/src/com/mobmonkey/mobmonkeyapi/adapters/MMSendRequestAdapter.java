@@ -38,17 +38,17 @@ public class MMSendRequestAdapter {
 		sendRequestUrl = MMAPIConstants.MOBMONKEY_URL + "requestmedia/" + mediaType;
 		
 		try {
-			HttpPost httpPut;
+			HttpPost httpPost;
 			requestInfo = new JSONObject();
 			requestInfo.put(MMAPIConstants.JSON_KEY_MESSAGE, message);
 			requestInfo.put(MMAPIConstants.JSON_KEY_SCHEDULEDATE, scheduleDate);
-			requestInfo.put(MMAPIConstants.JSON_KEY_PROVIDER_ID, "e048acf0-9e61-4794-b901-6a4bb49c3181"); //TODO: Provider ID is hard coded, change in future
+			requestInfo.put(MMAPIConstants.JSON_KEY_PROVIDER_ID, providerId);
 			requestInfo.put(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId);
 			requestInfo.put(MMAPIConstants.JSON_KEY_DURATION, duration);
 			requestInfo.put(MMAPIConstants.JSON_KEY_RADIUS_IN_YARDS, radiusInYards);
 			if(repeating.equals("none"))
 			{
-				requestInfo.put(MMAPIConstants.JSON_KEY_RECURRING, false);
+				requestInfo.put(MMAPIConstants.JSON_KEY_RECURRING, 0);
 			}
 			else
 			{
@@ -60,15 +60,15 @@ public class MMSendRequestAdapter {
 					freq = 2629740000L;
 				requestInfo.put(MMAPIConstants.JSON_KEY_FREQUENCY_IN_MS, freq);
 			}
-			httpPut = new HttpPost(sendRequestUrl);
+			httpPost = new HttpPost(sendRequestUrl);
 			StringEntity stringEntity = new StringEntity(requestInfo.toString());
-			httpPut.setEntity(stringEntity);
-			httpPut.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httpPut.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-			httpPut.setHeader(MMAPIConstants.KEY_USER, emailAddress);
-			httpPut.setHeader(MMAPIConstants.KEY_AUTH, password);
+			httpPost.setEntity(stringEntity);
+			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+			httpPost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
+			httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
 
-			new MMPostAsyncTask(mmCallback).execute(httpPut);
+			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch(JSONException ex) {
 			
 		} catch(UnsupportedEncodingException ex) {
