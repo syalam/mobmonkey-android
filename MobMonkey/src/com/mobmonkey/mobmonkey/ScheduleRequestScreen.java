@@ -61,6 +61,8 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		tbRepeating = (ToggleButton) findViewById(R.id.tbrepeating);
 		rgRepeating = (RadioGroup) findViewById(R.id.rgrepeating);
 		
+		rgRepeating.setOnCheckedChangeListener(ScheduleRequestScreen.this);
+		
 		repeatRate = ((RadioButton) findViewById(R.id.rbdaily)).getText().toString();
 		
 		Calendar calendar = Calendar.getInstance();
@@ -142,7 +144,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 			case R.id.rbmonthly:
 				repeatRate = ((RadioButton) findViewById(R.id.rbmonthly)).getText().toString().toLowerCase();
 				break;
-			}
+		}
 	}
 
 	@Override
@@ -206,6 +208,9 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 			scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, tbRepeating.isChecked());
 			if(tbRepeating.isChecked()) {
 				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, repeatRate);
+			}
+			else {
+				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, "none");
 			}
 			
 			setResult(RESULT_OK, scheduleRequestIntent);
