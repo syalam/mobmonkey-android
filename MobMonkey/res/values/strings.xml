@@ -187,7 +187,7 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	<!-- Add Message Screen -->
 	<string name="tv_message">Message</string>
 	<string-array name="tv_default_message">
-		<item>Do they serve Coke&#174; or Pepsi&#174; here?</item>
+		<item>Do they serve Coke or Pepsi here?</item>
 		<item>I want to see a picture of the wings.</item>
 	</string-array>
 	

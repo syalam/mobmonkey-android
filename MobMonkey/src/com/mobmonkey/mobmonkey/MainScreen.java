@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 
+import com.google.android.gcm.GCMRegistrar;
+import com.mobmonkey.mobmonkey.utils.GCMIntentService;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
@@ -66,6 +68,10 @@ public class MainScreen extends TabActivity {
 		userPrefsEditor = userPrefs.edit();
 		tabWidget = getTabWidget();
 		tabHost = getTabHost();
+		
+		
+		GCMIntentService gcm = new GCMIntentService(this);
+
 	}
 	
 	/**
