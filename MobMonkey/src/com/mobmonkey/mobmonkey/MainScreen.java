@@ -8,7 +8,6 @@ import org.json.JSONException;
 
 
 import com.google.android.gcm.GCMRegistrar;
-import com.mobmonkey.mobmonkey.utils.GCMIntentService;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
@@ -69,9 +68,17 @@ public class MainScreen extends TabActivity {
 		tabWidget = getTabWidget();
 		tabHost = getTabHost();
 		
-		
-		GCMIntentService gcm = new GCMIntentService(this);
-
+		GCMRegistrar.checkDevice(this);
+		GCMRegistrar.checkManifest(this);
+		final String regId = GCMRegistrar.getRegistrationId(this);
+		Log.d(TAG, regId);
+		if (regId.equals("")) {
+		  GCMRegistrar.register(this, GCMIntentService.SENDER_ID);
+		  String a = GCMRegistrar.getRegistrationId(this);
+		  Log.d(TAG, "regId: " + a);
+		} else {
+		  Log.d(TAG, "Already registered.");
+		}
 	}
 	
 	/**
