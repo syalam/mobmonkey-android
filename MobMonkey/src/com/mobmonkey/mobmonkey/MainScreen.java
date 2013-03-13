@@ -2,7 +2,15 @@ package com.mobmonkey.mobmonkey;
 
 import java.lang.Object;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+
 import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
+import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -16,6 +24,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabWidget;
@@ -47,6 +56,7 @@ public class MainScreen extends TabActivity {
 		
 		init();
 		getAllCategories();
+		getAllBookmarks();
 		setTabs();
 		tabHost.setCurrentTab(0);
 	}
@@ -117,6 +127,24 @@ public class MainScreen extends TabActivity {
 			userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
 			userPrefsEditor.commit();
 			progressDialog.dismiss();
+		}
+	}
+	
+	private void getAllBookmarks() {
+		MMBookmarksAdapter.getBookmarks(new bookmarksCallback(), 
+										"bookmarks", 
+										MMConstants.PARTNER_ID, 
+										userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+										userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+	}
+	
+	private class bookmarksCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, (String) obj);
+			}
 		}
 	}
 }

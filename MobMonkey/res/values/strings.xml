@@ -73,6 +73,9 @@
 	<!--  Inbox Screen -->
 	<string name="tv_title_inbox">Inbox</string>
 	
+	<!-- Send Request Screen -->
+	<string name="toast_request_successful">Successfully sent request</string>
+	
 	<!-- Search Screen -->
 	<string name="btn_filter">Filter</string>
 	<string name="btn_add_loc">+</string>
@@ -116,11 +119,11 @@
 	<string name="tv_make_request">Make a Request</string>
 	<string name="tv_members_found">members found</string>
 	<string name="tv_add_notifications">Add Notifications</string>
-	<string name="tv_bookmark">Bookmark</string>
-	<string name="tv_remove_bookmark">Remove bookmark</string>
+	<string name="tv_favorite">Favorite</string>
+	<string name="tv_remove_favorite">Remove favorite</string>
 	
 	<!-- Bookmarks Screen -->
-	<string name="tv_title_bookmarks">Bookmarks</string>
+	<string name="tv_title_favorites">Favorites</string>
 	
 	<!-- Settings Screen -->
 	<string name="tv_title_settings">Settings</string>
@@ -200,4 +203,10 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	<string name="btn_set_schedule">Set Schedule</string>
 	
 	<string name="toast_current_or_past_current_time">The time you have selected is the current time or past the current time, please select a time in the future.</string>
+	<string-array name="trending_category">
+		<item >Bookmarks</item>
+		<item >My Interests</item>
+		<item >Top Viewed</item>
+		<item >Near Me</item>
+	</string-array>
 </resources>

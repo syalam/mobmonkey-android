@@ -23,6 +23,7 @@ public final class MMAPIConstants {
 	public static final double DEFAULT_DOUBLE = 1.0d;
 
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
+	//public static final String TEST_MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
 	
 	public static final String TEXT_MALE = "Male";
 	public static final String TEXT_FEMALE = "Female";
@@ -46,6 +47,8 @@ public final class MMAPIConstants {
 	public static final String SHARED_PREFS_KEY_SEARCH_RADIUS = "Search radius";
 	public static final String SHARED_PREFS_KEY_NARROW_BY_LIVE_VIDEO = "Narrow by live video";
 	public static final String SHARED_PREFS_KEY_CATEGORY_LIST = "categoryList";
+	public static final String SHARED_PREFS_KEY_BOOKMARKS = "bookmarks";
+	
 	// Intent extra key values
 	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
@@ -145,6 +148,15 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
 	public static final String JSON_KEY_PROVIDER_ID = "providerId";
 	public static final String JSON_KEY_WEBSITE = "website";
+	
+	public static final String JSON_KEY_MESSAGE = "message";
+	public static final String JSON_KEY_DURATION = "duration";
+	public static final String JSON_KEY_LOCATION_ID = "locationId";
+	public static final String JSON_KEY_RECURRING = "recurring";
+	public static final String JSON_KEY_RADIUS_IN_YARDS = "radiusInYards";
+	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
+	public static final String JSON_KEY_FREQUENCY_IN_MS = "frequencyInMS";
+	
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;

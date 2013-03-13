@@ -87,6 +87,7 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 			addToHistory(searchResults.getJSONObject(position));
 			
 			locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
+			
 			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
 			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, searchResults.getJSONObject(position).toString());
 			startActivity(locDetailsIntent);
