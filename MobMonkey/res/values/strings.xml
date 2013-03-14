@@ -209,4 +209,11 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 		<item >Top Viewed</item>
 		<item >Near Me</item>
 	</string-array>
+	<string name="tv_title_socialnetworks">Social Networks</string>
+	<string-array name="social_networks_name">
+		<item >Facebook</item>
+		<item >Twitter</item>
+	</string-array>
+	<string name="tv_title_myinterests">My Interests</string>
+	<string name="tv_title_mysubscribe">My Subscribe</string>
 </resources>

@@ -11,10 +11,13 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -81,6 +84,31 @@ public class SettingsScreen extends Activity {
 		lvSettingsCategory = (ListView) findViewById(R.id.lvsettingscategory);
 		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(SettingsScreen.this, R.layout.settings_category_list_row, R.id.tvsettingscategory, getResources().getStringArray(R.array.settings_category));
 		lvSettingsCategory.setAdapter(arrayAdapter);
+		
+		lvSettingsCategory.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int position,
+					long id) {
+				switch(position) {
+					// My Info
+					case 0:
+						break;
+					// Social Networks
+					case 1:
+						startActivity(new Intent(SettingsScreen.this, SocialNetworksScreen.class));
+						break;
+					// My Interests
+					case 2:
+						startActivity(new Intent(SettingsScreen.this, MyInterestsScreen.class));
+						break;
+					// Subscribe
+					case 3:
+						startActivity(new Intent(SettingsScreen.this, SubscribeScreen.class));
+						break;
+				}
+			}
+		});
 	}
 	
     /**
