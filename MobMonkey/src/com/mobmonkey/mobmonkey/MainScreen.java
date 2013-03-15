@@ -1,21 +1,8 @@
 package com.mobmonkey.mobmonkey;
 
-import java.lang.Object;
-
-
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
-
-import com.google.android.gcm.GCMRegistrar;
-import com.mobmonkey.mobmonkey.utils.MMConstants;
-import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
-import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
-import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
-import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
-import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
-import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -26,10 +13,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabWidget;
+
+import com.google.android.gcm.GCMRegistrar;
+import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkey.utils.ServerUtility;
+import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
+import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 /**
  * Android {@link Activity} screen displays the signed in user portion of the application with different tabs.
@@ -80,6 +74,7 @@ public class MainScreen extends TabActivity {
 		} else {
 		  Log.d(TAG, "Already registered.");
 		}
+		
 	}
 	
 	/**
