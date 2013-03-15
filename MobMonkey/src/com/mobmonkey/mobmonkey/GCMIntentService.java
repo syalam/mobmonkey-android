@@ -18,7 +18,7 @@ public class GCMIntentService extends GCMBaseIntentService{
 
 
 	// TODO: senderid hardcoded
-	public static final String SENDER_ID = "41188709907";
+	public static final String SENDER_ID = "746185783038";
 	public static final String SERVER_URL = MMAPIConstants.TEST_MOBMONKEY_GCM_URL;
 	
 	public GCMIntentService() {
@@ -30,11 +30,14 @@ public class GCMIntentService extends GCMBaseIntentService{
 		Log.d(TAG, error);
 	}
 
-	@Override
-	protected void onMessage(Context context, Intent intent) {
-		Log.d(TAG, "onMessage");
-		generateNotification(context, "Message");
-	}
+    @Override
+    protected void onMessage(Context context, Intent intent) {
+        Log.i(TAG, "Received message");
+        String message = "From GCM: you got message!";
+        displayMessage(context, message);
+        // notifies user
+        generateNotification(context, message);
+    }
 
 	@Override
 	protected void onDeletedMessages(Context context, int total) {
@@ -83,6 +86,12 @@ public class GCMIntentService extends GCMBaseIntentService{
         notification.setLatestEventInfo(context, title, message, intent);
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(0, notification);
+    }
+    
+    static void displayMessage(Context context, String message) {
+        Intent intent = new Intent("com.mobmonkey.mobmonkey.DISPLAY_MESSAGE");
+        intent.putExtra("message", message);
+        context.sendBroadcast(intent);
     }
 
 }

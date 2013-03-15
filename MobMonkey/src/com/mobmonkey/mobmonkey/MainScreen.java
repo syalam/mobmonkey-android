@@ -7,8 +7,12 @@ import java.util.Map;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +20,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabWidget;
+import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
@@ -32,6 +37,8 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
  */
 public class MainScreen extends TabActivity {
 	protected static final String TAG = "MainScreen: ";
+	
+    AsyncTask<Void, Void, Void> mRegisterTask;
 	
 	SharedPreferences userPrefs;
 	SharedPreferences.Editor userPrefsEditor;
@@ -62,9 +69,14 @@ public class MainScreen extends TabActivity {
 		userPrefsEditor = userPrefs.edit();
 		tabWidget = getTabWidget();
 		tabHost = getTabHost();
-		
+
+	    
 		GCMRegistrar.checkDevice(this);
 		GCMRegistrar.checkManifest(this);
+		
+		registerReceiver(mHandleMessageReceiver,
+                new IntentFilter("com.mobmonkey.mobmonkey.DISPLAY_MESSAGE"));
+		
 		final String regId = GCMRegistrar.getRegistrationId(this);
 		Log.d(TAG, regId);
 		if (regId.equals("")) {
@@ -72,7 +84,32 @@ public class MainScreen extends TabActivity {
 		  String a = GCMRegistrar.getRegistrationId(this);
 		  Log.d(TAG, "regId: " + a);
 		} else {
-		  Log.d(TAG, "Already registered.");
+			final Context context = this;
+            mRegisterTask = new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected Void doInBackground(Void... params) {
+                    boolean registered =
+                            ServerUtility.register(context, regId);
+                    // At this point all attempts to register with the app
+                    // server failed, so we need to unregister the device
+                    // from GCM - the app will try to register again when
+                    // it is restarted. Note that GCM will send an
+                    // unregistered callback upon completion, but
+                    // GCMIntentService.onUnregistered() will ignore it.
+                    if (!registered) {
+                        GCMRegistrar.unregister(context);
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void result) {
+                    mRegisterTask = null;
+                }
+
+            };
+            mRegisterTask.execute(null, null, null);
 		}
 		
 	}
@@ -156,4 +193,15 @@ public class MainScreen extends TabActivity {
 			}
 		}
 	}
+	
+	private final BroadcastReceiver mHandleMessageReceiver =
+            new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String newMessage = intent.getExtras().getString("message");
+            Toast.makeText(MainScreen.this, newMessage, Toast.LENGTH_LONG).show();
+            //mDisplay.append(newMessage + "\n");
+        }
+    };
+    
 }

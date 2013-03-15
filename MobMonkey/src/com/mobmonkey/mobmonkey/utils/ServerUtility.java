@@ -37,7 +37,7 @@ public final class ServerUtility {
      */
     public static boolean register(final Context context, final String regId) {
         Log.i(TAG, "registering device (regId = " + regId + ")");
-        String serverUrl = GCMIntentService.SERVER_URL + "/register";
+        String serverUrl = GCMIntentService.SERVER_URL;
         Map<String, String> params = new HashMap<String, String>();
         params.put("regId", regId);
         long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
@@ -143,7 +143,7 @@ public final class ServerUtility {
             conn.setFixedLengthStreamingMode(bytes.length);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded;charset=UTF-8");
+                    "application/json");
             // post the request
             OutputStream out = conn.getOutputStream();
             out.write(bytes);

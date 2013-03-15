@@ -24,7 +24,7 @@ public final class MMAPIConstants {
 
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
-	public static final String TEST_MOBMONKEY_GCM_URL = "staging.mobmonkey.com";
+	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
 	
 	public static final String TEXT_MALE = "Male";
 	public static final String TEXT_FEMALE = "Female";
