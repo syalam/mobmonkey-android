@@ -18,7 +18,7 @@ public class GCMIntentService extends GCMBaseIntentService{
 
 
 	// TODO: senderid hardcoded
-	public static final String SENDER_ID = "746185783038";
+	public static final String SENDER_ID = "406893575625";
 	public static final String SERVER_URL = MMAPIConstants.TEST_MOBMONKEY_GCM_URL;
 	
 	public GCMIntentService() {
