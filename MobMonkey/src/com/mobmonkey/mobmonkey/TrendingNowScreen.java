@@ -1,9 +1,7 @@
 package com.mobmonkey.mobmonkey;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +11,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkeyapi.adapters.MMTrendingAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -36,7 +35,7 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.trending_now_screen);
-		
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		init();
 	}
 
@@ -67,8 +66,11 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 
 		@Override
 		public void processCallback(Object obj) {
-			
-			Log.d(TAG, obj.toString());
+//			
+//			Log.d(TAG, obj.toString());
+			Intent intent = new Intent(TrendingNowScreen.this, TopViewedScreen.class);
+			intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED, (String) obj);
+			startActivity(intent);
 		}
 		
 	}
@@ -84,6 +86,22 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 				break;
 			// top viewed
 			case 2:
+				
+				MMTrendingAdapter.getTrending(new TrendingCallback(), 
+									 		  "topviewed", 
+											  "week", 
+											  false, 
+											  false, 
+											  0.0d, 
+											  0.0d, 
+											  0, 
+											  false, 
+											  "", 
+											  false, 
+											  MMConstants.PARTNER_ID, 
+											  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+											  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+
 				break;
 			// near me
 			case 3:

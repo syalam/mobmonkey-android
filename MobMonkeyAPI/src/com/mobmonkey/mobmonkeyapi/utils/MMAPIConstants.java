@@ -23,7 +23,7 @@ public final class MMAPIConstants {
 	public static final double DEFAULT_DOUBLE = 1.0d;
 
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
-	public static final String TEST_MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
+	public static final String TEST_MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
 	
 	public static final String TEXT_MALE = "Male";
@@ -61,6 +61,7 @@ public final class MMAPIConstants {
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING = "Repeating";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
+	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
 	
 	// MobMonkey server call key values
 	public static final String KEY_FIRST_NAME = "firstName";

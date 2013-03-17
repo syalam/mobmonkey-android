@@ -30,7 +30,9 @@ public final class MMSignInAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signInUser(MMCallback mmCallback, String emailAddress, String password, String partnerId) {
-		signInURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+//		signInURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
+//				MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=false";
+		signInURL = MMAPIConstants.TEST_MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + "&deviceId=" + 
 				MMDeviceUUID.getDeviceUUID().toString() + "&useOAuth=false";
 		
 		Log.d(TAG, TAG + "signInURL: " + signInURL);
@@ -53,7 +55,7 @@ public final class MMSignInAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signInUserFacebook(MMCallback mmCallback, String oauthToken, String providerUserName, String partnerId) {
-		signInURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + 
+		signInURL = MMAPIConstants.TEST_MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + 
 				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + 
 				"&useOAuth=true&provider=" + MMAPIConstants.OAUTH_PROVIDER_FACEBOOK + 
 				"&oauthToken=" + oauthToken + 
@@ -77,7 +79,7 @@ public final class MMSignInAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signInUserTwitter(MMCallback mmCallback, String oauthToken, String providerUserName, String partnerId) {
-		signInURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + 
+		signInURL = MMAPIConstants.TEST_MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + 
 				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + 
 				"&useOAuth=true&provider=" + MMAPIConstants.OAUTH_PROVIDER_TWITTER + 
 				"&oauthToken=" + oauthToken + 

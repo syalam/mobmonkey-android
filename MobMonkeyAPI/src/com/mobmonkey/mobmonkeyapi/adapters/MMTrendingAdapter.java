@@ -35,7 +35,7 @@ public class MMTrendingAdapter {
 								   String emailAddress,
 								   String password) {
 		
-		trendingURL = MMAPIConstants.MOBMONKEY_URL +"trending";
+		trendingURL = MMAPIConstants.TEST_MOBMONKEY_URL +"trending";
 		
 		Builder uri = Uri.parse(trendingURL).buildUpon();
 		uri.appendPath(type)

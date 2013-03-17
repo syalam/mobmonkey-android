@@ -17,7 +17,7 @@ public class MMCategoryAdapter {
 	}
 	
 	public static void getCategories(MMCallback mmCallback, String categoryId, String user, String auth, String partnerId) {
-		categoryURL = MMAPIConstants.MOBMONKEY_URL + "category?categoryId=" + categoryId;
+		categoryURL = MMAPIConstants.TEST_MOBMONKEY_URL + "category?categoryId=" + categoryId;
 		
 		Log.d(TAG, TAG + "categoryURL: " + categoryURL);
 		
@@ -32,7 +32,7 @@ public class MMCategoryAdapter {
 	
 	public static void getAllCategories(MMCallback mmCallback, String user, String auth, String partnerId)
 	{
-		categoryURL = MMAPIConstants.MOBMONKEY_URL + "category/all";
+		categoryURL = MMAPIConstants.TEST_MOBMONKEY_URL + "category/all";
 		
 		Log.d(TAG, TAG + "AllCategoriesURL: " + categoryURL);
 

@@ -216,4 +216,5 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	</string-array>
 	<string name="tv_title_myinterests">My Interests</string>
 	<string name="tv_title_mysubscribe">My Subscribe</string>
+	<string name="tv_title_top_viewed">Top Viewed</string>
 </resources>
