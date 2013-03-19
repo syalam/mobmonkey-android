@@ -1,17 +1,25 @@
 package com.mobmonkey.mobmonkey;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkey.utils.MMTrendingArrayAdapter;
+import com.mobmonkey.mobmonkey.utils.MMTrendingItem;
 import com.mobmonkey.mobmonkeyapi.adapters.MMTrendingAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -41,13 +49,54 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 
 	private void init() {
 		
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-		
 		lvTrending = (ListView) findViewById(R.id.lvtrending);
-		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(TrendingNowScreen.this, R.layout.settings_category_list_row, R.id.tvsettingscategory, getResources().getStringArray(R.array.trending_category));
 		
-		lvTrending.setAdapter(arrayAdapter);
-		lvTrending.setOnItemClickListener(this);
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
+		Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		double longitude = location.getLongitude();
+		double latitude = location.getLatitude();
+		
+		try {
+			JSONArray categories = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
+					  MMAPIConstants.DEFAULT_STRING));
+			String categoryIds = "";
+			
+			JSONArray topTenCategories = new JSONArray();
+			
+			FindTopTen:
+			for(int i = 0; i < categories.length(); i++) {
+				if(categories.getJSONObject(i).getString("parents").compareTo("[1]") == 0) {
+					topTenCategories.put(categories.getJSONObject(i));
+				}
+				if(topTenCategories.length() == 10) {
+					break FindTopTen;
+				}
+			}
+			
+			for(int i = 0; i < topTenCategories.length(); i++) {
+				categoryIds += topTenCategories.getJSONObject(i).getString("categoryId")+",";
+			}
+			categoryIds.substring(0, categoryIds.length()-1);
+			
+			MMTrendingAdapter.getTrending(new CountOnlyCallback(), 
+									      "topviewed", 
+									      "week", 
+									      true, 
+									      true, 
+									      latitude, 
+									      longitude, 
+									      MMAPIConstants.SEARCH_RADIUS_FIVE_MILE, 
+									      true, 
+									      categoryIds, 
+									      true, 
+									      MMConstants.PARTNER_ID, 
+										  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+										  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+			
+		} catch (JSONException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	/**
@@ -66,11 +115,45 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 
 		@Override
 		public void processCallback(Object obj) {
-//			
-//			Log.d(TAG, obj.toString());
+
 			Intent intent = new Intent(TrendingNowScreen.this, TopViewedScreen.class);
 			intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED, (String) obj);
 			startActivity(intent);
+		}
+	}
+	
+	private class CountOnlyCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			try {
+				JSONObject jObj = new JSONObject((String)obj);
+				Log.d(TAG, jObj.getString("bookmarkCount"));
+				MMTrendingItem[] data = new MMTrendingItem[4];
+				for(int i = 0; i < 4; i++) {
+					MMTrendingItem item = new MMTrendingItem();
+					item.title = getResources().getStringArray(R.array.trending_category)[i];
+					
+					if(item.title.equalsIgnoreCase("bookmarks")) {
+						item.counter = jObj.getString("bookmarkCount");
+					} else if(item.title.equalsIgnoreCase("my interests")) {
+						item.counter = jObj.getString("interestCount");
+					} else if(item.title.equalsIgnoreCase("top viewed")) {
+						item.counter = jObj.getString("nearbyCount");
+					} else if(item.title.equalsIgnoreCase("near me")) {
+						item.counter = jObj.getString("topviewedCount");
+					}
+					
+					data[i] = item;
+				}
+				
+				MMTrendingArrayAdapter arrayAdapter 
+					= new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data);
+				lvTrending.setAdapter(arrayAdapter);
+				
+			} catch (JSONException ex) {
+				ex.printStackTrace();
+			}
 		}
 		
 	}

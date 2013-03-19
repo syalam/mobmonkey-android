@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+	android:padding="10dp">
+    
+	<TextView android:id="@+id/tvtrending"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    android:layout_gravity="center"
+	    android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:textStyle="bold"/>
+	
+	<TextView android:id="@+id/trendingBadgeCounter"
+	    android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content"
+	    android:textSize="9dp" 
+        android:textStyle="bold"  
+        android:background="@drawable/shapecounter"
+        android:textColor="#FFFFFF"
+        android:paddingLeft="3dp" 
+        android:paddingRight="3dp"
+        android:gravity="center_vertical"/>
+	
+	<ImageView android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="right|center"
+	    android:layout_margin="5dp"
+	    android:src="@drawable/listview_accessory_indicator"/>
+</LinearLayout>
