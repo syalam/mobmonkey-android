@@ -66,7 +66,7 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 			
 			FindTopTen:
 			for(int i = 0; i < categories.length(); i++) {
-				if(categories.getJSONObject(i).getString("parents").compareTo("[1]") == 0) {
+				if(categories.getJSONObject(i).getString("parents").compareTo("1") == 0) {
 					topTenCategories.put(categories.getJSONObject(i));
 				}
 				if(topTenCategories.length() == 10) {
