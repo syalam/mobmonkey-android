@@ -129,8 +129,8 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 			try {
 				JSONObject jObj = new JSONObject((String)obj);
 				Log.d(TAG, jObj.getString("bookmarkCount"));
-				MMTrendingItem[] data = new MMTrendingItem[4];
-				for(int i = 0; i < 4; i++) {
+				MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
+				for(int i = 0; i < data.length; i++) {
 					MMTrendingItem item = new MMTrendingItem();
 					item.title = getResources().getStringArray(R.array.trending_category)[i];
 					

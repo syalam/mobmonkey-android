@@ -93,6 +93,7 @@ public class SettingsScreen extends Activity {
 				switch(position) {
 					// My Info
 					case 0:
+						startActivity(new Intent(SettingsScreen.this, MyInfoScreen.class));
 						break;
 					// Social Networks
 					case 1:
