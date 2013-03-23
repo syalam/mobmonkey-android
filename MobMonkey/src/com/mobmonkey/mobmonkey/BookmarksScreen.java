@@ -68,7 +68,7 @@ public class BookmarksScreen extends Activity implements AdapterView.OnItemClick
 		
 		// refresh bookmark list
 		MMBookmarksAdapter.getBookmarks(new bookmarksCallback(), 
-										"bookmarks", 
+										MMAPIConstants.URL_BOOKMARKS, 
 										MMConstants.PARTNER_ID, 
 										userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 										userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));

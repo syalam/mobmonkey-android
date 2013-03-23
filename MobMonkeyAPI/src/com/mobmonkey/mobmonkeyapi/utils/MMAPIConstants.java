@@ -91,6 +91,10 @@ public final class MMAPIConstants {
 	public static final String KEY_NAME = "name";
 	public static final String KEY_CATEGORY_IDS = "categoryIds";
 	
+	// MobMonkey server url
+	public static final String URL_BOOKMARKS = "bookmarks";
+	public static final String URL_TOPVIEWED = "topviewed";
+	
 	// MobMonkey server response key values
 	public static final String KEY_RESPONSE_STATUS = "status";
 	public static final String KEY_RESPONSE_DESC = "description";
@@ -159,11 +163,15 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
 	public static final String JSON_KEY_FREQUENCY_IN_MS = "frequencyInMS";
 	
-	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;
 	public static final int SEARCH_RADIUS_ONE_MILE = 1760;
 	public static final int SEARCH_RADIUS_FIVE_MILE = 8800;
 	public static final int SEARCH_RADIUS_TEN_MILE = 17600;
 	public static final int SEARCH_RADIUS_TWENTY_MILE = 35200;
+	
+	// Search day 
+	public static final String SEARCH_TIME_DAY = "day";
+	public static final String SEARCH_TIME_WEEK = "week";
+	public static final String SEARCH_TIME_MONTH = "month";
 }

@@ -119,6 +119,9 @@ public class MainScreen extends TabActivity {
 	 */
 	private void getAllCategories() 
 	{	
+		
+		Log.d(TAG, "getAllCategories: " + userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, ""));
+		
 		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
 		{			
 			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...");
@@ -170,6 +173,7 @@ public class MainScreen extends TabActivity {
 	private class MainCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj){
+			
 			userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
 			userPrefsEditor.commit();
 			progressDialog.dismiss();

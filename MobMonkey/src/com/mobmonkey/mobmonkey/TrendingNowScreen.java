@@ -80,8 +80,8 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 			categoryIds.substring(0, categoryIds.length()-1);
 			
 			MMTrendingAdapter.getTrending(new CountOnlyCallback(), 
-									      "topviewed", 
-									      "week", 
+									      MMAPIConstants.URL_TOPVIEWED, 
+									      MMAPIConstants.SEARCH_TIME_DAY, 
 									      true, 
 									      true, 
 									      latitude, 
