@@ -146,7 +146,7 @@ public class MainScreen extends TabActivity {
 		addTab("Inbox", R.drawable.tab_inbox, InboxScreen.class);
 		addTab("Search", R.drawable.tab_search, SearchScreen.class);
 		addTab("Bookmarks", R.drawable.tab_bookmarks, BookmarksScreen.class);
-		addTab("Settings", R.drawable.tab_settings, SettingsScreen.class);
+		addTab("Settings", R.drawable.tab_settings, SettingsGroup.class);
 	}
 	
 	/**
@@ -177,7 +177,6 @@ public class MainScreen extends TabActivity {
 	private class MainCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj){
-			
 			userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
 			userPrefsEditor.commit();
 			progressDialog.dismiss();
@@ -193,7 +192,6 @@ public class MainScreen extends TabActivity {
 	}
 	
 	private class bookmarksCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {

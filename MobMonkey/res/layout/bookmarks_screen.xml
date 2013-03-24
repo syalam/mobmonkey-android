@@ -17,10 +17,33 @@
 			android:textColor="@android:color/white"
 			android:textStyle="bold"/>
 	    
+   		<ImageButton android:id="@+id/ibmap"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_toLeftOf="@+id/btnaddlocclear"
+		    android:layout_centerVertical="true"
+		    android:src="@android:drawable/ic_menu_mapmode"
+		    android:onClick="viewOnClick"/>
+		
+		<Button android:id="@+id/btnaddlocclear"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerVertical="true"
+		    android:layout_alignParentRight="true"
+		    android:layout_marginRight="3dp"
+		    android:background="@android:drawable/ic_menu_add"
+			android:textColor="@android:color/white"
+		    android:onClick="viewOnClick"/>
+	    
 	</RelativeLayout>
     
 	<FrameLayout android:layout_width="match_parent"
 	    android:layout_height="match_parent">
+		
+		<fragment android:id="@+id/fragmap"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			class="com.google.android.gms.maps.SupportMapFragment"/>
 	    
 		<ListView android:id="@+id/lvbookmarks"
 		    android:layout_width="match_parent"

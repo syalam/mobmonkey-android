@@ -69,7 +69,7 @@ public class SettingsScreen extends Activity {
 			case R.id.btnsignout:
 				MMSignOutAdapter.signOut(new SignOutCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
-				progressDialog = ProgressDialog.show(SettingsScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_out), true, false);
+				progressDialog = ProgressDialog.show(getParent(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_out), true, false);
 				break;
 		}
 	}
@@ -88,24 +88,39 @@ public class SettingsScreen extends Activity {
 		lvSettingsCategory.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> adapterView, View view, int position,
-					long id) {
+			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+				Intent intent;
+				View v;
+				
 				switch(position) {
 					// My Info
 					case 0:
-						startActivity(new Intent(SettingsScreen.this, MyInfoScreen.class));
+						intent = new Intent(SettingsScreen.this, MyInfoScreen.class);
+						v = SettingsGroup.settingsGroup.getLocalActivityManager().startActivity("My Info", intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)).getDecorView();
+						
+						SettingsGroup.settingsGroup.replaceView(v);
+//						startActivity();
 						break;
 					// Social Networks
 					case 1:
-						startActivity(new Intent(SettingsScreen.this, SocialNetworksScreen.class));
+						intent = new Intent(SettingsScreen.this, SocialNetworksScreen.class);
+						v = SettingsGroup.settingsGroup.getLocalActivityManager().startActivity("Social Networks", intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)).getDecorView();
+						
+						SettingsGroup.settingsGroup.replaceView(v);
+//						startActivity(new Intent(SettingsScreen.this, SocialNetworksScreen.class));
 						break;
 					// My Interests
 					case 2:
-						startActivity(new Intent(SettingsScreen.this, MyInterestsScreen.class));
+						intent = new Intent(SettingsScreen.this, MyInterestsScreen.class);
+						v = SettingsGroup.settingsGroup.getLocalActivityManager().startActivity("My Interests", intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)).getDecorView();
+						
+						SettingsGroup.settingsGroup.replaceView(v);
+//						startActivity();
 						break;
 					// Subscribe
 					case 3:
-						startActivity(new Intent(SettingsScreen.this, SubscribeScreen.class));
+						intent = new Intent(SettingsScreen.this, SubscribeScreen.class);
+						startActivity(intent);
 						break;
 				}
 			}
