@@ -4,8 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.mobmonkey.mobmonkey.utils.MMMyInfoArrayAdapter;
-import com.mobmonkey.mobmonkey.utils.MMMyinfoItem;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
 import android.app.Activity;
@@ -25,7 +23,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
-import android.widget.ListView;
 
 public class MyInfoScreen extends Activity implements OnKeyListener, OnDateChangedListener, OnTouchListener{
 	private static final String TAG = "MyInfoScreen: ";
@@ -37,14 +34,11 @@ public class MyInfoScreen extends Activity implements OnKeyListener, OnDateChang
 	EditText etFirstName;
 	EditText etLastName;
 	EditText etEmailAddress;
-	EditText etPassword;
-	EditText etPasswordConfirm;
 	EditText etBirthdate;
 	EditText etGender;
 	MotionEvent prevEvent;
 
 	Calendar birthdate;
-
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +57,7 @@ public class MyInfoScreen extends Activity implements OnKeyListener, OnDateChang
 	@Override
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
 		if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-			inputMethodManager.hideSoftInputFromWindow(etPasswordConfirm.getWindowToken(), 0);
+			inputMethodManager.hideSoftInputFromWindow(etEmailAddress.getWindowToken(), 0);
 			return true;
 		}
 		return false;
@@ -98,6 +92,35 @@ public class MyInfoScreen extends Activity implements OnKeyListener, OnDateChang
 		return false;
 	}
 	
+	/**
+	 * Handle events when the date changes on the {@link DatePicker}
+	 */
+	@Override
+	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+		
+	}
+    
+	/**
+	 * Function that overrides Android back button pressed to save user information for all fields
+	 * @return 
+	 */
+	@Override
+	public void onBackPressed() {
+		Log.d(TAG, TAG + "onBackPressed");
+		
+		userPrefsEditor.putString(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
+		userPrefsEditor.putString(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
+		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+		userPrefsEditor.putLong(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
+		userPrefsEditor.putInt(MMAPIConstants.KEY_GENDER, convertGender());
+		userPrefsEditor.commit();
+		
+		super.onBackPressed();
+		
+//		SettingsGroup.settingsGroup.back();
+//		return;
+	}
+    
 	private void init() {
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
         userPrefsEditor = userPrefs.edit();
@@ -107,41 +130,22 @@ public class MyInfoScreen extends Activity implements OnKeyListener, OnDateChang
     	etFirstName = (EditText) findViewById(R.id.etfirstname);
     	etLastName = (EditText) findViewById(R.id.etlastname);
     	etEmailAddress = (EditText) findViewById(R.id.etemailaddress);
-    	etPassword = (EditText) findViewById(R.id.etpassword);
-    	etPasswordConfirm = (EditText) findViewById(R.id.etpasswordconfirm);
     	etBirthdate = (EditText) findViewById(R.id.etbirthdate);
     	etGender = (EditText) findViewById(R.id.etgender);
     	
-    	etPasswordConfirm.setOnKeyListener(MyInfoScreen.this);
+    	etFirstName.setText(userPrefs.getString(MMAPIConstants.KEY_FIRST_NAME, MMAPIConstants.DEFAULT_STRING));
+    	etLastName.setText(userPrefs.getString(MMAPIConstants.KEY_LAST_NAME, MMAPIConstants.DEFAULT_STRING));
+    	etEmailAddress.setText(userPrefs.getString(MMAPIConstants.KEY_EMAIL_ADDRESS, MMAPIConstants.DEFAULT_STRING));
+    	
+		Date tempDate = new Date(userPrefs.getLong(MMAPIConstants.KEY_BIRTHDATE, MMAPIConstants.DEFAULT_INT));
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+    	etBirthdate.setText(simpleDateFormat.format(tempDate));
+    	
+    	etGender.setText((userPrefs.getInt(MMAPIConstants.KEY_GENDER, 0) == MMAPIConstants.NUM_MALE) ? MMAPIConstants.TEXT_MALE : MMAPIConstants.TEXT_FEMALE);
+    	
+    	etEmailAddress.setOnKeyListener(MyInfoScreen.this);
     	etBirthdate.setOnTouchListener(MyInfoScreen.this);
     	etGender.setOnTouchListener(MyInfoScreen.this);
-	}
-	
-	/**
-	 * Function that overrides Android back button to save user information for all fields
-	 * @return 
-	 * @return
-	 */
-	@Override
-	public void onBackPressed()
-	{
-		userPrefsEditor.putString(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
-		userPrefsEditor.putString(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
-		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
-		userPrefsEditor.putString(MMAPIConstants.KEY_PASSWORD, etPassword.getText().toString());
-		userPrefsEditor.putLong(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
-		userPrefsEditor.putInt(MMAPIConstants.KEY_GENDER, convertGender());
-		userPrefsEditor.commit();
-		
-		// TODO For testing, remove later
-		Log.d( TAG, userPrefs.getString(MMAPIConstants.KEY_FIRST_NAME, "fail") + ", " +
-				userPrefs.getString(MMAPIConstants.KEY_LAST_NAME, "fail") + ", " +
-				userPrefs.getString(MMAPIConstants.KEY_EMAIL_ADDRESS, "fail") + ", " +
-				userPrefs.getString(MMAPIConstants.KEY_PASSWORD, "fail") + ", " +
-				userPrefs.getLong(MMAPIConstants.KEY_BIRTHDATE, -1) + ", " +
-				userPrefs.getInt(MMAPIConstants.KEY_GENDER, -1) );
-		
-		finish();
 	}
 	
     /**
@@ -178,7 +182,7 @@ public class MyInfoScreen extends Activity implements OnKeyListener, OnDateChang
     		dpBirthdate.init(birthdate.get(Calendar.YEAR), birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH), MyInfoScreen.this);
     	}
     	
-    	new AlertDialog.Builder(MyInfoScreen.this)
+    	new AlertDialog.Builder(getParent())
     		.setTitle(R.string.ad_title_birthdate)
     		.setView(vBirthdate)
     		.setCancelable(false)
@@ -199,7 +203,7 @@ public class MyInfoScreen extends Activity implements OnKeyListener, OnDateChang
      * Prompt the user with an {@link AlertDialog} for his/her gender.
      */
     private void promptUserGender() {
-    	new AlertDialog.Builder(MyInfoScreen.this)
+    	new AlertDialog.Builder(getParent())
     		.setTitle(R.string.ad_title_gender)
     		.setItems(R.array.ad_list_gender, new DialogInterface.OnClickListener() {
     			@Override
@@ -211,15 +215,4 @@ public class MyInfoScreen extends Activity implements OnKeyListener, OnDateChang
     		.setCancelable(false)
     		.show();
     }
-
-	/**
-	 * Handle events when the date changes on the {@link DatePicker}
-	 */
-	@Override
-	public void onDateChanged(DatePicker view, int year, int monthOfYear,
-			int dayOfMonth) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

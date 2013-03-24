@@ -6,6 +6,7 @@ import android.widget.ListView;
 
 import com.mobmonkey.mobmonkey.utils.MMInboxArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMInboxItem;
+import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
 /**
  * Android {@link Activity} screen displays the inbox for the user
@@ -64,7 +65,7 @@ public class InboxScreen extends Activity {
 			default:
 				break;
 			}
-			item.counter = i+"";
+			item.counter = i + MMAPIConstants.DEFAULT_STRING;
 			data[i] = item;
 		}
 		

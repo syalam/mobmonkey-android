@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundcolor"
+    android:orientation="vertical" >
+    
+    <RelativeLayout android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:background="@drawable/navigation_bar">
+	    
+	    <TextView android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:text="@string/tv_title_socialnetworks"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textColor="@android:color/white"
+			android:textStyle="bold"/>
+	    
+	</RelativeLayout>
+    
+    <ListView android:id="@+id/lvsocialnetwork"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="20dp"
+	    android:scrollbars="none"
+	    android:background="@drawable/listview_border"
+		android:divider="@drawable/listview_divider"
+		android:dividerHeight="1dp"/>
+
+</LinearLayout>

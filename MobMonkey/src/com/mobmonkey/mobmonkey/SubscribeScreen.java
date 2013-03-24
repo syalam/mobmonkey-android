@@ -10,7 +10,5 @@ public class SubscribeScreen extends Activity{
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.subscribe_screen);
-	}
-
-	
+	}	
 }
