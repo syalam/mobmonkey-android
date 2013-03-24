@@ -225,4 +225,5 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 		<item >Birthday</item>
 		<item >Gender</item>
 	</string-array>
+	<string name="toast_no_gps_access">You have no GPS access at the moment, cannot start MobMonkey</string>
 </resources>

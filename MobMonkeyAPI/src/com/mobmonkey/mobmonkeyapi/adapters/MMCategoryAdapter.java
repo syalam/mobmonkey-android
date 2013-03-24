@@ -32,7 +32,7 @@ public class MMCategoryAdapter {
 	
 	public static void getAllCategories(MMCallback mmCallback, String user, String auth, String partnerId)
 	{
-		categoryURL = MMAPIConstants.TEST_MOBMONKEY_URL + "category/all";
+		categoryURL = MMAPIConstants.TEST_MOBMONKEY_URL + "category";
 		
 		Log.d(TAG, TAG + "AllCategoriesURL: " + categoryURL);
 
