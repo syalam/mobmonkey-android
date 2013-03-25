@@ -142,7 +142,7 @@ public class MainScreen extends TabActivity {
 		addTab("Inbox", R.drawable.tab_inbox, InboxScreen.class);
 		addTab("Search", R.drawable.tab_search, SearchScreen.class);
 		addTab("Bookmarks", R.drawable.tab_bookmarks, BookmarksScreen.class);
-		addTab("Settings", R.drawable.tab_settings, SettingsGroup.class);
+		addTab("Settings", R.drawable.tab_settings, SettingsActivity.class);
 	}
 	
 	/**
