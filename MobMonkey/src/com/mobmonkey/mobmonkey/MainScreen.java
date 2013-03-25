@@ -64,7 +64,7 @@ public class MainScreen extends TabActivity {
 		init();
 		getAllCategories();
 		getAllBookmarks();
-		setTabs();
+		//setTabs();
 		tabHost.setCurrentTab(0);
 	}
 
@@ -218,6 +218,7 @@ public class MainScreen extends TabActivity {
 				checkForGPSAccess();
 			} else {
 				Toast.makeText(MainScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
+				finish();
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -249,6 +250,8 @@ public class MainScreen extends TabActivity {
 		        }
 	    	})
 	    	.show();
+	    } else {
+	    	setTabs();
 	    }
 	}
 }
