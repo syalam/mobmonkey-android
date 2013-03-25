@@ -5,15 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,11 +60,11 @@ public class MainScreen extends TabActivity {
 		Log.d(TAG, TAG + "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);
-		
+		checkForGPSAccess();
 		init();
 		getAllCategories();
 		getAllBookmarks();
-		setTabs();
+		//setTabs();
 		tabHost.setCurrentTab(0);
 	}
 
@@ -205,5 +209,49 @@ public class MainScreen extends TabActivity {
             //mDisplay.append(newMessage + "\n");
         }
     };
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION) {
+			LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+			if(manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+				checkForGPSAccess();
+			} else {
+				Toast.makeText(MainScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
+				finish();
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
     
+	/**
+	 * Function that check if user's device has GPS access. Display a {@link Toast} message informing the user if 
+	 * there is no GPS access.
+	 */
+	private void checkForGPSAccess() {
+		LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			new AlertDialog.Builder(MainScreen.this)
+	    	.setTitle(R.string.ad_title_enable_gps)
+	    	.setMessage(R.string.ad_message_enable_gps)
+	    	.setCancelable(false)
+	    	.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) {
+		            // Launch settings, allowing user to make a change
+		            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION);
+		        }
+	    	})
+	    	.setNegativeButton(R.string.ad_btn_no, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) {
+		            // No location service, no Activity
+		        	Toast.makeText(MainScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
+//		            finish();
+		            // TODO: not close activity but return back to previous tab
+		        }
+	    	})
+	    	.show();
+	    } else {
+	    	setTabs();
+	    }
+	}
 }

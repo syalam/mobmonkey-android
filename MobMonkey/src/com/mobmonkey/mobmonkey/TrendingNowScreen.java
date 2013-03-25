@@ -54,6 +54,7 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
 		Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
 		double longitude = location.getLongitude();
 		double latitude = location.getLatitude();
 		

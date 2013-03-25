@@ -26,12 +26,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -65,7 +67,6 @@ public class SignInScreen extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		checkForInternetAccess();
-		checkForGPSAccess();
 		
 		// TODO: check if this is still needed...
         if (android.os.Build.VERSION.SDK_INT > 9) {
@@ -142,18 +143,7 @@ public class SignInScreen extends Activity {
 			finish();
 		}
 	}
-	
-	/**
-	 * Function that check if user's device has GPS access. Display a {@link Toast} message informing the user if 
-	 * there is no GPS access.
-	 */
-	private void checkForGPSAccess() {
-		LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
-		if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-			Toast.makeText(SignInScreen.this, getString(R.string.toast_no_gps_access), Toast.LENGTH_LONG).show();
-			finish();
-	    }
-	}
+
 	
 	/**
 	 * Initialize all the variables to be used in {@link SignInScreen}
