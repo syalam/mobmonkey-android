@@ -26,6 +26,12 @@ public final class MMAPIConstants {
 	public static final String TEST_MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
 	
+	public static final String TAB_TITLE_TRENDING_NOW = "Trending Now";
+	public static final String TAB_TITLE_INBOX = "Inbox";
+	public static final String TAB_TITLE_SEARCH = "Search";
+	public static final String TAB_TITLE_FAVORITES = "Favorites";
+	public static final String TAB_TITLE_SETTINGS = "Settings";
+	
 	public static final String TEXT_MALE = "Male";
 	public static final String TEXT_FEMALE = "Female";
 	public static final int NUM_MALE = 1;
@@ -174,4 +180,6 @@ public final class MMAPIConstants {
 	public static final String SEARCH_TIME_DAY = "day";
 	public static final String SEARCH_TIME_WEEK = "week";
 	public static final String SEARCH_TIME_MONTH = "month";
+	
+	public static final String INTENT_FILTER_DISPLAY_MESSAGE = "com.mobmonkey.mobmonkey.DISPLAY_MESSAGE";
 }
