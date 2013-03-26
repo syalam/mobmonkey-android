@@ -2,10 +2,7 @@ package com.mobmonkey.mobmonkey;
 
 import java.util.Stack;
 
-import com.mobmonkey.mobmonkey.fragments.MyInfoFragment;
-import com.mobmonkey.mobmonkey.fragments.MyInterestsFragment;
-import com.mobmonkey.mobmonkey.fragments.SettingsFragment;
-import com.mobmonkey.mobmonkey.fragments.SocialNetworksFragment;
+import com.mobmonkey.mobmonkey.fragments.*;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 
 import android.content.Intent;
@@ -15,7 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 /**
- * @author Dezapp
+ * @author Dezapp, LLC
  *
  */
 public class SettingsActivity extends FragmentActivity implements SettingsFragment.OnItemClickListener {
@@ -26,7 +23,7 @@ public class SettingsActivity extends FragmentActivity implements SettingsFragme
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_settings);
+		setContentView(R.layout.activity_fragmentcontainer);
 		
 		fragmentManager = getSupportFragmentManager();
 		fragmentStack = new Stack<MMFragment>();
@@ -36,11 +33,9 @@ public class SettingsActivity extends FragmentActivity implements SettingsFragme
 				return;
 			}
 			
-			SettingsFragment settingsFrag = new SettingsFragment();
-			fragmentManager.beginTransaction().add(R.id.llfragmentcontainer, fragmentStack.push(settingsFrag)).commit();
+			SettingsFragment settingsFragment = new SettingsFragment();
+			fragmentManager.beginTransaction().add(R.id.llfragmentcontainer, fragmentStack.push(settingsFragment)).commit();
 		}
-		
-		// TODO:
 	}
 
 	/**

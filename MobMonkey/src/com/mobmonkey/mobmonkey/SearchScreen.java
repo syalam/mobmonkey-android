@@ -145,7 +145,7 @@ public class SearchScreen extends Activity implements LocationListener {
 			case R.id.btnfilter:
 				startActivity(new Intent(SearchScreen.this, FilterScreen.class));
 				break;
-			case R.id.ibaddloc:
+			case R.id.btnaddloc:
 				checkForGPS(MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION);
 				break;
 		}

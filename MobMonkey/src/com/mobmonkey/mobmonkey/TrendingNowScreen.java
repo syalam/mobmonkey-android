@@ -58,6 +58,16 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 		double longitude = location.getLongitude();
 		double latitude = location.getLatitude();
 		
+		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
+		for(int i = 0; i < data.length; i++) {
+			data[i] = new MMTrendingItem();
+			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
+			data[i].counter = "0";
+		}
+		
+		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data);
+		lvTrending.setAdapter(arrayAdapter);
+		
 		try {
 			JSONArray categories = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
 					  MMAPIConstants.DEFAULT_STRING));
