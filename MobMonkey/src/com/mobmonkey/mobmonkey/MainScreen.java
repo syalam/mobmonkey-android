@@ -180,6 +180,20 @@ public class MainScreen extends TabActivity {
 //            mRegisterTask.execute(null, null, null);
 		}
 	}
+//	private void getAllCategories() 
+//	{	
+//		Log.d("AllCats", userPrefs.getString((MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES), ""));
+//		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
+//		{			
+//			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...");
+//
+//			MMCategoryAdapter.getAllCategories(
+//					new MainCallback(), 
+//					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+//					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+//					MMConstants.PARTNER_ID);
+//		}
+//	}
 	
 	/**
 	 * Function that set the tabs and the corresponding {@link Activity} for the {@link TabHost}

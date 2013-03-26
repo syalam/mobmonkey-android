@@ -69,15 +69,18 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 		lvTrending.setAdapter(arrayAdapter);
 		
 		try {
-			JSONArray categories = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
+			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
 					  MMAPIConstants.DEFAULT_STRING));
+			JSONArray categories = cats.toJSONArray(cats.names());
+					//new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
+					  //MMAPIConstants.DEFAULT_STRING));
 			String categoryIds = "";
 			
 			JSONArray topTenCategories = new JSONArray();
 			
 			FindTopTen:
 			for(int i = 0; i < categories.length(); i++) {
-				if(categories.getJSONObject(i).getString("parents").compareTo("1") == 0) {
+				if(categories.getJSONArray(i).getJSONObject(0).getString("parents").compareTo("1") == 0) {
 					topTenCategories.put(categories.getJSONObject(i));
 				}
 				if(topTenCategories.length() == 10) {
@@ -88,7 +91,7 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 			for(int i = 0; i < topTenCategories.length(); i++) {
 				categoryIds += topTenCategories.getJSONObject(i).getString("categoryId")+",";
 			}
-			categoryIds.substring(0, categoryIds.length()-1);
+			//categoryIds.substring(0, categoryIds.length()-1);
 			
 			MMTrendingAdapter.getTrending(new CountOnlyCallback(), 
 									      MMAPIConstants.URL_TOPVIEWED, 
