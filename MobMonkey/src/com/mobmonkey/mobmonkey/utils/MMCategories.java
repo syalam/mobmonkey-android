@@ -28,8 +28,7 @@ public class MMCategories extends Activity{
 			for(int i=0; i < allCategories.length(); i++)
 			{
 				category = new JSONObject(allCategories.getString(i));
-				
-				if(category.getString("parents").compareTo("[1]") == 0)
+				if(category.getString("parents").compareTo("1") == 0)
 					topLevelCategoriesList.put(category);
 			}
 		}
@@ -41,7 +40,6 @@ public class MMCategories extends Activity{
 	
 	public static String getSubCategoriesWithCategoriId(Context context, String categoryId) throws JSONException
 	{
-		String catId = "[" + categoryId + "]";
 		userPrefs = context.getSharedPreferences(MMAPIConstants.USER_PREFS, 0);
 		JSONArray subCategoriesList = null;
 		
@@ -53,8 +51,8 @@ public class MMCategories extends Activity{
 			for(int i=0; i < allCategories.length(); i++)
 			{
 				subCat = new JSONObject(allCategories.getString(i));
-				
-				if(subCat.getString("parents").compareTo(catId) == 0)
+
+				if(subCat.getString("parents").compareTo(categoryId) == 0)
 					subCategoriesList.put(subCat);
 			}
 		}

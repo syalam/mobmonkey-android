@@ -23,7 +23,14 @@ public final class MMAPIConstants {
 	public static final double DEFAULT_DOUBLE = 1.0d;
 
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
-	//public static final String TEST_MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
+	public static final String TEST_MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
+	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
+	
+	public static final String TAB_TITLE_TRENDING_NOW = "Trending Now";
+	public static final String TAB_TITLE_INBOX = "Inbox";
+	public static final String TAB_TITLE_SEARCH = "Search";
+	public static final String TAB_TITLE_FAVORITES = "Favorites";
+	public static final String TAB_TITLE_SETTINGS = "Settings";
 	
 	public static final String TEXT_MALE = "Male";
 	public static final String TEXT_FEMALE = "Female";
@@ -60,6 +67,7 @@ public final class MMAPIConstants {
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING = "Repeating";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
+	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
 	
 	// MobMonkey server call key values
 	public static final String KEY_FIRST_NAME = "firstName";
@@ -88,6 +96,10 @@ public final class MMAPIConstants {
 	public static final String KEY_RADIUS_IN_YARDS = "radiusInYards";
 	public static final String KEY_NAME = "name";
 	public static final String KEY_CATEGORY_IDS = "categoryIds";
+	
+	// MobMonkey server url
+	public static final String URL_BOOKMARKS = "bookmarks";
+	public static final String URL_TOPVIEWED = "topviewed";
 	
 	// MobMonkey server response key values
 	public static final String KEY_RESPONSE_STATUS = "status";
@@ -157,11 +169,17 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
 	public static final String JSON_KEY_FREQUENCY_IN_MS = "frequencyInMS";
 	
-	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;
 	public static final int SEARCH_RADIUS_ONE_MILE = 1760;
 	public static final int SEARCH_RADIUS_FIVE_MILE = 8800;
 	public static final int SEARCH_RADIUS_TEN_MILE = 17600;
 	public static final int SEARCH_RADIUS_TWENTY_MILE = 35200;
+	
+	// Search day 
+	public static final String SEARCH_TIME_DAY = "day";
+	public static final String SEARCH_TIME_WEEK = "week";
+	public static final String SEARCH_TIME_MONTH = "month";
+	
+	public static final String INTENT_FILTER_DISPLAY_MESSAGE = "com.mobmonkey.mobmonkey.DISPLAY_MESSAGE";
 }

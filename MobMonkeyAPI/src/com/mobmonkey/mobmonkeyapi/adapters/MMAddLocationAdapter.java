@@ -24,7 +24,7 @@ public class MMAddLocationAdapter {
 	public static void addLocation(MMCallback mmCallback, String emailAddress, String password, String partnerId, String address, String description, 
 			String address_ext, String categoryIds, String countryCode, String latitude, String locality, String longitude, String name, String neighborhood, String phoneNumber,
 			String postCode, String providerId, String region, String website) {
-		addLocationURL = MMAPIConstants.MOBMONKEY_URL + "location";
+		addLocationURL = MMAPIConstants.TEST_MOBMONKEY_URL + "location";
 		
 		Log.d(TAG, TAG + "signInURL: " + addLocationURL);
 

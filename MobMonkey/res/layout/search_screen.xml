@@ -33,7 +33,7 @@
 			android:textColor="@android:color/white"
 			android:textStyle="bold"/>
 		
-		<Button android:id="@+id/ibaddloc"
+		<Button android:id="@+id/btnaddloc"
 		    android:layout_width="33dp"
 		    android:layout_height="33dp"
 		    android:background="@drawable/nav_bar_button_blank"

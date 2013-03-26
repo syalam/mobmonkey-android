@@ -41,7 +41,7 @@ public final class MMSignUpAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signUpNewUser(MMCallback mmCallback, String firstName, String lastName, String emailAddress, String password, String birthdate, int gender, boolean checkedToS, String partnerId) {
-		signUpURL = MMAPIConstants.MOBMONKEY_URL + "signup/user";
+		signUpURL = MMAPIConstants.TEST_MOBMONKEY_URL + "signup/user";
 		try {
 			userInfo = new JSONObject();
 			userInfo.put(MMAPIConstants.KEY_FIRST_NAME, firstName);
@@ -86,7 +86,7 @@ public final class MMSignUpAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signUpNewUserFacebook(MMCallback mmCallback, String oauthToken, String providerUserName, String partnerId) {
-		signUpURL = MMAPIConstants.MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + 
+		signUpURL = MMAPIConstants.TEST_MOBMONKEY_URL + "signin?deviceType=" + MMAPIConstants.DEVICE_TYPE + 
 				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + 
 				"&useOAuth=true&provider=" + MMAPIConstants.OAUTH_PROVIDER_FACEBOOK + 
 				"&oauthToken=" + oauthToken + 
@@ -117,7 +117,7 @@ public final class MMSignUpAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signUpNewUserTwitter(MMCallback mmCallback, String firstName, String lastName, String oauthToken, String providerUserName, String emailAddress, String birthdate, int gender, String partnerId) {
-		signUpURL = MMAPIConstants.MOBMONKEY_URL + "signin/registeremail?deviceType=" + MMAPIConstants.DEVICE_TYPE +
+		signUpURL = MMAPIConstants.TEST_MOBMONKEY_URL + "signin/registeremail?deviceType=" + MMAPIConstants.DEVICE_TYPE +
 				"&deviceId=" + MMDeviceUUID.getDeviceUUID().toString() + 
 				"&oauthToken=" + oauthToken + 
 				"&providerUserName=" + providerUserName + 

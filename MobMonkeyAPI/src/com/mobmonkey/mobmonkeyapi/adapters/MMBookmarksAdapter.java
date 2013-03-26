@@ -35,7 +35,7 @@ public class MMBookmarksAdapter {
 									  String partnerId,
 									  String emailAddress,
 									  String password) {
-		bookmarkURL = MMAPIConstants.MOBMONKEY_URL + url;
+		bookmarkURL = MMAPIConstants.TEST_MOBMONKEY_URL + url;
 		try {
 			bookmarkInfo = new JSONObject();
 			bookmarkInfo.put(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId);
@@ -63,7 +63,7 @@ public class MMBookmarksAdapter {
 									String partnerId,
 									String emailAddress,
 									String password) {
-		bookmarkURL = MMAPIConstants.MOBMONKEY_URL + url;
+		bookmarkURL = MMAPIConstants.TEST_MOBMONKEY_URL + url;
 		
 		
 		bookmarkInfo = new JSONObject();

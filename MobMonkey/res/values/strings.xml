@@ -141,6 +141,22 @@
 	
 	<string name="toast_sign_out_successful">Successfully signed out</string>
 	
+	<!-- My Info Screen -->
+	<string name="tv_title_my_info">My Info</string>
+	
+	<!-- Social Networks Screen -->
+	<string name="tv_title_socialnetworks">Social Networks</string>
+	<string-array name="social_networks_name">
+		<item >Facebook</item>
+		<item >Twitter</item>
+	</string-array>
+
+	<!-- My Interests Screen -->
+	<string name="tv_title_myinterests">My Interests</string>
+	
+	<!-- Subscribe Screen -->
+	<string name="tv_title_subscribe">Subscribe</string>
+	
 	<!-- Terms of use Screen -->
 	<string name="tv_title_terms_of_use">Terms of use</string>
 	<string name="tv_terms_of_use">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim, mi tristique sollicitudin malesuada, velit nisi cursus magna, et interdum mauris turpis eget leo. Maecenas adipiscing, nunc ac consectetur dictum, risus mi ultrices nulla, sed pellentesque dui elit a diam. Morbi rhoncus ante ut justo tempus tristique eleifend quam rutrum. Nulla pulvinar, sem non ultricies tristique, lectus magna sodales ligula, non dignissim nibh nulla at nunc. Vivamus vestibulum ornare ipsum in mattis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Cras tempus imperdiet leo, ut faucibus risus pulvinar vitae. Donec lobortis odio ut tellus bibendum elementum. Donec pretium varius nisl. Donec nibh ipsum, dictum commodo vestibulum sed, vestibulum sit amet sem. Pellentesque facilisis odio vel nisl scelerisque vitae blandit mi mattis. Vivamus ac mi eget sapien lacinia cursus.
@@ -209,4 +225,10 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 		<item >Top Viewed</item>
 		<item >Near Me</item>
 	</string-array>
+	
+	<!-- Top Viewed Screen -->
+	<string name="tv_title_top_viewed">Top Viewed</string>
+	
+	<string name="toast_no_gps_access">You have no GPS access at the moment, cannot start MobMonkey</string>
+
 </resources>

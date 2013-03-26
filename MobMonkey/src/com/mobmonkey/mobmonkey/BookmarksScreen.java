@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,7 +36,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
  * @author Dezapp, LLC
  *
  */
-public class BookmarksScreen extends Activity implements AdapterView.OnItemClickListener {
+public class BookmarksScreen extends FragmentActivity implements AdapterView.OnItemClickListener {
 
 	private SharedPreferences userPrefs;
 	private ListView lvBookmark;
@@ -68,7 +69,7 @@ public class BookmarksScreen extends Activity implements AdapterView.OnItemClick
 		
 		// refresh bookmark list
 		MMBookmarksAdapter.getBookmarks(new bookmarksCallback(), 
-										"bookmarks", 
+										MMAPIConstants.URL_BOOKMARKS, 
 										MMConstants.PARTNER_ID, 
 										userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 										userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));

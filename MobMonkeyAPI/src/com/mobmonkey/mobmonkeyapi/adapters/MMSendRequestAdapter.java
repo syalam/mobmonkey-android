@@ -35,7 +35,7 @@ public class MMSendRequestAdapter {
 								   String emailAddress,
 								   String password) {
 		
-		sendRequestUrl = MMAPIConstants.MOBMONKEY_URL + "requestmedia/" + mediaType;
+		sendRequestUrl = MMAPIConstants.TEST_MOBMONKEY_URL + "requestmedia/" + mediaType;
 		
 		try {
 			HttpPost httpPost;

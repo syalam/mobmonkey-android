@@ -31,7 +31,7 @@ public final class MMSearchLocationAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void searchLocationWithText(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String categoryID, String user, String auth, String partnerId) {
-		searchLocationURL = MMAPIConstants.MOBMONKEY_URL + "search/location";
+		searchLocationURL = MMAPIConstants.TEST_MOBMONKEY_URL + "search/location";
 		
 		Log.d(TAG, TAG + "searchLocationURL: " + searchLocationURL);
 		

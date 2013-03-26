@@ -2,6 +2,11 @@ package com.mobmonkey.mobmonkey;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.ListView;
+
+import com.mobmonkey.mobmonkey.utils.MMInboxArrayAdapter;
+import com.mobmonkey.mobmonkey.utils.MMInboxItem;
+import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
 /**
  * Android {@link Activity} screen displays the inbox for the user
@@ -10,6 +15,9 @@ import android.os.Bundle;
  */
 public class InboxScreen extends Activity {
 
+	private ListView lvInbox;
+	
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -17,6 +25,8 @@ public class InboxScreen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.inbox_screen);
+		
+		init();
 	}
 	
 	/**
@@ -29,5 +39,38 @@ public class InboxScreen extends Activity {
 	public void onBackPressed() {
 		moveTaskToBack(true);
 		return;
+	}
+	
+	private void init() {
+		
+		lvInbox = (ListView) findViewById(R.id.lvinbox);
+		
+		// TODO: hard coded information. needs to use callback to get infomation from server.
+		MMInboxItem[] data = new MMInboxItem[4];
+		for(int i = 0; i < data.length; i++) {
+			MMInboxItem item = new MMInboxItem();
+			switch(i) {
+			case 0:
+				item.title = "Open Requests";
+				break;
+			case 1:
+				item.title = "Answered Request";
+				break;
+			case 2:
+				item.title = "Assigned Request";
+				break;
+			case 3:
+				item.title = "Notifications";
+				break;
+			default:
+				break;
+			}
+			item.counter = i + MMAPIConstants.DEFAULT_STRING;
+			data[i] = item;
+		}
+		
+		MMInboxArrayAdapter arrayAdapter = new MMInboxArrayAdapter(InboxScreen.this, R.layout.inbox_list_row, data);
+		
+		lvInbox.setAdapter(arrayAdapter);
 	}
 }

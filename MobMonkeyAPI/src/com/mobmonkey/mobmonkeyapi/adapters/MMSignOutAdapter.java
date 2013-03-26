@@ -34,7 +34,7 @@ public final class MMSignOutAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signOut(MMCallback mmCallback, String user, String auth, String partnerId) {
-		signOutURL = MMAPIConstants.MOBMONKEY_URL + "signout/" + MMAPIConstants.DEVICE_TYPE + "/" + MMDeviceUUID.getDeviceUUID().toString();
+		signOutURL = MMAPIConstants.TEST_MOBMONKEY_URL + "signout/" + MMAPIConstants.DEVICE_TYPE + "/" + MMDeviceUUID.getDeviceUUID().toString();
 		Log.d(TAG, TAG + "signOutURL: " + signOutURL);
 		
 		HttpPost httpPost = new HttpPost(signOutURL);
