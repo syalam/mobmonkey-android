@@ -142,32 +142,36 @@ public final class MMAPIConstants {
 	public static final int RESULT_CODE_NOT_FOUND = 404;
 	
 	// JSON key values
-	public static final String JSON_KEY_NAME = "name";
-	public static final String JSON_KEY_CATEGORY_ID = "categoryId";
-	public static final String JSON_KEY_DISTANCE = "distance";
-	public static final String JSON_KEY_LATITUDE = "latitude";
-	public static final String JSON_KEY_LONGITUDE = "longitude";
 	public static final String JSON_KEY_ADDRESS = "address";
-	public static final String JSON_KEY_LOCALITY = "locality";
-	public static final String JSON_KEY_REGION = "region";
-	public static final String JSON_KEY_POSTCODE = "postcode";
-	public static final String JSON_KEY_MONKEYS = "monkeys";
-	public static final String JSON_KEY_PHONENUMBER = "phoneNumber";
-	public static final String JSON_KEY_CATEGORY_IDS = "categoryIds";
-	public static final String JSON_KEY_DESCRIPTION = "description";
 	public static final String JSON_KEY_ADDRESS_EXT = "address_ext";
+	public static final String JSON_KEY_BOOKMARK_COUNT = "bookmarkCount";
+	public static final String JSON_KEY_CATEGORY_ID = "categoryId";
+	public static final String JSON_KEY_CATEGORY_IDS = "categoryIds";
 	public static final String JSON_KEY_COUNTRY_CODE = "countryCode";
-	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
-	public static final String JSON_KEY_PROVIDER_ID = "providerId";
-	public static final String JSON_KEY_WEBSITE = "website";
-	
-	public static final String JSON_KEY_MESSAGE = "message";
+	public static final String JSON_KEY_DESCRIPTION = "description";	
+	public static final String JSON_KEY_DISTANCE = "distance";
 	public static final String JSON_KEY_DURATION = "duration";
-	public static final String JSON_KEY_LOCATION_ID = "locationId";
-	public static final String JSON_KEY_RECURRING = "recurring";
-	public static final String JSON_KEY_RADIUS_IN_YARDS = "radiusInYards";
-	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
 	public static final String JSON_KEY_FREQUENCY_IN_MS = "frequencyInMS";
+	public static final String JSON_KEY_INTEREST_COUNT = "interestCount";
+	public static final String JSON_KEY_LATITUDE = "latitude";
+	public static final String JSON_KEY_LOCALITY = "locality";
+	public static final String JSON_KEY_LOCATION_ID = "locationId";
+	public static final String JSON_KEY_LONGITUDE = "longitude";
+	public static final String JSON_KEY_MESSAGE = "message";
+	public static final String JSON_KEY_MONKEYS = "monkeys";	
+	public static final String JSON_KEY_NAME = "name";
+	public static final String JSON_KEY_NEARBY_COUNT = "nearbyCount";
+	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
+	public static final String JSON_KEY_PARENTS = "parents";
+	public static final String JSON_KEY_PHONENUMBER = "phoneNumber";
+	public static final String JSON_KEY_POSTCODE = "postcode";
+	public static final String JSON_KEY_PROVIDER_ID = "providerId";
+	public static final String JSON_KEY_RADIUS_IN_YARDS = "radiusInYards";
+	public static final String JSON_KEY_RECURRING = "recurring";
+	public static final String JSON_KEY_REGION = "region";
+	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
+	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
+	public static final String JSON_KEY_WEBSITE = "website";
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;

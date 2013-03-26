@@ -50,7 +50,7 @@ public class MainScreen extends TabActivity {
 	TabWidget tabWidget;
 	TabHost tabHost;
 	
-	ProgressDialog progressDialog;
+	static ProgressDialog progressDialog;
 	
 	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -68,18 +68,8 @@ public class MainScreen extends TabActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreate");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_screen);
-		
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-		userPrefsEditor = userPrefs.edit();
-		tabWidget = getTabWidget();
-		tabHost = getTabHost();
-		
+		setContentView(R.layout.main_screen);		
 		checkForGPSAccess();
-		init();
-		getAllCategories();
-		getAllBookmarks();
-		tabHost.setCurrentTab(0);
 	}
 
 	@Override
@@ -129,14 +119,28 @@ public class MainScreen extends TabActivity {
 	    	})
 	    	.show();
 	    } else {
-	    	setTabs();
+			init();
 	    }
+	}
+	
+	public static void closeProgressDialog() {
+		if(progressDialog != null) {
+			progressDialog.dismiss();
+		}
 	}
 	
 	private void init() {		
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(MMAPIConstants.INTENT_FILTER_DISPLAY_MESSAGE));
-		
 		registerGCM();
+		
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
+		tabWidget = getTabWidget();
+		tabHost = getTabHost();
+		
+		getAllCategories();
+		getAllBookmarks();
+		tabHost.setCurrentTab(0);
 	}
 	
 	private void registerGCM() {
@@ -233,7 +237,7 @@ public class MainScreen extends TabActivity {
 		Log.d(TAG, "getAllCategories: " + userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
 		
 		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {			
-			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...");
+			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...", true, false);
 
 			MMCategoryAdapter.getAllCategories(
 					new CategoriesCallback(), 
@@ -243,8 +247,8 @@ public class MainScreen extends TabActivity {
 		} 
 	}
 	
-	private void getAllBookmarks() {
-		MMBookmarksAdapter.getBookmarks(new BookmarksCallback(), 
+	private void getAllBookmarks() {		
+		MMBookmarksAdapter.getBookmarks(new FavoritesCallback(), 
 										"bookmarks", 
 										MMConstants.PARTNER_ID, 
 										userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
@@ -281,19 +285,23 @@ public class MainScreen extends TabActivity {
 	 */ 
 	private class CategoriesCallback implements MMCallback {
 		@Override
-		public void processCallback(Object obj){
-			userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
-			userPrefsEditor.commit();
-			progressDialog.dismiss();
+		public void processCallback(Object obj){			
+			if(obj != null) {
+				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
+				userPrefsEditor.commit();
+			}
 		}
 	}
 	
-	private class BookmarksCallback implements MMCallback {
+	private class FavoritesCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
 				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, (String) obj);
+				userPrefsEditor.commit();
 			}
+			
+			setTabs();
 		}
 	}
 }

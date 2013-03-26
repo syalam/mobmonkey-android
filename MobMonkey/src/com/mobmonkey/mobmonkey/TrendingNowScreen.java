@@ -58,15 +58,15 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 		double longitude = location.getLongitude();
 		double latitude = location.getLatitude();
 		
-		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
-		for(int i = 0; i < data.length; i++) {
-			data[i] = new MMTrendingItem();
-			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
-			data[i].counter = "0";
-		}
-		
-		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data);
-		lvTrending.setAdapter(arrayAdapter);
+//		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
+//		for(int i = 0; i < data.length; i++) {
+//			data[i] = new MMTrendingItem();
+//			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
+//			data[i].counter = "0";
+//		}
+//		
+//		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data);
+//		lvTrending.setAdapter(arrayAdapter);
 		
 		try {
 			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
@@ -80,16 +80,21 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 			
 			FindTopTen:
 			for(int i = 0; i < categories.length(); i++) {
-				if(categories.getJSONArray(i).getJSONObject(0).getString("parents").compareTo("1") == 0) {
-					topTenCategories.put(categories.getJSONObject(i));
-				}
-				if(topTenCategories.length() == 10) {
-					break FindTopTen;
+				JSONArray jArr = categories.getJSONArray(i);
+				for(int j = 0; j < jArr.length(); j++) {
+					if(jArr.getJSONObject(j).getString(MMAPIConstants.JSON_KEY_PARENTS).compareTo("347") == 0) {
+						topTenCategories.put(categories.getJSONArray(i));
+					}
+					if(topTenCategories.length() == 10) {
+						break FindTopTen;
+					}
 				}
 			}
 			
 			for(int i = 0; i < topTenCategories.length(); i++) {
-				categoryIds += topTenCategories.getJSONObject(i).getString("categoryId")+",";
+				for(int j = 0; j < topTenCategories.getJSONArray(i).length(); j++) {
+					categoryIds += topTenCategories.getJSONArray(i).getJSONObject(j).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)+",";
+				}
 			}
 			//categoryIds.substring(0, categoryIds.length()-1);
 			
@@ -125,6 +130,10 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 		return;
 	}
 	
+	public interface OnTrendingNowLoadFinishListener {
+		public void onLoadFinish();
+	}
+	
 	private class TrendingCallback implements MMCallback {
 
 		@Override
@@ -137,9 +146,10 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 	}
 	
 	private class CountOnlyCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
+			Log.d(TAG, TAG + "Trending: " + ((String) obj));
+			
 			try {
 				JSONObject jObj = new JSONObject((String)obj);
 				Log.d(TAG, jObj.getString("bookmarkCount"));
@@ -149,13 +159,13 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 					item.title = getResources().getStringArray(R.array.trending_category)[i];
 					
 					if(item.title.equalsIgnoreCase("bookmarks")) {
-						item.counter = jObj.getString("bookmarkCount");
+						item.counter = jObj.getString(MMAPIConstants.JSON_KEY_BOOKMARK_COUNT);
 					} else if(item.title.equalsIgnoreCase("my interests")) {
-						item.counter = jObj.getString("interestCount");
+						item.counter = jObj.getString(MMAPIConstants.JSON_KEY_INTEREST_COUNT);
 					} else if(item.title.equalsIgnoreCase("top viewed")) {
-						item.counter = jObj.getString("nearbyCount");
+						item.counter = jObj.getString(MMAPIConstants.JSON_KEY_TOP_VIEWED_COUNT);
 					} else if(item.title.equalsIgnoreCase("near me")) {
-						item.counter = jObj.getString("topviewedCount");
+						item.counter = jObj.getString(MMAPIConstants.JSON_KEY_NEARBY_COUNT);
 					}
 					
 					data[i] = item;
@@ -165,6 +175,7 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 					= new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data);
 				lvTrending.setAdapter(arrayAdapter);
 				
+				MainScreen.closeProgressDialog();				
 			} catch (JSONException ex) {
 				ex.printStackTrace();
 			}
