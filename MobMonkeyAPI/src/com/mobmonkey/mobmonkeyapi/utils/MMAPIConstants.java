@@ -70,32 +70,35 @@ public final class MMAPIConstants {
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
 	
 	// MobMonkey server call key values
-	public static final String KEY_FIRST_NAME = "firstName";
-	public static final String KEY_LAST_NAME = "lastName";
-	public static final String KEY_EMAIL_ADDRESS = "eMailAddress";
-	public static final String KEY_PASSWORD = "password";
-	public static final String KEY_BIRTHDATE = "birthday";
-	public static final String KEY_GENDER = "gender";
-	public static final String KEY_PHONE_NUMBER = "phoneNumber";
-	public static final String KEY_CITY = "city";
-	public static final String KEY_STATE = "state";
-	public static final String KEY_ZIP = "zip";
 	public static final String KEY_ACCEPTEDTOS = "acceptedtos";
+	public static final String KEY_AUTH = "MobMonkey-auth";
+	public static final String KEY_BIRTHDATE = "birthday";
+	public static final String KEY_CATEGORY_IDS = "categoryIds";	
+	public static final String KEY_CITY = "city";
+	public static final String KEY_CONTENT_TYPE = "Content-Type";
 	public static final String KEY_DEVICE_ID = "deviceId";
 	public static final String KEY_DEVICE_TYPE = "deviceType";
-	public static final String KEY_CONTENT_TYPE = "Content-Type";
-	public static final String KEY_PARTNER_ID = "MobMonkey-partnerId";
-	public static final String KEY_USER = "MobMonkey-user";
-	public static final String KEY_AUTH = "MobMonkey-auth";
+	public static final String KEY_EMAIL_ADDRESS = "eMailAddress";
+	public static final String KEY_FIRST_NAME = "firstName";	
+	public static final String KEY_GENDER = "gender";	
+	public static final String KEY_LAST_NAME = "lastName";
+	public static final String KEY_LATITUDE = "latitude";
+	public static final String KEY_LONGITUDE = "longitude";
+	public static final String KEY_NAME = "name";
 	public static final String KEY_OAUTH_PROVIDER = "OauthProvider";
 	public static final String KEY_OAUTH_PROVIDER_USER_NAME = "OauthProviderUserName";
 	public static final String KEY_OAUTH_TOKEN = "OauthToken";
 	public static final String KEY_OAUTH_TOKEN_SECRET = "OauthTokenSecret";
-	public static final String KEY_LATITUDE = "latitude";
-	public static final String KEY_LONGITUDE = "longitude";
+	public static final String KEY_PARTNER_ID = "MobMonkey-partnerId";
+	public static final String KEY_PASSWORD = "password";
+	public static final String KEY_PHONE_NUMBER = "phoneNumber";
+	public static final String KEY_PROVIDER = "provider";
+	public static final String KEY_PROVIDER_USERNAME = "providerUserName";
 	public static final String KEY_RADIUS_IN_YARDS = "radiusInYards";
-	public static final String KEY_NAME = "name";
-	public static final String KEY_CATEGORY_IDS = "categoryIds";
+	public static final String KEY_STATE = "state";
+	public static final String KEY_USE_OAUTH = "useOauth";
+	public static final String KEY_USER = "MobMonkey-user";
+	public static final String KEY_ZIP = "zip";
 	
 	// MobMonkey server url
 	public static final String URL_BOOKMARKS = "bookmarks";

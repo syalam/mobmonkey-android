@@ -31,7 +31,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
  */
 public class TrendingNowScreen extends Activity implements OnItemClickListener{
 
-	private static String TAG = "TrendingNowScreen";
+	private static String TAG = "TrendingNowScreen: ";
 	private SharedPreferences userPrefs;
 	private ListView lvTrending;
 	
@@ -152,7 +152,7 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 			
 			try {
 				JSONObject jObj = new JSONObject((String)obj);
-				Log.d(TAG, jObj.getString("bookmarkCount"));
+				Log.d(TAG, TAG + jObj.getString("bookmarkCount"));
 				MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
 				for(int i = 0; i < data.length; i++) {
 					MMTrendingItem item = new MMTrendingItem();

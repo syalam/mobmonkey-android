@@ -3,6 +3,8 @@ package com.mobmonkey.mobmonkeyapi.adapters;
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpPost;
 
+import android.net.Uri;
+import android.net.Uri.Builder;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -35,9 +37,16 @@ public final class MMSignOutAdapter {
 	 */
 	public static void signOut(MMCallback mmCallback, String user, String auth, String partnerId) {
 		signOutURL = MMAPIConstants.TEST_MOBMONKEY_URL + "signout/" + MMAPIConstants.DEVICE_TYPE + "/" + MMDeviceUUID.getDeviceUUID().toString();
-		Log.d(TAG, TAG + "signOutURL: " + signOutURL);
 		
-		HttpPost httpPost = new HttpPost(signOutURL);
+		signOutURL = MMAPIConstants.MOBMONKEY_URL + "signout";
+		
+		Builder uriBuilder = Uri.parse(signOutURL).buildUpon();
+		uriBuilder.appendPath(MMAPIConstants.DEVICE_TYPE).appendPath(MMDeviceUUID.getDeviceUUID().toString());
+		
+//		Log.d(TAG, TAG + "signOutURL: " + signOutURL);
+		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder.toString());
+		
+		HttpPost httpPost = new HttpPost(uriBuilder.toString());
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
 		httpPost.setHeader(MMAPIConstants.KEY_USER, user);
