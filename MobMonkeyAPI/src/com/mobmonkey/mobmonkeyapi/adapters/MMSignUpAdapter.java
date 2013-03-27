@@ -3,10 +3,13 @@ package com.mobmonkey.mobmonkeyapi.adapters;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.Uri;
+import android.net.Uri.Builder;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.*;
@@ -41,7 +44,12 @@ public final class MMSignUpAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signUpNewUser(MMCallback mmCallback, String firstName, String lastName, String emailAddress, String password, String birthdate, int gender, boolean checkedToS, String partnerId) {
-		signUpURL = MMAPIConstants.TEST_MOBMONKEY_URL + "signup/user";
+//		signUpURL = MMAPIConstants.TEST_MOBMONKEY_URL + "user?deviceId=" + MMDeviceUUID.getDeviceUUID() + "&deviceType=" + MMAPIConstants.DEVICE_TYPE;
+		signUpURL = MMAPIConstants.MOBMONKEY_URL + "user";
+		
+		Builder uri = Uri.parse(signUpURL).buildUpon();
+		uri.appendQueryParameter("deviceId", MMDeviceUUID.getDeviceUUID().toString()).appendQueryParameter("deviceType", MMAPIConstants.DEVICE_TYPE);
+		
 		try {
 			userInfo = new JSONObject();
 			userInfo.put(MMAPIConstants.KEY_FIRST_NAME, firstName);
@@ -59,18 +67,19 @@ public final class MMSignUpAdapter {
 			userInfo.put(MMAPIConstants.KEY_PHONE_NUMBER, "480-555-5555");
 			// end TODO:
 			
-			userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
-			userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString());
+//			userInfo.put(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
+//			userInfo.put(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString());
 			
 			Log.d(TAG, TAG + "userInfo: " + userInfo.toString());
+			Log.d(TAG, TAG + "uri: " + uri.toString());
 			
-			HttpPost httpPost = new HttpPost(signUpURL);
+			HttpPut httpPut = new HttpPut(uri.toString());
 			StringEntity stringEntity = new StringEntity(userInfo.toString());
-			httpPost.setEntity(stringEntity);
-			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+			httpPut.setEntity(stringEntity);
+			httpPut.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+			httpPut.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
 			
-			new MMPostAsyncTask(mmCallback).execute(httpPost);
+			new MMPutAsyncTask(mmCallback).execute(httpPut);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
