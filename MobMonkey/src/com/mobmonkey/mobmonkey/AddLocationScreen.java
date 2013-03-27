@@ -36,7 +36,7 @@ public class AddLocationScreen extends Activity {
 	EditText etPhone;
 	String name, categories, street, city, state, postalCode, phone, latitude, longitude;
 	
-	JSONArray topLevelCats;
+	String[] topLevelCats;
 	
 	Location location;
 	LocationManager locationManager;

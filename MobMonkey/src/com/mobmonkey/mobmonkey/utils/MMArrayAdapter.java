@@ -62,12 +62,12 @@ public class MMArrayAdapter extends ArrayAdapter<Object> {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		
-		if(icons.length!=0)
-			viewHolder.ivIcon.setImageResource(icons[position]);
+		//TODO: Add icons to the top level categories on search screen here.
+		//if(icons.length!=0)
+			//viewHolder.ivIcon.setImageResource(icons[position]);
         viewHolder.tvLabel.setText(items[position]);
-        if(indicatorIcons.length!=0)
-        	viewHolder.ivIndicatorIcon.setImageResource(indicatorIcons[position]);
+        //if(indicatorIcons.length!=0)
+        	//viewHolder.ivIndicatorIcon.setImageResource(indicatorIcons[position]);
         
         if(indicatorIconOnClickListener != null && position == 1) {
         	viewHolder.ivIndicatorIcon.setClickable(true);

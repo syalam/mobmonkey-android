@@ -29,7 +29,7 @@ public class AddLocationCategoryList extends Activity{
 	
 	int[] categoryIcons;
 	int[] categoryIndicatorIcons;
-	JSONArray topLevelCategories;
+	String[] topLevelCategories;
 	ArrayAdapter<Object> arrayAdapter;
 	
 	protected static final String TAG = "AddLocationCategoryList ";

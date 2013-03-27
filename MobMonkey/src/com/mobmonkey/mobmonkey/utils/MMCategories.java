@@ -1,5 +1,7 @@
 package com.mobmonkey.mobmonkey.utils;
 
+import java.util.Iterator;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,23 +19,25 @@ public class MMCategories extends Activity{
 	private static SharedPreferences.Editor editPrefs;
 	Context context;
 	
-	public static JSONArray getTopLevelCategories(Context context) throws JSONException
+	public static String[] getTopLevelCategories(Context context) throws JSONException
 	{
 		userPrefs = context.getSharedPreferences(MMAPIConstants.USER_PREFS, 0);
-		JSONArray topLevelCategoriesList = new JSONArray();
+		
+		String[] topLevelCategoriesList;
 		
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
 		{
 			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
-			JSONArray allCategories = cats.toJSONArray(cats.names());
-			JSONObject category = null;
-			for(int i=0; i < allCategories.length(); i++)
-			{
-				category = allCategories.getJSONArray(i).getJSONObject(0);
-				Log.d("Cat Parents:", category.getString("parents"));
-				if(category.getString("parents").compareTo("1") == 0)
-					topLevelCategoriesList.put(category);
-			}
+			topLevelCategoriesList = getKeys(cats);
+//			JSONArray allCategories = cats.toJSONArray(cats.names());
+//			JSONObject category = null;
+//			for(int i=0; i < allCategories.length(); i++)
+//			{
+//				category = allCategories.getJSONArray(i).getJSONObject(0);
+//				Log.d("Cat Parents:", category.getString("parents"));
+//				if(category.getString("parents").compareTo("1") == 0)
+//					topLevelCategoriesList.put(category);
+//			}
 		}
 		else
 			return null;
@@ -41,6 +45,21 @@ public class MMCategories extends Activity{
 		return topLevelCategoriesList;
 	}
 	
+	private static String[] getKeys(JSONObject cats) {
+		int length = cats.length();
+	    if (length == 0) {
+	        return null;
+	    }
+	    Iterator iterator = cats.keys();
+	    String[] names = new String[length];
+	    int i = 0;
+	    while (iterator.hasNext()) {
+	        names[i] = (String)iterator.next();
+	        i += 1;
+	    }
+	    return names;
+	}
+
 	public static String getSubCategoriesWithCategoriId(Context context, String categoryId) throws JSONException
 	{
 		userPrefs = context.getSharedPreferences(MMAPIConstants.USER_PREFS, 0);
