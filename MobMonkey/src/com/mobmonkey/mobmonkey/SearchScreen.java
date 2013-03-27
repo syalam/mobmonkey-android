@@ -51,7 +51,7 @@ public class SearchScreen extends Activity implements LocationListener {
 	double latitudeValue;
 
 	SharedPreferences userPrefs;
-	JSONArray topLevelCategories;
+	String[] topLevelCategories;
 	
 	ProgressDialog progressDialog;
 	EditText etSearch;
@@ -255,21 +255,21 @@ public class SearchScreen extends Activity implements LocationListener {
 		elvSearchCategory.setAdapter(arrayAdapter);
 		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				try {
-					String catId = topLevelCategories.getJSONObject(position).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
-					selectedCategory = topLevelCategories.getJSONObject(position).getString("en");
-					JSONArray subCategories = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(SearchScreen.this.getApplicationContext(), catId));
-					
-					if(!subCategories.isNull(0))
-					{	
-						Intent categoryScreenIntent = new Intent(SearchScreen.this, CategoryScreen.class);					
-						categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, (String) subCategories.toString());
-						categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
-						startActivity(categoryScreenIntent);
-					}
-				} catch (JSONException e) { 
-					e.printStackTrace();
-				}
+//				try { //TODO:Change this implementation so that it does not go to subcats
+//					String catId = topLevelCategories.getJSONObject(position).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
+//					selectedCategory = topLevelCategories.getJSONObject(position).getString("en");
+//					JSONArray subCategories = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(SearchScreen.this.getApplicationContext(), catId));
+//					
+//					if(!subCategories.isNull(0))
+//					{	
+//						Intent categoryScreenIntent = new Intent(SearchScreen.this, CategoryScreen.class);					
+//						categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, (String) subCategories.toString());
+//						categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
+//						startActivity(categoryScreenIntent);
+//					}
+//				} catch (JSONException e) { 
+//					e.printStackTrace();
+//				}
 			}
 		});
 	}
@@ -331,13 +331,13 @@ public class SearchScreen extends Activity implements LocationListener {
 	}
 	
 	private String[] getTopLevelCategories() throws JSONException {
-		String[] topLevelCats = new String[topLevelCategories.length()];
+//		String[] topLevelCats = new String[topLevelCategories.length()];
+//		
+//		for(int i = 0; i < topLevelCategories.length(); i++) {
+//			topLevelCats[i] = topLevelCategories.getJSONObject(i).getString(Locale.getDefault().getLanguage());
+//		}
 		
-		for(int i = 0; i < topLevelCategories.length(); i++) {
-			topLevelCats[i] = topLevelCategories.getJSONObject(i).getString(Locale.getDefault().getLanguage());
-		}
-		
-		return topLevelCats;
+		return topLevelCategories;
 	}
 	
 	private void getSearchNoCategoryIcons() {
