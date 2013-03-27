@@ -9,6 +9,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class MMCategories extends Activity{
 	
@@ -23,11 +24,13 @@ public class MMCategories extends Activity{
 		
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
 		{
-			JSONArray allCategories = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+			JSONArray allCategories = cats.toJSONArray(cats.names());
 			JSONObject category = null;
 			for(int i=0; i < allCategories.length(); i++)
 			{
-				category = new JSONObject(allCategories.getString(i));
+				category = allCategories.getJSONArray(i).getJSONObject(0);
+				Log.d("Cat Parents:", category.getString("parents"));
 				if(category.getString("parents").compareTo("1") == 0)
 					topLevelCategoriesList.put(category);
 			}
@@ -46,12 +49,14 @@ public class MMCategories extends Activity{
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
 		{
 			subCategoriesList = new JSONArray();
-			JSONArray allCategories = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+			JSONArray allCategories = cats.toJSONArray(cats.names());
 			JSONObject subCat = null;
 			for(int i=0; i < allCategories.length(); i++)
 			{
-				subCat = new JSONObject(allCategories.getString(i));
-
+				//subCat = new JSONObject(allCategories.getString(i));
+				subCat = allCategories.getJSONArray(i).getJSONObject(0);
+				
 				if(subCat.getString("parents").compareTo(categoryId) == 0)
 					subCategoriesList.put(subCat);
 			}
