@@ -249,8 +249,8 @@ public class SearchScreen extends Activity implements LocationListener {
 		});
 		
 		getSearchCategoryIcons();
-		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, categoryIcons, 
-				getTopLevelCategories(), categoryIndicatorIcons, android.R.style.TextAppearance_Medium, 
+		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, new int[0], 
+				getTopLevelCategories(), new int[0], android.R.style.TextAppearance_Medium, 
 				Typeface.DEFAULT_BOLD, null);
 		elvSearchCategory.setAdapter(arrayAdapter);
 		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
