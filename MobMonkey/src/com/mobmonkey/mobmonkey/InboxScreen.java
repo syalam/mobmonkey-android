@@ -1,7 +1,9 @@
 package com.mobmonkey.mobmonkey;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkey.utils.MMInboxArrayAdapter;
@@ -69,8 +71,14 @@ public class InboxScreen extends Activity {
 			data[i] = item;
 		}
 		
-		MMInboxArrayAdapter arrayAdapter = new MMInboxArrayAdapter(InboxScreen.this, R.layout.inbox_list_row, data);
+		MMInboxArrayAdapter arrayAdapter = new MMInboxArrayAdapter(InboxScreen.this, R.layout.inbox_list_row, data, Color.GRAY) {
+			@Override
+			public boolean isEnabled(int position) {
+				return false;
+			}	
+		};
 		
 		lvInbox.setAdapter(arrayAdapter);
+		lvInbox.setEnabled(false);
 	}
 }

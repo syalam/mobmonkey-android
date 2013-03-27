@@ -15,13 +15,15 @@ public class MMTrendingArrayAdapter extends ArrayAdapter<MMTrendingItem>{
 	Context context; 
     int layoutResourceId;    
     MMTrendingItem data[] = null;
+    int textColor;
     
-    public MMTrendingArrayAdapter(Context context, int layoutResourceId, MMTrendingItem[] data) {
+    public MMTrendingArrayAdapter(Context context, int layoutResourceId, MMTrendingItem[] data, int textColor) {
         
     	super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
+        this.textColor = textColor;
     }
 
 	@Override
@@ -49,6 +51,7 @@ public class MMTrendingArrayAdapter extends ArrayAdapter<MMTrendingItem>{
 		
 		MMTrendingItem item = data[position];
 		vholder.tvLabel.setText(item.title);
+		vholder.tvLabel.setTextColor(textColor);
 		vholder.tvCounter.setText(item.counter);
 		
 		return row;

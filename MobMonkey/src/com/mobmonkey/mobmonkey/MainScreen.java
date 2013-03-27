@@ -148,11 +148,11 @@ public class MainScreen extends TabActivity {
 		GCMRegistrar.checkManifest(MainScreen.this);
 		
 		final String regId = GCMRegistrar.getRegistrationId(MainScreen.this);
-		Log.d(TAG, TAG + regId);
+		Log.d(TAG, TAG + "regId: " + regId);
 		if (regId.equals(MMAPIConstants.DEFAULT_STRING)) {
 			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
 			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
-			Log.d(TAG, TAG + "regId: " + a);
+			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
 		} else {
 			new RegisterGCMAsyncTask(MainScreen.this).execute(regId);
 //			
@@ -234,7 +234,7 @@ public class MainScreen extends TabActivity {
 	 * Function that gets all the categories from the server
 	 */
 	private void getAllCategories() {
-		Log.d(TAG, "getAllCategories: " + userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+		Log.d(TAG, TAG + "getAllCategories: " + userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
 		
 		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {			
 			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...", true, false);
@@ -248,6 +248,12 @@ public class MainScreen extends TabActivity {
 	}
 	
 	private void getAllBookmarks() {		
+		if(progressDialog == null) {
+			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...", true, false);
+		} else if(!progressDialog.isShowing()) {
+			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...", true, false);
+		}
+		
 		MMBookmarksAdapter.getBookmarks(new FavoritesCallback(), 
 										"bookmarks", 
 										MMConstants.PARTNER_ID, 
@@ -287,6 +293,7 @@ public class MainScreen extends TabActivity {
 		@Override
 		public void processCallback(Object obj){			
 			if(obj != null) {
+				Log.d(TAG, TAG + "CategoriesCallback: " + ((String) obj));
 				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
 				userPrefsEditor.commit();
 			}
@@ -297,6 +304,8 @@ public class MainScreen extends TabActivity {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
+				closeProgressDialog();
+				Log.d(TAG, TAG + "FavoritesCallback: " + ((String) obj));
 				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, (String) obj);
 				userPrefsEditor.commit();
 			}

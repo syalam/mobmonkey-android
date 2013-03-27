@@ -149,20 +149,21 @@ public final class MMSignUpAdapter {
 		Builder uriBuilder = Uri.parse(signUpURL).buildUpon();
 		uriBuilder.appendQueryParameter(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE)
 			.appendQueryParameter(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
+			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER)
 			.appendQueryParameter(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken)
 			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER_USERNAME, providerUserName)
 			.appendQueryParameter(MMAPIConstants.KEY_EMAIL_ADDRESS, emailAddress)
-			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER);
-
+			.appendQueryParameter(MMAPIConstants.KEY_FIRST_NAME, firstName)
+			.appendQueryParameter(MMAPIConstants.KEY_LAST_NAME, lastName)
+			.appendQueryParameter(MMAPIConstants.KEY_GENDER, Integer.toString(gender))
+			.appendQueryParameter(MMAPIConstants.KEY_BIRTHDATE, birthdate);
+		
 //		Log.d(TAG, TAG + "signUpURL: " + signUpURL);
 		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder.toString());
 		
 		HttpPost httpPost = new HttpPost(uriBuilder.toString());
 		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, (String) oauthToken);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER);
 		
 		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}

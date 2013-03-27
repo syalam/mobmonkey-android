@@ -15,13 +15,14 @@ public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
 	Context context; 
     int layoutResourceId;    
     MMInboxItem data[] = null;
+    int textColor;
     
-    public MMInboxArrayAdapter(Context context, int layoutResourceId, MMInboxItem[] data) {
-        
+    public MMInboxArrayAdapter(Context context, int layoutResourceId, MMInboxItem[] data, int textColor) {
     	super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
+        this.textColor = textColor;
     }
 
 	@Override
@@ -49,6 +50,7 @@ public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
 		
 		MMInboxItem item = data[position];
 		vholder.tvLabel.setText(item.title);
+		vholder.tvLabel.setTextColor(textColor);
 		vholder.tvCounter.setText(item.counter);
 		
 		return row;

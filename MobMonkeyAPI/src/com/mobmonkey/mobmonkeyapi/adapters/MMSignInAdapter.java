@@ -98,11 +98,10 @@ public final class MMSignInAdapter {
 //				"&providerUserName=" + providerUserName;
 		
 		Builder uriBuilder = Uri.parse(signInURL).buildUpon();
-		uriBuilder.appendQueryParameter(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE)
-			.appendQueryParameter(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
+		uriBuilder.appendQueryParameter(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
+			.appendQueryParameter(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE)
 			.appendQueryParameter(MMAPIConstants.KEY_USE_OAUTH, Boolean.toString(true))
 			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER)
-			.appendQueryParameter(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken)
 			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER_USERNAME, providerUserName);
 		
 		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder.toString());
