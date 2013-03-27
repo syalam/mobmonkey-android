@@ -379,6 +379,7 @@ public class SearchScreen extends Activity implements LocationListener {
      */
 	private class SearchCallback implements MMCallback {
 		public void processCallback(Object obj) {
+			
 			if(progressDialog != null) {
 				progressDialog.dismiss();
 			}
