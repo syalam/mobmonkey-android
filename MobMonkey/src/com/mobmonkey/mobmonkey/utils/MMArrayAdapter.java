@@ -62,7 +62,7 @@ public class MMArrayAdapter extends ArrayAdapter<Object> {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		
+		//TODO: Add icons to the top level categories on search screen here.
 		if(icons.length!=0)
 			viewHolder.ivIcon.setImageResource(icons[position]);
         viewHolder.tvLabel.setText(items[position]);

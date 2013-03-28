@@ -87,14 +87,14 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 		listener.onSettingsItemCLick(position);
 	}
-	
-	public interface OnItemClickListener {
-		public void onSettingsItemCLick(int position);
-	}
 
 	@Override
 	public void onFragmentBackPressed() {
 		
+	}
+	
+	public interface OnItemClickListener {
+		public void onSettingsItemCLick(int position);
 	}
 	
     /**

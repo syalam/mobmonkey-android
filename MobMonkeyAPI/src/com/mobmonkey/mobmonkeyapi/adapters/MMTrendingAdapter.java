@@ -1,9 +1,6 @@
 package com.mobmonkey.mobmonkeyapi.adapters;
 
-import java.net.URI;
-
 import org.apache.http.client.methods.HttpGet;
-import org.json.JSONObject;
 
 import android.net.Uri;
 import android.net.Uri.Builder;

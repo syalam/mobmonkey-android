@@ -137,13 +137,6 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	 */
 	@Override
 	public void onClick(View view) {
-		if(view.getId() == R.id.ivindicatoricon) {
-			message = MMAPIConstants.DEFAULT_STRING;
-			setSingleItemAddMessage();
-			mmelvAddMessage.setAdapter(mmArrayAdapter);
-			mmelvAddMessage.invalidate();
-		}
-		
 		// clicked on sendRequestButton
 		if(view.getId() == R.id.btnsentrequest) {
 			Log.d(TAG, "sent request");
@@ -200,11 +193,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		mmelvAddMessage.setAdapter(mmArrayAdapter);
 		mmelvAddMessage.setOnItemClickListener(MakeARequestScreen.this);
 		
-		icons = new int[] {android.R.drawable.ic_menu_today};
-		labels = new String[] {getString(R.string.tv_schedule_request)};
-		indicatorIcons = new int[] {R.drawable.listview_accessory_indicator};
-		
-		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
+		setSingleScheduleRequest();
 		mmelvScheduleRequest.setAdapter(mmArrayAdapter);
 		mmelvScheduleRequest.setOnItemClickListener(MakeARequestScreen.this);
 		
@@ -258,10 +247,25 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			icons = new int[] {android.R.drawable.ic_menu_edit, android.R.drawable.ic_menu_edit};
 			labels = new String[] {getString(R.string.tv_add_message), message};
 			indicatorIcons = new int[] {R.drawable.listview_accessory_indicator, android.R.drawable.ic_menu_close_clear_cancel};
-			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, MakeARequestScreen.this);
+			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					message = MMAPIConstants.DEFAULT_STRING;
+					setSingleItemAddMessage();
+					mmelvAddMessage.setAdapter(mmArrayAdapter);
+					mmelvAddMessage.invalidate();
+				}
+			});
 		}
 		mmelvAddMessage.setAdapter(mmArrayAdapter);
 		mmelvAddMessage.invalidate();
+	}
+	
+	private void setSingleScheduleRequest() {
+		icons = new int[] {android.R.drawable.ic_menu_today};
+		labels = new String[] {getString(R.string.tv_schedule_request)};
+		indicatorIcons = new int[] {R.drawable.listview_accessory_indicator};
+		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
 	}
 	
 	/**
@@ -279,13 +283,20 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			Calendar requestCal = (Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
 			//Log.d(TAG, requestCal.toString());
 			
-			
 			String scheduleMessage = sdfTime.format(requestCal.getTime()) + " on " + sdfDate.format(requestCal.getTime());
 			
 			icons = new int[] {android.R.drawable.ic_menu_today, android.R.drawable.ic_menu_today};
 			labels = new String[] {getString(R.string.tv_schedule_request), scheduleMessage};
 			indicatorIcons = new int[] {R.drawable.listview_accessory_indicator, android.R.drawable.ic_menu_close_clear_cancel};
-			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, MakeARequestScreen.this);
+			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					scheduleRequest = MMAPIConstants.DEFAULT_STRING;
+					setSingleScheduleRequest();
+					mmelvScheduleRequest.setAdapter(mmArrayAdapter);
+					mmelvScheduleRequest.invalidate();
+				}
+			});
 		}
 		
 		mmelvScheduleRequest.setAdapter(mmArrayAdapter);

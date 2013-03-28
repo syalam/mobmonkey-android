@@ -22,7 +22,7 @@ public final class MMAPIConstants {
 	public static final int DEFAULT_INT = -1;
 	public static final double DEFAULT_DOUBLE = 1.0d;
 
-	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
+	public static final String MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
 	
@@ -70,32 +70,35 @@ public final class MMAPIConstants {
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
 	
 	// MobMonkey server call key values
-	public static final String KEY_FIRST_NAME = "firstName";
-	public static final String KEY_LAST_NAME = "lastName";
-	public static final String KEY_EMAIL_ADDRESS = "eMailAddress";
-	public static final String KEY_PASSWORD = "password";
-	public static final String KEY_BIRTHDATE = "birthday";
-	public static final String KEY_GENDER = "gender";
-	public static final String KEY_PHONE_NUMBER = "phoneNumber";
-	public static final String KEY_CITY = "city";
-	public static final String KEY_STATE = "state";
-	public static final String KEY_ZIP = "zip";
 	public static final String KEY_ACCEPTEDTOS = "acceptedtos";
+	public static final String KEY_AUTH = "MobMonkey-auth";
+	public static final String KEY_BIRTHDATE = "birthday";
+	public static final String KEY_CATEGORY_IDS = "categoryIds";	
+	public static final String KEY_CITY = "city";
+	public static final String KEY_CONTENT_TYPE = "Content-Type";
 	public static final String KEY_DEVICE_ID = "deviceId";
 	public static final String KEY_DEVICE_TYPE = "deviceType";
-	public static final String KEY_CONTENT_TYPE = "Content-Type";
-	public static final String KEY_PARTNER_ID = "MobMonkey-partnerId";
-	public static final String KEY_USER = "MobMonkey-user";
-	public static final String KEY_AUTH = "MobMonkey-auth";
-	public static final String KEY_OAUTH_PROVIDER = "OauthProvider";
-	public static final String KEY_OAUTH_PROVIDER_USER_NAME = "OauthProviderUserName";
-	public static final String KEY_OAUTH_TOKEN = "OauthToken";
-	public static final String KEY_OAUTH_TOKEN_SECRET = "OauthTokenSecret";
+	public static final String KEY_EMAIL_ADDRESS = "eMailAddress";
+	public static final String KEY_FIRST_NAME = "firstName";	
+	public static final String KEY_GENDER = "gender";	
+	public static final String KEY_LAST_NAME = "lastName";
 	public static final String KEY_LATITUDE = "latitude";
 	public static final String KEY_LONGITUDE = "longitude";
-	public static final String KEY_RADIUS_IN_YARDS = "radiusInYards";
 	public static final String KEY_NAME = "name";
-	public static final String KEY_CATEGORY_IDS = "categoryIds";
+	public static final String KEY_OAUTH_PROVIDER = "OauthProvider";
+	public static final String KEY_OAUTH_PROVIDER_USER_NAME = "OauthProviderUserName";
+	public static final String KEY_OAUTH_TOKEN = "oauthToken";
+	public static final String KEY_OAUTH_TOKEN_SECRET = "OauthTokenSecret";
+	public static final String KEY_PARTNER_ID = "MobMonkey-partnerId";
+	public static final String KEY_PASSWORD = "password";
+	public static final String KEY_PHONE_NUMBER = "phoneNumber";
+	public static final String KEY_PROVIDER = "provider";
+	public static final String KEY_PROVIDER_USERNAME = "providerUserName";
+	public static final String KEY_RADIUS_IN_YARDS = "radiusInYards";
+	public static final String KEY_STATE = "state";
+	public static final String KEY_USE_OAUTH = "useOAuth";
+	public static final String KEY_USER = "MobMonkey-user";
+	public static final String KEY_ZIP = "zip";
 	
 	// MobMonkey server url
 	public static final String URL_BOOKMARKS = "bookmarks";
@@ -142,32 +145,36 @@ public final class MMAPIConstants {
 	public static final int RESULT_CODE_NOT_FOUND = 404;
 	
 	// JSON key values
-	public static final String JSON_KEY_NAME = "name";
-	public static final String JSON_KEY_CATEGORY_ID = "categoryId";
-	public static final String JSON_KEY_DISTANCE = "distance";
-	public static final String JSON_KEY_LATITUDE = "latitude";
-	public static final String JSON_KEY_LONGITUDE = "longitude";
 	public static final String JSON_KEY_ADDRESS = "address";
-	public static final String JSON_KEY_LOCALITY = "locality";
-	public static final String JSON_KEY_REGION = "region";
-	public static final String JSON_KEY_POSTCODE = "postcode";
-	public static final String JSON_KEY_MONKEYS = "monkeys";
-	public static final String JSON_KEY_PHONENUMBER = "phoneNumber";
-	public static final String JSON_KEY_CATEGORY_IDS = "categoryIds";
-	public static final String JSON_KEY_DESCRIPTION = "description";
 	public static final String JSON_KEY_ADDRESS_EXT = "address_ext";
+	public static final String JSON_KEY_BOOKMARK_COUNT = "bookmarkCount";
+	public static final String JSON_KEY_CATEGORY_ID = "categoryId";
+	public static final String JSON_KEY_CATEGORY_IDS = "categoryIds";
 	public static final String JSON_KEY_COUNTRY_CODE = "countryCode";
-	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
-	public static final String JSON_KEY_PROVIDER_ID = "providerId";
-	public static final String JSON_KEY_WEBSITE = "website";
-	
-	public static final String JSON_KEY_MESSAGE = "message";
+	public static final String JSON_KEY_DESCRIPTION = "description";	
+	public static final String JSON_KEY_DISTANCE = "distance";
 	public static final String JSON_KEY_DURATION = "duration";
-	public static final String JSON_KEY_LOCATION_ID = "locationId";
-	public static final String JSON_KEY_RECURRING = "recurring";
-	public static final String JSON_KEY_RADIUS_IN_YARDS = "radiusInYards";
-	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
 	public static final String JSON_KEY_FREQUENCY_IN_MS = "frequencyInMS";
+	public static final String JSON_KEY_INTEREST_COUNT = "interestCount";
+	public static final String JSON_KEY_LATITUDE = "latitude";
+	public static final String JSON_KEY_LOCALITY = "locality";
+	public static final String JSON_KEY_LOCATION_ID = "locationId";
+	public static final String JSON_KEY_LONGITUDE = "longitude";
+	public static final String JSON_KEY_MESSAGE = "message";
+	public static final String JSON_KEY_MONKEYS = "monkeys";	
+	public static final String JSON_KEY_NAME = "name";
+	public static final String JSON_KEY_NEARBY_COUNT = "nearbyCount";
+	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
+	public static final String JSON_KEY_PARENTS = "parents";
+	public static final String JSON_KEY_PHONENUMBER = "phoneNumber";
+	public static final String JSON_KEY_POSTCODE = "postcode";
+	public static final String JSON_KEY_PROVIDER_ID = "providerId";
+	public static final String JSON_KEY_RADIUS_IN_YARDS = "radiusInYards";
+	public static final String JSON_KEY_RECURRING = "recurring";
+	public static final String JSON_KEY_REGION = "region";
+	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
+	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
+	public static final String JSON_KEY_WEBSITE = "website";
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;

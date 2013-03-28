@@ -51,7 +51,7 @@ public class SearchScreen extends Activity implements LocationListener {
 	double latitudeValue;
 
 	SharedPreferences userPrefs;
-	JSONArray topLevelCategories;
+	String[] topLevelCategories;
 	
 	ProgressDialog progressDialog;
 	EditText etSearch;
@@ -249,16 +249,16 @@ public class SearchScreen extends Activity implements LocationListener {
 		});
 		
 		getSearchCategoryIcons();
-		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, categoryIcons, 
-				getTopLevelCategories(), categoryIndicatorIcons, android.R.style.TextAppearance_Medium, 
+		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, new int[0], 
+				getTopLevelCategories(), new int[0], android.R.style.TextAppearance_Medium, 
 				Typeface.DEFAULT_BOLD, null);
 		elvSearchCategory.setAdapter(arrayAdapter);
 		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				try {
-					String catId = topLevelCategories.getJSONObject(position).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
-					selectedCategory = topLevelCategories.getJSONObject(position).getString("en");
-					JSONArray subCategories = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(SearchScreen.this.getApplicationContext(), catId));
+				try { //TODO:Change this implementation so that it does not go to subcats
+					//String catId = topLevelCategories.getJSONObject(position).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
+					selectedCategory = topLevelCategories[position];
+					JSONArray subCategories = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(SearchScreen.this.getApplicationContext(), selectedCategory));
 					
 					if(!subCategories.isNull(0))
 					{	
@@ -331,13 +331,13 @@ public class SearchScreen extends Activity implements LocationListener {
 	}
 	
 	private String[] getTopLevelCategories() throws JSONException {
-		String[] topLevelCats = new String[topLevelCategories.length()];
+//		String[] topLevelCats = new String[topLevelCategories.length()];
+//		
+//		for(int i = 0; i < topLevelCategories.length(); i++) {
+//			topLevelCats[i] = topLevelCategories.getJSONObject(i).getString(Locale.getDefault().getLanguage());
+//		}
 		
-		for(int i = 0; i < topLevelCategories.length(); i++) {
-			topLevelCats[i] = topLevelCategories.getJSONObject(i).getString(Locale.getDefault().getLanguage());
-		}
-		
-		return topLevelCats;
+		return topLevelCategories;
 	}
 	
 	private void getSearchNoCategoryIcons() {
@@ -379,6 +379,7 @@ public class SearchScreen extends Activity implements LocationListener {
      */
 	private class SearchCallback implements MMCallback {
 		public void processCallback(Object obj) {
+			
 			if(progressDialog != null) {
 				progressDialog.dismiss();
 			}
