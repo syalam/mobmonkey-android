@@ -30,7 +30,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
  * @author Dezapp, LLC
  *
  */
-public class TrendingNowScreen extends Activity implements OnItemClickListener{
+public class TrendingNowScreen extends Activity implements OnItemClickListener {
 
 	private static String TAG = "TrendingNowScreen: ";
 	private SharedPreferences userPrefs;
@@ -66,7 +66,7 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 			data[i].counter = "0";
 		}
 		
-		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data, Color.GRAY) {
+		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data) {
 			@Override
 			public boolean isEnabled(int position) {
 				Log.d(TAG, TAG + "position: " + position);
@@ -182,7 +182,7 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener{
 					}
 					
 					MMTrendingArrayAdapter arrayAdapter 
-						= new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data, Color.BLACK);
+						= new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data);
 					lvTrending.setAdapter(arrayAdapter);
 					lvTrending.setOnItemClickListener(TrendingNowScreen.this);
 					lvTrending.setEnabled(true);

@@ -11,17 +11,19 @@
 	    android:layout_weight="1"
 	    android:layout_gravity="center"
 	    android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:textColor="@color/gray"
 	    android:textStyle="bold"/>
 	
 	<TextView android:id="@+id/trendingBadgeCounter"
 	    android:layout_width="wrap_content" 
 	    android:layout_height="wrap_content"
-	    android:textSize="9dp" 
+	    android:layout_marginRight="5dp"
+	    android:textSize="15sp" 
         android:textStyle="bold"  
         android:background="@drawable/shapecounter"
         android:textColor="@android:color/white"
-        android:paddingLeft="3dp" 
-        android:paddingRight="3dp"
+        android:paddingLeft="10dp" 
+        android:paddingRight="10dp"
         android:layout_gravity="center"/>
 	
 	<ImageView android:layout_width="wrap_content"

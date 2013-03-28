@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	
-	
+<resources>	
 	<color name="tabMedium">#2B2B2B</color>
 	<color name="tabDark">#000000</color>
 	<color name="tabTransparent">#10ffffff</color>
@@ -11,6 +8,8 @@
 	
 	<color name="lightblue">#00BFFF</color>
 	<color name="orange">#FFA500</color>
+	
+	<color name="gray">#808080</color>
 	
 	<color name="backgroundcolor">#E5E5E5</color>
 	

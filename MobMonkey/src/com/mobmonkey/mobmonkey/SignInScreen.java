@@ -105,9 +105,16 @@ public class SignInScreen extends Activity {
 			if(!requestEmail) {
 				userPrefsEditor.putString(MMAPIConstants.KEY_USER, (String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
 				userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, 	Session.getActiveSession().getAccessToken());
-				MMSignUpAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
-						(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
-	    		progressDialog = ProgressDialog.show(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_facebook), true, false);
+				String emailAddress = (String)facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL);
+				Log.d(TAG, TAG + "Email address: " + emailAddress);
+				if(emailAddress == null) {
+					requestEmail = true;
+					Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
+				} else {
+					MMSignUpAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
+							(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
+		    		progressDialog = ProgressDialog.show(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_facebook), true, false);
+				}
 			}
 		}
 	}
@@ -178,7 +185,7 @@ public class SignInScreen extends Activity {
      * Function that handles the user sign in with Facebook API
      */
 	private void signInFacebook() {
-		Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());	
+		Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 	}
 	
     /**
