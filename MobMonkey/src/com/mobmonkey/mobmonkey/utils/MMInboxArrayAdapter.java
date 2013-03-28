@@ -4,6 +4,7 @@ import com.mobmonkey.mobmonkey.R;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +16,22 @@ public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
 	Context context; 
     int layoutResourceId;    
     MMInboxItem data[] = null;
-    int textColor;
     
-    public MMInboxArrayAdapter(Context context, int layoutResourceId, MMInboxItem[] data, int textColor) {
+    public MMInboxArrayAdapter(Context context, int layoutResourceId, MMInboxItem[] data) {
     	super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
-        this.textColor = textColor;
     }
+
+	@Override
+	public boolean isEnabled(int position) {
+		if(Integer.parseInt(data[position].counter) > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -50,7 +58,11 @@ public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
 		
 		MMInboxItem item = data[position];
 		vholder.tvLabel.setText(item.title);
-		vholder.tvLabel.setTextColor(textColor);
+		if(Integer.parseInt(item.counter) > 0) {
+			vholder.tvLabel.setTextColor(Color.BLACK);
+		} else {
+			vholder.tvLabel.setTextColor(Color.GRAY);
+		}
 		vholder.tvCounter.setText(item.counter);
 		
 		return row;

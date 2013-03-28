@@ -180,11 +180,9 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener {
 						data[i] = item;
 					}
 					
-					MMTrendingArrayAdapter arrayAdapter 
-						= new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data);
+					MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data);
 					lvTrending.setAdapter(arrayAdapter);
 					lvTrending.setOnItemClickListener(TrendingNowScreen.this);
-					lvTrending.setEnabled(true);
 				} catch (JSONException ex) {
 					ex.printStackTrace();
 				}

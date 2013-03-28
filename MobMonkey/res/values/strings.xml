@@ -69,9 +69,21 @@
 	
 	<!-- Trending Now Screen -->
 	<string name="tv_title_trendingnow">What\'s Trending Now!</string>
+	<string-array name="trending_category">
+		<item>Bookmarks</item>
+		<item>My Interests</item>
+		<item>Top Viewed</item>
+		<item>Near Me</item>
+	</string-array>
 	
 	<!--  Inbox Screen -->
 	<string name="tv_title_inbox">Inbox</string>
+	<string-array name="inbox_category">
+	    <item>Open Requests</item>
+	    <item>Answered Request</item>
+	    <item>Assigned Request</item>
+	    <item>Notifications</item>
+	</string-array>
 	
 	<!-- Send Request Screen -->
 	<string name="toast_request_successful">Successfully sent request</string>
@@ -219,12 +231,6 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	<string name="btn_set_schedule">Set Schedule</string>
 	
 	<string name="toast_current_or_past_current_time">The time you have selected is the current time or past the current time, please select a time in the future.</string>
-	<string-array name="trending_category">
-		<item >Bookmarks</item>
-		<item >My Interests</item>
-		<item >Top Viewed</item>
-		<item >Near Me</item>
-	</string-array>
 	
 	<!-- Top Viewed Screen -->
 	<string name="tv_title_top_viewed">Top Viewed</string>

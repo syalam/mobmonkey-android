@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMInboxArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMInboxItem;
+import com.mobmonkey.mobmonkey.utils.MMTrendingItem;
 import com.mobmonkey.mobmonkeyapi.adapters.MMInboxAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -55,42 +56,17 @@ public class InboxScreen extends Activity {
 	}
 	
 	private void init() {
-		
 		lvInbox = (ListView) findViewById(R.id.lvinbox);
 		
-		// TODO: hard coded information. needs to use callback to get infomation from server.
-		data = new MMInboxItem[4];
+		data = new MMInboxItem[getResources().getStringArray(R.array.inbox_category).length];
 		for(int i = 0; i < data.length; i++) {
-			MMInboxItem item = new MMInboxItem();
-			switch(i) {
-			case 0:
-				item.title = "Open Requests";
-				break;
-			case 1:
-				item.title = "Answered Request";
-				break;
-			case 2:
-				item.title = "Assigned Request";
-				break;
-			case 3:
-				item.title = "Notifications";
-				break;
-			default:
-				break;
-			}
-			item.counter = 0 + MMAPIConstants.DEFAULT_STRING;
-			data[i] = item;
+			data[i] = new MMInboxItem();
+			data[i].title = getResources().getStringArray(R.array.inbox_category)[i];
+			data[i].counter = "0";
 		}
 		
-		arrayAdapter = new MMInboxArrayAdapter(InboxScreen.this, R.layout.inbox_list_row, data, Color.GRAY) {
-			@Override
-			public boolean isEnabled(int position) {
-				return false;
-			}	
-		};
-		
+		arrayAdapter = new MMInboxArrayAdapter(InboxScreen.this, R.layout.inbox_list_row, data);
 		lvInbox.setAdapter(arrayAdapter);
-		lvInbox.setEnabled(false);
 		
 		// get all the open request, and then update the badge counter
 		MMInboxAdapter.getOpenRequests(new OpenRequestCallback(), 
@@ -106,32 +82,37 @@ public class InboxScreen extends Activity {
 	}
 	
 	private class OpenRequestCallback implements MMCallback {
-		
 		@Override
 		public void processCallback(Object obj) {
-			try {
-				JSONArray jobj = new JSONArray((String) obj);
-				data[0].counter = jobj.length()+"";
-				//Log.d(TAG, (String) obj);
-				arrayAdapter.notifyDataSetChanged();
-				
-				
-			} catch (JSONException ex) {
-				ex.printStackTrace();
+			if(obj != null) {			
+				try {
+					JSONArray jArr = new JSONArray((String) obj);
+					data[0].counter = Integer.toString(jArr.length());
+					if(jArr.length() > 0) {
+						arrayAdapter.isEnabled(0);
+					}
+					arrayAdapter.notifyDataSetChanged();				
+				} catch (JSONException ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 	}
 	
 	private class AssignedRequestCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
-			try {
-				JSONArray jobj = new JSONArray((String) obj);
-				data[2].counter = jobj.length() + MMAPIConstants.DEFAULT_STRING;
-				arrayAdapter.notifyDataSetChanged();
-			} catch (JSONException ex) {
-				ex.printStackTrace();
+			if(obj != null) {
+				try {
+					JSONArray jArr = new JSONArray((String) obj);
+					data[2].counter = Integer.toString(jArr.length());
+					if(jArr.length() > 0) {
+						arrayAdapter.isEnabled(2);
+					}
+					arrayAdapter.notifyDataSetChanged();
+				} catch (JSONException ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 		
