@@ -86,6 +86,28 @@ public class MMCategories extends Activity{
 		return subCategoriesList.toString();
 	}
 	
+	public static String getSubCategoriesWithCategoryName(Context context, String categoryName) throws JSONException
+	{
+		userPrefs = context.getSharedPreferences(MMAPIConstants.USER_PREFS, 0);
+		JSONArray subCategoriesList = null;
+		
+		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
+		{
+			subCategoriesList = new JSONArray();
+			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+			JSONArray topCategory = cats.getJSONArray(categoryName);
+			for(int i=0; i < topCategory.length(); i++)
+			{
+				if(!topCategory.getJSONObject(i).get("en").toString().equals(categoryName))
+					subCategoriesList.put(topCategory.getJSONObject(i));
+			}
+		}
+		else
+			return null;
+		
+		return subCategoriesList.toString();
+	}
+	
 	public static void addCategory(String categoryId)
 	{
 		
