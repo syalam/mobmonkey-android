@@ -249,7 +249,7 @@ public class SearchScreen extends Activity implements LocationListener {
 		});
 		
 		getSearchCategoryIcons();
-		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, new int[0], 
+		arrayAdapter = new MMArrayAdapter(SearchScreen.this, R.layout.mm_listview_row, categoryIcons, 
 				getTopLevelCategories(), new int[0], android.R.style.TextAppearance_Medium, 
 				Typeface.DEFAULT_BOLD, null);
 		elvSearchCategory.setAdapter(arrayAdapter);
@@ -347,18 +347,26 @@ public class SearchScreen extends Activity implements LocationListener {
 	
 	private void getSearchCategoryIcons() {
 		categoryIcons = new int[] {
-			R.drawable.cat_icon_automotive, 
-			R.drawable.cat_icon_travel, 
-			R.drawable.cat_icon_sports, 
-			R.drawable.cat_icon_healthcare, 
-			R.drawable.cat_icon_landmarks, 
-			R.drawable.cat_icon_social, 
-			R.drawable.cat_icon_community_government, 
-			R.drawable.cat_icon_retail, 
-			R.drawable.cat_icon_services_supplies, 
-			R.drawable.cat_icon_transportation
+			R.drawable.cat_icon_beaches, 
+			R.drawable.cat_icon_conferences, 
+			R.drawable.cat_icon_restaurants, 
+			R.drawable.cat_icon_dog_parks, 
+			R.drawable.cat_icon_stadiums, 
+			R.drawable.cat_icon_dog_parks, 
+			R.drawable.cat_icon_coffee_shops, 
+			R.drawable.cat_icon_schools, 
+			R.drawable.cat_icon_supermarkets, 
+			R.drawable.cat_icon_hotels,
+			R.drawable.cat_icon_pubs,
+			R.drawable.cat_icon_night_clubs,
+			R.drawable.cat_icon_health_clubs,
+			R.drawable.cat_icon_cinemas
 		};
 		categoryIndicatorIcons = new int[] {
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
+			R.drawable.listview_accessory_indicator,
 			R.drawable.listview_accessory_indicator,
 			R.drawable.listview_accessory_indicator,
 			R.drawable.listview_accessory_indicator,
