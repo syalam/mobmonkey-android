@@ -8,8 +8,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,7 +35,6 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener {
 	private static String TAG = "TrendingNowScreen: ";
 	private SharedPreferences userPrefs;
 	private ListView lvTrending;
-	
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
