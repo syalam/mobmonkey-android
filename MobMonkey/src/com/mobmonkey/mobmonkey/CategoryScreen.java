@@ -2,6 +2,7 @@ package com.mobmonkey.mobmonkey;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkey.utils.MMCategories;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkey.utils.MMSearchResultsCallback;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -36,7 +38,6 @@ import android.graphics.Typeface;
 public class CategoryScreen extends Activity implements LocationListener {
 
 	private static final String TAG = "Categories Screen ";
-	final Context context = this;
 	SharedPreferences userPrefs;
 	
 	LocationManager locationManager;
@@ -67,7 +68,8 @@ public class CategoryScreen extends Activity implements LocationListener {
 	private void init()
 	{
 		String categoryInformation = getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY);
-		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
+		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		
 		getCurrentLocation();
 		
 		try 
@@ -77,7 +79,7 @@ public class CategoryScreen extends Activity implements LocationListener {
 			for(int i = 0; i < categoriesArray.length(); i++)
 			{
 				JSONObject category = categoriesArray.getJSONObject(i);
-				subCategories.add(category.getString("en"));
+				subCategories.add(category.getString(Locale.getDefault().getLanguage()));
 			}
 			
 	        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, subCategories) {
@@ -104,7 +106,7 @@ public class CategoryScreen extends Activity implements LocationListener {
 				{
 					JSONObject category = categoriesArray.getJSONObject(position);
 					JSONArray subCategoriesArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(CategoryScreen.this.getApplicationContext(), category.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)));
-					String categorySelected = category.getString("en");
+					String categorySelected = category.getString(Locale.getDefault().getLanguage());
 					
 					if(!subCategoriesArray.isNull(0))
 					{
@@ -118,7 +120,7 @@ public class CategoryScreen extends Activity implements LocationListener {
 						progressDialog = ProgressDialog.show(CategoryScreen.this, MMAPIConstants.DEFAULT_STRING, "Locating " + categorySelected);
 
 						MMSearchLocationAdapter.searchLocationWithText(
-								new SearchResultsCallback(), 
+								new MMSearchResultsCallback(CategoryScreen.this, progressDialog, location, categorySelected), 
 								Double.toString(longitudeValue), 
 								Double.toString(latitudeValue), 
 								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
@@ -144,57 +146,12 @@ public class CategoryScreen extends Activity implements LocationListener {
 			longitudeValue = location.getLongitude();
 			latitudeValue = location.getLatitude();
 			DecimalFormat twoDForm = new DecimalFormat("#.######");
+			Log.d(TAG, TAG + "latitudeValue: " + latitudeValue);
 			latitudeValue = Double.valueOf(twoDForm.format(latitudeValue));
 			longitudeValue = Double.valueOf(twoDForm.format(longitudeValue));
 		}
 	}
 	
-	private void displayAlertDialog()
-	{
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-		alertDialogBuilder.setTitle("MobMonkey");
-		alertDialogBuilder.setMessage("No locations found");
-		alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {				
-			}
-		});
-		AlertDialog alertDialog = alertDialogBuilder.create();
-		alertDialog.show();
-	}
-	
-	private class SearchResultsCallback implements MMCallback 
-	{
-		@Override
-		public void processCallback(Object obj) 
-		{
-			if(obj == null)
-				Log.d(TAG, TAG + "SearchResultsCallback is null");
-			else
-			{
-				try {
-					JSONArray searchResults = new JSONArray((String) obj);
-					progressDialog.dismiss();
-					if(searchResults.isNull(0))
-					{
-						displayAlertDialog();
-					}
-					else
-					{
-						Intent searchResultsIntent = new Intent(CategoryScreen.this, SearchResultsScreen.class);
-						searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, true);
-						searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
-						searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
-						searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, (String) obj);
-						startActivity(searchResultsIntent);
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
 	@Override
 	public void onLocationChanged(Location arg0) {
 		// TODO Auto-generated method stub

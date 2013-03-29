@@ -46,6 +46,8 @@ public final class MMSearchLocationAdapter {
 						
 			StringEntity stringEntity = new StringEntity(params.toString());
 			
+			Log.d(TAG, TAG + "params: " + params.toString());
+			
 			HttpPost httpPost = new HttpPost(searchLocationURL);
 			httpPost.setEntity(stringEntity);
 			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);

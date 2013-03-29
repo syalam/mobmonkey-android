@@ -5,11 +5,13 @@ import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMCategories;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
+import com.mobmonkey.mobmonkey.utils.MMSearchResultsCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
@@ -257,6 +259,11 @@ public class SearchScreen extends Activity implements LocationListener {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 				try { //TODO:Change this implementation so that it does not go to subcats
 					//String catId = topLevelCategories.getJSONObject(position).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
+					LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+					Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+					Double latitudeValue = location.getLatitude();
+					Double longitudeValue = location.getLongitude();
+					
 					selectedCategory = topLevelCategories[position];
 					JSONArray subCategories = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(SearchScreen.this.getApplicationContext(), selectedCategory));
 					
@@ -266,6 +273,22 @@ public class SearchScreen extends Activity implements LocationListener {
 						categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, (String) subCategories.toString());
 						categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
 						startActivity(categoryScreenIntent);
+					}
+					else if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
+					{
+						JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+						progressDialog = ProgressDialog.show(SearchScreen.this, MMAPIConstants.DEFAULT_STRING, "Locating " + topLevelCategories[position]);
+						String catId = cats.getJSONArray(topLevelCategories[position]).getJSONObject(0).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
+						MMSearchLocationAdapter.searchLocationWithText(
+								new MMSearchResultsCallback(SearchScreen.this, progressDialog, location, topLevelCategories[position]), 
+								Double.toString(longitudeValue), 
+								Double.toString(latitudeValue), 
+								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
+								MMAPIConstants.DEFAULT_STRING,
+								cats.getJSONArray(topLevelCategories[position]).getJSONObject(0).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID),
+								userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+								userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+								MMConstants.PARTNER_ID);
 					}
 				} catch (JSONException e) { 
 					e.printStackTrace();

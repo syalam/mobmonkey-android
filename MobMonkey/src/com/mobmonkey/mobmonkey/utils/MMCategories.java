@@ -1,6 +1,7 @@
 package com.mobmonkey.mobmonkey.utils;
 
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -98,7 +99,7 @@ public class MMCategories extends Activity{
 			JSONArray topCategory = cats.getJSONArray(categoryName);
 			for(int i=0; i < topCategory.length(); i++)
 			{
-				if(!topCategory.getJSONObject(i).get("en").toString().equals(categoryName))
+				if(!topCategory.getJSONObject(i).get(Locale.getDefault().getLanguage()).toString().equals(categoryName))
 					subCategoriesList.put(topCategory.getJSONObject(i));
 			}
 		}
