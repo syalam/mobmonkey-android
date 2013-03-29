@@ -40,6 +40,8 @@ import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
  * Android {@link Activity} screen displays search locations for the user
@@ -47,10 +49,11 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
  *
  */
 public class BookmarksScreen extends FragmentActivity implements AdapterView.OnItemClickListener, OnInfoWindowClickListener {
-
+	private static final String TAG = "BookmarksScreen: ";
+	
 	private SharedPreferences userPrefs;
 	
-	Location location;
+//	Location location;
 	
 	private ListView lvBookmarks;
 	private SupportMapFragment smfBookmarkLocations;
@@ -68,8 +71,8 @@ public class BookmarksScreen extends FragmentActivity implements AdapterView.OnI
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bookmarks_screen);
 		
-		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//		location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		
 		lvBookmarks = (ListView) findViewById(R.id.lvbookmarks);
 		smfBookmarkLocations = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragmap);
@@ -130,7 +133,7 @@ public class BookmarksScreen extends FragmentActivity implements AdapterView.OnI
 		JSONObject jObj = markerHashMap.get((Marker) marker);
 		
 		Intent locDetailsIntent = new Intent(BookmarksScreen.this, SearchResultDetailsScreen.class);
-		locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
+		locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, MMLocationManager.getGPSLocation(new MMLocationListener()));
 		locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
 		startActivity(locDetailsIntent);
 	}
@@ -142,12 +145,14 @@ public class BookmarksScreen extends FragmentActivity implements AdapterView.OnI
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.ibmap:
-				if(lvBookmarks.getVisibility() == View.VISIBLE) {
-					lvBookmarks.setVisibility(View.INVISIBLE);
-					smfBookmarkLocations.getView().setVisibility(View.VISIBLE);
-				} else if(lvBookmarks.getVisibility() == View.INVISIBLE) {
-					lvBookmarks.setVisibility(View.VISIBLE);
-					smfBookmarkLocations.getView().setVisibility(View.INVISIBLE);
+				if(MMLocationManager.isGPSEnabled()) {
+					if(lvBookmarks.getVisibility() == View.VISIBLE) {
+						lvBookmarks.setVisibility(View.INVISIBLE);
+						smfBookmarkLocations.getView().setVisibility(View.VISIBLE);
+					} else if(lvBookmarks.getVisibility() == View.INVISIBLE) {
+						lvBookmarks.setVisibility(View.VISIBLE);
+						smfBookmarkLocations.getView().setVisibility(View.INVISIBLE);
+					}
 				}
 				break;
 			case R.id.btnaddloc:
@@ -198,7 +203,7 @@ public class BookmarksScreen extends FragmentActivity implements AdapterView.OnI
 			markerHashMap.put(locationResultMarker, jObj);
 		}
 		
-		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+		LatLng currentLoc = new LatLng(MMLocationManager.getGPSLocation(new MMLocationListener()).getLatitude(), MMLocationManager.getGPSLocation(new MMLocationListener()).getLongitude());
 		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
 		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 		googleMap.setOnInfoWindowClickListener(BookmarksScreen.this);
@@ -256,17 +261,18 @@ public class BookmarksScreen extends FragmentActivity implements AdapterView.OnI
 			
 			if(obj != null) {
 				try {
+					Log.d(TAG, TAG + "response: " + ((String) obj));
 					bookmarksList = new JSONArray((String) obj);
-					getLocations();
-					ArrayAdapter<MMResultsLocation> arrayAdapter 
-						= new MMSearchResultsArrayAdapter(BookmarksScreen.this, R.layout.search_result_list_row, locations);
-					lvBookmarks.setAdapter(arrayAdapter);
-					
-					//arrayAdapter.notifyDataSetChanged();
-					
-					lvBookmarks.setOnItemClickListener(BookmarksScreen.this);
-					
-					addToGoogleMap();
+					if(MMLocationManager.isGPSEnabled()) {
+						getLocations();
+						ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(BookmarksScreen.this, R.layout.search_result_list_row, locations);
+						lvBookmarks.setAdapter(arrayAdapter);
+						
+						//arrayAdapter.notifyDataSetChanged();
+						
+						lvBookmarks.setOnItemClickListener(BookmarksScreen.this);
+						addToGoogleMap();
+					}
 				} catch (JSONException e) {
 					
 					e.printStackTrace();

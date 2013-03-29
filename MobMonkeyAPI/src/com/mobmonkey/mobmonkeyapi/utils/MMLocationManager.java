@@ -17,7 +17,7 @@ public final class MMLocationManager {
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);		
 	}
 	
-	public static boolean getGPSEnabled() {
+	public static boolean isGPSEnabled() {
 		return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 	}
 	

@@ -80,7 +80,7 @@ public class MainScreen extends TabActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION) {
-			if(MMLocationManager.getGPSEnabled()) {
+			if(MMLocationManager.isGPSEnabled()) {
 				checkForGPSAccess();
 			} else {
 				noGPSEnabled();
@@ -100,7 +100,7 @@ public class MainScreen extends TabActivity {
 	 * there is no GPS access.
 	 */
 	private void checkForGPSAccess() {
-		if (!MMLocationManager.getGPSEnabled()) {
+		if (!MMLocationManager.isGPSEnabled()) {
 			new AlertDialog.Builder(MainScreen.this)
 	    	.setTitle(R.string.ad_title_enable_gps)
 	    	.setMessage(R.string.ad_message_enable_gps)
@@ -129,7 +129,12 @@ public class MainScreen extends TabActivity {
 	    	.setTitle("Warning")
 	    	.setMessage("You have not enabled GPS, some features are not accessible")
 	    	.setCancelable(false)
-	    	.setNeutralButton(R.string.ad_btn_ok, null)
+	    	.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					init();
+				}
+			})
 	    	.show();
 	}
 	
@@ -232,7 +237,7 @@ public class MainScreen extends TabActivity {
 	private void getAllCategories() {
 		Log.d(TAG, TAG + "getAllCategories: " + userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
 		
-		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {			
+		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled()) {			
 			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...", true, false);
 
 			MMCategoryAdapter.getAllCategories(
@@ -250,11 +255,16 @@ public class MainScreen extends TabActivity {
 			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...", true, false);
 		}
 		
-		MMBookmarksAdapter.getBookmarks(new FavoritesCallback(), 
-										"bookmarks", 
-										MMConstants.PARTNER_ID, 
-										userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-										userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+		if(MMLocationManager.isGPSEnabled()) {
+			MMBookmarksAdapter.getBookmarks(new FavoritesCallback(), 
+											"bookmarks", 
+											MMConstants.PARTNER_ID, 
+											userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+											userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+		} else {
+			setTabs();
+			closeProgressDialog();
+		}
 	}
 	
 	private class RegisterGCMAsyncTask extends AsyncTask<String, Void, Void> {

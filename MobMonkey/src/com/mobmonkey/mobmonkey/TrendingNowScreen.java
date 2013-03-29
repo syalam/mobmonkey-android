@@ -24,6 +24,8 @@ import com.mobmonkey.mobmonkey.utils.MMTrendingItem;
 import com.mobmonkey.mobmonkeyapi.adapters.MMTrendingAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
  * Android {@link Activity} screen displays what's trending now for the user
@@ -48,15 +50,8 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener {
 	}
 
 	private void init() {
-		
-		lvTrending = (ListView) findViewById(R.id.lvtrending);
-		
+		lvTrending = (ListView) findViewById(R.id.lvtrending);		
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-		LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE); 
-		Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-		double longitude = location.getLongitude();
-		double latitude = location.getLatitude();
 		
 		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
 		for(int i = 0; i < data.length; i++) {
@@ -106,21 +101,24 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener {
 			}
 			//categoryIds.substring(0, categoryIds.length()-1);
 			
-			MMTrendingAdapter.getTrending(new CountOnlyCallback(), 
-									      MMAPIConstants.URL_TOPVIEWED, 
-									      MMAPIConstants.SEARCH_TIME_DAY, 
-									      true, 
-									      true, 
-									      latitude, 
-									      longitude, 
-									      MMAPIConstants.SEARCH_RADIUS_FIVE_MILE, 
-									      true, 
-									      categoryIds, 
-									      true, 
-									      MMConstants.PARTNER_ID, 
-										  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-										  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
-			
+			if(MMLocationManager.isGPSEnabled()) {
+				MMTrendingAdapter.getTrending(new CountOnlyCallback(), 
+										      MMAPIConstants.URL_TOPVIEWED, 
+										      MMAPIConstants.SEARCH_TIME_DAY, 
+										      true, 
+										      true, 
+										      MMLocationManager.getGPSLocation(new MMLocationListener()).getLatitude(), 
+										      MMLocationManager.getGPSLocation(new MMLocationListener()).getLongitude(), 
+										      MMAPIConstants.SEARCH_RADIUS_FIVE_MILE, 
+										      true, 
+										      categoryIds, 
+										      true, 
+										      MMConstants.PARTNER_ID, 
+											  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+											  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+			} else {
+				MainScreen.closeProgressDialog();
+			}
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}

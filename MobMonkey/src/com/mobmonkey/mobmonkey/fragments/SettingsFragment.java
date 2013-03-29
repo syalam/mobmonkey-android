@@ -5,9 +5,6 @@ import org.json.JSONObject;
 
 import com.facebook.Session;
 import com.mobmonkey.mobmonkey.R;
-import com.mobmonkey.mobmonkey.R.array;
-import com.mobmonkey.mobmonkey.R.id;
-import com.mobmonkey.mobmonkey.R.layout;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignOutAdapter;
@@ -18,7 +15,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
