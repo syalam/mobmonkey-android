@@ -14,7 +14,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -33,6 +32,7 @@ import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
  * Android {@link Activity} screen displays the signed in user portion of the application with different tabs.
@@ -68,19 +68,18 @@ public class MainScreen extends TabActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreate");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_screen);		
+		setContentView(R.layout.main_screen);
+		MMLocationManager.setContext(getApplicationContext());
 		checkForGPSAccess();
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION) {
-			LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
-			if(manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			if(MMLocationManager.getGPSEnabled()) {
 				checkForGPSAccess();
 			} else {
-				Toast.makeText(MainScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
-				finish();
+				noGPSEnabled();
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -97,8 +96,7 @@ public class MainScreen extends TabActivity {
 	 * there is no GPS access.
 	 */
 	private void checkForGPSAccess() {
-		LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+		if (!MMLocationManager.getGPSEnabled()) {
 			new AlertDialog.Builder(MainScreen.this)
 	    	.setTitle(R.string.ad_title_enable_gps)
 	    	.setMessage(R.string.ad_message_enable_gps)
@@ -112,15 +110,23 @@ public class MainScreen extends TabActivity {
 	    	.setNegativeButton(R.string.ad_btn_no, new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int which) {
 		            // No location service, no Activity
-		        	Toast.makeText(MainScreen.this, R.string.toast_not_enable_gps, Toast.LENGTH_SHORT).show();
-//		            finish();
-		            // TODO: not close activity but return back to previous tab
+		        	noGPSEnabled();
 		        }
 	    	})
 	    	.show();
 	    } else {
 			init();
 	    }
+	}
+	
+	private void noGPSEnabled() {
+    	new AlertDialog.Builder(MainScreen.this)
+	    	.setIcon(android.R.drawable.ic_dialog_alert)
+	    	.setTitle("Warning")
+	    	.setMessage("You have not enabled GPS, some features are not accessible")
+	    	.setCancelable(false)
+	    	.setNeutralButton(R.string.ad_btn_ok, null)
+	    	.show();
 	}
 	
 	public static void closeProgressDialog() {
@@ -184,20 +190,6 @@ public class MainScreen extends TabActivity {
 //            mRegisterTask.execute(null, null, null);
 		}
 	}
-//	private void getAllCategories() 
-//	{	
-//		Log.d("AllCats", userPrefs.getString((MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES), ""));
-//		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
-//		{			
-//			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...");
-//
-//			MMCategoryAdapter.getAllCategories(
-//					new MainCallback(), 
-//					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-//					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
-//					MMConstants.PARTNER_ID);
-//		}
-//	}
 	
 	/**
 	 * Function that set the tabs and the corresponding {@link Activity} for the {@link TabHost}
