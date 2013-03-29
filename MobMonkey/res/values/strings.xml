@@ -3,10 +3,10 @@
 	<string name="app_name">MobMonkey</string>
 	<string name="menu_settings">Settings</string>
 	<string name="app_id_facebook">160583530745361</string>
-	<string name="app_google_api_key1">AIzaSyCFU-ib8Zlva7HAgB1YGUIeBdq8wwAYVQQ</string>
-	<string name="app_google_api_key2">AIzaSyCgtLSCNuc0QeM196gyMS1XuilN51ejcuI</string>
-	<string name="app_google_api_key3">AIzaSyCJN3_E-trnqLNyfuTBedh2RlOJ9LTuNto</string>
-	<string name="app_google_api_key4">AIzaSyCtX9AL0ja64VmVi9BLA3oHTColOwH4Gxs</string>
+	<string name="app_google_api_key1">AIzaSyCFU-ib8Zlva7HAgB1YGUIeBdq8wwAYVQQ</string> <!-- Wilson Desktop -->
+	<string name="app_google_api_key2">AIzaSyCgtLSCNuc0QeM196gyMS1XuilN51ejcuI</string> <!-- Wilson MacBook -->
+	<string name="app_google_api_key3">AIzaSyCtX9AL0ja64VmVi9BLA3oHTColOwH4Gxs</string> <!-- Arash MacBook -->
+	<string name="app_google_api_key4">AIzaSyDVLAtdbyl9Ikt5ka2MS-HIj0I1WL99lx0</string> <!-- Hank MacBook Air -->
 
 	<!-- SignIn Screen -->
 	<string name="toast_no_internet_access">You have no internet access at the moment, cannot start MobMonkey</string>
