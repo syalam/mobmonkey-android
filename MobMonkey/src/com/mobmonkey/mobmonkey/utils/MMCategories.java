@@ -41,7 +41,7 @@ public class MMCategories extends Activity{
 //			}
 		}
 		else
-			return null;
+			return new String[0];
 		
 		return topLevelCategoriesList;
 	}

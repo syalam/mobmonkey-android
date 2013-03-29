@@ -160,11 +160,13 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_LOCALITY = "locality";
 	public static final String JSON_KEY_LOCATION_ID = "locationId";
 	public static final String JSON_KEY_LONGITUDE = "longitude";
+	public static final String JSON_KEY_MEDIA_TYPE = "mediaType";
 	public static final String JSON_KEY_MESSAGE = "message";
 	public static final String JSON_KEY_MONKEYS = "monkeys";	
 	public static final String JSON_KEY_NAME = "name";
 	public static final String JSON_KEY_NEARBY_COUNT = "nearbyCount";
 	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
+	public static final String JSON_KEY_OPENREQUESTS = "OpenRequests";
 	public static final String JSON_KEY_PARENTS = "parents";
 	public static final String JSON_KEY_PHONENUMBER = "phoneNumber";
 	public static final String JSON_KEY_POSTCODE = "postcode";
@@ -172,10 +174,11 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_RADIUS_IN_YARDS = "radiusInYards";
 	public static final String JSON_KEY_RECURRING = "recurring";
 	public static final String JSON_KEY_REGION = "region";
+	public static final String JSON_KEY_REQUEST_DATE = "requestDate";
 	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
+	public static final String JSON_KEY_STATUS = "status";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
 	public static final String JSON_KEY_WEBSITE = "website";
-	public static final String JSON_KEY_OPENREQUESTS = "OpenRequests";
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;

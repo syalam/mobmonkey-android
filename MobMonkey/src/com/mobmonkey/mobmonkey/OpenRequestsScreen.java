@@ -17,11 +17,14 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkey.utils.MMOpenRequestsArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 public class OpenRequestsScreen extends Activity{
 
@@ -38,10 +41,8 @@ public class OpenRequestsScreen extends Activity{
 		try {
 			init();
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -56,21 +57,23 @@ public class OpenRequestsScreen extends Activity{
 			for(int i = 0; i < dataLength; i++) {
 				MMOpenRequestsItem item = new MMOpenRequestsItem();
 				JSONObject jobj = jArr.getJSONObject(i);
-				item.message = jobj.getString("message");
 				item.title = jobj.getString("nameOfLocation");
-				item.time = getDate(Long.parseLong(jobj.getString("requestDate")), "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+				if(jobj.getString("message") == null) {
+					item.message = MMAPIConstants.DEFAULT_STRING;
+				} else {
+					item.message = jobj.getString("message");
+				}
+				item.time = getDate(Long.parseLong(jobj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE)));
 				
-				LocationManager locationManager =
-				        (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-				Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+				Location location = MMLocationManager.getGPSLocation(new MMLocationListener());
 				
 				double latitude = location.getLatitude(),
 					   longitude = location.getLongitude();
 				
-				double dis = (Math.sqrt(Math.pow(latitude - jobj.getDouble("latitude"), 2) + Math.pow(longitude - jobj.getDouble("longitude"), 2))) / 1.609344;
-				DecimalFormat df = new DecimalFormat( "#,###,###,##0.00" );
+				double dis = (Math.sqrt(Math.pow(latitude - jobj.getDouble(MMAPIConstants.KEY_LATITUDE), 2) + Math.pow(longitude - jobj.getDouble(MMAPIConstants.KEY_LONGITUDE), 2))) / 1.609344;
+				DecimalFormat df = new DecimalFormat("#.##");
 				item.dis = df.format(dis) + " miles";
-				item.mediaType = jobj.getInt("mediaType");
+				item.mediaType = jobj.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
 				
 				data[i] = item;
 			}
@@ -83,27 +86,12 @@ public class OpenRequestsScreen extends Activity{
 		
 	}
 	
-	public static String getDate(long milliSeconds, String dateFormat) throws ParseException
-	{
-	    // Create a DateFormatter object for displaying date in specified format.
-	    DateFormat formatter = new SimpleDateFormat(dateFormat);
-
+	public static String getDate(long milliSeconds) throws ParseException {
 	    // Create a calendar object that will convert the date and time value in milliseconds to date. 
 	     Calendar calendar = Calendar.getInstance();
 	     calendar.setTimeInMillis(milliSeconds);
 	     
-	     String month = formatter.format(calendar.getTime()).substring(5, 7);
-	     String day = formatter.format(calendar.getTime()).substring(8, 10);
-	     month = new DateFormatSymbols().getMonths()[Integer.parseInt(month)-1];
-	     
-	     String time = formatter.format(calendar.getTime()).substring(11,16);
-	     formatter = new SimpleDateFormat("hh:mm");
-	     Date date = formatter.parse(time);
-	     formatter = new SimpleDateFormat("h:mma");
-	     time = formatter.format(date).toLowerCase().toString();
-	    		 
-	    		 
-	     String displayDate = month + " " + day + " " + time;
-	     return displayDate;
+	     SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd hh:mma");
+	     return sdf.format(calendar.getTime());
 	}
 }

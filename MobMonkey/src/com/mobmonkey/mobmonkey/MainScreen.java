@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -237,7 +240,7 @@ public class MainScreen extends TabActivity {
 					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 					MMConstants.PARTNER_ID);
-		} 
+		}
 	}
 	
 	private void getAllBookmarks() {		
@@ -287,8 +290,17 @@ public class MainScreen extends TabActivity {
 		public void processCallback(Object obj){			
 			if(obj != null) {
 				Log.d(TAG, TAG + "CategoriesCallback: " + ((String) obj));
-				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
-				userPrefsEditor.commit();
+				
+				try {
+					JSONObject jObj = new JSONObject((String) obj);
+					
+					if(!jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
+						userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
+					}
+					userPrefsEditor.commit();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -299,6 +311,15 @@ public class MainScreen extends TabActivity {
 			if(obj != null) {
 				closeProgressDialog();
 				Log.d(TAG, TAG + "FavoritesCallback: " + ((String) obj));
+				try {
+					JSONObject jObj = new JSONObject((String) obj);
+					if(jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
+						Toast.makeText(MainScreen.this, jObj.getString(MMAPIConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, (String) obj);
 				userPrefsEditor.commit();
 			}
