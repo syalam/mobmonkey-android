@@ -236,5 +236,8 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	<string name="tv_title_top_viewed">Top Viewed</string>
 	
 	<string name="toast_no_gps_access">You have no GPS access at the moment, cannot start MobMonkey</string>
+	
+	<!-- Open Requests Screen -->
+	<string name="tv_title_openrequests">Open Requests</string>
 
 </resources>

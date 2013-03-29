@@ -175,6 +175,7 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
 	public static final String JSON_KEY_WEBSITE = "website";
+	public static final String JSON_KEY_OPENREQUESTS = "OpenRequests";
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;
