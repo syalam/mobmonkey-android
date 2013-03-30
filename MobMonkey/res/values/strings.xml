@@ -132,6 +132,7 @@
 	<!-- SearchResultLocationDetails Screen -->
 	<string name="tv_make_request">Make a Request</string>
 	<string name="tv_members_found">members found</string>
+	<string name="tv_no_phone_number_available">No Phone Number Available</string>
 	<string name="tv_add_notifications">Add Notifications</string>
 	<string name="tv_favorite">Favorite</string>
 	<string name="tv_remove_favorite">Remove favorite</string>

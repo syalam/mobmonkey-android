@@ -16,6 +16,7 @@ public final class MMAPIConstants {
 	
 	// MobMonkey default data values
 	public static final String DEFAULT_STRING = "";
+	public static final String DEFAULT_STRING_NULL = "null";
 	public static final String DEFAULT_SPACE = " ";
 	public static final String DEFAULT_NEWLINE = "\n";
 	public static final String COMMA_SPACE = ", ";
@@ -164,6 +165,7 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_MESSAGE = "message";
 	public static final String JSON_KEY_MONKEYS = "monkeys";	
 	public static final String JSON_KEY_NAME = "name";
+	public static final String JSON_KEY_NAME_OF_LOCATION = "nameOfLocation";
 	public static final String JSON_KEY_NEARBY_COUNT = "nearbyCount";
 	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
 	public static final String JSON_KEY_OPENREQUESTS = "OpenRequests";

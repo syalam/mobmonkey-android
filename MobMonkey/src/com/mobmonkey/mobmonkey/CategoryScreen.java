@@ -14,6 +14,8 @@ import com.mobmonkey.mobmonkey.utils.MMSearchResultsCallback;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -40,7 +42,6 @@ public class CategoryScreen extends Activity implements LocationListener {
 	private static final String TAG = "Categories Screen ";
 	SharedPreferences userPrefs;
 	
-	LocationManager locationManager;
 	Location location;
 	double longitudeValue;
 	double latitudeValue;
@@ -65,27 +66,23 @@ public class CategoryScreen extends Activity implements LocationListener {
 		init();
 	}
 	
-	private void init()
-	{
+	private void init() {
 		String categoryInformation = getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY);
-		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		getCurrentLocation();
 		
-		try 
-		{
+		try {
 			categoriesArray = new JSONArray(categoryInformation);
 			
-			for(int i = 0; i < categoriesArray.length(); i++)
-			{
+			for(int i = 0; i < categoriesArray.length(); i++) {
 				JSONObject category = categoriesArray.getJSONObject(i);
 				subCategories.add(category.getString(Locale.getDefault().getLanguage()));
 			}
 			
 	        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, subCategories) {
 				@Override
-				public View getView(int position, View convertView, ViewGroup parent) 
-				{
+				public View getView(int position, View convertView, ViewGroup parent) {
 					View view = super.getView(position, convertView, parent);
 					TextView eventText = (TextView) view.findViewById(android.R.id.text1);
 					eventText.setTypeface(null, Typeface.BOLD);
@@ -98,29 +95,24 @@ public class CategoryScreen extends Activity implements LocationListener {
 			e.printStackTrace();
 		}		
 		
-		lvSubCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() 
-		{
-			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) 
-			{
-				try
-				{
+		lvSubCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+				try {
 					JSONObject category = categoriesArray.getJSONObject(position);
 					JSONArray subCategoriesArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(CategoryScreen.this.getApplicationContext(), category.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)));
 					String categorySelected = category.getString(Locale.getDefault().getLanguage());
 					
-					if(!subCategoriesArray.isNull(0))
-					{
+					if(!subCategoriesArray.isNull(0)) {
 						Intent subCategoriesIntent = new Intent(CategoryScreen.this, CategoryScreen.class);
 						subCategoriesIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, subCategoriesArray.toString());
 						subCategoriesIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, categorySelected);
 						startActivity(subCategoriesIntent);
-					}
-					else
-					{
+					} else {
 						progressDialog = ProgressDialog.show(CategoryScreen.this, MMAPIConstants.DEFAULT_STRING, "Locating " + categorySelected);
 
 						MMSearchLocationAdapter.searchLocationWithText(
-								new MMSearchResultsCallback(CategoryScreen.this, progressDialog, location, categorySelected), 
+								new MMSearchResultsCallback(CategoryScreen.this, progressDialog, categorySelected), 
 								Double.toString(longitudeValue), 
 								Double.toString(latitudeValue), 
 								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
@@ -140,15 +132,12 @@ public class CategoryScreen extends Activity implements LocationListener {
 	}
 	
 	private void getCurrentLocation() {
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, CategoryScreen.this);
-		location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		if(location != null) {
 			longitudeValue = location.getLongitude();
 			latitudeValue = location.getLatitude();
-			DecimalFormat twoDForm = new DecimalFormat("#.######");
-			Log.d(TAG, TAG + "latitudeValue: " + latitudeValue);
-			latitudeValue = Double.valueOf(twoDForm.format(latitudeValue));
-			longitudeValue = Double.valueOf(twoDForm.format(longitudeValue));
+			DecimalFormat decimalFormat = new DecimalFormat("#.######");
+			latitudeValue = Double.valueOf(decimalFormat.format(latitudeValue));
+			longitudeValue = Double.valueOf(decimalFormat.format(longitudeValue));
 		}
 	}
 	

@@ -21,6 +21,8 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
  * @author Dezapp, LLC
@@ -52,7 +54,7 @@ public class AddLocationMapScreen extends FragmentActivity {
 	}
 	
 	private void init() {
-		location = getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION);
+		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		btnAddLoc = (Button) findViewById(R.id.btnaddloc);
 		addLocClicked = true;
 		
@@ -69,8 +71,7 @@ public class AddLocationMapScreen extends FragmentActivity {
 		googleMap.setOnMapClickListener(new OnMapClickListener(){
 			@Override
 			public void onMapClick(LatLng pointClicked) {
-				if(!addLocClicked)
-				{
+				if(!addLocClicked) {
 					try{
 						Address locationClicked = getAddressForLocation(AddLocationMapScreen.this, pointClicked.latitude, pointClicked.longitude);
 						Toast.makeText(AddLocationMapScreen.this, "Address: "+locationClicked.getAddressLine(0), Toast.LENGTH_SHORT).show();
@@ -109,7 +110,6 @@ public class AddLocationMapScreen extends FragmentActivity {
 	}
 	
 	public Address getAddressForLocation(Context context, double latitude, double longitude) throws IOException {
-
         int maxResults = 1;
 
         Geocoder gc = new Geocoder(context, Locale.getDefault());

@@ -19,7 +19,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
+import com.mobmonkey.mobmonkey.utils.MMUtility;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -46,7 +49,7 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 	
 	JSONArray searchResults;
 	Location location;
-	MMResultsLocation[] locations;
+	MMResultsLocation[] favorites;
 	SharedPreferences userPrefs;
 	SharedPreferences.Editor userPrefsEditor;
 	JSONArray locationHistory;
@@ -87,8 +90,6 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 			addToHistory(searchResults.getJSONObject(position));
 			
 			locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
-			
-			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
 			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, searchResults.getJSONObject(position).toString());
 			startActivity(locDetailsIntent);
 		} catch (JSONException e) {
@@ -106,7 +107,6 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 			addToHistory(jObj);
 			
 			locDetailsIntent = new Intent(SearchResultsScreen.this, SearchResultDetailsScreen.class);
-			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
 			locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
 			startActivity(locDetailsIntent);
 		} catch (JSONException e) {
@@ -154,7 +154,7 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		} else {
 			searchResults = new JSONArray();
 		}
-		location = getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION);
+		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		getLocations();
 		
@@ -177,7 +177,7 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 		
 		smfResultLocations.getView().setVisibility(View.INVISIBLE);
 		
-		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(SearchResultsScreen.this, R.layout.search_result_list_row, locations);
+		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(SearchResultsScreen.this, R.layout.search_result_list_row, favorites);
 		lvSearchResults.setAdapter(arrayAdapter);
 		lvSearchResults.setOnItemClickListener(SearchResultsScreen.this);
 	}
@@ -187,40 +187,15 @@ public class SearchResultsScreen extends FragmentActivity implements AdapterView
 	 * @throws JSONException
 	 */
 	private void getLocations() throws JSONException {
-			locations = new MMResultsLocation[searchResults.length()];
+			favorites = new MMResultsLocation[searchResults.length()];
 			for(int i = 0; i < searchResults.length(); i++) {
 				JSONObject jObj = searchResults.getJSONObject(i);
-				locations[i] = new MMResultsLocation();
-				locations[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
-				locations[i].setLocDist(calcDist(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles));
-				locations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
+				favorites[i] = new MMResultsLocation();
+				favorites[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
+				favorites[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.miles));
+				favorites[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
 										jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE));
 			}
-	}
-	
-	/**
-	 * 
-	 * @param latitude
-	 * @param longitude
-	 * @return
-	 */
-	private String calcDist(double latitude, double longitude) {
-		Location resultLocation = new Location(location);
-		resultLocation.setLatitude(latitude);
-		resultLocation.setLongitude(longitude);
-		
-		return convertMetersToMiles(location.distanceTo(resultLocation));
-	}
-	
-	/**
-	 * 
-	 * @param dist
-	 * @return
-	 */
-	private String convertMetersToMiles(double dist) {
-		dist = dist * 0.000621371f;
-		
-		return new DecimalFormat("#.##").format(dist) + MMAPIConstants.DEFAULT_SPACE;
 	}
 	
 	private void addToGoogleMap() throws JSONException {		

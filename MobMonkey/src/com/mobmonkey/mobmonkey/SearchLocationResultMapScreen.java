@@ -16,6 +16,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
  * @author Dezapp, LLC
@@ -38,20 +40,17 @@ public class SearchLocationResultMapScreen extends FragmentActivity {
 		
 		JSONObject jObj;
 		try {
-			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));			
 			
-			double latitude = jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE);
-			double longitude = jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE);
-			
-			Location location = getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION);
+			Location location = MMLocationManager.getGPSLocation(new MMLocationListener());
 			
 			LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
 			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE));
 			
-			Marker locationResultMarker = googleMap.addMarker(new MarkerOptions().
-					position(resultLocLatLng).
-					title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
-					.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
+			googleMap.addMarker(new MarkerOptions().
+				position(resultLocLatLng).
+				title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
+				.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
 			
 			googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 				@Override
@@ -64,8 +63,6 @@ public class SearchLocationResultMapScreen extends FragmentActivity {
 			
 			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
 			googleMap.setMyLocationEnabled(true);
-			
-			Log.d(TAG, TAG + "lat: " + latitude + " long: " + longitude);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

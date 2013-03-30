@@ -145,7 +145,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 											 message,
 											 scheduleDate, 
 											 providerId,
-											 locationId, //TODO: Hard coded locationId
+											 locationId,
 											 duration,
 											 radiusInYards,
 											 repeating,
@@ -167,7 +167,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			processAddMessageResult(resultCode, data);
 		} else if(requestCode == MMAPIConstants.REQUEST_CODE_SCHEDULE_REQUEST) {
 			processScheduleRequestResult(resultCode, data);
-			scheduleDate = ((Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME)).getTimeInMillis() +"";
+			scheduleDate = ((Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME)).getTimeInMillis() + MMAPIConstants.DEFAULT_STRING;
 			repeating = data.getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
 		}
 	}
@@ -213,10 +213,9 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		}
 		try {
 			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
-			locationId = jObj.getString("locationId");
-			providerId = jObj.getString("providerId");
+			locationId = jObj.getString(MMAPIConstants.JSON_KEY_LOCATION_ID);
+			providerId = jObj.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -281,7 +280,6 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
 			
 			Calendar requestCal = (Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
-			//Log.d(TAG, requestCal.toString());
 			
 			String scheduleMessage = sdfTime.format(requestCal.getTime()) + " on " + sdfDate.format(requestCal.getTime());
 			
@@ -307,7 +305,6 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 
 		@Override
 		public void processCallback(Object obj) {
-			// TODO Auto-generated method stub
 			if(obj != null) {
 				try {
 					JSONObject response = new JSONObject((String)obj);

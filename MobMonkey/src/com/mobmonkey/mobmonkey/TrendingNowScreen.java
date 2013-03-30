@@ -33,8 +33,10 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
  *
  */
 public class TrendingNowScreen extends Activity implements OnItemClickListener {
-
 	private static String TAG = "TrendingNowScreen: ";
+	
+	private JSONArray categories;
+	
 	private SharedPreferences userPrefs;
 	private ListView lvTrending;
 	
@@ -45,85 +47,44 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.trending_now_screen);
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		init();
 	}
 
-	private void init() {
-		lvTrending = (ListView) findViewById(R.id.lvtrending);		
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
-		
-		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
-		for(int i = 0; i < data.length; i++) {
-			data[i] = new MMTrendingItem();
-			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
-			data[i].counter = "0";
-		}
-		
-		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data) {
-			@Override
-			public boolean isEnabled(int position) {
-				Log.d(TAG, TAG + "position: " + position);
-				return false;
-			}			
-		};
-		lvTrending.setAdapter(arrayAdapter);
-		lvTrending.setOnItemClickListener(TrendingNowScreen.this);
-		lvTrending.setEnabled(false);
-		
-		try {
-			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
-					  MMAPIConstants.DEFAULT_STRING));
-			JSONArray categories = cats.toJSONArray(cats.names());
-					//new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
-					  //MMAPIConstants.DEFAULT_STRING));
-			String categoryIds = "";
-			
-			JSONArray topTenCategories = new JSONArray();
-			
-			FindTopTen:
-			for(int i = 0; i < categories.length(); i++) {
-				JSONArray jArr = categories.getJSONArray(i);
-				for(int j = 0; j < jArr.length(); j++) {
-					if(jArr.getJSONObject(j).getString(MMAPIConstants.JSON_KEY_PARENTS).compareTo("432") == 0) {
-						topTenCategories.put(categories.getJSONArray(i));
-					}
-					if(topTenCategories.length() == 10) {
-						break FindTopTen;
-					}
-				}
-			}
-			
-			for(int i = 0; i < topTenCategories.length(); i++) {
-				for(int j = 0; j < topTenCategories.getJSONArray(i).length(); j++) {
-					categoryIds += topTenCategories.getJSONArray(i).getJSONObject(j).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)+",";
-				}
-			}
-			//categoryIds.substring(0, categoryIds.length()-1);
-			
-			if(MMLocationManager.isGPSEnabled()) {
-				MMTrendingAdapter.getTrending(new CountOnlyCallback(), 
-										      MMAPIConstants.URL_TOPVIEWED, 
-										      MMAPIConstants.SEARCH_TIME_DAY, 
-										      true, 
-										      true, 
-										      MMLocationManager.getGPSLocation(new MMLocationListener()).getLatitude(), 
-										      MMLocationManager.getGPSLocation(new MMLocationListener()).getLongitude(), 
-										      MMAPIConstants.SEARCH_RADIUS_FIVE_MILE, 
-										      true, 
-										      categoryIds, 
-										      true, 
-										      MMConstants.PARTNER_ID, 
-											  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-											  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
-			} else {
-				MainScreen.closeProgressDialog();
-			}
-		} catch (JSONException ex) {
-			ex.printStackTrace();
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		Log.d(TAG, TAG + "position clicked: " + position);
+		switch (position) {
+			// bookmarks
+			case 0:
+				break;
+			// my interests
+			case 1:
+				break;
+			// top viewed
+			case 2:
+				
+//				MMTrendingAdapter.getTrending(new TrendingCallback(), 
+//									 		  "topviewed", 
+//											  "week", 
+//											  false, 
+//											  false, 
+//											  0.0d, 
+//											  0.0d, 
+//											  0, 
+//											  false, 
+//											  "", 
+//											  false, 
+//											  MMConstants.PARTNER_ID, 
+//											  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+//											  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+
+				break;
+			// near me
+			case 3:
+				break;
 		}
 	}
-
+	
 	/**
 	 * Handler when back button is pressed, it will not close and destroy the current {@link Activity} but instead it will remain on the current {@link Activity}
 	 */
@@ -134,6 +95,85 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener {
 	public void onBackPressed() {
 		moveTaskToBack(true);
 		return;
+	}
+	
+	private void init() {
+		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		
+		lvTrending = (ListView) findViewById(R.id.lvtrending);
+		
+		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
+		for(int i = 0; i < data.length; i++) {
+			data[i] = new MMTrendingItem();
+			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
+			data[i].counter = "0";
+		}
+		
+		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(TrendingNowScreen.this, R.layout.trending_list_row, data);
+		lvTrending.setAdapter(arrayAdapter);
+		lvTrending.setOnItemClickListener(TrendingNowScreen.this);
+		lvTrending.setEnabled(false);
+		
+		try {
+			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+			categories = cats.toJSONArray(cats.names());
+					//new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
+					  //MMAPIConstants.DEFAULT_STRING));
+			
+			trending(findTopTenCategories());
+		} catch (JSONException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	private String findTopTenCategories() throws JSONException {
+		String categoryIds = MMAPIConstants.DEFAULT_STRING;
+		
+		JSONArray topTenCategories = new JSONArray();
+		
+		FindTopTen:
+		for(int i = 0; i < categories.length(); i++) {
+			JSONArray jArr = categories.getJSONArray(i);
+			for(int j = 0; j < jArr.length(); j++) {
+				if(jArr.getJSONObject(j).getString(MMAPIConstants.JSON_KEY_PARENTS).compareTo("432") == 0) {
+					topTenCategories.put(categories.getJSONArray(i));
+				}
+				if(topTenCategories.length() == 10) {
+					break FindTopTen;
+				}
+			}
+		}
+		
+		for(int i = 0; i < topTenCategories.length(); i++) {
+			for(int j = 0; j < topTenCategories.getJSONArray(i).length(); j++) {
+				categoryIds += topTenCategories.getJSONArray(i).getJSONObject(j).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)+",";
+			}
+		}
+		
+		return categoryIds;
+	}
+	
+	private void trending(String categoryIds) {
+		if(MMLocationManager.isGPSEnabled()) {
+			Location location = MMLocationManager.getGPSLocation(new MMLocationListener());
+			
+			MMTrendingAdapter.getTrending(new CountOnlyCallback(), 
+									      MMAPIConstants.URL_TOPVIEWED, 
+									      MMAPIConstants.SEARCH_TIME_DAY, 
+									      true,
+									      true,
+									      location.getLatitude(), 
+									      location.getLongitude(), 
+									      MMAPIConstants.SEARCH_RADIUS_FIVE_MILE, 
+									      true, 
+									      categoryIds, 
+									      true, 
+									      MMConstants.PARTNER_ID, 
+										  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+										  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+		} else {
+			MainScreen.closeProgressDialog();
+		}
 	}
 	
 	public interface OnTrendingNowLoadFinishListener {
@@ -187,40 +227,5 @@ public class TrendingNowScreen extends Activity implements OnItemClickListener {
 			}
 		}
 		
-	}
-
-	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		Log.d(TAG, TAG + "position clicked: " + position);
-		switch (position) {
-			// bookmarks
-			case 0:
-				break;
-			// my interests
-			case 1:
-				break;
-			// top viewed
-			case 2:
-				
-//				MMTrendingAdapter.getTrending(new TrendingCallback(), 
-//									 		  "topviewed", 
-//											  "week", 
-//											  false, 
-//											  false, 
-//											  0.0d, 
-//											  0.0d, 
-//											  0, 
-//											  false, 
-//											  "", 
-//											  false, 
-//											  MMConstants.PARTNER_ID, 
-//											  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-//											  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
-
-				break;
-			// near me
-			case 3:
-				break;
-		}
 	}
 }

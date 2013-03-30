@@ -1,6 +1,7 @@
 package com.mobmonkey.mobmonkey.utils;
 
 import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -63,9 +64,13 @@ public class MMArrayAdapter extends ArrayAdapter<Object> {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		//TODO: Add icons to the top level categories on search screen here.
-		if(icons.length!=0)
+		if(icons.length != 0)
 			viewHolder.ivIcon.setImageResource(icons[position]);
         viewHolder.tvLabel.setText(items[position]);
+        if(!MMLocationManager.isGPSEnabled()) {
+        	viewHolder.tvLabel.setTextColor(Color.GRAY);
+        }
+        	
         if(indicatorIcons.length!=0)
         	viewHolder.ivIndicatorIcon.setImageResource(indicatorIcons[position]);
         
@@ -78,7 +83,16 @@ public class MMArrayAdapter extends ArrayAdapter<Object> {
         return convertView;
 	}
 	
-    /**
+    @Override
+	public boolean isEnabled(int position) {
+		if(items[position].equals(context.getString(R.string.tv_no_phone_number_available))) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	/**
      * Private class that holds the views of the {@link ListView} row layout
      * @author Dezapp, LLC
      *

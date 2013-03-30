@@ -148,7 +148,7 @@ public class InboxScreen extends Activity implements OnItemClickListener{
 		switch(position) {
 			case 0:
 				// open requests
-				Intent OpenRequestsIntent = new Intent(InboxScreen.this, OpenRequestsScreen.class);
+				Intent OpenRequestsIntent = new Intent(InboxScreen.this, OpenedRequestsScreen.class);
 				OpenRequestsIntent.putExtra(MMAPIConstants.JSON_KEY_OPENREQUESTS, InboxInfo[0].toString());
 				startActivity(OpenRequestsIntent);
 				break;

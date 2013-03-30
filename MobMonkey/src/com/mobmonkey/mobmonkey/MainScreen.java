@@ -207,7 +207,7 @@ public class MainScreen extends TabActivity {
 		addTab(MMAPIConstants.TAB_TITLE_TRENDING_NOW, R.drawable.tab_trendingnow, TrendingNowScreen.class);
 		addTab(MMAPIConstants.TAB_TITLE_INBOX, R.drawable.tab_inbox, InboxScreen.class);
 		addTab(MMAPIConstants.TAB_TITLE_SEARCH, R.drawable.tab_search, SearchScreen.class);
-		addTab(MMAPIConstants.TAB_TITLE_FAVORITES, R.drawable.tab_bookmarks, BookmarksScreen.class);
+		addTab(MMAPIConstants.TAB_TITLE_FAVORITES, R.drawable.tab_bookmarks, FavoritesScreen.class);
 		addTab(MMAPIConstants.TAB_TITLE_SETTINGS, R.drawable.tab_settings, SettingsActivity.class);
 	}
 	
