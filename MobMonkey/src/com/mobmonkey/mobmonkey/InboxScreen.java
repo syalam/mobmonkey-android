@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -104,9 +105,11 @@ public class InboxScreen extends Activity implements OnItemClickListener{
 					InboxInfo[2] = jArr;
 					
 					data[2].counter = Integer.toString(jArr.length());
+					
 					if(jArr.length() > 0) {
 						arrayAdapter.isEnabled(2);
 					}
+					
 					arrayAdapter.notifyDataSetChanged();
 				} catch (JSONException ex) {
 					ex.printStackTrace();
@@ -151,6 +154,15 @@ public class InboxScreen extends Activity implements OnItemClickListener{
 				Intent OpenRequestsIntent = new Intent(InboxScreen.this, OpenedRequestsScreen.class);
 				OpenRequestsIntent.putExtra(MMAPIConstants.JSON_KEY_OPENREQUESTS, InboxInfo[0].toString());
 				startActivity(OpenRequestsIntent);
+				break;
+			case 1:
+				break;
+			case 2:
+				Intent AssignedRequestsIntent = new Intent(InboxScreen.this, AssignedRequestsScreen.class);
+				AssignedRequestsIntent.putExtra(MMAPIConstants.JSON_KEY_ASSIGNEDREQUESTS, InboxInfo[2].toString());
+				startActivity(AssignedRequestsIntent);
+				break;
+			case 3:
 				break;
 		}
 		

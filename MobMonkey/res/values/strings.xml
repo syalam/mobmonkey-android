@@ -81,9 +81,9 @@
 	<!--  Inbox Screen -->
 	<string name="tv_title_inbox">Inbox</string>
 	<string-array name="inbox_category">
-	    <item>Open Requests</item>
-	    <item>Answered Request</item>
-	    <item>Assigned Request</item>
+	    <item>Opened Requests</item>
+	    <item>Answered Requests</item>
+	    <item>Assigned Requests</item>
 	    <item>Notifications</item>
 	</string-array>
 	
@@ -243,7 +243,10 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	
 	<string name="toast_no_gps_access">You have no GPS access at the moment, cannot start MobMonkey</string>
 	
-	<!-- Open Requests Screen -->
-	<string name="tv_title_openrequests">Open Requests</string>
+	<!-- Opened Requests Screen -->
+	<string name="tv_title_openrequests">Opened Requests</string>
+	
+	<!-- Assigned Requests -->
+	<string name="tv_title_assginedrequests">Assigned Requests</string>
 
 </resources>
