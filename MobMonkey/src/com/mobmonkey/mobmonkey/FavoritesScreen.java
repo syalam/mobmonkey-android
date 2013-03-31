@@ -59,7 +59,7 @@ public class FavoritesScreen extends FragmentActivity implements AdapterView.OnI
 	HashMap<Marker, JSONObject> markerHashMap;
 	
 	private MMResultsLocation[] favoriteLocations;
-	private JSONArray bookmarksList;
+	private JSONArray favoritesList;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -94,7 +94,7 @@ public class FavoritesScreen extends FragmentActivity implements AdapterView.OnI
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		try {
 			Intent favLocDetailsIntent = new Intent(FavoritesScreen.this, SearchResultDetailsScreen.class);
-			favLocDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, bookmarksList.getJSONObject(position).toString());
+			favLocDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, favoritesList.getJSONObject(position).toString());
 			startActivity(favLocDetailsIntent);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -165,7 +165,7 @@ public class FavoritesScreen extends FragmentActivity implements AdapterView.OnI
 	
 	private void onCreateBookmarks() {
 		try {
-			bookmarksList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING));
+			favoritesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING));
 			getFavorites();
 			ArrayAdapter<MMResultsLocation> arrayAdapter 
 				= new MMSearchResultsArrayAdapter(FavoritesScreen.this, R.layout.search_result_list_row, favoriteLocations);
@@ -182,8 +182,8 @@ public class FavoritesScreen extends FragmentActivity implements AdapterView.OnI
 	}
 	
 	private void addToGoogleMap() throws JSONException {		
-		for(int i = 0; i < bookmarksList.length(); i++) {
-			JSONObject jObj = bookmarksList.getJSONObject(i);
+		for(int i = 0; i < favoritesList.length(); i++) {
+			JSONObject jObj = favoritesList.getJSONObject(i);
 			
 			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE));
 			
@@ -203,9 +203,9 @@ public class FavoritesScreen extends FragmentActivity implements AdapterView.OnI
 	}
 	
 	private void getFavorites() throws JSONException {
-		favoriteLocations = new MMResultsLocation[bookmarksList.length()];
-		for(int i = 0; i < bookmarksList.length(); i++) {
-			JSONObject jObj = bookmarksList.getJSONObject(i);
+		favoriteLocations = new MMResultsLocation[favoritesList.length()];
+		for(int i = 0; i < favoritesList.length(); i++) {
+			JSONObject jObj = favoritesList.getJSONObject(i);
 			favoriteLocations[i] = new MMResultsLocation();
 			favoriteLocations[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			favoriteLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.miles));
@@ -219,11 +219,11 @@ public class FavoritesScreen extends FragmentActivity implements AdapterView.OnI
 		favoriteLocations = (MMResultsLocation[]) temp.toArray();
 		
 		temp = new ArrayList<JSONObject>();
-		for(int i = 0; i < bookmarksList.length(); i++) {
-			temp.add(bookmarksList.get(i));
+		for(int i = 0; i < favoritesList.length(); i++) {
+			temp.add(favoritesList.get(i));
 		}
 		Collections.reverse(temp);
-		bookmarksList = new JSONArray(temp);
+		favoritesList = new JSONArray(temp);
 	}
 	
 	// callback for bookmark list	
@@ -233,7 +233,7 @@ public class FavoritesScreen extends FragmentActivity implements AdapterView.OnI
 			if(obj != null) {
 				try {
 					Log.d(TAG, TAG + "response: " + ((String) obj));
-					bookmarksList = new JSONArray((String) obj);
+					favoritesList = new JSONArray((String) obj);
 					if(MMLocationManager.isGPSEnabled()) {
 						getFavorites();
 						ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(FavoritesScreen.this, R.layout.search_result_list_row, favoriteLocations);

@@ -38,6 +38,24 @@ public class SettingsActivity extends FragmentActivity implements SettingsFragme
 		}
 	}
 
+	@Override
+	public void onSettingsItemCLick(int position) {		
+		switch(position) {
+			case 0:
+				performTransaction(new MyInfoFragment());
+				break;
+			case 1:
+				performTransaction(new SocialNetworksFragment());
+				break;
+			case 2:
+				performTransaction(new MyInterestsFragment());
+				break;
+			case 3:
+				startActivity(new Intent(SettingsActivity.this, SubscribeScreen.class));
+				break;
+		}
+	}
+	
 	/**
 	 * Handler when back button is pressed, it will not close and destroy the current {@link Activity} but instead it will remain on the current {@link Activity}
 	 */
@@ -58,24 +76,6 @@ public class SettingsActivity extends FragmentActivity implements SettingsFragme
 		
 		moveTaskToBack(true);
 		return;
-	}
-
-	@Override
-	public void onSettingsItemCLick(int position) {		
-		switch(position) {
-			case 0:
-				performTransaction(new MyInfoFragment());
-				break;
-			case 1:
-				performTransaction(new SocialNetworksFragment());
-				break;
-			case 2:
-				performTransaction(new MyInterestsFragment());
-				break;
-			case 3:
-				startActivity(new Intent(SettingsActivity.this, SubscribeScreen.class));
-				break;
-		}
 	}
 	
 	private void performTransaction(MMFragment mmFragment) {

@@ -1,22 +1,30 @@
 package com.mobmonkey.mobmonkey.fragments;
 
-import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -30,72 +38,152 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.mobmonkey.mobmonkey.AddLocationScreen;
 import com.mobmonkey.mobmonkey.R;
 import com.mobmonkey.mobmonkey.SearchResultDetailsScreen;
-import com.mobmonkey.mobmonkey.SearchResultsScreen;
+import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
+import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
+import com.mobmonkey.mobmonkey.utils.MMUtility;
+import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
  * @author Dezapp, LLC
  *
  */
-public class FavoritesFragment extends MMFragment implements OnClickListener, OnInfoWindowClickListener {
-	SharedPreferences userPrefs;
-	Location location;
-	MMResultsLocation[] locations;
-	JSONArray favoritesList;
+public class FavoritesFragment extends MMFragment implements OnClickListener, OnItemClickListener, OnInfoWindowClickListener {
+	private static final String TAG = "FavoritesFragment: ";
 	
-	ImageButton ibMap;
-	Button btnAddLoc;
-	ListView lvFavorites;
-	SupportMapFragment smfResultLocations;
-	GoogleMap googleMap;
+	private SharedPreferences userPrefs;
+	private SharedPreferences.Editor userPrefsEditor;
+	private Location location;
 	
-	HashMap<Marker, JSONObject> markerHashMap;
+	private ImageButton ibMap;
+	private Button btnAddLoc;
+	private ListView lvFavorites;
+	private SupportMapFragment smfFavoriteLocations;
+	private GoogleMap googleMap;
+	private HashMap<Marker, JSONObject> markerHashMap;
+	
+	private MMResultsLocation[] favoriteLocations;
+	private JSONArray favoritesList;
+	
+	private OnMMLocationSelectedListener listener;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, getActivity().MODE_PRIVATE);
+		Log.d(TAG, TAG + "onCreateView");
 		
-		String favorites = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING);
-		if(favorites.equals(MMAPIConstants.DEFAULT_STRING)) {
-			favoritesList = new JSONArray();
-		} else {
-			try {
-				favoritesList = new JSONArray(favorites);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
+		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
+		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_favorites, container, false);
-		
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
 		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
-		smfResultLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmap);
-		
-		// TODO: LocationManager
-		location = null;
-		googleMap = smfResultLocations.getMap();
-		markerHashMap = new HashMap<Marker, JSONObject>();
-		
 		lvFavorites = (ListView) view.findViewById(R.id.lvbookmarks);
+		smfFavoriteLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmap);
 		
+		googleMap = smfFavoriteLocations.getMap();
+		markerHashMap = new HashMap<Marker, JSONObject>();
+
+		ibMap.setOnClickListener(FavoritesFragment.this);
+		btnAddLoc.setOnClickListener(FavoritesFragment.this);
+		lvFavorites.setOnItemClickListener(FavoritesFragment.this);
+		
+		if(userPrefs.getInt(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, View.GONE) == View.VISIBLE) {
+			smfFavoriteLocations.getView().setVisibility(userPrefs.getInt(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, View.GONE));
+			lvFavorites.setVisibility(View.INVISIBLE);
+		} else {
+			smfFavoriteLocations.getView().setVisibility(View.GONE);
+		}
+		
+		return view;
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if(activity instanceof OnMMLocationSelectedListener) {
+			listener = (OnMMLocationSelectedListener) activity;
+		}
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch(view.getId()) {
+			case R.id.ibmap:
+				if(MMLocationManager.isGPSEnabled()) {
+					if(lvFavorites.getVisibility() == View.VISIBLE) {
+						lvFavorites.setVisibility(View.INVISIBLE);
+						smfFavoriteLocations.getView().setVisibility(View.VISIBLE);
+						Log.d(TAG, TAG + "map visibility: " + smfFavoriteLocations.getView().getVisibility());
+					} else if(lvFavorites.getVisibility() == View.INVISIBLE) {
+						lvFavorites.setVisibility(View.VISIBLE);
+						smfFavoriteLocations.getView().setVisibility(View.INVISIBLE);
+					}
+				}
+				break;
+			case R.id.btnaddloc:
+				if(MMLocationManager.isGPSEnabled()) {
+					startActivity(new Intent(getActivity(), AddLocationScreen.class));
+				}
+				break;
+		}
+	}
+	
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		try {
-			getLocations();
-			addToGoogleMap();
+			listener.onLocationSelected(favoritesList.getJSONObject(position));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
-		ibMap.setOnClickListener(FavoritesFragment.this);
-		btnAddLoc.setOnClickListener(FavoritesFragment.this);
-		
-		smfResultLocations.getView().setVisibility(View.INVISIBLE);
-		
-		return view;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.d(TAG, TAG + "onResume");
+		try {
+			refreshFavorites();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onDestroyView() {
+		Log.d(TAG, TAG + "onDestroyView");
+		Log.d(TAG, TAG + "visibility: " + smfFavoriteLocations.getView().getVisibility());
+		userPrefsEditor.putInt(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, smfFavoriteLocations.getView().getVisibility());
+		userPrefsEditor.commit();
+		try {
+			FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+			transaction.remove(smfFavoriteLocations);
+			transaction.commit();
+		} catch (Exception e) {
+			
+		}
+
+		super.onDestroyView();
+	}
+	
+	@Override
+	public void onDestroy() {
+		Log.d(TAG, TAG + "onDestroy");
+		super.onDestroy();
+	}
+
+	@Override
+	public void onDetach() {
+		Log.d(TAG, TAG + "onDetach");
+		super.onDetach();
 	}
 
 	/* (non-Javadoc)
@@ -105,54 +193,68 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	public void onFragmentBackPressed() {
 		
 	}
-
-	@Override
-	public void onClick(View view) {
-		switch(view.getId()) {
-			case R.id.ibmap:
-				if(lvFavorites.getVisibility() == View.VISIBLE) {
-					lvFavorites.setVisibility(View.INVISIBLE);
-					smfResultLocations.getView().setVisibility(View.VISIBLE);
-				} else if(lvFavorites.getVisibility() == View.INVISIBLE) {
-					lvFavorites.setVisibility(View.VISIBLE);
-					smfResultLocations.getView().setVisibility(View.INVISIBLE);
-				}
-				break;
-			case R.id.btnaddloc:
-				break;
-		}
-	}
 	
 	/* (non-Javadoc)
 	 * @see com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener#onInfoWindowClick(com.google.android.gms.maps.model.Marker)
 	 */
 	@Override
 	public void onInfoWindowClick(Marker marker) {
-		JSONObject jObj = markerHashMap.get((Marker) marker);
+		listener.onLocationSelected(markerHashMap.get((Marker) marker));
+	}
+	
+	/**
+	 * Make a call to the server and refresh the Favorites list
+	 * @throws JSONException 
+	 */
+	private void refreshFavorites() throws JSONException {
+		favoritesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING));
+		getFavorites();
+		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.search_result_list_row, favoriteLocations);
+		lvFavorites.setAdapter(arrayAdapter);
+		addToGoogleMap();
 		
-		Intent locDetailsIntent = new Intent(getActivity(), SearchResultDetailsScreen.class);
-		locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
-		locDetailsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
-		startActivity(locDetailsIntent);
+//		MMBookmarksAdapter.getBookmarks(new FavoritesCallback(), 
+//										MMAPIConstants.URL_BOOKMARKS, 
+//										MMConstants.PARTNER_ID, 
+//										userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+//										userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 	}
 	
 	/**
 	 * 
 	 * @throws JSONException
 	 */
-	private void getLocations() throws JSONException {
-		locations = new MMResultsLocation[favoritesList.length()];
+	private void getFavorites() throws JSONException {
+		favoriteLocations = new MMResultsLocation[favoritesList.length()];
 		for(int i = 0; i < favoritesList.length(); i++) {
 			JSONObject jObj = favoritesList.getJSONObject(i);
-			locations[i] = new MMResultsLocation();
-			locations[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
-			locations[i].setLocDist(calcDist(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles));
-			locations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
+			favoriteLocations[i] = new MMResultsLocation();
+			favoriteLocations[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
+			favoriteLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles));
+			favoriteLocations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
 									jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE));
 		}
+		
+		// reverse array
+		List temp = Arrays.asList(favoriteLocations);
+		Collections.reverse(temp);
+		favoriteLocations = (MMResultsLocation[]) temp.toArray();
+		
+		temp = new ArrayList<JSONObject>();
+		for(int i = 0; i < favoritesList.length(); i++) {
+			temp.add(favoritesList.get(i));
+		}
+		Collections.reverse(temp);
+		favoritesList = new JSONArray(temp);
 	}
 	
-	private void addToGoogleMap() throws JSONException {		
+	/**
+	 * 
+	 * @throws JSONException
+	 */
+	private void addToGoogleMap() throws JSONException {
+		markerHashMap.clear();
+		googleMap.clear();
 		for(int i = 0; i < favoritesList.length(); i++) {
 			JSONObject jObj = favoritesList.getJSONObject(i);
 			
@@ -172,23 +274,31 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		googleMap.setOnInfoWindowClickListener(FavoritesFragment.this);
 		googleMap.setMyLocationEnabled(true);
 	}
-	
-	private String calcDist(double latitude, double longitude) {
-		LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-		Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		
-		Location favoriteLocation = new Location(location);
-		favoriteLocation.setLatitude(latitude);
-		favoriteLocation.setLongitude(longitude);
-		
-		return convertMetersToMiles(location.distanceTo(favoriteLocation));
-	}
 
-	private String convertMetersToMiles(double dist) {
-		dist = dist * 0.000621371f;
-		
-		return new DecimalFormat("#.##").format(dist) + MMAPIConstants.DEFAULT_SPACE;
+	public interface OnMMLocationSelectedListener {
+		public void onLocationSelected(Object obj);
 	}
+	
+//	private class FavoritesCallback implements MMCallback {
+//		@Override
+//		public void processCallback(Object obj) {
+//			if(obj != null) {
+//				try {
+//					Log.d(TAG, TAG + "response: " + ((String) obj));
+//					favoritesList = new JSONArray((String) obj);
+//					if(MMLocationManager.isGPSEnabled()) {
+//						getFavorites();
+//						ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.search_result_list_row, favoriteLocations);
+//						lvFavorites.setAdapter(arrayAdapter);
+//						addToGoogleMap();
+//					}
+//				} catch (JSONException e) {
+//					
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//	}
 	
 	/**
 	 * 

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundcolor"
+    android:orientation="vertical">
+    
+	<RelativeLayout android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp"
+		android:background="@drawable/navigation_bar">
+		
+		<TextView android:id="@+id/tvlocnametitle"
+		    android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:lines="1"
+			android:maxLines="1"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textColor="@android:color/white"
+			android:textStyle="bold"/>
+		
+	</RelativeLayout>
+	
+	<ScrollView android:layout_width="match_parent"
+	    android:layout_height="match_parent">
+	    
+	    <LinearLayout android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical"
+	        android:paddingLeft="10dp"
+	        android:paddingRight="10dp"
+	        android:paddingTop="10dp"
+	        android:paddingBottom="10dp">
+	        
+	        <TextView android:id="@+id/tvlocname"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="5dp"
+	            android:layout_marginBottom="5dp"
+	            android:textAppearance="@android:style/TextAppearance.Medium"
+	            android:textStyle="bold"/>
+	        
+	        <LinearLayout android:id="@+id/llmakerequest"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:background="@drawable/orange_button_background"
+	            android:padding="20dp"
+	            android:onClick="viewOnClick">
+	            
+	            <TextView android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="center"
+	                android:text="@string/tv_make_request"
+	                android:textAppearance="@android:style/TextAppearance.Medium"
+	                android:textColor="@android:color/white"
+	                android:textStyle="bold"/>
+	            
+	            <TextView android:id="@+id/tvmembersfound"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="center"
+	                android:textAppearance="@android:style/TextAppearance.Small"
+	                android:textColor="@android:color/white"/>
+	            
+	        </LinearLayout>
+	        
+	        <com.mobmonkey.mobmonkey.utils.MMExpandedListView android:id="@+id/elvlocdetails"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="20dp"
+	            android:cacheColorHint="@android:color/transparent"
+				android:scrollbars="none"
+				android:background="@drawable/listview_border"
+				android:divider="@drawable/listview_divider"
+				android:dividerHeight="1dp"/>
+	        
+			<LinearLayout android:id="@+id/llfavorite"
+			    android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_marginTop="15dp"
+				android:orientation="horizontal"
+				android:padding="10dp"
+				android:background="@drawable/listview_border">
+				
+				<ImageView android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="left|center"
+				    android:layout_margin="5dp"
+				    android:src="@drawable/cat_icon_bookmark_icon"/>
+				
+				<TextView android:id="@+id/tvfavorite"
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center"
+				    android:layout_marginLeft="5dp"
+				    android:text="@string/tv_favorite"
+   	                android:textAppearance="@android:style/TextAppearance.Medium"/>
+	
+			</LinearLayout>
+	        
+	    </LinearLayout>
+	    
+	</ScrollView>
+    
+</LinearLayout>

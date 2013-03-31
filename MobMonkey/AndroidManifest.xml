@@ -134,6 +134,11 @@
 		    
 		</activity>
 		
+		<activity android:name=".FavoritesActivity"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
+		
 		<activity android:name=".SettingsActivity"
 		    android:screenOrientation="portrait">
 		    
