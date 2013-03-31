@@ -50,6 +50,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	
 	private TextView tvLocNameTitle;
 	private TextView tvLocName;
+	private LinearLayout llMakeRequest;
 	private TextView tvMembersFound;
 	private MMExpandedListView elvLocDetails;
 	private LinearLayout llFavorite;
@@ -65,6 +66,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		
 		tvLocNameTitle = (TextView) view.findViewById(R.id.tvlocnametitle);
 		tvLocName = (TextView) view.findViewById(R.id.tvlocname);
+		llMakeRequest = (LinearLayout) view.findViewById(R.id.llmakerequest);
 		tvMembersFound = (TextView) view.findViewById(R.id.tvmembersfound);
 		elvLocDetails = (MMExpandedListView) view.findViewById(R.id.elvlocdetails);
 		llFavorite = (LinearLayout) view.findViewById(R.id.llfavorite);
@@ -137,8 +139,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		details[2] = getString(R.string.tv_add_notifications);
 		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(getActivity(), R.layout.mm_listview_row, icons, details, indicatorIcons, android.R.style.TextAppearance_Small, Typeface.DEFAULT, null);
 		elvLocDetails.setAdapter(arrayAdapter);
-		elvLocDetails.setOnItemClickListener(LocationDetailsFragment.this);
 		
+		llMakeRequest.setOnClickListener(LocationDetailsFragment.this);
+		elvLocDetails.setOnItemClickListener(LocationDetailsFragment.this);
 		llFavorite.setOnClickListener(LocationDetailsFragment.this);
 		
 		for(int i = 0; i < favoritesList.length(); i++) {
