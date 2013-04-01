@@ -43,6 +43,104 @@
 	            android:textAppearance="@android:style/TextAppearance.Medium"
 	            android:textStyle="bold"/>
 	        
+	        <!-- RelativeLayout to overlapping imageview, videoview, and messageview -->
+	        <RelativeLayout
+					android:orientation="vertical"
+					android:layout_width="wrap_content"
+			       	android:layout_height="wrap_content">
+
+				<TextView 
+				    android:id="@+id/tvthumbnail"
+				    android:layout_width="wrap_content" 
+				    android:layout_height="wrap_content"/>
+				<VideoView 
+				    android:id="@+id/vvthumbnail"
+				    android:layout_width="wrap_content" 
+				    android:layout_height="wrap_content"/>
+				<ImageView 
+				    android:id="@+id/ivthumbnail"
+				    android:layout_width="wrap_content" 
+				    android:layout_height="wrap_content"/>
+	            
+	        </RelativeLayout>
+	        
+	        <!-- buttons to switch between thumbnail -->
+			<LinearLayout 
+			    android:id="@+id/btngrouplayout"
+			    android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal"
+	            android:padding="3dp"
+	            android:visibility="gone">
+				<FrameLayout 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+		            android:layout_marginRight="7dp"
+				    >
+				    <ImageButton
+		            android:id="@+id/btntextview"
+		            android:layout_width="90dp"
+		            android:layout_height="62dp"
+		            android:background="@drawable/btn_text_icon"
+		            android:focusable="true" />
+				    <TextView 
+				        android:id="@+id/tvtextcounter"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="top|right"
+						android:layout_marginTop="5dp"
+						android:layout_marginRight="10dp"
+						android:textColor="@color/white"
+						android:text=""
+						/>
+				</FrameLayout>
+			    <FrameLayout 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+		            android:layout_marginLeft="5dp"
+		            android:layout_marginRight="5dp"
+				    >
+			        <ImageButton
+			            android:id="@+id/btnvideoview"
+			            android:layout_width="90dp"
+			            android:layout_height="62dp"
+			            android:background="@drawable/btn_video_icon"
+			            android:focusable="true" />
+		        	<TextView 
+				        android:id="@+id/tvvideocounter"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="top|right"
+						android:layout_marginTop="5dp"
+						android:layout_marginRight="10dp"
+						android:textColor="@color/white"
+						android:text=""
+						/>
+				</FrameLayout>
+				<FrameLayout 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+		            android:layout_marginLeft="5dp"
+				    >
+			        <ImageButton
+			            android:id="@+id/btnimageview"
+			            android:layout_width="90dp"
+			            android:layout_height="62dp"
+			            android:background="@drawable/btn_picture_icon"
+			            android:focusable="true" />
+			        <TextView 
+				        android:id="@+id/tvimagecounter"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="top|right"
+						android:layout_marginTop="5dp"
+						android:layout_marginRight="10dp"
+						android:textColor="@color/white"
+						android:text=""
+						/>
+				</FrameLayout>
+			</LinearLayout>
+	        
 	        <LinearLayout android:id="@+id/llmakerequest"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
