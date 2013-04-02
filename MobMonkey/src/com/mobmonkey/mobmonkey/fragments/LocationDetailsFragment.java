@@ -1,14 +1,11 @@
 package com.mobmonkey.mobmonkey.fragments;
 
-import java.util.ArrayList;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkey.MakeARequestScreen;
 import com.mobmonkey.mobmonkey.R;
-import com.mobmonkey.mobmonkey.SearchLocationResultMapScreen;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
@@ -17,12 +14,12 @@ import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,12 +54,14 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private TextView tvFavorite;
 	private ProgressDialog progressDialog;
 	
+	private OnLocationDetailsItemClickListener listener;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
-		View view = inflater.inflate(R.layout.fragment_locationdetails, container, false);
+		View view = inflater.inflate(R.layout.fragment_locationdetails_screen, container, false);
 		
 		tvLocNameTitle = (TextView) view.findViewById(R.id.tvlocnametitle);
 		tvLocName = (TextView) view.findViewById(R.id.tvlocname);
@@ -89,29 +88,35 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	}
 
 	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if(activity instanceof OnLocationDetailsItemClickListener) {
+			listener = (OnLocationDetailsItemClickListener) activity;
+		}
+	}
+
+	@Override
 	public void onClick(View view) {
 		switch(view.getId()) {
-		case R.id.llmakerequest:
-			Intent intent = new Intent(getActivity(), MakeARequestScreen.class);
-			intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, locationDetails.toString());
-			startActivity(intent);
-			break;
-		case R.id.llfavorite:
-			favoriteClicked();
-			break;
-	}
+			case R.id.llmakerequest:
+				Intent intent = new Intent(getActivity(), MakeARequestScreen.class);
+				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, locationDetails.toString());
+				startActivity(intent);
+				break;
+			case R.id.llfavorite:
+				favoriteClicked();
+				break;
+		}
 	}
 	
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
 		if(position == 0) {
-			Intent dialerIntent = new Intent(Intent.ACTION_DIAL);
-			dialerIntent.setData(Uri.parse("tel:" + ((TextView)view.findViewById(R.id.tvlabel)).getText().toString()));
-			startActivity(dialerIntent);
+			listener.onLocationDetailsItem(position, ((TextView)view.findViewById(R.id.tvlabel)).getText().toString());
 		} else if(position == 1) {
-			Intent mapIntent = new Intent(getActivity(), SearchLocationResultMapScreen.class);
-			mapIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, locationDetails.toString());
-			startActivity(mapIntent);
+			listener.onLocationDetailsItem(position, locationDetails.toString());
+		} else if(position == 2) {
+			listener.onLocationDetailsItem(position, MMAPIConstants.DEFAULT_STRING);
 		}
 	}
 
@@ -192,6 +197,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				MMConstants.PARTNER_ID, 
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+	}
+	
+	public interface OnLocationDetailsItemClickListener {
+		public void onLocationDetailsItem(int position, Object obj);
 	}
 	
 	private class AddFavoriteCallback implements MMCallback {
