@@ -89,12 +89,12 @@
 		    
 		</activity>
 		
-		<activity android:name=".TrendingNowScreen"
+		<activity android:name=".TrendingNowActivity"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
-		
-		<activity android:name=".InboxScreen"
+
+		<activity android:name=".InboxActivity"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
@@ -125,11 +125,6 @@
 		</activity>
 		
 		<activity android:name=".MakeARequestScreen"
-		    android:screenOrientation="portrait">
-		    
-		</activity>
-		
-		<activity android:name=".FavoritesScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>

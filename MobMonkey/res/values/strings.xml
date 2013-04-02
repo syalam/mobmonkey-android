@@ -87,6 +87,12 @@
 	    <item>Notifications</item>
 	</string-array>
 	
+	<!-- Opened Requests Fragment -->
+	<string name="tv_title_openrequests">Opened Requests</string>
+	
+	<!-- Assigned Requests Fragment -->
+	<string name="tv_title_assignedrequests">Assigned Requests</string>
+	
 	<!-- Send Request Screen -->
 	<string name="toast_request_successful">Successfully sent request</string>
 	
@@ -242,11 +248,5 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	<string name="tv_title_top_viewed">Top Viewed</string>
 	
 	<string name="toast_no_gps_access">You have no GPS access at the moment, cannot start MobMonkey</string>
-	
-	<!-- Opened Requests Screen -->
-	<string name="tv_title_openrequests">Opened Requests</string>
-	
-	<!-- Assigned Requests -->
-	<string name="tv_title_assginedrequests">Assigned Requests</string>
 
 </resources>

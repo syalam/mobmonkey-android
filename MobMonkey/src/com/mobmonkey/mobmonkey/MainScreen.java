@@ -204,8 +204,8 @@ public class MainScreen extends TabActivity {
 	 * Function that set the tabs and the corresponding {@link Activity} for the {@link TabHost}
 	 */
 	private void setTabs() {
-		addTab(MMAPIConstants.TAB_TITLE_TRENDING_NOW, R.drawable.tab_trendingnow, TrendingNowScreen.class);
-		addTab(MMAPIConstants.TAB_TITLE_INBOX, R.drawable.tab_inbox, InboxScreen.class);
+		addTab(MMAPIConstants.TAB_TITLE_TRENDING_NOW, R.drawable.tab_trendingnow, TrendingNowActivity.class);
+		addTab(MMAPIConstants.TAB_TITLE_INBOX, R.drawable.tab_inbox, InboxActivity.class);
 		addTab(MMAPIConstants.TAB_TITLE_SEARCH, R.drawable.tab_search, SearchScreen.class);
 		addTab(MMAPIConstants.TAB_TITLE_FAVORITES, R.drawable.tab_bookmarks, FavoritesActivity.class);
 		addTab(MMAPIConstants.TAB_TITLE_SETTINGS, R.drawable.tab_settings, SettingsActivity.class);

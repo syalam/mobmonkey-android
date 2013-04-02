@@ -13,6 +13,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,17 +35,17 @@ import android.widget.Toast;
 public class SettingsFragment extends MMFragment implements OnClickListener, OnItemClickListener {
 	private final static String TAG = "SettingsFragment: ";
 	
-	SharedPreferences userPrefs;
-	SharedPreferences.Editor userPrefsEditor;
+	private SharedPreferences userPrefs;
+	private SharedPreferences.Editor userPrefsEditor;
 	
 	private OnItemClickListener listener;
-	ProgressDialog progressDialog;
-	ListView lvSettingsCategory;
+	private ProgressDialog progressDialog;
+	private ListView lvSettingsCategory;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, getActivity().MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
 		View view = inflater.inflate(R.layout.fragment_settings_screen, container, false);
@@ -81,7 +82,7 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		listener.onSettingsItemCLick(position);
+		listener.onSettingsItemClick(position);
 	}
 
 	@Override
@@ -90,7 +91,7 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 	}
 	
 	public interface OnItemClickListener {
-		public void onSettingsItemCLick(int position);
+		public void onSettingsItemClick(int position);
 	}
 	
     /**

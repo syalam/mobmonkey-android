@@ -49,25 +49,26 @@ public final class MMAPIConstants {
 
 	// SharePreferences Key
 	public static final String USER_PREFS = "User Preferences";
-	public static final String SHARED_PREFS_KEY_HISTORY = "history";
-	public static final String SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES = "Top level categories";
 	public static final String SHARED_PREFS_KEY_ALL_CATEGORIES = "All categories";
-	public static final String SHARED_PREFS_KEY_SEARCH_RADIUS = "Search radius";
-	public static final String SHARED_PREFS_KEY_NARROW_BY_LIVE_VIDEO = "Narrow by live video";
-	public static final String SHARED_PREFS_KEY_CATEGORY_LIST = "categoryList";
 	public static final String SHARED_PREFS_KEY_BOOKMARKS = "bookmarks";
+	public static final String SHARED_PREFS_KEY_CATEGORY_LIST = "categoryList";
+	public static final String SHARED_PREFS_KEY_HISTORY = "history";
+	public static final String SHARED_PREFS_KEY_NARROW_BY_LIVE_VIDEO = "Narrow by live video";
+	public static final String SHARED_PREFS_KEY_SEARCH_RADIUS = "Search radius";
+	public static final String SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES = "Top level categories";
 	
-	// Intent extra key values
+	// Intent extra/Bundle key values
 	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
-	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
-	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
 	public static final String KEY_INTENT_EXTRA_DISPLAY_MAP = "Display map";
+	public static final String KEY_INTENT_EXTRA_INBOX_REQUESTS = "Inbox requests";
 	public static final String KEY_INTENT_EXTRA_LOCATION = "Location";
 	public static final String KEY_INTENT_EXTRA_LOCATION_DETAILS = "Location details";
 	public static final String KEY_INTENT_EXTRA_MESSAGE = "Message";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING = "Repeating";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
+	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
+	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
 	
 	// MobMonkey server call key values
@@ -148,6 +149,7 @@ public final class MMAPIConstants {
 	// JSON key values
 	public static final String JSON_KEY_ADDRESS = "address";
 	public static final String JSON_KEY_ADDRESS_EXT = "address_ext";
+	public static final String JSON_KEY_ASSIGNED_REQUESTS = "assignedrequests";
 	public static final String JSON_KEY_BOOKMARK_COUNT = "bookmarkCount";
 	public static final String JSON_KEY_CATEGORY_ID = "categoryId";
 	public static final String JSON_KEY_CATEGORY_IDS = "categoryIds";
@@ -161,7 +163,9 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_LOCALITY = "locality";
 	public static final String JSON_KEY_LOCATION_ID = "locationId";
 	public static final String JSON_KEY_LONGITUDE = "longitude";
+	public static final String JSON_KEY_MEDIA = "media";
 	public static final String JSON_KEY_MEDIA_TYPE = "mediaType";
+	public static final String JSON_KEY_MEDIA_URL = "mediaURL";
 	public static final String JSON_KEY_MESSAGE = "message";
 	public static final String JSON_KEY_MONKEYS = "monkeys";	
 	public static final String JSON_KEY_NAME = "name";
@@ -181,7 +185,6 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_STATUS = "status";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
 	public static final String JSON_KEY_WEBSITE = "website";
-	public static final String JSON_KEY_ASSIGNEDREQUESTS = "assginedrequests";
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;

@@ -39,7 +39,7 @@ public class SettingsActivity extends FragmentActivity implements SettingsFragme
 	}
 
 	@Override
-	public void onSettingsItemCLick(int position) {		
+	public void onSettingsItemClick(int position) {		
 		switch(position) {
 			case 0:
 				performTransaction(new MyInfoFragment());

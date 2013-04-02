@@ -1,6 +1,8 @@
 package com.mobmonkey.mobmonkey.utils;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import android.location.Location;
 
@@ -37,5 +39,17 @@ public final class MMUtility {
 		dist = dist * 0.000621371f;
 		
 		return new DecimalFormat("#.##").format(dist);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static String getDate(long milliSeconds, String format) {
+		Calendar calendar = Calendar.getInstance();
+	     calendar.setTimeInMillis(milliSeconds);
+	     
+	     SimpleDateFormat sdf = new SimpleDateFormat(format);
+	     return sdf.format(calendar.getTime());
 	}
 }
