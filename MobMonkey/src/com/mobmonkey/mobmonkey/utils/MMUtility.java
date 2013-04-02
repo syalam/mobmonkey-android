@@ -47,9 +47,9 @@ public final class MMUtility {
 	 */
 	public static String getDate(long milliSeconds, String format) {
 		Calendar calendar = Calendar.getInstance();
-	     calendar.setTimeInMillis(milliSeconds);
+	    calendar.setTimeInMillis(milliSeconds);
 	     
-	     SimpleDateFormat sdf = new SimpleDateFormat(format);
-	     return sdf.format(calendar.getTime());
+	    SimpleDateFormat sdf = new SimpleDateFormat(format);
+	    return sdf.format(calendar.getTime());
 	}
 }

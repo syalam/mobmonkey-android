@@ -1,18 +1,25 @@
 package com.mobmonkey.mobmonkey;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Stack;
 
 import com.mobmonkey.mobmonkey.fragments.AssignedRequestsFragment;
 import com.mobmonkey.mobmonkey.fragments.InboxFragment;
 import com.mobmonkey.mobmonkey.fragments.InboxFragment.OnInboxItemClickListener;
 import com.mobmonkey.mobmonkey.fragments.OpenedRequestsFragment;
+import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
+import com.mobmonkey.mobmonkeyapi.adapters.MMAnswerRequestAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Base64;
 
 /**
  * @author Dezapp, LLC
@@ -38,6 +45,7 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 			InboxFragment inboxFragment = new InboxFragment();
 			fragmentManager.beginTransaction().add(R.id.llfragmentcontainer, fragmentStack.push(inboxFragment)).commit();
 		}
+		
 	}
 	
 	/*
@@ -95,4 +103,5 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.push(mmFragment));
 		fragmentTransaction.commit();		
 	}
+	
 }

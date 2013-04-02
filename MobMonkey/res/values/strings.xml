@@ -159,6 +159,10 @@
 	    <item>Subscribe</item>
 	</string-array>
 	
+	<string name="et_hint_new_password">New Password</string>
+	
+	<string name="et_hint_confirm_password">Confirm Password</string>
+	
 	<string name="btn_sign_out">Sign Out</string>
 	
 	<string name="pd_signing_out">Signing out&#8230;</string>

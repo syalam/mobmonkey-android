@@ -2,6 +2,7 @@ package com.mobmonkey.mobmonkeyapi.adapters;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
@@ -166,5 +167,18 @@ public final class MMSignUpAdapter {
 		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
 		
 		new MMPostAsyncTask(mmCallback).execute(httpPost);
+	}
+	
+	public static void getUserInfo(MMCallback mmCallback, String partnerId, String emailAddress, String password)
+	{
+		signUpURL = MMAPIConstants.MOBMONKEY_URL + "user";
+		
+		HttpGet httpGet = new HttpGet(signUpURL);
+		httpGet.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+		httpGet.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+		httpGet.setHeader(MMAPIConstants.KEY_USER, emailAddress);
+		httpGet.setHeader(MMAPIConstants.KEY_AUTH, password);
+		
+		new MMGetAsyncTask(mmCallback).execute(httpGet);
 	}
 }
