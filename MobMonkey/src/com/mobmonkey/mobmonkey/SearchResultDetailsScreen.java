@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +37,9 @@ public class SearchResultDetailsScreen extends Activity {
 	
 	JSONObject jObj;
 	
-	TextView tvBookmark;
+	TextView tvBookmark, tvtextcounter, tvimagecounter, tvvideocounter;
+	LinearLayout btngrouplayout;
+	ImageButton btntextview, btnvideoview, btnimageview;
 	
 	SharedPreferences userPrefs;
 	SharedPreferences.Editor userPrefsEditor;
@@ -53,15 +57,60 @@ public class SearchResultDetailsScreen extends Activity {
 		TextView tvMembersFound = (TextView) findViewById(R.id.tvmembersfound);
 		MMExpandedListView elvLocDetails = (MMExpandedListView) findViewById(R.id.elvlocdetails);
 		tvBookmark = (TextView) findViewById(R.id.tvbookmark);
+		btngrouplayout = (LinearLayout) findViewById(R.id.btngrouplayout);
 		
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
 		try {
 			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			
 			tvLocNameTitle.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvLocName.setText(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			tvMembersFound.setText(jObj.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));
+			
+			// check if there is any type of media stored for that location
+			int livestreaming, videos, images;
+			try {
+				livestreaming = jObj.getInt("livestreaming");
+				videos = jObj.getInt("videos");
+				images = jObj.getInt("images");
+				
+				if(livestreaming > 0 || videos > 0 || images > 0) {
+					btngrouplayout.setVisibility(View.VISIBLE);
+					btntextview = (ImageButton) findViewById(R.id.btntextview);
+					btnvideoview = (ImageButton) findViewById(R.id.btnvideoview);
+					btnimageview = (ImageButton) findViewById(R.id.btnimageview);
+		
+					tvtextcounter = (TextView) findViewById(R.id.tvtextcounter);
+					tvimagecounter = (TextView) findViewById(R.id.tvimagecounter);
+					tvvideocounter = (TextView) findViewById(R.id.tvimagecounter);
+					
+					if(livestreaming == 0) {
+						// TODO: set imagebutton's src to button disable
+					}
+					else {
+						tvtextcounter.setText(livestreaming + MMAPIConstants.DEFAULT_STRING);
+					}
+					
+					if(videos == 0) {
+						// TODO: set imagebutton's src to button disable
+					}
+					else {
+						tvimagecounter.setText(videos + MMAPIConstants.DEFAULT_STRING);
+					}
+					
+					if(images == 0) {
+						// TODO: set imagebutton's src to button disable
+					}
+					else {
+						tvvideocounter.setText(images + MMAPIConstants.DEFAULT_STRING);
+					}
+				}
+				
+			} catch (JSONException ex) {
+				ex.printStackTrace();
+			}
 			
 			// check if this location is alreayd in bookmark
 			//tvBookmark.setText(jObj.getBoolean("bookmark")? getString(R.string.tv_remove_bookmark):getString(R.string.tv_bookmark));
