@@ -45,7 +45,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		try {
-			assignedRequests = new JSONArray(getArguments().getString(MMAPIConstants.JSON_KEY_ASSIGNED_REQUESTS));
+			assignedRequests = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS));
 			arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, getAssignedRequestItems());
 			lvAssignedRequests.setAdapter(arrayAdapter);
 		} catch (JSONException e) {

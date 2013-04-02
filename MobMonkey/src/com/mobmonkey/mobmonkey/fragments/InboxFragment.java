@@ -41,7 +41,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	
 	private OnInboxItemClickListener listener;
 	
-	private ArrayList<JSONArray> inboxRequests;
+	private JSONArray[] inboxRequests;
 	
 	/*
 	 * (non-Javadoc)
@@ -54,7 +54,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		View view = inflater.inflate(R.layout.fragment_inbox_screen, container, false);
 		lvInbox = (ListView) view.findViewById(R.id.lvinbox);
 		
-		inboxRequests = new ArrayList<JSONArray>();
+		inboxRequests = new JSONArray[4];
 		
 		lvInbox.setOnItemClickListener(InboxFragment.this);
 		inboxUpdate();
@@ -79,7 +79,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
-		listener.onInboxItemClick(position, inboxRequests.get(position).toString());
+		listener.onInboxItemClick(position, inboxRequests[position].toString());
 	}
 	
 	/* (non-Javadoc)
@@ -128,7 +128,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 				try {
 					JSONArray jArr = new JSONArray((String) obj);
 					
-					inboxRequests.add(jArr);
+					inboxRequests[0] = jArr;
 					
 					inboxItems[0].counter = Integer.toString(jArr.length());
 					if(jArr.length() > 0) {
@@ -149,7 +149,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 				try {
 					JSONArray jArr = new JSONArray((String) obj);
 					
-					inboxRequests.add(jArr);
+					inboxRequests[2] = jArr;
 					
 					inboxItems[2].counter = Integer.toString(jArr.length());
 					
