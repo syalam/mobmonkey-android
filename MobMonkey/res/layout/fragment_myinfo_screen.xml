@@ -47,6 +47,22 @@
 				android:layout_marginRight="20dp"
 				android:hint="@string/et_hint_emailaddress"
 				android:inputType="text"/>
+			
+			<EditText android:id="@+id/etnewpassword"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp"
+				android:hint="@string/et_hint_new_password"
+				android:inputType="textPassword"/>
+			
+			<EditText android:id="@+id/etconfirmpassword"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp"
+				android:hint="@string/et_hint_confirm_password"
+				android:inputType="textPassword"/>
 					
 			<EditText android:id="@+id/etbirthdate"
 				android:layout_width="match_parent"
