@@ -131,6 +131,8 @@ public final class MMAPIConstants {
 	// Request code values
 	public static final String REQUEST_CODE = "Request code";
 	
+	public static final int REQUEST_CODE_IMAGE = 1;
+	public static final int REQUEST_CODE_VIDEO = 2;
 	public static final int REQUEST_CODE_SIGN_IN_TWITTER_AUTH = 1000;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER_AUTH = 1001;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2000;
@@ -185,6 +187,9 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_STATUS = "status";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
 	public static final String JSON_KEY_WEBSITE = "website";
+	public static final String JSON_KEY_REQUESTID = "requestId";
+	public static final String JSON_KEY_MEDIADATA = "mediaData";
+	public static final String JSON_KEY_UPLOADEDDATE = "uploadedDate";
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;

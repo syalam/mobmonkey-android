@@ -1,24 +1,39 @@
 package com.mobmonkey.mobmonkey.fragments;
 
+import java.io.ByteArrayOutputStream;
+
 import java.text.ParseException;
+import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkey.R;
 import com.mobmonkey.mobmonkey.utils.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMAssignedRequestsItem;
+import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkey.utils.MMUtility;
+import com.mobmonkey.mobmonkeyapi.adapters.MMAnswerRequestAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
@@ -32,7 +47,9 @@ public class AssignedRequestsFragment extends MMFragment {
 	private Location location;
 	private ListView lvAssignedRequests;
 	private JSONArray assignedRequests;
-	MMAssignedRequestsArrayAdapter arrayAdapter;
+	private MMAssignedRequestsArrayAdapter arrayAdapter;
+	private SharedPreferences userPrefs;
+	private int positionClicked;
 	
 	/*
 	 * (non-Javadoc)
@@ -48,6 +65,7 @@ public class AssignedRequestsFragment extends MMFragment {
 			assignedRequests = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS));
 			arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, getAssignedRequestItems());
 			lvAssignedRequests.setAdapter(arrayAdapter);
+			lvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (NumberFormatException e) {
@@ -96,5 +114,74 @@ public class AssignedRequestsFragment extends MMFragment {
 		}
 		
 		return assginedRequestItems;
+	}
+	
+	private class onAssignedRequestsClick implements OnItemClickListener {
+
+		@Override
+		public void onItemClick(AdapterView<?> adapterView, View view, int position,
+				long id) {
+			//Log.d(TAG, "itemClicked: " + position);
+			positionClicked = position;
+			try {
+				JSONObject data = assignedRequests.getJSONObject(position);
+				
+				switch(data.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE)) {
+					// Image request
+					case 1:
+						Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+						startActivityForResult(takePictureIntent, MMAPIConstants.REQUEST_CODE_IMAGE);
+						break;
+					// Video request
+					case 2:
+						break;
+					default:
+						break;
+				}
+			} catch (JSONException ex) {
+				
+			}
+		}
+		
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		if(requestCode == MMAPIConstants.REQUEST_CODE_IMAGE) {
+			Bundle extras = data.getExtras();
+			Bitmap mImageBitmap = (Bitmap) extras.get("data");
+			
+			// encode image to Base64 String
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+			byte[] b = baos.toByteArray();
+			String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
+			Log.d(TAG, imageEncoded);
+			
+			try {
+				MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
+											   MMConstants.PARTNER_ID, 
+											   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+											   userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING), 
+											   assignedRequests.getJSONObject(positionClicked).getString(MMAPIConstants.JSON_KEY_REQUESTID), 
+											   imageEncoded, 
+											   new Date().getTime(), 
+											   1);
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}					   
+		}
+	}
+	
+	private class mmAnswerRequest implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			Log.d(TAG, (String) obj);
+		}
+		
 	}
 }
