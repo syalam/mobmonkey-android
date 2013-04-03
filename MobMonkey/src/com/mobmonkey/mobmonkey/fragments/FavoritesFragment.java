@@ -119,14 +119,15 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		switch(view.getId()) {
 			case R.id.ibmap:
 				if(MMLocationManager.isGPSEnabled()) {
-					if(lvFavorites.getVisibility() == View.VISIBLE) {
-						lvFavorites.setVisibility(View.INVISIBLE);
-						smfFavoriteLocations.getView().setVisibility(View.VISIBLE);
-						Log.d(TAG, TAG + "map visibility: " + smfFavoriteLocations.getView().getVisibility());
-					} else if(lvFavorites.getVisibility() == View.INVISIBLE) {
-						lvFavorites.setVisibility(View.VISIBLE);
-						smfFavoriteLocations.getView().setVisibility(View.INVISIBLE);
-					}
+					
+//					if(lvFavorites.getVisibility() == View.VISIBLE) {
+//						lvFavorites.setVisibility(View.INVISIBLE);
+//						smfFavoriteLocations.getView().setVisibility(View.VISIBLE);
+//						Log.d(TAG, TAG + "map visibility: " + smfFavoriteLocations.getView().getVisibility());
+//					} else if(lvFavorites.getVisibility() == View.INVISIBLE) {
+//						lvFavorites.setVisibility(View.VISIBLE);
+//						smfFavoriteLocations.getView().setVisibility(View.INVISIBLE);
+//					}
 				}
 				break;
 			case R.id.btnaddloc:
@@ -149,11 +150,12 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.d(TAG, TAG + "onResume");
-		try {
-			refreshFavorites();
-		} catch (JSONException e) {
-			e.printStackTrace();
+		if(MMLocationManager.isGPSEnabled()) {
+			try {
+				refreshFavorites();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -207,7 +209,12 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	 * @throws JSONException 
 	 */
 	private void refreshFavorites() throws JSONException {
-		favoritesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING));
+		String favorites = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING);
+		if(!favorites.equals(MMAPIConstants.DEFAULT_STRING)) {
+			favoritesList = new JSONArray(favorites);
+		} else {
+			favoritesList = new JSONArray();
+		}
 		getFavorites();
 		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.search_result_list_row, favoriteLocations);
 		lvFavorites.setAdapter(arrayAdapter);
@@ -275,6 +282,10 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		googleMap.setMyLocationEnabled(true);
 	}
 
+	public interface OnMapIconClickListern {
+		public void onMapIconClicked();
+	}
+	
 	public interface OnMMLocationSelectedListener {
 		public void onLocationSelected(Object obj);
 	}
