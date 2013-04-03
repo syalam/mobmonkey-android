@@ -102,16 +102,6 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	public void onFragmentBackPressed() {
 		//TODO: add call to server to update the user information
 		
-//		userPrefsEditor.putString(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
-//		userPrefsEditor.putString(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
-//		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
-//		if(!TextUtils.isEmpty(etBirthdate.getText())) {
-//			userPrefsEditor.putLong(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
-//		}
-//		if(!TextUtils.isEmpty(etGender.getText())) {
-//			userPrefsEditor.putInt(MMAPIConstants.KEY_GENDER, convertGender());
-//		}
-//		userPrefsEditor.commit();
 	}
 
 	/**

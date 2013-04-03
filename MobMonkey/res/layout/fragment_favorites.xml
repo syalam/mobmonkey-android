@@ -44,10 +44,10 @@
 	<FrameLayout android:layout_width="match_parent"
 	    android:layout_height="match_parent">
 		
-		<fragment android:id="@+id/fragmap"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			class="com.google.android.gms.maps.SupportMapFragment"/>
+<!-- 		<fragment android:id="@+id/fragmap" -->
+<!-- 			android:layout_width="match_parent" -->
+<!-- 			android:layout_height="match_parent" -->
+<!-- 			class="com.google.android.gms.maps.SupportMapFragment"/> -->
 	    
 		<ListView android:id="@+id/lvbookmarks"
 		    android:layout_width="match_parent"

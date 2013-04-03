@@ -167,8 +167,6 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			processAddMessageResult(resultCode, data);
 		} else if(requestCode == MMAPIConstants.REQUEST_CODE_SCHEDULE_REQUEST) {
 			processScheduleRequestResult(resultCode, data);
-			scheduleDate = ((Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME)).getTimeInMillis() + MMAPIConstants.DEFAULT_STRING;
-			repeating = data.getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
 		}
 	}
 	
@@ -276,6 +274,9 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		if(resultCode == RESULT_CANCELED) {
 			
 		} else if(resultCode == RESULT_OK) {
+			scheduleDate = ((Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME)).getTimeInMillis() + MMAPIConstants.DEFAULT_STRING;
+			repeating = data.getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
+			
 			SimpleDateFormat sdfTime = new SimpleDateFormat("KK:mm a");
 			SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
 			

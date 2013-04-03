@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkey.fragments.*;
 import com.mobmonkey.mobmonkey.fragments.FavoritesFragment.OnMMLocationSelectedListener;
+import com.mobmonkey.mobmonkey.fragments.FavoritesFragment.OnMapIconClickListener;
 import com.mobmonkey.mobmonkey.fragments.LocationDetailsFragment.OnLocationDetailsItemClickListener;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -13,18 +14,22 @@ import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.widget.TextView;
 
 /**
  * @author Dezapp, LLC
  *
  */
-public class FavoritesActivity extends FragmentActivity implements OnMMLocationSelectedListener, OnLocationDetailsItemClickListener {
+public class FavoritesActivity extends FragmentActivity implements OnMapIconClickListener, OnMMLocationSelectedListener, OnLocationDetailsItemClickListener {
+	private static final String TAG = "FavoritesActivity: ";
+	
 	FragmentManager fragmentManager;
-	Stack<MMFragment> fragmentStack;
+	Stack<Fragment> fragmentStack;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +38,7 @@ public class FavoritesActivity extends FragmentActivity implements OnMMLocationS
 		setContentView(R.layout.activity_fragmentcontainer);
 		
 		fragmentManager = getSupportFragmentManager();
-		fragmentStack = new Stack<MMFragment>();
+		fragmentStack = new Stack<Fragment>();
 		
 		if(findViewById(R.id.llfragmentcontainer) != null) {
 			if(savedInstanceState != null) {
@@ -43,6 +48,19 @@ public class FavoritesActivity extends FragmentActivity implements OnMMLocationS
 			FavoritesFragment favoritesFragment = new FavoritesFragment();
 			fragmentManager.beginTransaction().add(R.id.llfragmentcontainer, fragmentStack.push(favoritesFragment)).commit();
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkey.fragments.FavoritesFragment.OnMapIconClickListener#onMapIconClicked(java.lang.String)
+	 */
+	@Override
+	public void onMapIconClicked(String favorites) {
+		Fragment mmMapsFragment = new MMMapsFragment();
+		Bundle arguments = new Bundle();
+		arguments.putString("", favorites);
+		mmMapsFragment.setArguments(arguments);
+		performTransaction(mmMapsFragment);
 	}
 	
 	/*
@@ -85,11 +103,16 @@ public class FavoritesActivity extends FragmentActivity implements OnMMLocationS
 	 * @see android.app.Activity#onBackPressed()
 	 */
 	@Override
-	public void onBackPressed() {		
+	public void onBackPressed() {
+		Log.d(TAG, TAG + "onBackPressed");
 		if(fragmentStack.size() > 1) {
-			MMFragment mmFragment = fragmentStack.pop();
+			Fragment fragment = fragmentStack.pop();
 			
-			mmFragment.onFragmentBackPressed();
+			if(fragment instanceof MMFragment) {			
+				((MMFragment) fragment).onFragmentBackPressed();
+			} else if(fragment instanceof MMMapsFragment) {
+				
+			}
 			
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
@@ -100,7 +123,7 @@ public class FavoritesActivity extends FragmentActivity implements OnMMLocationS
 		return;
 	}
 	
-	private void performTransaction(MMFragment mmFragment) {
+	private void performTransaction(Fragment mmFragment) {
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.push(mmFragment));
 		fragmentTransaction.commit();		

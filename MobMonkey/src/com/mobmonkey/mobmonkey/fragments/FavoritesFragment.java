@@ -30,6 +30,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.internal.ac;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -56,7 +57,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
  * @author Dezapp, LLC
  *
  */
-public class FavoritesFragment extends MMFragment implements OnClickListener, OnItemClickListener, OnInfoWindowClickListener {
+public class FavoritesFragment extends MMFragment implements OnClickListener, OnItemClickListener {//, OnInfoWindowClickListener {
 	private static final String TAG = "FavoritesFragment: ";
 	
 	private SharedPreferences userPrefs;
@@ -66,14 +67,12 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	private ImageButton ibMap;
 	private Button btnAddLoc;
 	private ListView lvFavorites;
-	private SupportMapFragment smfFavoriteLocations;
-	private GoogleMap googleMap;
-	private HashMap<Marker, JSONObject> markerHashMap;
 	
 	private MMResultsLocation[] favoriteLocations;
 	private JSONArray favoritesList;
 	
-	private OnMMLocationSelectedListener listener;
+	private OnMapIconClickListener mapIconClickListener;
+	private OnMMLocationSelectedListener locationSelectedListener;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,21 +86,17 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
 		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
 		lvFavorites = (ListView) view.findViewById(R.id.lvbookmarks);
-		smfFavoriteLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmap);
-		
-		googleMap = smfFavoriteLocations.getMap();
-		markerHashMap = new HashMap<Marker, JSONObject>();
 
 		ibMap.setOnClickListener(FavoritesFragment.this);
 		btnAddLoc.setOnClickListener(FavoritesFragment.this);
 		lvFavorites.setOnItemClickListener(FavoritesFragment.this);
 		
-		if(userPrefs.getInt(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, View.GONE) == View.VISIBLE) {
-			smfFavoriteLocations.getView().setVisibility(userPrefs.getInt(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, View.GONE));
-			lvFavorites.setVisibility(View.INVISIBLE);
-		} else {
-			smfFavoriteLocations.getView().setVisibility(View.GONE);
-		}
+//		if(userPrefs.getInt(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, View.GONE) == View.VISIBLE) {
+//			smfFavoriteLocations.getView().setVisibility(userPrefs.getInt(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, View.GONE));
+//			lvFavorites.setVisibility(View.INVISIBLE);
+//		} else {
+//			smfFavoriteLocations.getView().setVisibility(View.GONE);
+//		}
 		
 		return view;
 	}
@@ -109,8 +104,10 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnMMLocationSelectedListener) {
-			listener = (OnMMLocationSelectedListener) activity;
+		if(activity instanceof OnMapIconClickListener) {
+			mapIconClickListener = (OnMapIconClickListener) activity;
+		} else if(activity instanceof OnMMLocationSelectedListener) {
+			locationSelectedListener = (OnMMLocationSelectedListener) activity;
 		}
 	}
 
@@ -119,6 +116,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		switch(view.getId()) {
 			case R.id.ibmap:
 				if(MMLocationManager.isGPSEnabled()) {
+					mapIconClickListener.onMapIconClicked(favoritesList.toString());
 					
 //					if(lvFavorites.getVisibility() == View.VISIBLE) {
 //						lvFavorites.setVisibility(View.INVISIBLE);
@@ -141,7 +139,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		try {
-			listener.onLocationSelected(favoritesList.getJSONObject(position));
+			locationSelectedListener.onLocationSelected(favoritesList.getJSONObject(position));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -162,16 +160,16 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	@Override
 	public void onDestroyView() {
 		Log.d(TAG, TAG + "onDestroyView");
-		Log.d(TAG, TAG + "visibility: " + smfFavoriteLocations.getView().getVisibility());
-		userPrefsEditor.putInt(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, smfFavoriteLocations.getView().getVisibility());
-		userPrefsEditor.commit();
-		try {
-			FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-			transaction.remove(smfFavoriteLocations);
-			transaction.commit();
-		} catch (Exception e) {
-			
-		}
+//		Log.d(TAG, TAG + "visibility: " + smfFavoriteLocations.getView().getVisibility());
+//		userPrefsEditor.putInt(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, smfFavoriteLocations.getView().getVisibility());
+//		userPrefsEditor.commit();
+//		try {
+//			FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+//			transaction.remove(smfFavoriteLocations);
+//			transaction.commit();
+//		} catch (Exception e) {
+//			
+//		}
 
 		super.onDestroyView();
 	}
@@ -196,13 +194,13 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener#onInfoWindowClick(com.google.android.gms.maps.model.Marker)
-	 */
-	@Override
-	public void onInfoWindowClick(Marker marker) {
-		listener.onLocationSelected(markerHashMap.get((Marker) marker));
-	}
+//	/* (non-Javadoc)
+//	 * @see com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener#onInfoWindowClick(com.google.android.gms.maps.model.Marker)
+//	 */
+//	@Override
+//	public void onInfoWindowClick(Marker marker) {
+//		locationSelectedListener.onLocationSelected(markerHashMap.get((Marker) marker));
+//	}
 	
 	/**
 	 * Make a call to the server and refresh the Favorites list
@@ -218,7 +216,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		getFavorites();
 		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.search_result_list_row, favoriteLocations);
 		lvFavorites.setAdapter(arrayAdapter);
-		addToGoogleMap();
+//		addToGoogleMap();
 		
 //		MMBookmarksAdapter.getBookmarks(new FavoritesCallback(), 
 //										MMAPIConstants.URL_BOOKMARKS, 
@@ -255,35 +253,35 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		favoritesList = new JSONArray(temp);
 	}
 	
-	/**
-	 * 
-	 * @throws JSONException
-	 */
-	private void addToGoogleMap() throws JSONException {
-		markerHashMap.clear();
-		googleMap.clear();
-		for(int i = 0; i < favoritesList.length(); i++) {
-			JSONObject jObj = favoritesList.getJSONObject(i);
-			
-			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE));
-			
-			Marker locationResultMarker = googleMap.addMarker(new MarkerOptions().
-					position(resultLocLatLng).
-					title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
-					.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
-			
-			markerHashMap.put(locationResultMarker, jObj);
-		}
-		
-		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
-		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
-		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
-		googleMap.setOnInfoWindowClickListener(FavoritesFragment.this);
-		googleMap.setMyLocationEnabled(true);
-	}
+//	/**
+//	 * 
+//	 * @throws JSONException
+//	 */
+//	private void addToGoogleMap() throws JSONException {
+//		markerHashMap.clear();
+//		googleMap.clear();
+//		for(int i = 0; i < favoritesList.length(); i++) {
+//			JSONObject jObj = favoritesList.getJSONObject(i);
+//			
+//			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE));
+//			
+//			Marker locationResultMarker = googleMap.addMarker(new MarkerOptions().
+//					position(resultLocLatLng).
+//					title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
+//					.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
+//			
+//			markerHashMap.put(locationResultMarker, jObj);
+//		}
+//		
+//		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+//		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
+//		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+//		googleMap.setOnInfoWindowClickListener(FavoritesFragment.this);
+//		googleMap.setMyLocationEnabled(true);
+//	}
 
-	public interface OnMapIconClickListern {
-		public void onMapIconClicked();
+	public interface OnMapIconClickListener {
+		public void onMapIconClicked(String favorites);
 	}
 	
 	public interface OnMMLocationSelectedListener {
@@ -311,48 +309,48 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 //		}
 //	}
 	
-	/**
-	 * 
-	 * @author Dezapp, LLC
-	 *
-	 */
-	private class CustomInfoWindowAdapter implements InfoWindowAdapter {
-        private final View mWindow;
-        private final View mContents;
-
-        public CustomInfoWindowAdapter() {
-            mWindow = getActivity().getLayoutInflater().inflate(R.layout.custom_info_window, null);
-            mContents = getActivity().getLayoutInflater().inflate(R.layout.custom_info_contents, null);
-        }
-
-        @Override
-        public View getInfoWindow(Marker marker) {
-            render(marker, mWindow);
-            return mWindow;
-        }
-
-        @Override
-        public View getInfoContents(Marker marker) {
-            render(marker, mContents);
-            return mContents;
-        }
-
-        private void render(Marker marker, View view) {
-            String title = marker.getTitle();
-            TextView titleUi = ((TextView) view.findViewById(R.id.title));
-            if (title != null) {
-                titleUi.setText(title);
-            } else {
-                titleUi.setText(MMAPIConstants.DEFAULT_STRING);
-            }
-
-            String snippet = marker.getSnippet();
-            TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
-            if (snippet != null) {
-                snippetUi.setText(snippet);
-            } else {
-                snippetUi.setText(MMAPIConstants.DEFAULT_STRING);
-            }
-        }
-    }
+//	/**
+//	 * 
+//	 * @author Dezapp, LLC
+//	 *
+//	 */
+//	private class CustomInfoWindowAdapter implements InfoWindowAdapter {
+//        private final View mWindow;
+//        private final View mContents;
+//
+//        public CustomInfoWindowAdapter() {
+//            mWindow = getActivity().getLayoutInflater().inflate(R.layout.custom_info_window, null);
+//            mContents = getActivity().getLayoutInflater().inflate(R.layout.custom_info_contents, null);
+//        }
+//
+//        @Override
+//        public View getInfoWindow(Marker marker) {
+//            render(marker, mWindow);
+//            return mWindow;
+//        }
+//
+//        @Override
+//        public View getInfoContents(Marker marker) {
+//            render(marker, mContents);
+//            return mContents;
+//        }
+//
+//        private void render(Marker marker, View view) {
+//            String title = marker.getTitle();
+//            TextView titleUi = ((TextView) view.findViewById(R.id.title));
+//            if (title != null) {
+//                titleUi.setText(title);
+//            } else {
+//                titleUi.setText(MMAPIConstants.DEFAULT_STRING);
+//            }
+//
+//            String snippet = marker.getSnippet();
+//            TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
+//            if (snippet != null) {
+//                snippetUi.setText(snippet);
+//            } else {
+//                snippetUi.setText(MMAPIConstants.DEFAULT_STRING);
+//            }
+//        }
+//    }
 }
