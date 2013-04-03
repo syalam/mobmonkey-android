@@ -38,6 +38,9 @@ public final class MMAPIConstants {
 	public static final int NUM_MALE = 1;
 	public static final int NUM_FEMALE = 0;
 	
+	public static final int FAVORITES_FRAGMENT_LIST = 0;
+	public static final int FAVORITES_FRAGMENT_MAP = 1;
+	
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
 
 	public static final String MEDIA_TYPE_VIDEO = "video";

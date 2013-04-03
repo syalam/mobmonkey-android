@@ -87,8 +87,9 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		super.onAttach(activity);
 		if(activity instanceof OnMapIconClickListener) {
 			mapIconClickListener = (OnMapIconClickListener) activity;
-		} else if(activity instanceof OnMMLocationSelectListener) {
-			locationSelectListener = (OnMMLocationSelectListener) activity;
+			if(activity instanceof OnMMLocationSelectListener) {
+				locationSelectListener = (OnMMLocationSelectListener) activity;
+			}
 		}
 	}
 
@@ -97,7 +98,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		switch(view.getId()) {
 			case R.id.ibmap:
 				if(MMLocationManager.isGPSEnabled()) {
-//					mapIconClickListener.onMapIconClicked(favoritesList.toString());
+					mapIconClickListener.onMapIconClicked(MMAPIConstants.FAVORITES_FRAGMENT_LIST);
 				}
 				break;
 			case R.id.btnaddloc:
@@ -129,10 +130,6 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	public void onDestroyView() {
 		super.onDestroyView();
 		Log.d(TAG, TAG + "onDestroyView");
-	}
-	
-	@Override
-	public void onFragmentBackPressed() {
 		try {
 			FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
 			transaction.remove(smfFavoriteLocations);
@@ -140,6 +137,11 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		} catch (Exception e) {
 			
 		}
+	}
+	
+	@Override
+	public void onFragmentBackPressed() {
+		
 	}
 
 	/**

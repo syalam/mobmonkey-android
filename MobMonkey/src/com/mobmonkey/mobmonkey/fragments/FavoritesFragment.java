@@ -106,8 +106,9 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		super.onAttach(activity);
 		if(activity instanceof OnMapIconClickListener) {
 			mapIconClickListener = (OnMapIconClickListener) activity;
-		} else if(activity instanceof OnMMLocationSelectListener) {
-			locationSelectListener = (OnMMLocationSelectListener) activity;
+			if(activity instanceof OnMMLocationSelectListener) {
+				locationSelectListener = (OnMMLocationSelectListener) activity;
+			}
 		}
 	}
 
@@ -116,16 +117,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		switch(view.getId()) {
 			case R.id.ibmap:
 				if(MMLocationManager.isGPSEnabled()) {
-					mapIconClickListener.onMapIconClicked(favoritesList.toString());
-					
-//					if(lvFavorites.getVisibility() == View.VISIBLE) {
-//						lvFavorites.setVisibility(View.INVISIBLE);
-//						smfFavoriteLocations.getView().setVisibility(View.VISIBLE);
-//						Log.d(TAG, TAG + "map visibility: " + smfFavoriteLocations.getView().getVisibility());
-//					} else if(lvFavorites.getVisibility() == View.INVISIBLE) {
-//						lvFavorites.setVisibility(View.VISIBLE);
-//						smfFavoriteLocations.getView().setVisibility(View.INVISIBLE);
-//					}
+					mapIconClickListener.onMapIconClicked(MMAPIConstants.FAVORITES_FRAGMENT_MAP);
 				}
 				break;
 			case R.id.btnaddloc:
@@ -279,9 +271,9 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 //		googleMap.setOnInfoWindowClickListener(FavoritesFragment.this);
 //		googleMap.setMyLocationEnabled(true);
 //	}
-
+	
 	public interface OnMapIconClickListener {
-		public void onMapIconClicked(String favorites);
+		public void onMapIconClicked(int which);
 	}
 	
 	public interface OnMMLocationSelectListener {

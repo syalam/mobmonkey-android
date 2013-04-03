@@ -44,7 +44,8 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 			}
 			
 			FavoritesFragment favoritesFragment = new FavoritesFragment();
-			fragmentManager.beginTransaction().add(R.id.llfragmentcontainer, fragmentStack.push(favoritesFragment)).commit();
+			fragmentManager.beginTransaction().add(R.id.llfragmentcontainer, 
+					fragmentStack.push(favoritesFragment)).commit();
 		}
 	}
 	
@@ -53,10 +54,16 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 	 * @see com.mobmonkey.mobmonkey.fragments.FavoritesFragment.OnMapIconClickListener#onMapIconClicked(java.lang.String)
 	 */
 	@Override
-	public void onMapIconClicked(String favorites) {
-		// TODO: check which fragment the favorite tab is currently on
-		
-		performTransaction(new FavoritesMapFragment());
+	public void onMapIconClicked(int which) {
+		if(which == MMAPIConstants.FAVORITES_FRAGMENT_MAP) {
+			fragmentManager.beginTransaction().replace(R.id.llfragmentcontainer, 
+					fragmentStack.push(new FavoritesMapFragment())).commit();
+		} else if(which == MMAPIConstants.FAVORITES_FRAGMENT_LIST) {		
+			fragmentManager.beginTransaction().remove(fragmentStack.pop());
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
+			fragmentTransaction.commit();
+		}
 	}
 	
 	/*
@@ -106,10 +113,11 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 				// Do nothing?
 			} else {
 				MMFragment mmFragment = fragmentStack.pop();
-						
+				
 				mmFragment.onFragmentBackPressed();
 				
 				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
 				fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
 				fragmentTransaction.commit();
 			}
@@ -121,6 +129,7 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 	
 	private void performTransaction(MMFragment mmFragment) {
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.push(mmFragment));
 		fragmentTransaction.commit();		
 	}
