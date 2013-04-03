@@ -1,7 +1,9 @@
 package com.mobmonkey.mobmonkey.fragments;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-
+import java.io.File;
+import java.io.FileInputStream;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -14,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -134,6 +137,8 @@ public class AssignedRequestsFragment extends MMFragment {
 						break;
 					// Video request
 					case 2:
+						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+						startActivityForResult(takeVideoIntent, MMAPIConstants.REQUEST_CODE_VIDEO);
 						break;
 					default:
 						break;
@@ -149,6 +154,8 @@ public class AssignedRequestsFragment extends MMFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		
+		// picture data
 		if(requestCode == MMAPIConstants.REQUEST_CODE_IMAGE) {
 			Bundle extras = data.getExtras();
 			Bitmap mImageBitmap = (Bitmap) extras.get("data");
@@ -173,6 +180,31 @@ public class AssignedRequestsFragment extends MMFragment {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}					   
+		} 
+		// video 
+		else if(requestCode == MMAPIConstants.REQUEST_CODE_VIDEO) {
+			Uri mVideoUri = data.getData();
+			File mVideoFile = new File(mVideoUri.getPath());
+			try {
+				BufferedInputStream in = new BufferedInputStream(new FileInputStream(mVideoFile));
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				long fileLength = mVideoFile.length();
+				byte[] b = new byte[(int) fileLength];
+				int bytesRead;
+	            while ((bytesRead = in.read(b)) != -1) {
+	                bos.write(b, 0, bytesRead);
+	            }
+	            byte[] ficheroAEnviar = bos.toByteArray();
+	            String videoEncoded = Base64.encodeToString(ficheroAEnviar, Base64.DEFAULT);
+	            
+	            Log.d(TAG, videoEncoded);
+	            
+	            // send videoEncoded to the server via adapter
+	            
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			
 		}
 	}
 	

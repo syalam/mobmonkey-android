@@ -51,7 +51,6 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	private static final String TAG = "MyInfoFragment: ";
 
 	SharedPreferences userPrefs;
-	SharedPreferences.Editor userPrefsEditor;
 	
 	InputMethodManager inputMethodManager;
 	EditText etFirstName;
@@ -62,21 +61,18 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	MotionEvent prevEvent;
 	
 	Calendar birthdate;
-	SimpleDateFormat simpleDateFormat;
 	
 	ProgressDialog progressDialog;
 	
 	JSONObject response;
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Activity.MODE_PRIVATE);
-        userPrefsEditor = userPrefs.edit();
         
-		progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, "Loading user info...");
-				
+		progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, "Loading user info...", true, false);
+		
 		MMSignUpAdapter.getUserInfo(new UserInfoCallback(), MMConstants.PARTNER_ID,
 				 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
@@ -93,25 +89,29 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 		etEmailAddress.setClickable(false);
     	etBirthdate = (EditText) view.findViewById(R.id.etbirthdate);
     	etGender = (EditText) view.findViewById(R.id.etgender);
-		
-//    	etFirstName.setText(userPrefs.getString(MMAPIConstants.KEY_FIRST_NAME, MMAPIConstants.DEFAULT_STRING));
-//    	etLastName.setText(userPrefs.getString(MMAPIConstants.KEY_LAST_NAME, MMAPIConstants.DEFAULT_STRING));
-//    	etEmailAddress.setText(userPrefs.getString(MMAPIConstants.KEY_EMAIL_ADDRESS, MMAPIConstants.DEFAULT_STRING));
+    	birthdate = Calendar.getInstance();
     	
-		simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
-    	if(userPrefs.getLong(MMAPIConstants.KEY_BIRTHDATE, MMAPIConstants.DEFAULT_INT) != MMAPIConstants.DEFAULT_INT) {
-			birthdate = Calendar.getInstance();
-			birthdate.setTimeInMillis(userPrefs.getLong(MMAPIConstants.KEY_BIRTHDATE, MMAPIConstants.DEFAULT_INT));
-	    	etBirthdate.setText(simpleDateFormat.format(birthdate.getTime()));
+    	if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING) == "facebook")
+    	{
+    		etFirstName.setFocusable(false);
+    		etFirstName.setClickable(false);
+    		
+    		etLastName.setFocusable(false);
+    		etLastName.setClickable(false);
+    		
+    		etBirthdate.setFocusable(false);
+    		etBirthdate.setClickable(false);
+    		
+    		etBirthdate.setFocusable(false);
+    		etBirthdate.setClickable(false);
+    	}
+    	else
+    	{
+    		etEmailAddress.setOnKeyListener(MyInfoFragment.this);
+        	etBirthdate.setOnTouchListener(MyInfoFragment.this);
+        	etGender.setOnTouchListener(MyInfoFragment.this);
     	}
     	
-    	if(userPrefs.getInt(MMAPIConstants.KEY_GENDER, MMAPIConstants.DEFAULT_INT) != MMAPIConstants.DEFAULT_INT) {
-    		etGender.setText((userPrefs.getInt(MMAPIConstants.KEY_GENDER, 0) == MMAPIConstants.NUM_MALE) ? MMAPIConstants.TEXT_MALE : MMAPIConstants.TEXT_FEMALE);
-    	}
-    	
-    	etEmailAddress.setOnKeyListener(MyInfoFragment.this);
-    	etBirthdate.setOnTouchListener(MyInfoFragment.this);
-    	etGender.setOnTouchListener(MyInfoFragment.this);
     	
 		return view;
 	}
@@ -120,16 +120,16 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	public void onFragmentBackPressed() {
 		//TODO: add call to server to update the user information
 		
-		userPrefsEditor.putString(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
-		userPrefsEditor.putString(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
-		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
-		if(!TextUtils.isEmpty(etBirthdate.getText())) {
-			userPrefsEditor.putLong(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
-		}
-		if(!TextUtils.isEmpty(etGender.getText())) {
-			userPrefsEditor.putInt(MMAPIConstants.KEY_GENDER, convertGender());
-		}
-		userPrefsEditor.commit();
+//		userPrefsEditor.putString(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
+//		userPrefsEditor.putString(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
+//		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+//		if(!TextUtils.isEmpty(etBirthdate.getText())) {
+//			userPrefsEditor.putLong(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
+//		}
+//		if(!TextUtils.isEmpty(etGender.getText())) {
+//			userPrefsEditor.putInt(MMAPIConstants.KEY_GENDER, convertGender());
+//		}
+//		userPrefsEditor.commit();
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     			@Override
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
-					etBirthdate.setText(simpleDateFormat.format(birthdate.getTime()));
+					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MM-dd-yyyy"));
 				}
 			})
 			.setNegativeButton(R.string.ad_btn_cancel, null)
@@ -247,17 +247,17 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     		.show();
     }
     
-    public void setUserInfo()
-    {
+    public void setUserInfo() {
     	try{
-        	etFirstName.setText(response.getString("firstName"));
-        	etLastName.setText(response.getString("lastName"));
-        	etEmailAddress.setText(response.getString("eMailAddress"));
-        	if(response.getInt("gender")==1)
-        		etGender.setText("Male");
-        	else if(response.getInt("gender")==0)
-        		etGender.setText("Female");
-        	etBirthdate.setText(MMUtility.getDate(response.getLong("birthday"), "MM-dd-yyyy"));
+        	etFirstName.setText(response.getString(MMAPIConstants.KEY_FIRST_NAME));
+        	etLastName.setText(response.getString(MMAPIConstants.KEY_LAST_NAME));
+        	etEmailAddress.setText(response.getString(MMAPIConstants.KEY_EMAIL_ADDRESS));
+        	if(response.getInt(MMAPIConstants.KEY_GENDER) == MMAPIConstants.NUM_MALE)
+        		etGender.setText(MMAPIConstants.TEXT_MALE);
+        	else if(response.getInt(MMAPIConstants.KEY_GENDER) == MMAPIConstants.NUM_FEMALE)
+        		etGender.setText(MMAPIConstants.TEXT_FEMALE);
+        	birthdate.setTimeInMillis(response.getLong(MMAPIConstants.KEY_BIRTHDATE));
+        	etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MM-dd-yyyy"));
     	} catch(Exception e)
     	{
     		e.printStackTrace();
@@ -265,7 +265,6 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     }
     
     private class UserInfoCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {

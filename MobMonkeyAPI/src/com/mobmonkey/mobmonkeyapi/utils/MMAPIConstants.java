@@ -99,6 +99,7 @@ public final class MMAPIConstants {
 	public static final String KEY_RADIUS_IN_YARDS = "radiusInYards";
 	public static final String KEY_STATE = "state";
 	public static final String KEY_USE_OAUTH = "useOAuth";
+	public static final String KEY_OAUTH_USER = "oAuthUser";
 	public static final String KEY_USER = "MobMonkey-user";
 	public static final String KEY_ZIP = "zip";
 	
