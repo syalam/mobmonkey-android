@@ -61,7 +61,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	private static final String TAG = "FavoritesFragment: ";
 	
 	private SharedPreferences userPrefs;
-	private SharedPreferences.Editor userPrefsEditor;
+//	private SharedPreferences.Editor userPrefsEditor;
 	private Location location;
 	
 	private ImageButton ibMap;
@@ -72,17 +72,17 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	private JSONArray favoritesList;
 	
 	private OnMapIconClickListener mapIconClickListener;
-	private OnMMLocationSelectedListener locationSelectedListener;
+	private OnMMLocationSelectListener locationSelectListener;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreateView");
 		
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
-		userPrefsEditor = userPrefs.edit();
+//		userPrefsEditor = userPrefs.edit();
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
-		View view = inflater.inflate(R.layout.fragment_favorites, container, false);
+		View view = inflater.inflate(R.layout.fragment_favorites_screen, container, false);
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
 		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
 		lvFavorites = (ListView) view.findViewById(R.id.lvbookmarks);
@@ -106,8 +106,8 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		super.onAttach(activity);
 		if(activity instanceof OnMapIconClickListener) {
 			mapIconClickListener = (OnMapIconClickListener) activity;
-		} else if(activity instanceof OnMMLocationSelectedListener) {
-			locationSelectedListener = (OnMMLocationSelectedListener) activity;
+		} else if(activity instanceof OnMMLocationSelectListener) {
+			locationSelectListener = (OnMMLocationSelectListener) activity;
 		}
 	}
 
@@ -139,7 +139,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		try {
-			locationSelectedListener.onLocationSelected(favoritesList.getJSONObject(position));
+			locationSelectListener.onLocationSelect(favoritesList.getJSONObject(position));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -284,8 +284,8 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		public void onMapIconClicked(String favorites);
 	}
 	
-	public interface OnMMLocationSelectedListener {
-		public void onLocationSelected(Object obj);
+	public interface OnMMLocationSelectListener {
+		public void onLocationSelect(Object obj);
 	}
 	
 //	private class FavoritesCallback implements MMCallback {
