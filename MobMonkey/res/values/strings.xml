@@ -67,9 +67,10 @@
 	<string name="pd_signing_up_twitter">Signing up via Twitter&#8230;</string>
 	
 	<!-- Main Screen -->
-	<string name="pd_loading_categories">Loading categories&#8230;</string>
+	<string name="pd_loading">Loading</string>
+	<string name="toast_no_gps_access">You have no GPS access at the moment, cannot start MobMonkey</string>
 	
-	<!-- Trending Now Screen -->
+	<!-- Trending Now Fragment -->
 	<string name="tv_title_trendingnow">What\'s Trending Now!</string>
 	<string-array name="trending_category">
 		<item>Bookmarks</item>
@@ -78,7 +79,10 @@
 		<item>Near Me</item>
 	</string-array>
 	
-	<!--  Inbox Screen -->
+	<!-- Top Viewed Fragment -->
+	<string name="tv_title_top_viewed">Top Viewed</string>
+	
+	<!--  Inbox Fragment -->
 	<string name="tv_title_inbox">Inbox</string>
 	<string-array name="inbox_category">
 	    <item>Opened Requests</item>
@@ -90,13 +94,15 @@
 	<!-- Opened Requests Fragment -->
 	<string name="tv_title_openrequests">Opened Requests</string>
 	
+	<!-- Answered Requests Fragment -->
+	
 	<!-- Assigned Requests Fragment -->
 	<string name="tv_title_assignedrequests">Assigned Requests</string>
 	
 	<!-- Send Request Screen -->
 	<string name="toast_request_successful">Successfully sent request</string>
 	
-	<!-- Search Screen -->
+	<!-- Search Fragment -->
 	<string name="btn_filter">Filter</string>
 	<string name="btn_add_loc">+</string>
 	<string name="tv_title_search">Search</string>
@@ -117,6 +123,7 @@
 	<string name="pd_search_all_nearby">Searching all nearby&#8230;</string>
 	<string name="pd_search_for">Searching for</string>
 	<string name="pd_ellipses">&#8230;</string>
+	<string name="pd_locating">Locating</string>
 	
 	<!-- Filter Screen -->
 	<string name="tv_narrow_by_distance">Narrow by Distance</string>
@@ -127,7 +134,7 @@
 	<string name="rb_twentymile">20 mi</string>
 	<string name="tv_narrow_by_live_video">Narrow by Live Video</string>
 	
-	<!-- SearchResults Screen -->
+	<!-- SearchResults Fragment -->
 	<string name="btn_clear">Clear</string>
 	<string name="miles">miles</string>
 	
@@ -135,7 +142,7 @@
 	<string name="ad_message_no_history">No history available</string>
 	<string name="ad_btn_ok">OK</string>
 	
-	<!-- SearchResultLocationDetails Screen -->
+	<!-- SearchResultLocationDetails Fragment -->
 	<string name="tv_make_request">Make a Request</string>
 	<string name="tv_members_found">members found</string>
 	<string name="tv_no_phone_number_available">No Phone Number Available</string>
@@ -146,75 +153,7 @@
 	<string name="toast_add_favorite">Successfully added location to favorites</string>
 	<string name="toast_remove_favorite">Successfully removed location to favorites</string>
 	
-	<!-- Bookmarks Screen -->
-	<string name="tv_title_favorites">Favorites</string>
-	
-	<!-- Settings Screen -->
-	<string name="tv_title_settings">Settings</string>
-	
-	<string-array name="settings_category">
-	    <item>My Info</item>
-	    <item>Social Networks</item>
-	    <item>My Interests</item>
-	    <item>Subscribe</item>
-	</string-array>
-	
-	<string name="et_hint_new_password">New Password</string>
-	
-	<string name="et_hint_confirm_password">Confirm Password</string>
-	
-	<string name="btn_sign_out">Sign Out</string>
-	
-	<string name="pd_signing_out">Signing out&#8230;</string>
-	
-	<string name="toast_sign_out_successful">Successfully signed out</string>
-	
-	<!-- My Info Screen -->
-	<string name="tv_title_my_info">My Info</string>
-	
-	<!-- Social Networks Screen -->
-	<string name="tv_title_socialnetworks">Social Networks</string>
-	<string-array name="social_networks_name">
-		<item >Facebook</item>
-		<item >Twitter</item>
-	</string-array>
-
-	<!-- My Interests Screen -->
-	<string name="tv_title_myinterests">My Interests</string>
-	
-	<!-- Subscribe Screen -->
-	<string name="tv_title_subscribe">Subscribe</string>
-	
-	<!-- Terms of use Screen -->
-	<string name="tv_title_terms_of_use">Terms of use</string>
-	<string name="tv_terms_of_use">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim, mi tristique sollicitudin malesuada, velit nisi cursus magna, et interdum mauris turpis eget leo. Maecenas adipiscing, nunc ac consectetur dictum, risus mi ultrices nulla, sed pellentesque dui elit a diam. Morbi rhoncus ante ut justo tempus tristique eleifend quam rutrum. Nulla pulvinar, sem non ultricies tristique, lectus magna sodales ligula, non dignissim nibh nulla at nunc. Vivamus vestibulum ornare ipsum in mattis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Cras tempus imperdiet leo, ut faucibus risus pulvinar vitae. Donec lobortis odio ut tellus bibendum elementum. Donec pretium varius nisl. Donec nibh ipsum, dictum commodo vestibulum sed, vestibulum sit amet sem. Pellentesque facilisis odio vel nisl scelerisque vitae blandit mi mattis. Vivamus ac mi eget sapien lacinia cursus.
-
-Quisque vel orci enim, a dapibus sem. Etiam nisl diam, tristique quis eleifend quis, rhoncus id leo. Ut nunc urna, semper et auctor ac, porttitor sollicitudin eros. Cras purus libero, tempor ut euismod et, luctus eu urna. Sed ut magna nulla. Mauris cursus vestibulum ante a sollicitudin. Fusce sit amet libero et lorem ultricies iaculis.
-
-Nam ornare consequat leo eget tincidunt. Mauris vulputate molestie congue. Aliquam nec lobortis eros. Quisque nunc ante, iaculis vel ultricies ut, facilisis eu nibh. Nam vitae lorem sed odio faucibus adipiscing at hendrerit nunc. Vivamus gravida dui a ligula hendrerit tincidunt. Nulla sagittis, tellus sit amet feugiat aliquet, augue sem sollicitudin nibh, id placerat libero nisi ac mi. Phasellus eget volutpat sapien. Integer neque sem, porta eu malesuada vitae, ultricies eu ipsum. Fusce faucibus scelerisque sapien, sit amet tincidunt odio hendrerit et. Aliquam erat volutpat.
-
-Duis leo quam, faucibus vitae aliquet vitae, sagittis sed augue. Nunc sit amet magna vitae massa semper consectetur laoreet in justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel quam est, sit amet adipiscing leo. Donec tellus justo, egestas dignissim molestie a, pretium eget nisl. Duis mollis metus eget mauris ullamcorper auctor. In hac habitasse platea dictumst. Mauris interdum dignissim viverra. Suspendisse ac ipsum nisl. Sed sagittis posuere nulla. Mauris id eros nec diam porttitor posuere vitae eget orci.
-
-Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis et auctor diam aliquet. Maecenas ligula tellus, suscipit sed eleifend at, condimentum dictum augue. Aliquam vel urna neque, sit amet malesuada massa. In fringilla facilisis dictum. Aliquam a erat at sem iaculis sollicitudin eu gravida mauris. Mauris eu sapien risus, vel laoreet metus. Pellentesque quis velit lacus. Aliquam sit amet dolor nisi, sed aliquet erat.</string>
-	
-	<!-- Add Location Screen -->
-	<string name="tv_title_add_location">Add Location</string>
-	<string name="et_hint_location_name">Name</string>
-	<string name="et_hint_location_categories">Categories</string>
-	<string name="et_hint_location_street">Street</string>
-	<string name="et_hint_location_city">City</string>
-	<string name="et_hint_location_state">State</string>
-	<string name="et_hint_location_zip">Zip</string>
-	<string name="et_hint_location_phone">Phone Number (optional)</string>
-	<string name="btn_add_location">Add Location</string>
-	<string name="ad_no_name">Please enter a name</string>
-	<string name="ad_no_categories">Please select categories</string>
-	<string name="ad_no_street">Please enter an address</string>
-	<string name="ad_no_city">Please enter a city</string>
-	<string name="ad_no_state">Please enter a state</string>
-	<string name="ad_no_zip">Please enter a zip code</string>
-	
-	<!-- Make a Request Screen -->
+		<!-- Make a Request Screen -->
 	<string name="tv_add_message">Add Message</string>
 	<string name="tv_schedule_request">Schedule Request</string>
 	<string name="tv_stay_active_for">Stay Active For</string>
@@ -248,9 +187,74 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	
 	<string name="toast_current_or_past_current_time">The time you have selected is the current time or past the current time, please select a time in the future.</string>
 	
-	<!-- Top Viewed Screen -->
-	<string name="tv_title_top_viewed">Top Viewed</string>
+	<!-- Favorites Fragment -->
+	<string name="tv_title_favorites">Favorites</string>
 	
-	<string name="toast_no_gps_access">You have no GPS access at the moment, cannot start MobMonkey</string>
+	<!-- Settings Fragment -->
+	<string name="tv_title_settings">Settings</string>
+	
+	<string-array name="settings_category">
+	    <item>My Info</item>
+	    <item>Social Networks</item>
+	    <item>My Interests</item>
+	    <item>Subscribe</item>
+	</string-array>
+	
+	<string name="et_hint_new_password">New Password</string>
+	
+	<string name="et_hint_confirm_password">Confirm Password</string>
+	
+	<string name="btn_sign_out">Sign Out</string>
+	
+	<string name="pd_signing_out">Signing out&#8230;</string>
+	
+	<string name="toast_sign_out_successful">Successfully signed out</string>
+	
+	<!-- My Info Fragment -->
+	<string name="tv_title_my_info">My Info</string>
+	
+	<string name="pd_loading_user_info">Loading user info&#8230;</string>
+	
+	<!-- Social Networks Fragment -->
+	<string name="tv_title_socialnetworks">Social Networks</string>
+	<string-array name="social_networks_name">
+		<item >Facebook</item>
+		<item >Twitter</item>
+	</string-array>
+
+	<!-- My Interests Fragment -->
+	<string name="tv_title_myinterests">My Interests</string>
+	
+	<!-- Subscribe Screen -->
+	<string name="tv_title_subscribe">Subscribe</string>
+	
+	<!-- Terms of use Screen -->
+	<string name="tv_title_terms_of_use">Terms of use</string>
+	<string name="tv_terms_of_use">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim, mi tristique sollicitudin malesuada, velit nisi cursus magna, et interdum mauris turpis eget leo. Maecenas adipiscing, nunc ac consectetur dictum, risus mi ultrices nulla, sed pellentesque dui elit a diam. Morbi rhoncus ante ut justo tempus tristique eleifend quam rutrum. Nulla pulvinar, sem non ultricies tristique, lectus magna sodales ligula, non dignissim nibh nulla at nunc. Vivamus vestibulum ornare ipsum in mattis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Cras tempus imperdiet leo, ut faucibus risus pulvinar vitae. Donec lobortis odio ut tellus bibendum elementum. Donec pretium varius nisl. Donec nibh ipsum, dictum commodo vestibulum sed, vestibulum sit amet sem. Pellentesque facilisis odio vel nisl scelerisque vitae blandit mi mattis. Vivamus ac mi eget sapien lacinia cursus.
+
+Quisque vel orci enim, a dapibus sem. Etiam nisl diam, tristique quis eleifend quis, rhoncus id leo. Ut nunc urna, semper et auctor ac, porttitor sollicitudin eros. Cras purus libero, tempor ut euismod et, luctus eu urna. Sed ut magna nulla. Mauris cursus vestibulum ante a sollicitudin. Fusce sit amet libero et lorem ultricies iaculis.
+
+Nam ornare consequat leo eget tincidunt. Mauris vulputate molestie congue. Aliquam nec lobortis eros. Quisque nunc ante, iaculis vel ultricies ut, facilisis eu nibh. Nam vitae lorem sed odio faucibus adipiscing at hendrerit nunc. Vivamus gravida dui a ligula hendrerit tincidunt. Nulla sagittis, tellus sit amet feugiat aliquet, augue sem sollicitudin nibh, id placerat libero nisi ac mi. Phasellus eget volutpat sapien. Integer neque sem, porta eu malesuada vitae, ultricies eu ipsum. Fusce faucibus scelerisque sapien, sit amet tincidunt odio hendrerit et. Aliquam erat volutpat.
+
+Duis leo quam, faucibus vitae aliquet vitae, sagittis sed augue. Nunc sit amet magna vitae massa semper consectetur laoreet in justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel quam est, sit amet adipiscing leo. Donec tellus justo, egestas dignissim molestie a, pretium eget nisl. Duis mollis metus eget mauris ullamcorper auctor. In hac habitasse platea dictumst. Mauris interdum dignissim viverra. Suspendisse ac ipsum nisl. Sed sagittis posuere nulla. Mauris id eros nec diam porttitor posuere vitae eget orci.
+
+Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis et auctor diam aliquet. Maecenas ligula tellus, suscipit sed eleifend at, condimentum dictum augue. Aliquam vel urna neque, sit amet malesuada massa. In fringilla facilisis dictum. Aliquam a erat at sem iaculis sollicitudin eu gravida mauris. Mauris eu sapien risus, vel laoreet metus. Pellentesque quis velit lacus. Aliquam sit amet dolor nisi, sed aliquet erat.</string>
+	
+	<!-- Add Location Screen -->
+	<string name="tv_title_add_location">Add Location</string>
+	<string name="et_hint_location_name">Name</string>
+	<string name="et_hint_location_categories">Categories</string>
+	<string name="et_hint_location_street">Street</string>
+	<string name="et_hint_location_city">City</string>
+	<string name="et_hint_location_state">State</string>
+	<string name="et_hint_location_zip">Zip</string>
+	<string name="et_hint_location_phone">Phone Number (optional)</string>
+	<string name="btn_add_location">Add Location</string>
+	<string name="ad_no_name">Please enter a name</string>
+	<string name="ad_no_categories">Please select categories</string>
+	<string name="ad_no_street">Please enter an address</string>
+	<string name="ad_no_city">Please enter a city</string>
+	<string name="ad_no_state">Please enter a state</string>
+	<string name="ad_no_zip">Please enter a zip code</string>
 
 </resources>

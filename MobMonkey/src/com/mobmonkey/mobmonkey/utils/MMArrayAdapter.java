@@ -20,7 +20,7 @@ import android.widget.TextView;
  *
  */
 public class MMArrayAdapter extends ArrayAdapter<Object> {
-	Context context;
+	private Context context;
     private LayoutInflater layoutInflater;
     private int listRowLayout;
     private int[] icons;

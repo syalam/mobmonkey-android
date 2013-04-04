@@ -26,7 +26,7 @@ public class TopViewedFragment extends MMFragment {
 	public static final String TAG = "TopViewedFragment: "; 
 	
 	private ListView lvtopviewed;
-	JSONArray topViewed;
+	private JSONArray topViewed;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

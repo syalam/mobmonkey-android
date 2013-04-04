@@ -3,7 +3,6 @@ package com.mobmonkey.mobmonkey;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,8 +13,7 @@ import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
-import com.mobmonkey.mobmonkey.utils.MMResultsLocation;
-import com.mobmonkey.mobmonkey.utils.MMSearchResultsArrayAdapter;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -24,20 +22,15 @@ import com.mobmonkey.mobmonkeyapi.utils.MMDeviceUUID;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -51,15 +44,14 @@ import android.widget.Toast;
 public class SignInScreen extends Activity {
 	private static final String TAG = "SignInScreen: ";
 	
-	SharedPreferences userPrefs;
-	SharedPreferences.Editor userPrefsEditor;
+	private SharedPreferences userPrefs;
+	private SharedPreferences.Editor userPrefsEditor;
 	
-	ProgressDialog progressDialog;
-	EditText etEmailAddress;
-	EditText etPassword;
+	private EditText etEmailAddress;
+	private EditText etPassword;
 	
-    boolean requestEmail;
-	GraphUser facebookUser;
+	private boolean requestEmail;
+	private GraphUser facebookUser;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -90,9 +82,7 @@ public class SignInScreen extends Activity {
 		Log.d(TAG, TAG + "onActivityResult");
 		
 		if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
+			MMProgressDialog.dismissDialog();
 			
 			if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
 				Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
@@ -113,7 +103,7 @@ public class SignInScreen extends Activity {
 				} else {
 					MMSignUpAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
 							(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
-		    		progressDialog = ProgressDialog.show(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_facebook), true, false);
+					MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_facebook));
 				}
 			}
 		}
@@ -177,7 +167,7 @@ public class SignInScreen extends Activity {
 			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
 			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
 			MMSignInAdapter.signInUser(new SignInCallback(), etEmailAddress.getText().toString(), etPassword.getText().toString(), MMConstants.PARTNER_ID);
-    		progressDialog = ProgressDialog.show(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in), true, false);
+    		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in));
 		}
 	}
 	
@@ -196,7 +186,7 @@ public class SignInScreen extends Activity {
      * 		launchMode singleTask is that this {@link Activity} can only be created once, if it was destroyed and recreated, it will cause an {@link IllegalStateException} error.
      */
 	private void signInTwitter() {
-		progressDialog = ProgressDialog.show(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_launch_twitter_auth_screen), true, false);
+		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_launch_twitter_auth_screen));
 		Intent twitterAuthIntent = new Intent(SignInScreen.this, TwitterAuthScreen.class);
 		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
 		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
@@ -290,9 +280,7 @@ public class SignInScreen extends Activity {
 	private class SignInCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
+			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
 				try {

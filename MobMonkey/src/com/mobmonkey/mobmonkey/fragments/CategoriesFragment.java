@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,11 +24,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.mobmonkey.mobmonkey.CategoryScreen;
 import com.mobmonkey.mobmonkey.R;
 import com.mobmonkey.mobmonkey.utils.MMCategories;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsCallback;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -48,7 +47,6 @@ public class CategoriesFragment extends MMFragment {
 	private double longitudeValue;
 	private double latitudeValue;
 	
-	private ProgressDialog progressDialog;
 	private ListView lvSubCategories;
 	private TextView tvNavigationBarText;
 	
@@ -134,10 +132,10 @@ public class CategoriesFragment extends MMFragment {
 					if(!subCategoriesArray.isNull(0)) {
 						subCategoryItemClickListener.onSubCategoryItemClick(subCategoriesArray, selectedCategory);
 					} else {
-						progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, "Locating " + selectedCategory, true, false);
+						MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_locating) + MMAPIConstants.DEFAULT_SPACE + selectedCategory + getString(R.string.pd_ellipses));
 
 						MMSearchLocationAdapter.searchLocationWithText(
-								new MMSearchResultsCallback(getActivity(), progressDialog, selectedCategory), 
+								new MMSearchResultsCallback(getActivity(), selectedCategory), 
 								Double.toString(longitudeValue), 
 								Double.toString(latitudeValue), 
 								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 

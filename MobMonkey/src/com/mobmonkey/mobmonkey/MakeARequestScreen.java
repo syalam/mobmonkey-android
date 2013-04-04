@@ -35,30 +35,30 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 public class MakeARequestScreen extends Activity implements OnCheckedChangeListener, OnItemClickListener, View.OnClickListener {
 	private static final String TAG = "MakeARequestScreen: ";
 	
-	MMSegmentedRadioGroup rgRequests;
-	RadioGroup rgStayActive;
-	MMExpandedListView mmelvAddMessage;
-	MMExpandedListView mmelvScheduleRequest;
-	Button btnSendRequest;
+	private MMSegmentedRadioGroup rgRequests;
+	private RadioGroup rgStayActive;
+	private MMExpandedListView mmelvAddMessage;
+	private MMExpandedListView mmelvScheduleRequest;
+	private Button btnSendRequest;
 	
-	String message;
-	String scheduleRequest;
-	String mediaType;
+	private String message;
+	private String scheduleRequest;
+	private String mediaType;
 	
-	int[] icons;
-	String[] labels;
-	int[] indicatorIcons;
-	MMArrayAdapter mmArrayAdapter;
+	private int[] icons;
+	private String[] labels;
+	private int[] indicatorIcons;
+	private MMArrayAdapter mmArrayAdapter;
 	
 	private String scheduleDate;
 	private int duration;
-	JSONObject jObj;
-	String repeating = "none";
+	private JSONObject jObj;
+	private String repeating = "none";
 	private int radiusInYards = 50; //TODO: Remove hard-coded value for radius
 	
-	SharedPreferences userPrefs;
-	String locationId;
-	String providerId;
+	private SharedPreferences userPrefs;
+	private String locationId;
+	private String providerId;
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)

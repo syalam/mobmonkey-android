@@ -5,16 +5,12 @@ import java.util.Stack;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.mobmonkey.mobmonkey.fragments.CategoriesFragment;
-import com.mobmonkey.mobmonkey.fragments.LocationDetailsFragment;
-import com.mobmonkey.mobmonkey.fragments.LocationDetailsMapFragment;
+import com.mobmonkey.mobmonkey.fragments.*;
 import com.mobmonkey.mobmonkey.fragments.CategoriesFragment.OnSubCategoryItemClickListener;
 import com.mobmonkey.mobmonkey.fragments.LocationDetailsFragment.OnLocationDetailsItemClickListener;
-import com.mobmonkey.mobmonkey.fragments.SearchFragment;
 import com.mobmonkey.mobmonkey.fragments.SearchFragment.OnCategoryItemClickListener;
 import com.mobmonkey.mobmonkey.fragments.SearchFragment.OnNoCategoryItemClickListener;
 import com.mobmonkey.mobmonkey.fragments.SearchResultsFragment.OnSearchResultsLocationSelectListener;
-import com.mobmonkey.mobmonkey.fragments.SearchResultsFragment;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 

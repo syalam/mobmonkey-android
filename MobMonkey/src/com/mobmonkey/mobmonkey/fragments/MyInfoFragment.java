@@ -1,21 +1,14 @@
 package com.mobmonkey.mobmonkey.fragments;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.mobmonkey.mobmonkey.MakeARequestScreen;
 import com.mobmonkey.mobmonkey.R;
-import com.mobmonkey.mobmonkey.SearchScreen;
-import com.mobmonkey.mobmonkey.R.array;
-import com.mobmonkey.mobmonkey.R.id;
-import com.mobmonkey.mobmonkey.R.layout;
-import com.mobmonkey.mobmonkey.R.string;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMUtility;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -23,13 +16,10 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -39,7 +29,6 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.Toast;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
 
@@ -50,28 +39,26 @@ import android.widget.EditText;
 public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateChangedListener, OnTouchListener {
 	private static final String TAG = "MyInfoFragment: ";
 
-	SharedPreferences userPrefs;
+	private SharedPreferences userPrefs;
 	
-	InputMethodManager inputMethodManager;
-	EditText etFirstName;
-	EditText etLastName;
-	EditText etEmailAddress;
-	EditText etBirthdate;
-	EditText etGender;
-	MotionEvent prevEvent;
+	private InputMethodManager inputMethodManager;
+	private EditText etFirstName;
+	private EditText etLastName;
+	private EditText etEmailAddress;
+	private EditText etBirthdate;
+	private EditText etGender;
+	private MotionEvent prevEvent;
 	
-	Calendar birthdate;
+	private Calendar birthdate;
 	
-	ProgressDialog progressDialog;
-	
-	JSONObject response;
+	private JSONObject response;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Activity.MODE_PRIVATE);
         
-		progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, "Loading user info...", true, false);
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading_user_info));
 		
 		MMSignUpAdapter.getUserInfo(new UserInfoCallback(), MMConstants.PARTNER_ID,
 				 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
@@ -239,10 +226,10 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     private class UserInfoCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
 			if(obj != null) {
 				try {
-					if(progressDialog != null)
-						progressDialog.dismiss();
 					response = new JSONObject((String)obj);
 					setUserInfo();
 				} catch (JSONException e) {

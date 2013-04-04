@@ -10,12 +10,12 @@ import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,7 +52,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private MMExpandedListView elvLocDetails;
 	private LinearLayout llFavorite;
 	private TextView tvFavorite;
-	private ProgressDialog progressDialog;
 	
 	private OnLocationDetailsItemClickListener listener;
 	
@@ -158,7 +157,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	}
 	
 	private void favoriteClicked() {
-		progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_updating_favorites), true, false);
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_updating_favorites));
 		if(tvFavorite.getText().toString().equals(getString(R.string.tv_favorite))) {
 			try {
 				// Make a server call and add to favorites
@@ -242,9 +241,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private class FavoritesCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
+			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "response: " + ((String) obj));

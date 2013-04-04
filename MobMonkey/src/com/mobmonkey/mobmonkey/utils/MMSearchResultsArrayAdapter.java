@@ -16,9 +16,9 @@ import android.widget.TextView;
  *
  */
 public class MMSearchResultsArrayAdapter extends ArrayAdapter<MMResultsLocation> {
-	LayoutInflater layoutInflater;
-	int listRowLayout;
-	MMResultsLocation[] locations;
+	private LayoutInflater layoutInflater;
+	private int listRowLayout;
+	private MMResultsLocation[] locations;
 	
 	public MMSearchResultsArrayAdapter(Context context, int listRowLayout, MMResultsLocation[] locations) {
 		super(context, listRowLayout, locations);

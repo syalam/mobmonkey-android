@@ -13,12 +13,11 @@ import android.widget.TextView;
 
 public class MMOpenedRequestsArrayAdapter extends ArrayAdapter<MMOpenedRequestsItem>{
 	
-	Context context; 
-    int layoutResourceId;    
-    MMOpenedRequestsItem data[] = null;
+	private Context context;
+	private int layoutResourceId;
+	private MMOpenedRequestsItem data[] = null;
     
     public MMOpenedRequestsArrayAdapter(Context context, int layoutResourceId, MMOpenedRequestsItem[] data) {
-        
     	super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;

@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,12 +30,12 @@ import android.widget.TextView;
 import com.mobmonkey.mobmonkey.AddLocationMapScreen;
 import com.mobmonkey.mobmonkey.FilterScreen;
 import com.mobmonkey.mobmonkey.R;
-import com.mobmonkey.mobmonkey.SearchScreen;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMCategories;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsCallback;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -59,7 +58,6 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 	
 	private String[] topLevelCategories;
 	
-	private ProgressDialog progressDialog;
 	private Button btnFilter;
 	private Button btnAddLoc;
 	private EditText etSearch;
@@ -204,9 +202,9 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 						categoryItemClickListener.onCategoryItemClick(subCategories, selectedCategory);
 					} else if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
 						JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
-						progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, "Locating " + topLevelCategories[position]);
+						MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_locating) + MMAPIConstants.DEFAULT_SPACE + topLevelCategories[position] + getString(R.string.pd_ellipses));
 						MMSearchLocationAdapter.searchLocationWithText(
-								new MMSearchResultsCallback(getActivity(), progressDialog, topLevelCategories[position]), 
+								new MMSearchResultsCallback(getActivity(), topLevelCategories[position]), 
 								Double.toString(longitudeValue), 
 								Double.toString(latitudeValue), 
 								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
@@ -243,8 +241,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 				MMConstants.PARTNER_ID);
-		progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + 
-		searchCategory + getString(R.string.pd_ellipses), true, false);
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + searchCategory + getString(R.string.pd_ellipses));
     	InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 	}
@@ -255,7 +252,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 		MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 
 				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), userPrefs.getString(MMAPIConstants.KEY_USER, 
 				MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
-		progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_all_nearby), true, false);
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_all_nearby));
 	}
 	
 	private void showHistory() {
@@ -318,11 +315,9 @@ public class SearchFragment extends MMFragment implements OnClickListener {
      *
      */
 	private class SearchCallback implements MMCallback {
+		@Override
 		public void processCallback(Object obj) {
-			
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
+			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "Response: " + ((String) obj));

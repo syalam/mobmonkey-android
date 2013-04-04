@@ -12,13 +12,13 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -35,16 +35,14 @@ import android.widget.Toast;
 public class TwitterAuthScreen extends Activity {
 	private static final String TAG = "TwitterAuthScreen: ";
 	
-	SharedPreferences userPrefs;
-	SharedPreferences.Editor userPrefsEditor;
-
-	ProgressDialog progressDialog;
+	private SharedPreferences userPrefs;
+	private SharedPreferences.Editor userPrefsEditor;
 	
-	WebView wvTwitterAuth;
+	private WebView wvTwitterAuth;
 	
-	Twitter twitter;
-	RequestToken requestToken;
-	AccessToken twitterAccessToken;
+	private Twitter twitter;
+	private RequestToken requestToken;
+	private AccessToken twitterAccessToken;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -107,9 +105,9 @@ public class TwitterAuthScreen extends Activity {
 				
 				// Depend on which Activity it was called from, it will display the appropriate signin/signup message
 				if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
-					progressDialog = ProgressDialog.show(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_twitter), true, false);
+					MMProgressDialog.displayDialog(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_twitter));
 				} else if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH) {
-					progressDialog = ProgressDialog.show(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_twitter), true, false);
+					MMProgressDialog.displayDialog(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_twitter));
 				}
 			} else {
 				finish();
@@ -145,9 +143,7 @@ public class TwitterAuthScreen extends Activity {
      */
 	private class TwitterAuthCallback implements MMCallback {
 		public void processCallback(Object obj) {
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
+			MMProgressDialog.dismissDialog();
 			
 			try {
 				JSONObject response = new JSONObject((String) obj);

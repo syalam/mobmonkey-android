@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.mobmonkey.mobmonkey.fragments;
 
 import java.util.ArrayList;
@@ -51,7 +48,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
- * @author dezapp1
+ * @author Dezapp, LLC
  *
  */
 public class SearchResultsFragment extends MMFragment implements OnClickListener, OnItemClickListener, OnInfoWindowClickListener {

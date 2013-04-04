@@ -14,20 +14,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-public class MMCategories extends Activity{
+public class MMCategories extends Activity {
 	
 	private static SharedPreferences userPrefs;
-	private static SharedPreferences.Editor editPrefs;
-	Context context;
+	private Context context;
 	
-	public static String[] getTopLevelCategories(Context context) throws JSONException
-	{
+	public static String[] getTopLevelCategories(Context context) throws JSONException {
 		userPrefs = context.getSharedPreferences(MMAPIConstants.USER_PREFS, 0);
 		
 		String[] topLevelCategoriesList;
 		
-		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
-		{
+		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
 			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
 			topLevelCategoriesList = getKeys(cats);
 //			JSONArray allCategories = cats.toJSONArray(cats.names());
@@ -61,19 +58,16 @@ public class MMCategories extends Activity{
 	    return names;
 	}
 
-	public static String getSubCategoriesWithCategoriId(Context context, String categoryId) throws JSONException
-	{
+	public static String getSubCategoriesWithCategoriId(Context context, String categoryId) throws JSONException {
 		userPrefs = context.getSharedPreferences(MMAPIConstants.USER_PREFS, 0);
 		JSONArray subCategoriesList = null;
 		
-		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
-		{
+		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
 			subCategoriesList = new JSONArray();
 			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
 			JSONArray allCategories = cats.toJSONArray(cats.names());
 			JSONObject subCat = null;
-			for(int i=0; i < allCategories.length(); i++)
-			{
+			for(int i=0; i < allCategories.length(); i++) {
 				//subCat = new JSONObject(allCategories.getString(i));
 				subCat = allCategories.getJSONArray(i).getJSONObject(0);
 				
@@ -87,8 +81,7 @@ public class MMCategories extends Activity{
 		return subCategoriesList.toString();
 	}
 	
-	public static String getSubCategoriesWithCategoryName(Context context, String categoryName) throws JSONException
-	{
+	public static String getSubCategoriesWithCategoryName(Context context, String categoryName) throws JSONException {
 		userPrefs = context.getSharedPreferences(MMAPIConstants.USER_PREFS, 0);
 		JSONArray subCategoriesList = null;
 		
@@ -109,8 +102,7 @@ public class MMCategories extends Activity{
 		return subCategoriesList.toString();
 	}
 	
-	public static void addCategory(String categoryId)
-	{
+	public static void addCategory(String categoryId) {
 		
 	}
 }

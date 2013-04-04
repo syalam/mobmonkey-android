@@ -1,6 +1,5 @@
 package com.mobmonkey.mobmonkey;
 
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -34,16 +33,16 @@ import android.widget.ToggleButton;
 public class ScheduleRequestScreen extends Activity implements OnWheelChangedListener, OnCheckedChangeListener {
 	private static final String TAG = "ScheduleRequestScreen: ";
 	
-	WheelView wvDay;
-	WheelView wvHours;
-	WheelView wvMins;
-	WheelView wvAMPM;
-	ToggleButton tbRepeating;
-	RadioGroup rgRepeating;
+	private WheelView wvDay;
+	private WheelView wvHours;
+	private WheelView wvMins;
+	private WheelView wvAMPM;
+	private ToggleButton tbRepeating;
+	private RadioGroup rgRepeating;
 	
-	NumericWheelAdapter numericWheelAdapter;
+	private NumericWheelAdapter numericWheelAdapter;
 	
-	String repeatRate;
+	private String repeatRate;
 	
 	/*
 	 * (non-Javadoc)

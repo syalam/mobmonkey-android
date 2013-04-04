@@ -29,13 +29,13 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
  *
  */
 public class AddLocationMapScreen extends FragmentActivity {
-	Location location;
+	private Location location;
 	
-	Button btnAddLoc;
-	boolean addLocClicked;
+	private Button btnAddLoc;
+	private boolean addLocClicked;
 	
-	SupportMapFragment smfLocation;
-	GoogleMap googleMap;
+	private SupportMapFragment smfLocation;
+	private GoogleMap googleMap;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

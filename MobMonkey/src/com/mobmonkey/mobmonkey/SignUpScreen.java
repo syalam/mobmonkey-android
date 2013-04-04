@@ -1,4 +1,4 @@
-package com.mobmonkey.mobmonkey;
+private package com.mobmonkey.mobmonkey;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -15,6 +15,7 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -23,7 +24,6 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -53,25 +53,24 @@ import android.text.TextUtils;
 public class SignUpScreen extends Activity implements OnKeyListener, OnDateChangedListener, OnTouchListener {
 	private static final String TAG = "SignUpScreen: ";
 	
-	SharedPreferences userPrefs;
-	SharedPreferences.Editor userPrefsEditor;
+	private SharedPreferences userPrefs;
+	private SharedPreferences.Editor userPrefsEditor;
 	
-	InputMethodManager inputMethodManager;
-	ProgressDialog progressDialog;
-	EditText etFirstName;
-	EditText etLastName;
-	EditText etEmailAddress;
-	EditText etPassword;
-	EditText etPasswordConfirm;
-	EditText etBirthdate;
-	EditText etGender;
-	CheckBox cbAcceptedToS;
-    MotionEvent prevEvent;
+	private InputMethodManager inputMethodManager;
+	private EditText etFirstName;
+	private EditText etLastName;
+	private EditText etEmailAddress;
+	private EditText etPassword;
+	private EditText etPasswordConfirm;
+	private EditText etBirthdate;
+	private EditText etGender;
+	private CheckBox cbAcceptedToS;
+	private  MotionEvent prevEvent;
 	
-	Calendar birthdate;
+	private Calendar birthdate;
 	
-    boolean requestEmail;
-	GraphUser facebookUser;
+	private  boolean requestEmail;
+	private GraphUser facebookUser;
 	
 	/*
 	 * (non-Javadoc)
@@ -130,7 +129,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 			prevEvent = event;
 		}
 		
-		if(event.getAction() == MotionEvent.ACTION_UP) {
+		if(event.getAction() == MotionEvent.ACTION_UP && prevEvent.getAction() == MotionEvent.ACTION_UP) {
 			switch(v.getId()) {
 		    	case R.id.etbirthdate:
 		    		inputMethodManager.hideSoftInputFromWindow(etBirthdate.getWindowToken(), 0);
@@ -169,9 +168,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 		
 		switch(requestCode) {
 			case MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH:
-				if(progressDialog != null) {
-					progressDialog.dismiss();
-				}
+				MMProgressDialog.dismissDialog();
 				
 				if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
 					Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_in_successful, Toast.LENGTH_LONG).show();
@@ -198,7 +195,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, (String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
 					MMSignUpAdapter.signUpNewUserFacebook(new SignUpCallback(), Session.getActiveSession().getAccessToken(), 
 							(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
-		    		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_facebook), true, false);
+		    		MMProgressDialog.displayDialog(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_facebook));
 				}
 				break;
 		}
@@ -280,7 +277,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     				convertGender(),
     				cbAcceptedToS.isChecked(), 
     				MMConstants.PARTNER_ID);
-    		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up), true, false);
+    		MMProgressDialog.displayDialog(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up));
     	}
     }
     
@@ -303,7 +300,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      */
     private void signUpTwitter() {    	
     	if(checkAcceptedToS()) {
-    		progressDialog = ProgressDialog.show(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_launch_twitter_auth_screen), true, false);
+    		MMProgressDialog.displayDialog(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_launch_twitter_auth_screen));
     		Intent twitterAuthIntent = new Intent(SignUpScreen.this, TwitterAuthScreen.class);
     		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
     		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
@@ -531,9 +528,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     private class SignUpCallback implements MMCallback {
     	@Override
 		public void processCallback(Object obj) {
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
+			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
 				try {
