@@ -1,6 +1,9 @@
 package com.mobmonkey.mobmonkey.fragments;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,6 +13,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -20,12 +25,15 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -43,7 +51,9 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
  * @author Dezapp, LLC
  *
  */
-public class FavoritesMapFragment extends MMFragment implements OnClickListener, OnInfoWindowClickListener {
+public class FavoritesMapFragment extends MMFragment implements OnClickListener, 
+																OnInfoWindowClickListener, 
+																OnMapClickListener {
 	private static final String TAG = "MMMapsFragment: ";
 	
 	private SharedPreferences userPrefs;
@@ -51,11 +61,13 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	
 	private ImageButton ibMap;
 	private Button btnAddLoc;
+	private Button btnCancel;
 	private SupportMapFragment smfFavoriteLocations;
 	
 	private JSONArray favoritesList;
 	private GoogleMap googleMap;
 	private HashMap<Marker, JSONObject> markerHashMap;
+	private boolean addLocClicked;
 	
 	private OnMapIconClickListener mapIconClickListener;
 	private OnMMLocationSelectListener locationSelectListener;
@@ -68,14 +80,17 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		View view = inflater.inflate(R.layout.fragment_favorites_map, container, false);
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
 		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
+		btnCancel = (Button) view.findViewById(R.id.btncancel);
 		smfFavoriteLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmap);
 		
 		googleMap = smfFavoriteLocations.getMap();
 		markerHashMap = new HashMap<Marker, JSONObject>();		
+		addLocClicked = false;
 		
 		ibMap.setOnClickListener(FavoritesMapFragment.this);
 		btnAddLoc.setOnClickListener(FavoritesMapFragment.this);
-
+		btnCancel.setOnClickListener(FavoritesMapFragment.this);
+		
 		return view;
 	}
 	
@@ -100,8 +115,22 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 				break;
 			case R.id.btnaddloc:
 				if(MMLocationManager.isGPSEnabled()) {
-					startActivity(new Intent(getActivity(), AddLocationScreen.class));
+					Toast.makeText(getActivity(), R.string.toast_tap_location_to_add, Toast.LENGTH_LONG).show();
+					addLocClicked = true;
+					btnAddLoc.setVisibility(View.INVISIBLE);
+					btnCancel.setVisibility(View.VISIBLE);
+					RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ibMap.getLayoutParams();
+					params.addRule(RelativeLayout.LEFT_OF, R.id.btncancel);
+					ibMap.setLayoutParams(params);
 				}
+				break;
+			case R.id.btncancel:
+				addLocClicked = false;
+				btnAddLoc.setVisibility(View.VISIBLE);
+				btnCancel.setVisibility(View.INVISIBLE);
+				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ibMap.getLayoutParams();
+				params.addRule(RelativeLayout.LEFT_OF, R.id.btnaddloc);
+				ibMap.setLayoutParams(params);
 				break;
 		}
 	}
@@ -111,6 +140,32 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		locationSelectListener.onLocationSelect(markerHashMap.get((Marker) marker));
 	}
 
+	@Override
+	public void onMapClick(LatLng pointClicked) {
+		if(addLocClicked) {
+			try{
+				Address locationClicked = getAddressForLocation(pointClicked.latitude, pointClicked.longitude);
+//				Toast.makeText(getActivity(), "Address: "+locationClicked.getAddressLine(0), Toast.LENGTH_SHORT).show();
+				
+				// pass information to category screen
+				Bundle bundle = new Bundle();
+				bundle.putString(MMAPIConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
+				bundle.putString(MMAPIConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+				bundle.putString(MMAPIConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+				bundle.putString(MMAPIConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+				bundle.putString(MMAPIConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude()+"");
+				bundle.putString(MMAPIConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude()+"");
+				
+				Intent intent = new Intent(getActivity(), AddLocationScreen.class);
+				intent.putExtras(bundle);
+				startActivity(intent);
+			}catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -180,8 +235,22 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
 		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 		googleMap.setOnInfoWindowClickListener(FavoritesMapFragment.this);
+		googleMap.setOnMapClickListener(FavoritesMapFragment.this);
 		googleMap.setMyLocationEnabled(true);
 	}
+	
+	public Address getAddressForLocation(double latitude, double longitude) throws IOException {
+        int maxResults = 1;
+
+        Geocoder gc = new Geocoder(getActivity(), Locale.getDefault());
+        List<Address> addresses = gc.getFromLocation(latitude, longitude, maxResults);
+
+        if (addresses.size() == 1) {
+            return addresses.get(0);
+        } else {
+            return null;
+        }
+    }
 	
 	/**
 	 * 

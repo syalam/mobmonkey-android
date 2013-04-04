@@ -204,7 +204,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 						JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
 						MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_locating) + MMAPIConstants.DEFAULT_SPACE + topLevelCategories[position] + getString(R.string.pd_ellipses));
 						MMSearchLocationAdapter.searchLocationWithText(
-								new MMSearchResultsCallback(getActivity(), topLevelCategories[position]), 
+								new MMSearchResultsCallback(getActivity(), topLevelCategories[position], null), 
 								Double.toString(longitudeValue), 
 								Double.toString(latitudeValue), 
 								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 

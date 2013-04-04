@@ -242,6 +242,7 @@ Duis leo quam, faucibus vitae aliquet vitae, sagittis sed augue. Nunc sit amet m
 Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis et auctor diam aliquet. Maecenas ligula tellus, suscipit sed eleifend at, condimentum dictum augue. Aliquam vel urna neque, sit amet malesuada massa. In fringilla facilisis dictum. Aliquam a erat at sem iaculis sollicitudin eu gravida mauris. Mauris eu sapien risus, vel laoreet metus. Pellentesque quis velit lacus. Aliquam sit amet dolor nisi, sed aliquet erat.</string>
 	
 	<!-- Add Location Screen -->
+	<string name="toast_tap_location_to_add">Tap on the location you would like to add on the map</string>
 	<string name="tv_title_add_location">Add Location</string>
 	<string name="et_hint_location_name">Name</string>
 	<string name="et_hint_location_categories">Categories</string>
