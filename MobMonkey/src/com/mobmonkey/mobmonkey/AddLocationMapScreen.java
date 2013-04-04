@@ -11,7 +11,9 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ public class AddLocationMapScreen extends FragmentActivity {
 	private Location location;
 	
 	private Button btnAddLoc;
+	private Button btnPlus;
 	private boolean addLocClicked;
 	
 	private SupportMapFragment smfLocation;
@@ -50,12 +53,16 @@ public class AddLocationMapScreen extends FragmentActivity {
 			case R.id.btnaddloc:
 				getLocation();
 				break;
+			case R.id.btnplus:
+				getLocation();
+				break;
 		}
 	}
 	
 	private void init() {
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		btnAddLoc = (Button) findViewById(R.id.btnaddloc);
+		btnPlus = (Button) findViewById(R.id.btnplus);
 		addLocClicked = true;
 		
 		smfLocation = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragmap);
@@ -100,11 +107,13 @@ public class AddLocationMapScreen extends FragmentActivity {
 	
 	private void getLocation() {
 		if(addLocClicked) {
-			Toast.makeText(AddLocationMapScreen.this, "Tap on the location you'd like to add on the map", Toast.LENGTH_LONG).show();
-			btnAddLoc.setText(R.string.ad_btn_cancel);
+			Toast.makeText(AddLocationMapScreen.this, R.string.toast_tap_location_to_add, Toast.LENGTH_LONG).show();
+			btnAddLoc.setVisibility(View.VISIBLE);
+			btnPlus.setVisibility(View.INVISIBLE);
 			addLocClicked = false;
 		} else {
-			btnAddLoc.setText("");
+			btnAddLoc.setVisibility(View.INVISIBLE);
+			btnPlus.setVisibility(View.VISIBLE);
 			addLocClicked = true;
 		}
 	}
