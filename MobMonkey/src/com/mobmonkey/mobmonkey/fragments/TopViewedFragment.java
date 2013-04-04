@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,8 @@ public class TopViewedFragment extends MMFragment {
 	
 	private MMTopviewedItem[] getTopViewedItems() throws JSONException, IOException {
 		MMTopviewedItem topViewedItems[] = new MMTopviewedItem[topViewed.length()];
+		
+		Log.d(TAG, topViewed.toString());
 		
 		for(int i = 0; i < topViewedItems.length; i++) {
 			if(!topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_MEDIA).equals(MMAPIConstants.DEFAULT_STRING_NULL)) {

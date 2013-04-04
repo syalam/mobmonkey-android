@@ -95,6 +95,7 @@
 	<string name="tv_title_openrequests">Opened Requests</string>
 	
 	<!-- Answered Requests Fragment -->
+	<string name="tv_title_answeredrequests">Answered Requests</string>
 	
 	<!-- Assigned Requests Fragment -->
 	<string name="tv_title_assignedrequests">Assigned Requests</string>

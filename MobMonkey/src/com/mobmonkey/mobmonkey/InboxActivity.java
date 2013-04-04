@@ -3,6 +3,7 @@ package com.mobmonkey.mobmonkey;
 import java.io.ByteArrayOutputStream;
 import java.util.Stack;
 
+import com.mobmonkey.mobmonkey.fragments.AnsweredRequestsFragment;
 import com.mobmonkey.mobmonkey.fragments.AssignedRequestsFragment;
 import com.mobmonkey.mobmonkey.fragments.InboxFragment;
 import com.mobmonkey.mobmonkey.fragments.InboxFragment.OnInboxItemClickListener;
@@ -60,7 +61,7 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 				mmFragment = new OpenedRequestsFragment();
 				break;
 			case 1:
-//				mmFragment = new AnsweredRequestsFragment();
+				mmFragment = new AnsweredRequestsFragment();
 				break;
 			case 2:
 				mmFragment = new AssignedRequestsFragment();

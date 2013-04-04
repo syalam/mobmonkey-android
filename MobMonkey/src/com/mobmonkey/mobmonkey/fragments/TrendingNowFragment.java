@@ -103,7 +103,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 				break;
 			// top viewed
 			case 2:
-				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + "Top Viewed...");
+				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + " Top Viewed...");
 				MMTrendingAdapter.getTrending(new TrendingCallback(position), 
 									 		  "topviewed", 
 											  "week", 

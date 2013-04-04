@@ -29,11 +29,13 @@ public class MMAnswerRequestAdapter {
 							   int requestType,
 							   String contentType,
 							   String mediaData,
-							   String mediaType) {
+							   String mediaType
+							   ) {
 		AnswerRequestURL = MMAPIConstants.TEST_MOBMONKEY_URL + "media/" + mediaType;
 		
 		mediaInfo = new JSONObject();
 		try {
+			//AnswerRequestURL = MMAPIConstants.TEST_MOBMONKEY_URL + "media/" + mediaType;
 			mediaInfo.put(MMAPIConstants.JSON_KEY_REQUESTID, requestID);
 			mediaInfo.put(MMAPIConstants.JSON_KEY_REQUEST_TYPE, requestType);
 			mediaInfo.put(MMAPIConstants.JSON_KEY_CONTENT_TYPE, contentType);
