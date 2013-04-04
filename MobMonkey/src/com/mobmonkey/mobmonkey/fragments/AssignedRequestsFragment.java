@@ -4,8 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,10 +15,13 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -165,17 +169,17 @@ public class AssignedRequestsFragment extends MMFragment {
 			mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 			byte[] b = baos.toByteArray();
 			String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
-			Log.d(TAG, imageEncoded);
 			
 			try {
 				MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
 											   MMConstants.PARTNER_ID, 
 											   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 											   userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING), 
-											   assignedRequests.getJSONObject(positionClicked).getString(MMAPIConstants.JSON_KEY_REQUESTID), 
-											   imageEncoded, 
-											   new Date().getTime(), 
-											   1);
+											   assignedRequests.getJSONObject(positionClicked).getString(MMAPIConstants.JSON_KEY_REQUESTID),
+											   assignedRequests.getJSONObject(positionClicked).getInt(MMAPIConstants.JSON_KEY_REQUEST_TYPE),
+											   MMAPIConstants.MEDIA_CONTENT_JPEG,
+											   imageEncoded,
+											   MMAPIConstants.MEDIA_TYPE_IMAGE);
 				
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -183,28 +187,54 @@ public class AssignedRequestsFragment extends MMFragment {
 		} 
 		// video 
 		else if(requestCode == MMAPIConstants.REQUEST_CODE_VIDEO) {
-			Uri mVideoUri = data.getData();
-			File mVideoFile = new File(mVideoUri.getPath());
-			try {
-				BufferedInputStream in = new BufferedInputStream(new FileInputStream(mVideoFile));
+			
+			Uri vid = data.getData();
+		    String videoPath = getRealPathFromURI(vid);
+		    
+		    try {
+		    	FileInputStream fis = new FileInputStream(new File(videoPath));
+
+		    	File tmpFile = new File(Environment.getExternalStorageDirectory(),"mobmonkeyVideo.mp4"); 
+
+		    	//save the video to the File path
+		    	FileOutputStream fos = new FileOutputStream(tmpFile);
+
+		    	byte[] buf = new byte[1024];
+		    	int len;
+		    	while ((len = fis.read(buf)) > 0) {
+		    		fos.write(buf, 0, len);
+		    	}       
+		    	fis.close();
+		    	fos.close();
+		    	  
+		    	// encode to base64
+		    	BufferedInputStream in = new BufferedInputStream(new FileInputStream(tmpFile));
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				long fileLength = mVideoFile.length();
+				long fileLength = tmpFile.length();
 				byte[] b = new byte[(int) fileLength];
 				int bytesRead;
-	            while ((bytesRead = in.read(b)) != -1) {
-	                bos.write(b, 0, bytesRead);
-	            }
-	            byte[] ficheroAEnviar = bos.toByteArray();
-	            String videoEncoded = Base64.encodeToString(ficheroAEnviar, Base64.DEFAULT);
-	            
-	            Log.d(TAG, videoEncoded);
-	            
-	            // send videoEncoded to the server via adapter
-	            
-			} catch(Exception ex) {
-				ex.printStackTrace();
+		        while ((bytesRead = in.read(b)) != -1) {
+		        	bos.write(b, 0, bytesRead);
+		        }
+		        byte[] ficheroAEnviar = bos.toByteArray();
+		        String videoEncoded = Base64.encodeToString(ficheroAEnviar, Base64.DEFAULT);
+		          
+		    	// send base64 file to server
+		        MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
+						   MMConstants.PARTNER_ID, 
+						   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+						   userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING), 
+						   assignedRequests.getJSONObject(positionClicked).getString(MMAPIConstants.JSON_KEY_REQUESTID),
+						   assignedRequests.getJSONObject(positionClicked).getInt(MMAPIConstants.JSON_KEY_REQUEST_TYPE),
+						   MMAPIConstants.MEDIA_CONTENT_MP4,
+						   videoEncoded,
+						   MMAPIConstants.MEDIA_TYPE_VIDEO);
+		        
+		    } catch (IOException e) {
+		    		
+		    } catch (JSONException e) {
+				e.printStackTrace();
 			}
-			
 		}
 	}
 	
@@ -215,5 +245,13 @@ public class AssignedRequestsFragment extends MMFragment {
 			Log.d(TAG, (String) obj);
 		}
 		
+	}
+	
+	public String getRealPathFromURI(Uri contentUri) {
+	    String[] proj = { MediaStore.Images.Media.DATA };
+	    Cursor cursor = getActivity().managedQuery(contentUri, proj, null, null, null);
+	    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+	    cursor.moveToFirst();
+	    return cursor.getString(column_index);
 	}
 }
