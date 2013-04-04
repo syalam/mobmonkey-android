@@ -1,12 +1,18 @@
 package com.mobmonkey.mobmonkeyapi.adapters;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Environment;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -48,15 +54,62 @@ public class MMAnswerRequestAdapter {
 			httppost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
 			httppost.setHeader(MMAPIConstants.KEY_AUTH, password);
 			
-			StringEntity stringEntity = new StringEntity(mediaInfo.toString());
-			httppost.setEntity(stringEntity);
-			
-			new MMPostAsyncTask(mmCallback).execute(httppost);
-			
+			// might cause outofmemory
+			try {
+				StringEntity stringEntity = new StringEntity(mediaInfo.toString());
+				httppost.setEntity(stringEntity);
+				new MMPostAsyncTask(mmCallback).execute(httppost);
+				
+			} catch (OutOfMemoryError er) {
+				// write mediaInfo into sd card as a temp file.
+				File root = Environment.getExternalStorageDirectory();
+				if (!root.exists()) {
+		            root.mkdirs();
+		        }
+				try {
+					// write to file
+					File tempfile = new File(root, "mobmonkeyMediaInfo");
+					FileWriter writer = new FileWriter(tempfile);
+					BufferedWriter bw = new BufferedWriter(writer);
+					mediaInfo = null;
+					
+					// try to write small piece of data into bufferedwriter
+					bw.write("{");
+					bw.write("\"" + MMAPIConstants.JSON_KEY_REQUESTID + "\":\"" + requestID + "\",");
+					bw.write("\"" + MMAPIConstants.JSON_KEY_REQUEST_TYPE + "\":" + requestType + ",");
+					bw.write("\"" + MMAPIConstants.JSON_KEY_CONTENT_TYPE + "\":\"" + contentType + "\",");
+					// divide mediaData into smaller pieces
+					bw.write("\"" + MMAPIConstants.JSON_KEY_MEDIADATA + "\":\"");
+					
+					for(int i = 0; i < mediaData.length(); i++) {
+						
+						if(!Character.isISOControl(mediaData.charAt(i))) {
+//							Log.d(TAG, "At posittion " + i + ", character \"" + mediaData.charAt(i) + "\"");
+							bw.write(mediaData.charAt(i));
+						}
+					}
+					
+					bw.write("\"");
+					bw.write("}");
+					bw.flush();
+					bw.close();
+			        
+					// put tempfile into FileEntity
+					FileEntity reqEntity = new FileEntity(tempfile, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+			        httppost.setEntity(reqEntity);
+			        
+			        // delete tempfile
+			        tempfile.delete();
+			        
+			        new MMPostAsyncTask(mmCallback).execute(httppost);
+			        
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
