@@ -1,8 +1,13 @@
 package com.mobmonkey.mobmonkeyapi.adapters;
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -13,7 +18,6 @@ public class MMAnswerRequestAdapter {
 	private static String TAG = "MMAnswerRequestAdapter";
 	private static String AnswerRequestURL;
 	private static JSONObject mediaInfo;
-	private static String contentType = "";
 	
 	public static void AnswerRequest(MMCallback mmCallback,
 							   // headers
@@ -22,25 +26,18 @@ public class MMAnswerRequestAdapter {
 							   String password,
 							   // body
 							   String requestID,
+							   int requestType,
+							   String contentType,
 							   String mediaData,
-							   long uploadedDate,
-							   // other
-							   int type) {
-		AnswerRequestURL = MMAPIConstants.TEST_MOBMONKEY_URL + "media/";
-		if(type == 1) {
-			AnswerRequestURL += "image";
-			contentType = "image/jpeg";
-		} else if(type == 2) {
-			AnswerRequestURL += "video";
-		} 
+							   String mediaType) {
+		AnswerRequestURL = MMAPIConstants.TEST_MOBMONKEY_URL + "media/" + mediaType;
 		
 		mediaInfo = new JSONObject();
 		try {
 			mediaInfo.put(MMAPIConstants.JSON_KEY_REQUESTID, requestID);
+			mediaInfo.put(MMAPIConstants.JSON_KEY_REQUEST_TYPE, requestType);
+			mediaInfo.put(MMAPIConstants.JSON_KEY_CONTENT_TYPE, contentType);
 			mediaInfo.put(MMAPIConstants.JSON_KEY_MEDIADATA, mediaData);
-			//mediaInfo.put(MMAPIConstants.JSON_KEY_UPLOADEDDATE, uploadedDate);
-			mediaInfo.put("requestType", type);
-			mediaInfo.put("contentType", contentType);
 			
 			HttpPost httppost = new HttpPost(AnswerRequestURL);
 			// add header
@@ -49,10 +46,16 @@ public class MMAnswerRequestAdapter {
 			httppost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
 			httppost.setHeader(MMAPIConstants.KEY_AUTH, password);
 			
+			StringEntity stringEntity = new StringEntity(mediaInfo.toString());
+			httppost.setEntity(stringEntity);
+			
 			new MMPostAsyncTask(mmCallback).execute(httppost);
 			
 		} catch (JSONException ex) {
 			ex.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
