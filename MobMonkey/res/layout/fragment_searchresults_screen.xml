@@ -24,8 +24,7 @@
 		    android:layout_toLeftOf="@+id/btnaddlocclear"
 		    android:layout_centerVertical="true"
 		    android:background="@drawable/nav_bar_button_blank"
-		    android:src="@android:drawable/ic_menu_mapmode"
-		    android:onClick="viewOnClick"/>
+		    android:src="@android:drawable/ic_menu_mapmode"/>
 		
 		<Button android:id="@+id/btnaddlocclear"
 		    android:layout_width="33dp"
@@ -38,8 +37,7 @@
 		    android:text="@string/btn_add_loc"
 		    android:textStyle="bold"
 		    android:textSize="22sp"
-			android:textColor="@android:color/white"
-			android:onClick="viewOnClick"/>
+			android:textColor="@android:color/white"/>
 		
 	</RelativeLayout>
 	

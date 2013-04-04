@@ -100,6 +100,11 @@
 		    
 		</activity>
 		
+		<activity android:name=".SearchActivity"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
+		
 		<activity android:name=".SearchScreen"
 		    android:screenOrientation="portrait">
 		    

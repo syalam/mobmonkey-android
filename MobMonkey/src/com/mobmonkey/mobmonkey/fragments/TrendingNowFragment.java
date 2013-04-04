@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.facebook.widget.ProfilePictureView;
 import com.mobmonkey.mobmonkey.MainScreen;
 import com.mobmonkey.mobmonkey.R;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
@@ -39,6 +41,8 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	
 	private SharedPreferences userPrefs;
 	private JSONArray categories;
+	
+	private ProgressDialog progressDialog;
 	
 	private ListView lvTrending;
 	
@@ -66,7 +70,6 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, data);
 		lvTrending.setAdapter(arrayAdapter);
 		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
-		lvTrending.setEnabled(false);
 		
 		try {
 			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
@@ -105,6 +108,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 				break;
 			// top viewed
 			case 2:
+				progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, "Loading " + "Top Viewed...", true, false);
 				MMTrendingAdapter.getTrending(new TrendingCallback(position), 
 									 		  "topviewed", 
 											  "week", 
@@ -198,6 +202,10 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		
 		@Override
 		public void processCallback(Object obj) {
+			if(progressDialog != null) {
+				progressDialog.dismiss();
+			}
+			
 			if(obj != null) {
 				listener.onTrendingItemClick(position, ((String) obj));
 			}

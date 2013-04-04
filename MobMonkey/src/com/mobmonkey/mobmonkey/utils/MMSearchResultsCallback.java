@@ -57,6 +57,7 @@ public class MMSearchResultsCallback implements MMCallback {
 		new AlertDialog.Builder(context)
 			.setTitle("MobMonkey")
 			.setMessage("No locations found")
+			.setCancelable(false)
 			.setPositiveButton(R.string.ad_btn_ok, null)
 			.show();
 	}

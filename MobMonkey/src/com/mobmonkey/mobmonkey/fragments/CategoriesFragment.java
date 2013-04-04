@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,22 +42,28 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
  */
 public class CategoriesFragment extends MMFragment {
 	private static final String TAG = "CategoriesFragment: ";
-	private SharedPreferences userPrefs;
 	
+	private SharedPreferences userPrefs;
 	private Location location;
 	private double longitudeValue;
 	private double latitudeValue;
 	
+	private ProgressDialog progressDialog;
 	private ListView lvSubCategories;
 	private TextView tvNavigationBarText;
 	
 	private ArrayList<String> subCategories = new ArrayList<String>();
 	private JSONArray categoriesArray;
-
-	private ProgressDialog progressDialog;
 	
+	private OnSubCategoryItemClickListener subCategoryItemClickListener;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		Log.d(TAG, TAG + "onCreateView");
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
@@ -66,7 +74,19 @@ public class CategoriesFragment extends MMFragment {
 		
 		init();
 		
-		return super.onCreateView(inflater, container, savedInstanceState);
+		return view;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onAttach(android.app.Activity)
+	 */
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if(activity instanceof OnSubCategoryItemClickListener) {
+			subCategoryItemClickListener = (OnSubCategoryItemClickListener) activity;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -109,18 +129,15 @@ public class CategoriesFragment extends MMFragment {
 				try {
 					JSONObject category = categoriesArray.getJSONObject(position);
 					JSONArray subCategoriesArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(getActivity(), category.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)));
-					String categorySelected = category.getString(Locale.getDefault().getLanguage());
+					String selectedCategory = category.getString(Locale.getDefault().getLanguage());
 					
 					if(!subCategoriesArray.isNull(0)) {
-						Intent subCategoriesIntent = new Intent(getActivity(), CategoryScreen.class);
-						subCategoriesIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, subCategoriesArray.toString());
-						subCategoriesIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, categorySelected);
-						startActivity(subCategoriesIntent);
+						subCategoryItemClickListener.onSubCategoryItemClick(subCategoriesArray, selectedCategory);
 					} else {
-						progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, "Locating " + categorySelected);
+						progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, "Locating " + selectedCategory, true, false);
 
 						MMSearchLocationAdapter.searchLocationWithText(
-								new MMSearchResultsCallback(getActivity(), progressDialog, categorySelected), 
+								new MMSearchResultsCallback(getActivity(), progressDialog, selectedCategory), 
 								Double.toString(longitudeValue), 
 								Double.toString(latitudeValue), 
 								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
@@ -131,8 +148,7 @@ public class CategoriesFragment extends MMFragment {
 								MMConstants.PARTNER_ID);
 					}
 				} 
-				catch (JSONException e) 
-				{
+				catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
@@ -147,5 +163,9 @@ public class CategoriesFragment extends MMFragment {
 			latitudeValue = Double.valueOf(decimalFormat.format(latitudeValue));
 			longitudeValue = Double.valueOf(decimalFormat.format(longitudeValue));
 		}
+	}
+	
+	public interface OnSubCategoryItemClickListener {
+		public void onSubCategoryItemClick(JSONArray subCategories, String selectedCategory);
 	}
 }

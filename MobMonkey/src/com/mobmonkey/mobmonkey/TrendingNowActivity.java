@@ -86,6 +86,6 @@ public class TrendingNowActivity extends FragmentActivity implements OnTrendingI
 	private void performTransaction(MMFragment mmFragment) {
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.push(mmFragment));
-		fragmentTransaction.commit();		
+		fragmentTransaction.commit();
 	}
 }
