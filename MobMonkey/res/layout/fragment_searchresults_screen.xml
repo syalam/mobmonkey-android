@@ -21,12 +21,12 @@
 		    android:layout_width="39dp"
 		    android:layout_height="33dp"
 		    android:layout_marginRight="4dp"
-		    android:layout_toLeftOf="@+id/btnaddlocclear"
+		    android:layout_toLeftOf="@+id/btnaddloc"
 		    android:layout_centerVertical="true"
 		    android:background="@drawable/nav_bar_button_blank"
 		    android:src="@android:drawable/ic_menu_mapmode"/>
 		
-		<Button android:id="@+id/btnaddlocclear"
+		<Button android:id="@+id/btnaddloc"
 		    android:layout_width="33dp"
 		    android:layout_height="33dp"
 		    android:layout_marginRight="4dp"
@@ -52,7 +52,22 @@
 		    android:text="@string/ad_btn_cancel"
 		    android:textStyle="bold"
 			android:textColor="@android:color/white"
-			android:visibility="invisible"/>
+			android:visibility="gone"/>
+		
+		<Button android:id="@+id/btnclear"
+		    android:layout_width="wrap_content"
+		    android:layout_height="33dp"
+		    android:layout_centerVertical="true"
+		    android:layout_alignParentRight="true"
+		    android:background="@drawable/nav_bar_button_blank"
+		    android:layout_marginRight="4dp"
+		    android:paddingLeft="3dp"
+		    android:paddingRight="5dp"
+		    android:paddingBottom="4dp"
+		    android:text="@string/btn_clear"
+		    android:textStyle="bold"
+			android:textColor="@android:color/white"
+			android:visibility="gone"/>
 		
 	</RelativeLayout>
 	

@@ -45,7 +45,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.mobmonkey.mobmonkey.AddLocationMapScreen;
 import com.mobmonkey.mobmonkey.AddLocationScreen;
 import com.mobmonkey.mobmonkey.R;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
@@ -76,8 +75,9 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	
 	private TextView tvSearchResultsTitle;
 	private ImageButton ibMap;
-	private Button btnAddLocClear;
+	private Button btnAddLoc;
 	private Button btnCancel;
+	private Button btnClear;
 	private ListView lvSearchResults;
 	private SupportMapFragment smfResultLocations;
 	private GoogleMap googleMap;
@@ -99,8 +99,9 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		View view = inflater.inflate(R.layout.fragment_searchresults_screen, container, false);
 		tvSearchResultsTitle = (TextView) view.findViewById(R.id.tvsearchresultstitle);
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
-		btnAddLocClear = (Button) view.findViewById(R.id.btnaddlocclear);
+		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
 		btnCancel = (Button) view.findViewById(R.id.btncancel);
+		btnClear = (Button) view.findViewById(R.id.btnclear);
 		smfResultLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmap);
 		lvSearchResults = (ListView) view.findViewById(R.id.lvsearchresults);
 		
@@ -120,11 +121,13 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 
 		
 		ibMap.setOnClickListener(SearchResultsFragment.this);
-		btnAddLocClear.setOnClickListener(SearchResultsFragment.this);
+		btnAddLoc.setOnClickListener(SearchResultsFragment.this);
 		btnCancel.setOnClickListener(SearchResultsFragment.this);
+		btnClear.setOnClickListener(SearchResultsFragment.this);
+		lvSearchResults.setOnItemClickListener(SearchResultsFragment.this);
+		
 		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.search_result_list_row, resultLocations);
 		lvSearchResults.setAdapter(arrayAdapter);
-		lvSearchResults.setOnItemClickListener(SearchResultsFragment.this);
 		
 		addLocClicked = false;
 		
@@ -133,6 +136,10 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		return view;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onAttach(android.app.Activity)
+	 */
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -141,6 +148,10 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener#onInfoWindowClick(com.google.android.gms.maps.model.Marker)
+	 */
 	@Override
 	public void onInfoWindowClick(Marker marker) {
 		try {
@@ -153,12 +164,15 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.google.android.gms.maps.GoogleMap.OnMapClickListener#onMapClick(com.google.android.gms.maps.model.LatLng)
+	 */
 	@Override
 	public void onMapClick(LatLng pointClicked) {
 		if(addLocClicked) {
 			try{
 				Address locationClicked = getAddressForLocation(pointClicked.latitude, pointClicked.longitude);
-//				Toast.makeText(getActivity(), "Address: "+locationClicked.getAddressLine(0), Toast.LENGTH_SHORT).show();
 				
 				// pass information to category screen
 				Bundle bundle = new Bundle();
@@ -179,44 +193,24 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.view.View.OnClickListener#onClick(android.view.View)
+	 */
 	@Override
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.ibmap:
-				if(lvSearchResults.getVisibility() == View.VISIBLE) {
-					lvSearchResults.setVisibility(View.INVISIBLE);
-					smfResultLocations.getView().setVisibility(View.VISIBLE);
-				} else if(lvSearchResults.getVisibility() == View.INVISIBLE) {
-					lvSearchResults.setVisibility(View.VISIBLE);
-					smfResultLocations.getView().setVisibility(View.INVISIBLE);
-					btnAddLocClear.setVisibility(View.VISIBLE);
-					btnCancel.setVisibility(View.INVISIBLE);
-				}
+				ibMapClick();
 				break;
-			case R.id.btnaddlocclear:
-				if(MMLocationManager.isGPSEnabled()) {
-					if(smfResultLocations.getView().getVisibility() == View.INVISIBLE) {
-						startActivity(new Intent(getActivity(), AddLocationScreen.class));
-					} else {
-						Toast.makeText(getActivity(), R.string.toast_tap_location_to_add, Toast.LENGTH_LONG).show();
-						addLocClicked = true;
-						btnAddLocClear.setVisibility(View.INVISIBLE);
-						btnCancel.setVisibility(View.VISIBLE);
-						
-						RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ibMap.getLayoutParams();
-						params.addRule(RelativeLayout.LEFT_OF, R.id.btncancel);
-						ibMap.setLayoutParams(params);
-					}
-				}
+			case R.id.btnaddloc:
+				buttonAddLocClick();
 				break;
 			case R.id.btncancel:
-				addLocClicked = false;
-				btnAddLocClear.setVisibility(View.VISIBLE);
-				btnCancel.setVisibility(View.INVISIBLE);
-				
-				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ibMap.getLayoutParams();
-				params.addRule(RelativeLayout.LEFT_OF, R.id.btnaddlocclear);
-				ibMap.setLayoutParams(params);
+				buttonCancelClick();
+				break;
+			case R.id.btnclear:
+				promptClearHistory();
 				break;
 		}
 	}
@@ -241,6 +235,10 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onDestroyView()
+	 */
 	@Override
 	public void onDestroyView() {
 		try {
@@ -277,6 +275,10 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 			}
 	}
 	
+	/**
+	 * 
+	 * @throws JSONException
+	 */
 	private void displayMap() throws JSONException {
 		if(getArguments().getBoolean(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, true)) {
 			googleMap = smfResultLocations.getMap();
@@ -285,8 +287,8 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 			getLocationHistory();
 		} else {
 			ibMap.setVisibility(View.GONE);
-			btnAddLocClear.setBackgroundResource(R.drawable.orange_button_background);
-			btnAddLocClear.setText(R.string.btn_clear);
+			btnAddLoc.setVisibility(View.GONE);
+			btnClear.setVisibility(View.VISIBLE);
 			
 			if(!getLocationHistory()) {
 				displayNoHistoryAlert();
@@ -294,6 +296,11 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		}
 	}
 	
+	/**
+	 * 
+	 * @return
+	 * @throws JSONException
+	 */
 	private boolean getLocationHistory() throws JSONException {
 		String history = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING);
 		if(!history.equals(MMAPIConstants.DEFAULT_STRING)) {
@@ -305,6 +312,10 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		}
 	}
 	
+	/**
+	 * 
+	 * @throws JSONException
+	 */
 	private void addToGoogleMap() throws JSONException {		
 		for(int i = 0; i < searchResults.length(); i++) {
 			JSONObject jObj = searchResults.getJSONObject(i);
@@ -327,6 +338,9 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		googleMap.setMyLocationEnabled(true);
 	}
 	
+	/**
+	 * 
+	 */
 	private void displayNoHistoryAlert() {
 		new AlertDialog.Builder(getActivity())
 			.setTitle(R.string.ad_title_no_history)
@@ -398,6 +412,13 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		return false;
 	}
 	
+	/**
+	 * 
+	 * @param latitude
+	 * @param longitude
+	 * @return
+	 * @throws IOException
+	 */
 	public Address getAddressForLocation(double latitude, double longitude) throws IOException {
         int maxResults = 1;
 
@@ -411,6 +432,91 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
         }
     }
 	
+	/**
+	 * 
+	 */
+	private void ibMapClick() {
+		if(lvSearchResults.getVisibility() == View.VISIBLE) {
+			lvSearchResults.setVisibility(View.INVISIBLE);
+			smfResultLocations.getView().setVisibility(View.VISIBLE);
+		} else if(lvSearchResults.getVisibility() == View.INVISIBLE) {
+			lvSearchResults.setVisibility(View.VISIBLE);
+			smfResultLocations.getView().setVisibility(View.INVISIBLE);
+			btnAddLoc.setVisibility(View.VISIBLE);
+			btnCancel.setVisibility(View.INVISIBLE);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void buttonAddLocClick() {
+		if(MMLocationManager.isGPSEnabled()) {
+			if(smfResultLocations.getView().getVisibility() == View.INVISIBLE) {
+				startActivity(new Intent(getActivity(), AddLocationScreen.class));
+			} else {
+				Toast.makeText(getActivity(), R.string.toast_tap_location_to_add, Toast.LENGTH_LONG).show();
+				addLocClicked = true;
+				btnAddLoc.setVisibility(View.INVISIBLE);
+				btnCancel.setVisibility(View.VISIBLE);
+				
+				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ibMap.getLayoutParams();
+				params.addRule(RelativeLayout.LEFT_OF, R.id.btncancel);
+				ibMap.setLayoutParams(params);
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void buttonCancelClick() {
+		addLocClicked = false;
+		btnAddLoc.setVisibility(View.VISIBLE);
+		btnCancel.setVisibility(View.INVISIBLE);
+		
+		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ibMap.getLayoutParams();
+		params.addRule(RelativeLayout.LEFT_OF, R.id.btnaddloc);
+		ibMap.setLayoutParams(params);
+	}
+	
+	/**
+	 * 
+	 */
+	private void promptClearHistory() {
+		new AlertDialog.Builder(getActivity())
+			.setTitle("clear history")
+			.setMessage("Are you sure to clear all your history?")
+			.setCancelable(false)
+			.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					clearHistory();
+				}
+			})
+			.setNegativeButton(R.string.ad_btn_no, null)
+			.show();
+		
+	}
+	
+	/**
+	 * 
+	 */
+	private void clearHistory() {
+		resultLocations = new MMResultsLocation[0];
+		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.search_result_list_row, resultLocations);
+		lvSearchResults.setAdapter(arrayAdapter);
+		lvSearchResults.invalidate();
+		
+		userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_HISTORY);
+		userPrefsEditor.commit();
+	}
+	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	public interface OnSearchResultsLocationSelectListener {
 		public void onLocationSelect(Object obj);
 	}

@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,10 +29,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.VideoView;
 
 /**
  * @author Dezapp, LLC
@@ -53,6 +58,15 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private LinearLayout llFavorite;
 	private TextView tvFavorite;
 	
+	private LinearLayout llMedia;
+	private VideoView vvStream;
+	private ImageView ivImage;
+	private TextView tvTimePast;
+	private ImageButton ibShareMedia;
+	private ImageButton ibStream;
+	private ImageButton ibVideo;
+	private ImageButton ibImage;
+	
 	private OnLocationDetailsItemClickListener listener;
 	
 	@Override
@@ -69,6 +83,15 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		elvLocDetails = (MMExpandedListView) view.findViewById(R.id.elvlocdetails);
 		llFavorite = (LinearLayout) view.findViewById(R.id.llfavorite);
 		tvFavorite = (TextView) view.findViewById(R.id.tvfavorite);
+		
+		llMedia = (LinearLayout) view.findViewById(R.id.llmedia);
+		vvStream = (VideoView) view.findViewById(R.id.vvstream);
+		ivImage = (ImageView) view.findViewById(R.id.ivimage);
+		tvTimePast = (TextView) view.findViewById(R.id.tvtimepast);
+		ibShareMedia = (ImageButton) view.findViewById(R.id.ibsharemedia);
+		ibStream = (ImageButton) view.findViewById(R.id.ibstream);
+		ibVideo = (ImageButton) view.findViewById(R.id.ibvideo);
+		ibImage = (ImageButton) view.findViewById(R.id.ibimage);
 		
 		try {
 			if(!userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING).equals(MMAPIConstants.DEFAULT_STRING)) {
@@ -105,6 +128,20 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			case R.id.llfavorite:
 				favoriteClicked();
 				break;
+			case R.id.ibsharemedia:
+				break;
+			case R.id.ibstream:
+				vvStream.setVisibility(View.VISIBLE);
+				ivImage.setVisibility(View.INVISIBLE);
+				break;
+			case R.id.ibvideo:
+				vvStream.setVisibility(View.VISIBLE);
+				ivImage.setVisibility(View.INVISIBLE);
+				break;
+			case R.id.ibimage:
+				vvStream.setVisibility(View.INVISIBLE);
+				ivImage.setVisibility(View.VISIBLE);
+				break;
 		}
 	}
 	
@@ -128,6 +165,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		tvLocNameTitle.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_NAME));
 		tvLocName.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_NAME));
 		tvMembersFound.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));
+		
+		// TODO: check if location has media
+		hasMedia();
 		
 		int[] icons = new int[]{R.drawable.cat_icon_telephone, R.drawable.cat_icon_map_pin, R.drawable.cat_icon_alarm_clock};
 		int[] indicatorIcons = new int[]{R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator};
@@ -154,6 +194,19 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				break;
 			}
 		}
+	}
+	
+	private void hasMedia() {
+		llMedia.setVisibility(View.VISIBLE);
+		tvTimePast.setText("31m");
+		
+		vvStream.setVideoURI(Uri.parse("http://commonsware.com/misc/test2.3gp"));
+		vvStream.setMediaController(new MediaController(getActivity()));
+		
+		ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
+		ibStream.setOnClickListener(LocationDetailsFragment.this);
+		ibVideo.setOnClickListener(LocationDetailsFragment.this);
+		ibImage.setOnClickListener(LocationDetailsFragment.this);
 	}
 	
 	private void favoriteClicked() {
