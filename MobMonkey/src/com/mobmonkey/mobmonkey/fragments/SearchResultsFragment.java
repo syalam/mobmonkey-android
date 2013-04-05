@@ -81,11 +81,14 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	private ListView lvSearchResults;
 	private SupportMapFragment smfResultLocations;
 	private GoogleMap googleMap;
+	private boolean displayMap = false;
+	private boolean addLocClicked;
+	private Marker currMarker;
+	private float currZoomLevel = 16;
 	
 	private HashMap<Marker, JSONObject> markerHashMap;
 	private OnSearchResultsLocationSelectListener searchResultsLocationSelectListener;
-	private boolean addLocClicked;
-
+	
 	/*
 	 * (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
@@ -131,7 +134,13 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		
 		addLocClicked = false;
 		
-		smfResultLocations.getView().setVisibility(View.INVISIBLE);
+		if(displayMap) {
+			lvSearchResults.setVisibility(View.INVISIBLE);
+			smfResultLocations.getView().setVisibility(View.VISIBLE);
+		} else {
+			lvSearchResults.setVisibility(View.VISIBLE);
+			smfResultLocations.getView().setVisibility(View.INVISIBLE);
+		}
 		
 		return view;
 	}
@@ -155,9 +164,9 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	@Override
 	public void onInfoWindowClick(Marker marker) {
 		try {
-			JSONObject jObj = markerHashMap.get((Marker) marker);
-			addToHistory(jObj);
-			
+			addToHistory(markerHashMap.get((Marker) marker));
+			currMarker = marker;
+			currZoomLevel = googleMap.getCameraPosition().zoom;
 			searchResultsLocationSelectListener.onLocationSelect(markerHashMap.get((Marker) marker));
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -316,7 +325,10 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 * 
 	 * @throws JSONException
 	 */
-	private void addToGoogleMap() throws JSONException {		
+	private void addToGoogleMap() throws JSONException {
+		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+		
 		for(int i = 0; i < searchResults.length(); i++) {
 			JSONObject jObj = searchResults.getJSONObject(i);
 			
@@ -327,12 +339,20 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 					title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
 					.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
 			
+			if(currMarker != null && currMarker.getTitle().equals(locationResultMarker.getTitle())) {
+				Log.d(TAG, TAG + "marker equal");
+				locationResultMarker.showInfoWindow();
+				currentLoc = currMarker.getPosition();
+			}
+			
 			markerHashMap.put(locationResultMarker, jObj);
 		}
 		
-		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
-		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
-		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+		if(currMarker != null) {
+			currentLoc = currMarker.getPosition();
+		}
+		
+		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, currZoomLevel));
 		googleMap.setOnInfoWindowClickListener(SearchResultsFragment.this);
 		googleMap.setOnMapClickListener(SearchResultsFragment.this);
 		googleMap.setMyLocationEnabled(true);
@@ -437,9 +457,11 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 */
 	private void ibMapClick() {
 		if(lvSearchResults.getVisibility() == View.VISIBLE) {
+			displayMap = true;
 			lvSearchResults.setVisibility(View.INVISIBLE);
 			smfResultLocations.getView().setVisibility(View.VISIBLE);
 		} else if(lvSearchResults.getVisibility() == View.INVISIBLE) {
+			displayMap = false;
 			lvSearchResults.setVisibility(View.VISIBLE);
 			smfResultLocations.getView().setVisibility(View.INVISIBLE);
 			btnAddLoc.setVisibility(View.VISIBLE);

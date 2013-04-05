@@ -53,27 +53,52 @@
 		            android:layout_height="wrap_content"
 		            android:paddingLeft="3dp"
 		            android:paddingRight="3dp">
-		            
+					
 		            <VideoView android:id="@+id/vvstream"
 		                android:layout_width="match_parent"
 		                android:layout_height="200dp"/>
+					
+					<TextView android:id="@+id/tvstreamexpirydate"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="right"
+						android:layout_marginTop="10dp"
+						android:layout_marginRight="10dp"
+						android:gravity="center"
+						android:drawableLeft="@drawable/ic_dialog_time"
+						android:drawablePadding="5dp"
+						android:textColor="@android:color/white"
+						android:visibility="invisible"/>
 		            
+					<TextView android:id="@+id/tvvideoexpirydate"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="right"
+						android:layout_marginTop="10dp"
+						android:layout_marginRight="10dp"
+						android:gravity="center"
+						android:drawableLeft="@drawable/ic_dialog_time"
+						android:drawablePadding="5dp"
+						android:textColor="@android:color/white"
+						android:visibility="invisible"/>
+   					
 		            <ImageView android:id="@+id/ivimage"
 		                android:layout_width="match_parent"
 		                android:layout_height="200dp"
 		                android:visibility="invisible"/>
-			                
-		            <TextView android:id="@+id/tvtimepast"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:layout_gravity="right"
-		                android:layout_marginTop="10dp"
-		                android:layout_marginRight="10dp"
-		                android:gravity="center"
-		                android:drawableLeft="@drawable/ic_dialog_time"
-		                android:drawablePadding="5dp"
-		                android:textColor="@android:color/white"/>
-		            
+					
+					<TextView android:id="@+id/tvimageexpirydate"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="right"
+						android:layout_marginTop="10dp"
+						android:layout_marginRight="10dp"
+						android:gravity="center"
+						android:drawableLeft="@drawable/ic_dialog_time"
+						android:drawablePadding="5dp"
+						android:textColor="@android:color/white"
+						android:visibility="invisible"/>
+					
 		            <ImageButton android:id="@+id/ibsharemedia"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"

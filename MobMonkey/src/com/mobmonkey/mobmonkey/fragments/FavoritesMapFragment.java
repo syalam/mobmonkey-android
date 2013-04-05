@@ -68,6 +68,8 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	private GoogleMap googleMap;
 	private HashMap<Marker, JSONObject> markerHashMap;
 	private boolean addLocClicked;
+	private Marker currMarker;
+	private float currZoomLevel = 16;
 	
 	private OnMapIconClickListener mapIconClickListener;
 	private OnMMLocationSelectListener locationSelectListener;
@@ -137,6 +139,8 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 
 	@Override
 	public void onInfoWindowClick(Marker marker) {
+		currMarker = marker;
+		currZoomLevel = googleMap.getCameraPosition().zoom;
 		locationSelectListener.onLocationSelect(markerHashMap.get((Marker) marker));
 	}
 
@@ -218,6 +222,9 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	private void addToGoogleMap() throws JSONException {
 		markerHashMap.clear();
 		googleMap.clear();
+		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+		
 		for(int i = 0; i < favoritesList.length(); i++) {
 			JSONObject jObj = favoritesList.getJSONObject(i);
 			
@@ -228,12 +235,16 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 					title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
 					.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
 			
+			if(currMarker != null && currMarker.getTitle().equals(locationResultMarker.getTitle())) {
+				Log.d(TAG, TAG + "marker equal");
+				locationResultMarker.showInfoWindow();
+				currentLoc = currMarker.getPosition();
+			}
+			
 			markerHashMap.put(locationResultMarker, jObj);
 		}
-		
-		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
-		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
-		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+
+		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, currZoomLevel));
 		googleMap.setOnInfoWindowClickListener(FavoritesMapFragment.this);
 		googleMap.setOnMapClickListener(FavoritesMapFragment.this);
 		googleMap.setMyLocationEnabled(true);

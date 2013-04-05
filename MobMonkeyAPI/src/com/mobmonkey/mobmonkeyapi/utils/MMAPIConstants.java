@@ -43,6 +43,7 @@ public final class MMAPIConstants {
 	
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
 
+	public static final String MEDIA_TYPE_LIVESTREAMING = "livestreaming";
 	public static final String MEDIA_TYPE_VIDEO = "video";
 	public static final String MEDIA_TYPE_IMAGE = "image";
 	public static final String MEDIA_TYPE_TEXT = "text";
@@ -162,6 +163,7 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_DESCRIPTION = "description";	
 	public static final String JSON_KEY_DISTANCE = "distance";
 	public static final String JSON_KEY_DURATION = "duration";
+	public static final String JSON_KEY_EXPIRY_DATE = "expiryDate";
 	public static final String JSON_KEY_FREQUENCY_IN_MS = "frequencyInMS";
 	public static final String JSON_KEY_INTEREST_COUNT = "interestCount";
 	public static final String JSON_KEY_LATITUDE = "latitude";

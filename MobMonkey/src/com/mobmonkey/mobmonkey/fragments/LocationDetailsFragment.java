@@ -11,7 +11,9 @@ import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
+import com.mobmonkey.mobmonkey.utils.MMUtility;
 import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMMediaAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
@@ -61,7 +63,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private LinearLayout llMedia;
 	private VideoView vvStream;
 	private ImageView ivImage;
-	private TextView tvTimePast;
+	private TextView tvStreamExpiryDate;
+	private TextView tvVideoExpiryDate;
+	private TextView tvImageExpiryDate;
 	private ImageButton ibShareMedia;
 	private ImageButton ibStream;
 	private ImageButton ibVideo;
@@ -87,7 +91,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		llMedia = (LinearLayout) view.findViewById(R.id.llmedia);
 		vvStream = (VideoView) view.findViewById(R.id.vvstream);
 		ivImage = (ImageView) view.findViewById(R.id.ivimage);
-		tvTimePast = (TextView) view.findViewById(R.id.tvtimepast);
+		tvStreamExpiryDate = (TextView) view.findViewById(R.id.tvstreamexpirydate);
+		tvVideoExpiryDate = (TextView) view.findViewById(R.id.tvvideoexpirydate);
+		tvImageExpiryDate = (TextView) view.findViewById(R.id.tvimageexpirydate);
 		ibShareMedia = (ImageButton) view.findViewById(R.id.ibsharemedia);
 		ibStream = (ImageButton) view.findViewById(R.id.ibstream);
 		ibVideo = (ImageButton) view.findViewById(R.id.ibvideo);
@@ -100,6 +106,15 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				favoritesList = new JSONArray();
 			}
 			locationDetails = new JSONObject(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			
+			MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, "Retreiving available media...");
+			MMMediaAdapter.retrieveAllMediaForLocation(new MediaCallback(), 
+					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+					MMConstants.PARTNER_ID, 
+					locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
+					locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID));
+			
 			Log.d(TAG, TAG + "Location Details: " + locationDetails.toString());
 			setLocationDetails();
 		} catch (JSONException e) {
@@ -133,14 +148,23 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			case R.id.ibstream:
 				vvStream.setVisibility(View.VISIBLE);
 				ivImage.setVisibility(View.INVISIBLE);
+				tvStreamExpiryDate.setVisibility(View.VISIBLE);
+				tvVideoExpiryDate.setVisibility(View.INVISIBLE);
+				tvImageExpiryDate.setVisibility(View.INVISIBLE);
 				break;
 			case R.id.ibvideo:
 				vvStream.setVisibility(View.VISIBLE);
 				ivImage.setVisibility(View.INVISIBLE);
+				tvStreamExpiryDate.setVisibility(View.INVISIBLE);
+				tvVideoExpiryDate.setVisibility(View.VISIBLE);
+				tvImageExpiryDate.setVisibility(View.INVISIBLE);
 				break;
 			case R.id.ibimage:
 				vvStream.setVisibility(View.INVISIBLE);
 				ivImage.setVisibility(View.VISIBLE);
+				tvStreamExpiryDate.setVisibility(View.INVISIBLE);
+				tvVideoExpiryDate.setVisibility(View.INVISIBLE);
+				tvImageExpiryDate.setVisibility(View.VISIBLE);
 				break;
 		}
 	}
@@ -165,9 +189,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		tvLocNameTitle.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_NAME));
 		tvLocName.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_NAME));
 		tvMembersFound.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));
-		
-		// TODO: check if location has media
-		hasMedia();
 		
 		int[] icons = new int[]{R.drawable.cat_icon_telephone, R.drawable.cat_icon_map_pin, R.drawable.cat_icon_alarm_clock};
 		int[] indicatorIcons = new int[]{R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator};
@@ -196,17 +217,36 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
-	private void hasMedia() {
-		llMedia.setVisibility(View.VISIBLE);
-		tvTimePast.setText("31m");
+	private void hasMedia(String mediaResults) throws JSONException {		
+		JSONObject mediaJObj = new JSONObject(mediaResults); 
+		JSONArray mediaJArr = mediaJObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA);
 		
-		vvStream.setVideoURI(Uri.parse("http://commonsware.com/misc/test2.3gp"));
-		vvStream.setMediaController(new MediaController(getActivity()));
-		
-		ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
-		ibStream.setOnClickListener(LocationDetailsFragment.this);
-		ibVideo.setOnClickListener(LocationDetailsFragment.this);
-		ibImage.setOnClickListener(LocationDetailsFragment.this);
+		if(mediaJArr.length() > 0) {
+			llMedia.setVisibility(View.VISIBLE);
+			for(int i = 0; i < mediaJArr.length(); i++) {
+				JSONObject jObj = mediaJArr.getJSONObject(i);
+				
+				String mediaType = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
+			
+				if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING)) {
+					vvStream.setVideoURI(Uri.parse(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
+					vvStream.setMediaController(new MediaController(getActivity()));
+					tvStreamExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm"));
+				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
+					vvStream.setVideoURI(Uri.parse(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
+					vvStream.setMediaController(new MediaController(getActivity()));
+					tvVideoExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm"));
+				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
+					// TODO: load image from mediaUrl using asynctask and possibly lazy image loader? dont save image locally since it may not be the most up-to-date image
+					tvImageExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm"));
+				}
+			}
+	
+			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
+			ibStream.setOnClickListener(LocationDetailsFragment.this);
+			ibVideo.setOnClickListener(LocationDetailsFragment.this);
+			ibImage.setOnClickListener(LocationDetailsFragment.this);
+		}
 	}
 	
 	private void favoriteClicked() {
@@ -253,6 +293,22 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	
 	public interface OnLocationDetailsItemClickListener {
 		public void onLocationDetailsItem(int position, Object obj);
+	}
+	
+	private class MediaCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
+			if(obj != null) {
+				Log.d(TAG, TAG + "mediaResults: " + (String) obj);
+				try {
+					hasMedia((String) obj);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	private class AddFavoriteCallback implements MMCallback {
