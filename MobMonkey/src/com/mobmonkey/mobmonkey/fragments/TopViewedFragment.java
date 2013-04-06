@@ -82,19 +82,27 @@ public class TopViewedFragment extends MMFragment {
 		}
 	}
 	
-	private MMTopviewedItem[] getTopViewedItems() throws JSONException, IOException {
+	private MMTopviewedItem[] getTopViewedItems() {
 		MMTopviewedItem topViewedItems[] = new MMTopviewedItem[topViewed.length()];
-		
-		//Log.d(TAG, topViewed.toString());
-		for(int i = 0; i < topViewedItems.length; i++) {
-			if(mediaType.get(i).equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
-				topViewedItems[i] = new MMTopviewedItem(topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME), 
-														mediaUrl.get(i), false);
-			} else if(mediaType.get(i).equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
-				topViewedItems[i] = new MMTopviewedItem(topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME), 
-														mediaUrl.get(i), true);
-			}
+		try {
+			//Log.d(TAG, topViewed.toString());
+			for(int i = 0; i < topViewedItems.length; i++) {
+				if(mediaType.get(i).equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
+					topViewedItems[i] = new MMTopviewedItem(topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME), 
+															mediaUrl.get(i), false);
+				} else if(mediaType.get(i).equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
+					topViewedItems[i] = new MMTopviewedItem(topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME), 
+															mediaUrl.get(i), true);
+				}
 			
+				Log.d(TAG, "title: " + topViewedItems[i].title);
+			}
+		} catch (IOException ex) {
+			Log.d(TAG, "IOExcpetion at getTopViewedItems()");
+			ex.printStackTrace();
+		} catch (JSONException e) {
+			Log.d(TAG, "JSONException at getTopViewedItems()");
+			e.printStackTrace();
 		}
 		
 		return topViewedItems;
@@ -110,15 +118,13 @@ public class TopViewedFragment extends MMFragment {
 				
 				mediaUrl.add(mediaArray.getJSONObject(0).getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
 				mediaType.add(mediaArray.getJSONObject(0).getString(MMAPIConstants.JSON_KEY_TYPE));
-				if(mediaUrl.size() == mediaArray.length()) {
+				if(mediaUrl.size() > 0) {
 					MMTopviewedArrayAdapter adapter = new MMTopviewedArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, getTopViewedItems());
 					lvtopviewed.setAdapter(adapter);
+					adapter.notifyDataSetChanged();
 				}
 				
 			} catch (JSONException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
