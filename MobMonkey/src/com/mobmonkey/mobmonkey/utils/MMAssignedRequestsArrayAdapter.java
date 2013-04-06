@@ -12,10 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MMAssignedRequestsArrayAdapter extends ArrayAdapter<MMAssignedRequestsItem>{
-	
-	Context context; 
-    int layoutResourceId;    
-    MMAssignedRequestsItem data[] = null;
+	private Context context; 
+	private int layoutResourceId;    
+	private MMAssignedRequestsItem data[] = null;
     
     public MMAssignedRequestsArrayAdapter(Context context, int layoutResourceId, MMAssignedRequestsItem[] data) {
         

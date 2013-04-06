@@ -33,7 +33,7 @@ import android.widget.RadioButton;
  */
 public class MMCenteredRadioImageButton extends RadioButton {
 
-	Drawable image;
+	private Drawable image;
 
 	public MMCenteredRadioImageButton(Context context, AttributeSet attrs) {
 		super(context, attrs);

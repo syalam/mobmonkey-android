@@ -3,15 +3,19 @@ package com.mobmonkey.mobmonkey;
 import java.util.Stack;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
-import com.mobmonkey.mobmonkey.fragments.CategoriesFragment;
-import com.mobmonkey.mobmonkey.fragments.SearchFragment;
+import com.mobmonkey.mobmonkey.fragments.*;
+import com.mobmonkey.mobmonkey.fragments.CategoriesFragment.OnSubCategoryItemClickListener;
+import com.mobmonkey.mobmonkey.fragments.LocationDetailsFragment.OnLocationDetailsItemClickListener;
 import com.mobmonkey.mobmonkey.fragments.SearchFragment.OnCategoryItemClickListener;
 import com.mobmonkey.mobmonkey.fragments.SearchFragment.OnNoCategoryItemClickListener;
-import com.mobmonkey.mobmonkey.fragments.SearchResultsFragment;
+import com.mobmonkey.mobmonkey.fragments.SearchResultsFragment.OnSearchResultsLocationSelectListener;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -21,7 +25,11 @@ import android.support.v4.app.FragmentTransaction;
  * @author Dezapp, LLC
  *
  */
-public class SearchActivity extends FragmentActivity implements OnNoCategoryItemClickListener, OnCategoryItemClickListener {
+public class SearchActivity extends FragmentActivity implements OnNoCategoryItemClickListener, 
+																OnCategoryItemClickListener, 
+																OnSubCategoryItemClickListener, 
+																OnSearchResultsLocationSelectListener, 
+																OnLocationDetailsItemClickListener {
 	FragmentManager fragmentManager;
 	Stack<MMFragment> fragmentStack;
 	
@@ -47,7 +55,7 @@ public class SearchActivity extends FragmentActivity implements OnNoCategoryItem
 	public void onNoCategoryItemClick(boolean showMap, String searchCategory, String results) {
 		SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
 		Bundle data = new Bundle();
-		data.putBoolean(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, true);
+		data.putBoolean(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, showMap);
 		data.putString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
 		data.putString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, results);
 		searchResultsFragment.setArguments(data);
@@ -62,6 +70,45 @@ public class SearchActivity extends FragmentActivity implements OnNoCategoryItem
 		data.putString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
 		categoriesFragment.setArguments(data);
 		performTransaction(categoriesFragment);
+	}
+	
+	@Override
+	public void onSubCategoryItemClick(JSONArray subCategories, String selectedCategory) {
+		CategoriesFragment categoriesFragment = new CategoriesFragment();
+		Bundle data = new Bundle();
+		data.putString(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, subCategories.toString());
+		data.putString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
+		categoriesFragment.setArguments(data);
+		performTransaction(categoriesFragment);
+	}
+	
+	@Override
+	public void onLocationSelect(Object obj) {
+		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
+		Bundle data = new Bundle();
+		data.putString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((JSONObject) obj).toString());
+		locationDetailsFragment.setArguments(data);
+		performTransaction(locationDetailsFragment);
+	}
+	
+	@Override
+	public void onLocationDetailsItem(int position, Object obj) {
+		switch(position) {
+		case 0:
+			Intent dialerIntent = new Intent(Intent.ACTION_DIAL);
+			dialerIntent.setData(Uri.parse("tel:" + ((String) obj)));
+			startActivity(dialerIntent);
+			break;
+		case 1:
+			LocationDetailsMapFragment locationDetailsMapFragment = new LocationDetailsMapFragment();
+			Bundle data = new Bundle();
+			data.putString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((String) obj));
+			locationDetailsMapFragment.setArguments(data);
+			performTransaction(locationDetailsMapFragment);
+			break;
+		case 2:
+			break;
+	}
 	}
 	
 	/**

@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,20 +20,22 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.mobmonkey.mobmonkey.AddLocationMapScreen;
 import com.mobmonkey.mobmonkey.FilterScreen;
 import com.mobmonkey.mobmonkey.R;
-import com.mobmonkey.mobmonkey.SearchScreen;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMCategories;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMSearchResultsCallback;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -57,7 +58,8 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 	
 	private String[] topLevelCategories;
 	
-	private ProgressDialog progressDialog;
+	private Button btnFilter;
+	private Button btnAddLoc;
 	private EditText etSearch;
 	private MMExpandedListView elvSearchCategory;
 	private MMExpandedListView elvSearchNoCategory;
@@ -77,9 +79,14 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_search_screen, container, false);
+		btnFilter = (Button) view.findViewById(R.id.btnfilter);
+		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
 		etSearch = (EditText) view.findViewById(R.id.etsearch);
-		elvSearchNoCategory  = (MMExpandedListView) view.findViewById(R.id.elvsearchnocategory);
+		elvSearchNoCategory = (MMExpandedListView) view.findViewById(R.id.elvsearchnocategory);
 		elvSearchCategory = (MMExpandedListView) view.findViewById(R.id.elvsearchcategory);
+		
+		btnFilter.setOnClickListener(SearchFragment.this);
+		btnAddLoc.setOnClickListener(SearchFragment.this);
 		
 		try {
 			topLevelCategories = MMCategories.getTopLevelCategories(getActivity().getApplicationContext());
@@ -99,6 +106,9 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 		super.onAttach(activity);
 		if(activity instanceof OnCategoryItemClickListener) {
 			categoryItemClickListener = (OnCategoryItemClickListener) activity;
+			if(activity instanceof OnNoCategoryItemClickListener) {
+				noCategoryItemClickListener = (OnNoCategoryItemClickListener) activity;
+			}
 		}
 	}
 
@@ -129,7 +139,6 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 			longitudeValue = location.getLongitude();
 			latitudeValue = location.getLatitude();
 			DecimalFormat twoDForm = new DecimalFormat("#.######");
-			Log.d(TAG, TAG + "latitudeValue: " + latitudeValue);
 			latitudeValue = Double.valueOf(twoDForm.format(latitudeValue));
 			longitudeValue = Double.valueOf(twoDForm.format(longitudeValue));
 		}
@@ -191,15 +200,11 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 					
 					if(!subCategories.isNull(0)) {
 						categoryItemClickListener.onCategoryItemClick(subCategories, selectedCategory);
-//						Intent categoryScreenIntent = new Intent(getActivity(), CategoryScreen.class);					
-//						categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, (String) subCategories.toString());
-//						categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
-//						startActivity(categoryScreenIntent);
 					} else if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
 						JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
-						progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, "Locating " + topLevelCategories[position]);
+						MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_locating) + MMAPIConstants.DEFAULT_SPACE + topLevelCategories[position] + getString(R.string.pd_ellipses));
 						MMSearchLocationAdapter.searchLocationWithText(
-								new MMSearchResultsCallback(getActivity(), progressDialog, topLevelCategories[position]), 
+								new MMSearchResultsCallback(getActivity(), topLevelCategories[position], null), 
 								Double.toString(longitudeValue), 
 								Double.toString(latitudeValue), 
 								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
@@ -236,8 +241,9 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 				MMConstants.PARTNER_ID);
-				progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + 
-				searchCategory + getString(R.string.pd_ellipses), true, false);
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + searchCategory + getString(R.string.pd_ellipses));
+    	InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 	}
 	
 	private void searchAllNearbyLocations() {
@@ -246,26 +252,14 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 		MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 
 				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), userPrefs.getString(MMAPIConstants.KEY_USER, 
 				MMAPIConstants.DEFAULT_STRING), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
-		progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_all_nearby), true, false);
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_all_nearby));
 	}
 	
 	private void showHistory() {
 		noCategoryItemClickListener.onNoCategoryItemClick(false, searchCategory, userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
-		
-//		Intent searchResultsIntent = new Intent(getActivity(), SearchResultsScreen.class);
-//		searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, false);
-//		searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
-//		searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING));
-//		startActivity(searchResultsIntent);
 	}
 	
 	private String[] getTopLevelCategories() throws JSONException {
-//		String[] topLevelCats = new String[topLevelCategories.length()];
-//		
-//		for(int i = 0; i < topLevelCategories.length(); i++) {
-//			topLevelCats[i] = topLevelCategories.getJSONObject(i).getString(Locale.getDefault().getLanguage());
-//		}
-		
 		return topLevelCategories;
 	}
 	
@@ -276,23 +270,21 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 	
 	private void getSearchCategoryIcons() {
 		categoryIcons = new int[] {
-			R.drawable.cat_icon_beaches, 
-			R.drawable.cat_icon_conferences, 
-			R.drawable.cat_icon_restaurants, 
-			R.drawable.cat_icon_dog_parks, 
-			R.drawable.cat_icon_stadiums, 
-			R.drawable.cat_icon_dog_parks, 
 			R.drawable.cat_icon_coffee_shops, 
 			R.drawable.cat_icon_schools, 
+			R.drawable.cat_icon_beaches, 
 			R.drawable.cat_icon_supermarkets, 
-			R.drawable.cat_icon_hotels,
-			R.drawable.cat_icon_pubs,
-			R.drawable.cat_icon_night_clubs,
+			R.drawable.cat_icon_conferences, 
+			R.drawable.cat_icon_restaurants, 
+			R.drawable.cat_icon_hotels, 
+			R.drawable.cat_icon_night_clubs, 
+			R.drawable.cat_icon_pubs, 
+			R.drawable.cat_icon_stadiums,
 			R.drawable.cat_icon_health_clubs,
-			R.drawable.cat_icon_cinemas
+			R.drawable.cat_icon_cinemas,
+			R.drawable.cat_icon_dog_parks
 		};
 		categoryIndicatorIcons = new int[] {
-			R.drawable.listview_accessory_indicator,
 			R.drawable.listview_accessory_indicator,
 			R.drawable.listview_accessory_indicator,
 			R.drawable.listview_accessory_indicator,
@@ -323,22 +315,14 @@ public class SearchFragment extends MMFragment implements OnClickListener {
      *
      */
 	private class SearchCallback implements MMCallback {
+		@Override
 		public void processCallback(Object obj) {
-			
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
+			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "Response: " + ((String) obj));
 				
 				noCategoryItemClickListener.onNoCategoryItemClick(true, searchCategory, ((String) obj));
-				
-//				Intent searchResultsIntent = new Intent(getActivity(), SearchResultsScreen.class);
-//				searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, true);
-//				searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
-//				searchResultsIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, (String) obj);
-//				startActivity(searchResultsIntent);
 			}
 		}
 	}

@@ -43,6 +43,99 @@
 	            android:textAppearance="@android:style/TextAppearance.Medium"
 	            android:textStyle="bold"/>
 	        
+	        <LinearLayout android:id="@+id/llmedia"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:visibility="gone">
+	        
+		        <FrameLayout android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:paddingLeft="3dp"
+		            android:paddingRight="3dp">
+					
+		            <VideoView android:id="@+id/vvstream"
+		                android:layout_width="match_parent"
+		                android:layout_height="200dp"/>
+					
+					<TextView android:id="@+id/tvstreamexpirydate"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="right"
+						android:layout_marginTop="10dp"
+						android:layout_marginRight="10dp"
+						android:gravity="center"
+						android:drawableLeft="@drawable/ic_dialog_time"
+						android:drawablePadding="5dp"
+						android:textColor="@android:color/white"
+						android:visibility="invisible"/>
+		            
+					<TextView android:id="@+id/tvvideoexpirydate"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="right"
+						android:layout_marginTop="10dp"
+						android:layout_marginRight="10dp"
+						android:gravity="center"
+						android:drawableLeft="@drawable/ic_dialog_time"
+						android:drawablePadding="5dp"
+						android:textColor="@android:color/white"
+						android:visibility="invisible"/>
+   					
+		            <ImageView android:id="@+id/ivimage"
+		                android:layout_width="match_parent"
+		                android:layout_height="200dp"
+		                android:visibility="invisible"/>
+					
+					<TextView android:id="@+id/tvimageexpirydate"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="right"
+						android:layout_marginTop="10dp"
+						android:layout_marginRight="10dp"
+						android:gravity="center"
+						android:drawableLeft="@drawable/ic_dialog_time"
+						android:drawablePadding="5dp"
+						android:textColor="@android:color/white"
+						android:visibility="invisible"/>
+					
+		            <ImageButton android:id="@+id/ibsharemedia"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_gravity="right|bottom"
+		                android:layout_marginBottom="3dp"
+		                android:layout_marginRight="3dp"
+		                android:background="@drawable/app_icon"/>
+
+		        </FrameLayout>
+		        
+		        <LinearLayout android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="10dp"
+		            android:orientation="horizontal">
+		            
+		            <ImageButton android:id="@+id/ibstream"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:src="@android:drawable/ic_media_play"/>
+		            
+		            <ImageButton android:id="@+id/ibvideo"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:src="@android:drawable/ic_menu_camera"/>
+		            
+		            <ImageButton android:id="@+id/ibimage"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:src="@android:drawable/ic_menu_gallery"/>
+		            
+		        </LinearLayout>
+	        
+	        </LinearLayout>
+	        
 	        <LinearLayout android:id="@+id/llmakerequest"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"

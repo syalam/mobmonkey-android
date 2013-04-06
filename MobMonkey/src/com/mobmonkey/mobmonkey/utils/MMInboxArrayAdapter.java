@@ -13,9 +13,9 @@ import android.widget.TextView;
 
 public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
 
-	Context context; 
-    int layoutResourceId;    
-    MMInboxItem data[] = null;
+	private Context context; 
+	private int layoutResourceId;    
+	private MMInboxItem data[] = null;
     
     public MMInboxArrayAdapter(Context context, int layoutResourceId, MMInboxItem[] data) {
     	super(context, layoutResourceId, data);

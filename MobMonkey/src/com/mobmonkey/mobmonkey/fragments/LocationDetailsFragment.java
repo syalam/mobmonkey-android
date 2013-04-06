@@ -10,16 +10,19 @@ import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
+import com.mobmonkey.mobmonkey.utils.MMUtility;
 import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMMediaAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,10 +31,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.VideoView;
 
 /**
  * @author Dezapp, LLC
@@ -52,7 +59,17 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private MMExpandedListView elvLocDetails;
 	private LinearLayout llFavorite;
 	private TextView tvFavorite;
-	private ProgressDialog progressDialog;
+	
+	private LinearLayout llMedia;
+	private VideoView vvStream;
+	private ImageView ivImage;
+	private TextView tvStreamExpiryDate;
+	private TextView tvVideoExpiryDate;
+	private TextView tvImageExpiryDate;
+	private ImageButton ibShareMedia;
+	private ImageButton ibStream;
+	private ImageButton ibVideo;
+	private ImageButton ibImage;
 	
 	private OnLocationDetailsItemClickListener listener;
 	
@@ -71,6 +88,17 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		llFavorite = (LinearLayout) view.findViewById(R.id.llfavorite);
 		tvFavorite = (TextView) view.findViewById(R.id.tvfavorite);
 		
+		llMedia = (LinearLayout) view.findViewById(R.id.llmedia);
+		vvStream = (VideoView) view.findViewById(R.id.vvstream);
+		ivImage = (ImageView) view.findViewById(R.id.ivimage);
+		tvStreamExpiryDate = (TextView) view.findViewById(R.id.tvstreamexpirydate);
+		tvVideoExpiryDate = (TextView) view.findViewById(R.id.tvvideoexpirydate);
+		tvImageExpiryDate = (TextView) view.findViewById(R.id.tvimageexpirydate);
+		ibShareMedia = (ImageButton) view.findViewById(R.id.ibsharemedia);
+		ibStream = (ImageButton) view.findViewById(R.id.ibstream);
+		ibVideo = (ImageButton) view.findViewById(R.id.ibvideo);
+		ibImage = (ImageButton) view.findViewById(R.id.ibimage);
+		
 		try {
 			if(!userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING).equals(MMAPIConstants.DEFAULT_STRING)) {
 				favoritesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING));
@@ -78,6 +106,15 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				favoritesList = new JSONArray();
 			}
 			locationDetails = new JSONObject(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			
+			MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, "Retreiving available media...");
+			MMMediaAdapter.retrieveAllMediaForLocation(new MediaCallback(), 
+					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+					MMConstants.PARTNER_ID, 
+					locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
+					locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID));
+			
 			Log.d(TAG, TAG + "Location Details: " + locationDetails.toString());
 			setLocationDetails();
 		} catch (JSONException e) {
@@ -105,6 +142,29 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				break;
 			case R.id.llfavorite:
 				favoriteClicked();
+				break;
+			case R.id.ibsharemedia:
+				break;
+			case R.id.ibstream:
+				vvStream.setVisibility(View.VISIBLE);
+				ivImage.setVisibility(View.INVISIBLE);
+				tvStreamExpiryDate.setVisibility(View.VISIBLE);
+				tvVideoExpiryDate.setVisibility(View.INVISIBLE);
+				tvImageExpiryDate.setVisibility(View.INVISIBLE);
+				break;
+			case R.id.ibvideo:
+				vvStream.setVisibility(View.VISIBLE);
+				ivImage.setVisibility(View.INVISIBLE);
+				tvStreamExpiryDate.setVisibility(View.INVISIBLE);
+				tvVideoExpiryDate.setVisibility(View.VISIBLE);
+				tvImageExpiryDate.setVisibility(View.INVISIBLE);
+				break;
+			case R.id.ibimage:
+				vvStream.setVisibility(View.INVISIBLE);
+				ivImage.setVisibility(View.VISIBLE);
+				tvStreamExpiryDate.setVisibility(View.INVISIBLE);
+				tvVideoExpiryDate.setVisibility(View.INVISIBLE);
+				tvImageExpiryDate.setVisibility(View.VISIBLE);
 				break;
 		}
 	}
@@ -157,8 +217,40 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	private void hasMedia(String mediaResults) throws JSONException {		
+		JSONObject mediaJObj = new JSONObject(mediaResults); 
+		JSONArray mediaJArr = mediaJObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA);
+		
+		if(mediaJArr.length() > 0) {
+			llMedia.setVisibility(View.VISIBLE);
+			for(int i = 0; i < mediaJArr.length(); i++) {
+				JSONObject jObj = mediaJArr.getJSONObject(i);
+				
+				String mediaType = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
+			
+				if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING)) {
+					vvStream.setVideoURI(Uri.parse(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
+					vvStream.setMediaController(new MediaController(getActivity()));
+					tvStreamExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm"));
+				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
+					vvStream.setVideoURI(Uri.parse(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
+					vvStream.setMediaController(new MediaController(getActivity()));
+					tvVideoExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm"));
+				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
+					// TODO: load image from mediaUrl using asynctask and possibly lazy image loader? dont save image locally since it may not be the most up-to-date image
+					tvImageExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm"));
+				}
+			}
+	
+			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
+			ibStream.setOnClickListener(LocationDetailsFragment.this);
+			ibVideo.setOnClickListener(LocationDetailsFragment.this);
+			ibImage.setOnClickListener(LocationDetailsFragment.this);
+		}
+	}
+	
 	private void favoriteClicked() {
-		progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_updating_favorites), true, false);
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_updating_favorites));
 		if(tvFavorite.getText().toString().equals(getString(R.string.tv_favorite))) {
 			try {
 				// Make a server call and add to favorites
@@ -203,6 +295,22 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		public void onLocationDetailsItem(int position, Object obj);
 	}
 	
+	private class MediaCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
+			if(obj != null) {
+				Log.d(TAG, TAG + "mediaResults: " + (String) obj);
+				try {
+					hasMedia((String) obj);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	private class AddFavoriteCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -242,9 +350,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private class FavoritesCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
+			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "response: " + ((String) obj));

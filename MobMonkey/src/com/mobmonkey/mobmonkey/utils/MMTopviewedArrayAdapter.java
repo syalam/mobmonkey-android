@@ -11,11 +11,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MMTopviewedArrayAdapter extends ArrayAdapter<MMTopviewedItem>{
-
-	Context context; 
-    int layoutResourceId;    
-    MMTopviewedItem data[] = null;
+public class MMTopviewedArrayAdapter extends ArrayAdapter<MMTopviewedItem> {
+	private Context context; 
+	private  int layoutResourceId;    
+	private MMTopviewedItem data[] = null;
     
     public MMTopviewedArrayAdapter(Context context, int layoutResourceId, MMTopviewedItem[] data) {
         

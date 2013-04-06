@@ -38,8 +38,12 @@ public final class MMAPIConstants {
 	public static final int NUM_MALE = 1;
 	public static final int NUM_FEMALE = 0;
 	
+	public static final int FAVORITES_FRAGMENT_LIST = 0;
+	public static final int FAVORITES_FRAGMENT_MAP = 1;
+	
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
 
+	public static final String MEDIA_TYPE_LIVESTREAMING = "livestreaming";
 	public static final String MEDIA_TYPE_VIDEO = "video";
 	public static final String MEDIA_TYPE_IMAGE = "image";
 	public static final String MEDIA_TYPE_TEXT = "text";
@@ -160,6 +164,7 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_DESCRIPTION = "description";	
 	public static final String JSON_KEY_DISTANCE = "distance";
 	public static final String JSON_KEY_DURATION = "duration";
+	public static final String JSON_KEY_EXPIRY_DATE = "expiryDate";
 	public static final String JSON_KEY_FREQUENCY_IN_MS = "frequencyInMS";
 	public static final String JSON_KEY_INTEREST_COUNT = "interestCount";
 	public static final String JSON_KEY_LATITUDE = "latitude";
@@ -191,6 +196,8 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_REQUESTID = "requestId";
 	public static final String JSON_KEY_MEDIADATA = "mediaData";
 	public static final String JSON_KEY_UPLOADEDDATE = "uploadedDate";
+	public static final String JSON_KEY_REQUEST_TYPE = "requestType";
+	public static final String JSON_KEY_CONTENT_TYPE = "contentType";
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;
@@ -203,6 +210,14 @@ public final class MMAPIConstants {
 	public static final String SEARCH_TIME_DAY = "day";
 	public static final String SEARCH_TIME_WEEK = "week";
 	public static final String SEARCH_TIME_MONTH = "month";
+	
+	// Media content type
+	public static final String MEDIA_CONTENT_JPG = "image/jpg";
+	public static final String MEDIA_CONTENT_JPEG = "image/jpeg";
+	public static final String MEDIA_CONTENT_PNG = "image/png";
+	public static final String MEDIA_CONTENT_MP4 = "video/mp4";
+	public static final String MEDIA_CONTENT_MPEG = "video/mpeg";
+	public static final String MEDIA_CONTENT_QUICKTIME = "video/quicktime";
 	
 	public static final String INTENT_FILTER_DISPLAY_MESSAGE = "com.mobmonkey.mobmonkey.DISPLAY_MESSAGE";
 }

@@ -9,13 +9,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -44,24 +44,22 @@ import android.widget.EditText;
 public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTouchListener, OnDateChangedListener {
 	private static final String TAG = "SignUpTwitter: ";
 	
-	SharedPreferences userPrefs;
-	SharedPreferences.Editor userPrefsEditor;
+	private SharedPreferences userPrefs;
+	private SharedPreferences.Editor userPrefsEditor;
 	
-	String providerUserName;
+	private String providerUserName;
 	
-	MotionEvent prevEvent;
-	ProgressDialog progressDialog;
-	InputMethodManager inputMethodManager;
+	private MotionEvent prevEvent;
+	private InputMethodManager inputMethodManager;
 	
-	TextView tvProviderUserName;
-	EditText etFirstName;
-	EditText etLastName;
-	EditText etEmailAddress;
-	EditText etBirthdate;
-	EditText etGender;
+	private TextView tvProviderUserName;
+	private EditText etFirstName;
+	private EditText etLastName;
+	private EditText etEmailAddress;
+	private EditText etBirthdate;
+	private EditText etGender;
 	
-	Calendar birthdate;
-	String userEmail;
+	private Calendar birthdate;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +107,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 			prevEvent = event;
 		}
 		
-		if(event.getAction() == MotionEvent.ACTION_UP) {
+		if(event.getAction() == MotionEvent.ACTION_UP && prevEvent.getAction() == MotionEvent.ACTION_UP) {
 			switch(v.getId()) {
 		    	case R.id.etbirthdate:
 		    		inputMethodManager.hideSoftInputFromWindow(etGender.getWindowToken(), 0);
@@ -241,7 +239,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
     				Long.toString(birthdate.getTimeInMillis()), 
     				convertGender(), 
     				MMConstants.PARTNER_ID);
-    		progressDialog = ProgressDialog.show(SignUpTwitterScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up), true, false);
+    		MMProgressDialog.displayDialog(SignUpTwitterScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up));
     	}
     }
     
@@ -350,9 +348,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
      */
     private class SignUpTwitterCallback implements MMCallback {
 		public void processCallback(Object obj) {
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
+			MMProgressDialog.dismissDialog();
 			
 			try {
 				JSONObject response = new JSONObject((String) obj);

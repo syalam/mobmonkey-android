@@ -16,9 +16,9 @@ import android.widget.TextView;
 public class MMTrendingArrayAdapter extends ArrayAdapter<MMTrendingItem> {
 	private static final String TAG = "MMTrendingAdapter: ";
 	
-	Context context; 
-    int layoutResourceId;    
-    MMTrendingItem data[] = null;
+	private Context context; 
+	private int layoutResourceId;    
+	private MMTrendingItem data[] = null;
     
     public MMTrendingArrayAdapter(Context context, int layoutResourceId, MMTrendingItem[] data) {
         

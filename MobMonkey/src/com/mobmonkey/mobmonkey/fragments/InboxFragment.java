@@ -1,9 +1,8 @@
 package com.mobmonkey.mobmonkey.fragments;
 
-import java.util.ArrayList;
-
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -109,6 +108,12 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 					  					   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 					  					   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 			
+			// get all the answered request, and then update the badge counter
+			MMInboxAdapter.getOpenRequests(new AnsweredRequestCallback(), 
+										   MMConstants.PARTNER_ID, 
+										   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+										   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+			
 			// get all the assigned request, and then update the badge counter
 			MMInboxAdapter.getAssignedRequests(new AssignedRequestCallback(), 
 											   MMConstants.PARTNER_ID, 
@@ -162,6 +167,35 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 					ex.printStackTrace();
 				}
 			}
+		}
+	}
+	
+	private class AnsweredRequestCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				try {
+					JSONArray jArr = new JSONArray((String) obj);
+					JSONArray newJarr = new JSONArray();
+					for(int i = 0; i < jArr.length(); i++) {
+						JSONObject jObj = jArr.getJSONObject(i);
+						if(jObj.getBoolean("requestFulfilled")) {
+							newJarr.put(jObj);
+						}
+					}
+					inboxRequests[2] = newJarr;
+					
+					inboxItems[2].counter = Integer.toString(newJarr.length());
+					
+					if(newJarr.length() > 0) {
+						arrayAdapter.isEnabled(2);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			
 		}
 		
 	}

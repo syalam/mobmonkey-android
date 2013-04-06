@@ -6,6 +6,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,7 +21,7 @@ import android.widget.TextView;
  *
  */
 public class MMArrayAdapter extends ArrayAdapter<Object> {
-	Context context;
+	private Context context;
     private LayoutInflater layoutInflater;
     private int listRowLayout;
     private int[] icons;

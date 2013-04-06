@@ -6,7 +6,6 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -18,10 +17,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.mobmonkey.mobmonkey.MainScreen;
 import com.mobmonkey.mobmonkey.R;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMTrendingArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMTrendingItem;
 import com.mobmonkey.mobmonkeyapi.adapters.MMTrendingAdapter;
@@ -42,7 +41,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	
 	private ListView lvTrending;
 	
-	OnTrendingItemClickListener listener;
+	private OnTrendingItemClickListener listener;
 	
 	/*
 	 * 	(non-Javadoc)
@@ -66,7 +65,6 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, data);
 		lvTrending.setAdapter(arrayAdapter);
 		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
-		lvTrending.setEnabled(false);
 		
 		try {
 			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
@@ -105,6 +103,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 				break;
 			// top viewed
 			case 2:
+				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + " Top Viewed...");
 				MMTrendingAdapter.getTrending(new TrendingCallback(position), 
 									 		  "topviewed", 
 											  "week", 
@@ -135,6 +134,11 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		
 	}
 	
+	/**
+	 * 
+	 * @return
+	 * @throws JSONException
+	 */
 	private String findTopTenCategories() throws JSONException {
 		String categoryIds = MMAPIConstants.DEFAULT_STRING;
 		
@@ -162,6 +166,10 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		return categoryIds;
 	}
 	
+	/**
+	 * 
+	 * @param categoryIds
+	 */
 	private void trending(String categoryIds) {
 		if(MMLocationManager.isGPSEnabled()) {
 			Location location = MMLocationManager.getGPSLocation(new MMLocationListener());
@@ -181,14 +189,24 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 										  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 										  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 		} else {
-			MainScreen.closeProgressDialog();
+			MMProgressDialog.dismissDialog();
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	public interface OnTrendingItemClickListener {
 		public void onTrendingItemClick(int position, String trends);
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class TrendingCallback implements MMCallback {
 		private int position;
 		
@@ -198,19 +216,26 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		
 		@Override
 		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
 			if(obj != null) {
 				listener.onTrendingItemClick(position, ((String) obj));
 			}
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class CountOnlyCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
 			Log.d(TAG, TAG + "Trending: " + ((String) obj));
 			
 			if(obj != null) {
-				MainScreen.closeProgressDialog();
+				MMProgressDialog.dismissDialog();
 				try {
 					JSONObject jObj = new JSONObject((String)obj);
 					Log.d(TAG, TAG + jObj.getString("bookmarkCount"));

@@ -1,16 +1,10 @@
 package com.mobmonkey.mobmonkey;
 
-import java.io.IOException;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,6 +25,7 @@ import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.ServerUtility;
 import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
@@ -45,16 +40,12 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
  */
 public class MainScreen extends TabActivity {
 	protected static final String TAG = "MainScreen: ";
+
+	private SharedPreferences userPrefs;
+	private SharedPreferences.Editor userPrefsEditor;
 	
-//    AsyncTask<Void, Void, Void> mRegisterTask;
-	
-	SharedPreferences userPrefs;
-	SharedPreferences.Editor userPrefsEditor;
-	
-	TabWidget tabWidget;
-	TabHost tabHost;
-	
-	static ProgressDialog progressDialog;
+	private TabWidget tabWidget;
+	private TabHost tabHost;
 	
 	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -113,7 +104,6 @@ public class MainScreen extends TabActivity {
 	    	})
 	    	.setNegativeButton(R.string.ad_btn_no, new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int which) {
-		            // No location service, no Activity
 		        	noGPSEnabled();
 		        }
 	    	})
@@ -136,12 +126,6 @@ public class MainScreen extends TabActivity {
 				}
 			})
 	    	.show();
-	}
-	
-	public static void closeProgressDialog() {
-		if(progressDialog != null) {
-			progressDialog.dismiss();
-		}
 	}
 	
 	private void init() {		
@@ -170,33 +154,6 @@ public class MainScreen extends TabActivity {
 			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
 		} else {
 			new RegisterGCMAsyncTask(MainScreen.this).execute(regId);
-//			
-//			
-//			final Context context = MainScreen.this;
-//            mRegisterTask = new AsyncTask<Void, Void, Void>() {
-//
-//                @Override
-//                protected Void doInBackground(Void... params) {
-//                    boolean registered = ServerUtility.register(context, regId);
-//                    // At this point all attempts to register with the app
-//                    // server failed, so we need to unregister the device
-//                    // from GCM - the app will try to register again when
-//                    // it is restarted. Note that GCM will send an
-//                    // unregistered callback upon completion, but
-//                    // GCMIntentService.onUnregistered() will ignore it.
-//                    if (!registered) {
-//                        GCMRegistrar.unregister(context);
-//                    }
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(Void result) {
-//                    mRegisterTask = null;
-//                }
-//
-//            };
-//            mRegisterTask.execute(null, null, null);
 		}
 	}
 	
@@ -206,7 +163,7 @@ public class MainScreen extends TabActivity {
 	private void setTabs() {
 		addTab(MMAPIConstants.TAB_TITLE_TRENDING_NOW, R.drawable.tab_trendingnow, TrendingNowActivity.class);
 		addTab(MMAPIConstants.TAB_TITLE_INBOX, R.drawable.tab_inbox, InboxActivity.class);
-		addTab(MMAPIConstants.TAB_TITLE_SEARCH, R.drawable.tab_search, SearchScreen.class);
+		addTab(MMAPIConstants.TAB_TITLE_SEARCH, R.drawable.tab_search, SearchActivity.class);
 		addTab(MMAPIConstants.TAB_TITLE_FAVORITES, R.drawable.tab_bookmarks, FavoritesActivity.class);
 		addTab(MMAPIConstants.TAB_TITLE_SETTINGS, R.drawable.tab_settings, SettingsActivity.class);
 	}
@@ -237,8 +194,8 @@ public class MainScreen extends TabActivity {
 	private void getAllCategories() {
 		Log.d(TAG, TAG + "getAllCategories: " + userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
 		
-		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled()) {			
-			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...", true, false);
+		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled()) {
+			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 
 			MMCategoryAdapter.getAllCategories(
 					new CategoriesCallback(), 
@@ -249,10 +206,10 @@ public class MainScreen extends TabActivity {
 	}
 	
 	private void getAllFavorites() {		
-		if(progressDialog == null) {
-			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...", true, false);
-		} else if(!progressDialog.isShowing()) {
-			progressDialog = ProgressDialog.show(MainScreen.this, MMAPIConstants.DEFAULT_STRING, "Loading...", true, false);
+		if(MMProgressDialog.isProgressDialogNull()) {
+			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+		} else if(!MMProgressDialog.isProgressDialogShowing()) {
+			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 		}
 		
 		if(MMLocationManager.isGPSEnabled()) {
@@ -263,7 +220,7 @@ public class MainScreen extends TabActivity {
 											userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 		} else {
 			setTabs();
-			closeProgressDialog();
+			MMProgressDialog.dismissDialog();
 		}
 	}
 	
@@ -319,7 +276,7 @@ public class MainScreen extends TabActivity {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				closeProgressDialog();
+				MMProgressDialog.dismissDialog();
 				Log.d(TAG, TAG + "FavoritesCallback: " + ((String) obj));
 				try {
 					JSONObject jObj = new JSONObject((String) obj);
