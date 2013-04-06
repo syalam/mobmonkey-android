@@ -42,10 +42,10 @@ public class MMAnswerRequestAdapter {
 		mediaInfo = new JSONObject();
 		try {
 			//AnswerRequestURL = MMAPIConstants.TEST_MOBMONKEY_URL + "media/" + mediaType;
-			mediaInfo.put(MMAPIConstants.JSON_KEY_REQUESTID, requestID);
+			mediaInfo.put(MMAPIConstants.JSON_KEY_REQUEST_ID, requestID);
 			mediaInfo.put(MMAPIConstants.JSON_KEY_REQUEST_TYPE, requestType);
 			mediaInfo.put(MMAPIConstants.JSON_KEY_CONTENT_TYPE, contentType);
-			mediaInfo.put(MMAPIConstants.JSON_KEY_MEDIADATA, mediaData);
+			mediaInfo.put(MMAPIConstants.JSON_KEY_MEDIA_DATA, mediaData);
 			
 			HttpPost httppost = new HttpPost(AnswerRequestURL);
 			// add header
@@ -75,11 +75,11 @@ public class MMAnswerRequestAdapter {
 					
 					// try to write small piece of data into bufferedwriter
 					bw.write("{");
-					bw.write("\"" + MMAPIConstants.JSON_KEY_REQUESTID + "\":\"" + requestID + "\",");
+					bw.write("\"" + MMAPIConstants.JSON_KEY_REQUEST_ID + "\":\"" + requestID + "\",");
 					bw.write("\"" + MMAPIConstants.JSON_KEY_REQUEST_TYPE + "\":" + requestType + ",");
 					bw.write("\"" + MMAPIConstants.JSON_KEY_CONTENT_TYPE + "\":\"" + contentType + "\",");
 					// divide mediaData into smaller pieces
-					bw.write("\"" + MMAPIConstants.JSON_KEY_MEDIADATA + "\":\"");
+					bw.write("\"" + MMAPIConstants.JSON_KEY_MEDIA_DATA + "\":\"");
 					
 					for(int i = 0; i < mediaData.length(); i++) {
 						

@@ -235,7 +235,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 					title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
 					.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
 			
-			if(currMarker != null && currMarker.getTitle().equals(locationResultMarker.getTitle())) {
+			if(currMarker != null && currMarker.getTitle().equals(locationResultMarker.getTitle()) && currMarker.getTitle().equals(locationResultMarker.getTitle())) {
 				Log.d(TAG, TAG + "marker equal");
 				locationResultMarker.showInfoWindow();
 				currentLoc = currMarker.getPosition();

@@ -47,7 +47,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
-	            android:visibility="gone">
+	            android:visibility="visible">
 	        
 		        <FrameLayout android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
@@ -114,27 +114,63 @@
 		            android:layout_marginTop="10dp"
 		            android:orientation="horizontal">
 		            
-		            <ImageButton android:id="@+id/ibstream"
-		                android:layout_width="wrap_content"
+		            <FrameLayout android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
-		                android:layout_weight="1"
-		                android:src="@android:drawable/ic_media_play"/>
+		                android:layout_weight="1">
+			                
+						<ImageButton android:id="@+id/ibstream"
+							android:layout_width="match_parent"
+							android:layout_height="match_parent"
+							android:src="@android:drawable/ic_media_play"/>
+						
+						<TextView android:id="@+id/tvstreammediacount"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_gravity="right"
+						    android:layout_marginTop="3dp"
+						    android:layout_marginRight="7dp"/>
+							
+		            </FrameLayout>
 		            
-		            <ImageButton android:id="@+id/ibvideo"
-		                android:layout_width="wrap_content"
+					<FrameLayout android:layout_width="wrap_content"
+			        	android:layout_height="wrap_content"
+		                android:layout_weight="1">
+			                
+						<ImageButton android:id="@+id/ibvideo"
+							android:layout_width="match_parent"
+							android:layout_height="match_parent"
+							android:src="@android:drawable/ic_menu_camera"/>
+						
+						<TextView android:id="@+id/tvvideomediacount"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_gravity="right"
+						    android:layout_marginTop="3dp"
+						    android:layout_marginRight="7dp"/>
+							
+		            </FrameLayout>
+		            
+					<FrameLayout android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
-		                android:layout_weight="1"
-		                android:src="@android:drawable/ic_menu_camera"/>
-		            
-		            <ImageButton android:id="@+id/ibimage"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:layout_weight="1"
-		                android:src="@android:drawable/ic_menu_gallery"/>
-		            
-		        </LinearLayout>
+		                android:layout_weight="1">
+			                
+						<ImageButton android:id="@+id/ibimage"
+							android:layout_width="match_parent"
+							android:layout_height="match_parent"
+							android:src="@android:drawable/ic_menu_gallery"/>
+						
+						<TextView android:id="@+id/tvimagemediacount"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_gravity="right"
+						    android:layout_marginTop="3dp"
+						    android:layout_marginRight="7dp"/>
+								
+					</FrameLayout>
 	        
-	        </LinearLayout>
+	        	</LinearLayout>
+	        
+			</LinearLayout>
 	        
 	        <LinearLayout android:id="@+id/llmakerequest"
 	            android:layout_width="match_parent"

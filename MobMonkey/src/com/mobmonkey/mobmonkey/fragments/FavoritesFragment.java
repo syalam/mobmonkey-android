@@ -26,6 +26,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+
+import com.google.android.gms.maps.model.Marker;
 import com.mobmonkey.mobmonkey.AddLocationScreen;
 import com.mobmonkey.mobmonkey.R;
 import com.mobmonkey.mobmonkey.utils.MMFragment;

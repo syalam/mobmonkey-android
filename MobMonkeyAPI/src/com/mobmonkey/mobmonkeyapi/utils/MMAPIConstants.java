@@ -167,12 +167,14 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_DURATION = "duration";
 	public static final String JSON_KEY_EXPIRY_DATE = "expiryDate";
 	public static final String JSON_KEY_FREQUENCY_IN_MS = "frequencyInMS";
+	public static final String JSON_KEY_IMAGES = "images";
 	public static final String JSON_KEY_INTEREST_COUNT = "interestCount";
 	public static final String JSON_KEY_LATITUDE = "latitude";
 	public static final String JSON_KEY_LOCALITY = "locality";
 	public static final String JSON_KEY_LOCATION_ID = "locationId";
 	public static final String JSON_KEY_LONGITUDE = "longitude";
 	public static final String JSON_KEY_MEDIA = "media";
+	public static final String JSON_KEY_MEDIA_DATA = "mediaData";
 	public static final String JSON_KEY_MEDIA_TYPE = "mediaType";
 	public static final String JSON_KEY_MEDIA_URL = "mediaURL";
 	public static final String JSON_KEY_MESSAGE = "message";
@@ -181,24 +183,24 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_NAME_OF_LOCATION = "nameOfLocation";
 	public static final String JSON_KEY_NEARBY_COUNT = "nearbyCount";
 	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
-	public static final String JSON_KEY_OPENREQUESTS = "OpenRequests";
+	public static final String JSON_KEY_OPEN_REQUESTS = "OpenRequests";
 	public static final String JSON_KEY_PARENTS = "parents";
-	public static final String JSON_KEY_PHONENUMBER = "phoneNumber";
+	public static final String JSON_KEY_PHONE_NUMBER = "phoneNumber";
 	public static final String JSON_KEY_POSTCODE = "postcode";
 	public static final String JSON_KEY_PROVIDER_ID = "providerId";
 	public static final String JSON_KEY_RADIUS_IN_YARDS = "radiusInYards";
 	public static final String JSON_KEY_RECURRING = "recurring";
 	public static final String JSON_KEY_REGION = "region";
 	public static final String JSON_KEY_REQUEST_DATE = "requestDate";
+	public static final String JSON_KEY_REQUEST_ID = "requestId";
 	public static final String JSON_KEY_REQUEST_TYPE = "requestType";
-	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
+	public static final String JSON_KEY_SCHEDULE_DATE = "scheduleDate";
 	public static final String JSON_KEY_STATUS = "status";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
 	public static final String JSON_KEY_TYPE = "type";
+	public static final String JSON_KEY_UPLOADED_DATE = "uploadedDate";
+	public static final String JSON_KEY_VIDEOS = "videos";
 	public static final String JSON_KEY_WEBSITE = "website";
-	public static final String JSON_KEY_REQUESTID = "requestId";
-	public static final String JSON_KEY_MEDIADATA = "mediaData";
-	public static final String JSON_KEY_UPLOADEDDATE = "uploadedDate";
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;

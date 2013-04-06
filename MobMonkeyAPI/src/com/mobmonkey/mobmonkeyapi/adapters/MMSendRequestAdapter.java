@@ -41,7 +41,7 @@ public class MMSendRequestAdapter {
 			HttpPost httpPost;
 			requestInfo = new JSONObject();
 			requestInfo.put(MMAPIConstants.JSON_KEY_MESSAGE, message);
-			requestInfo.put(MMAPIConstants.JSON_KEY_SCHEDULEDATE, scheduleDate);
+			requestInfo.put(MMAPIConstants.JSON_KEY_SCHEDULE_DATE, scheduleDate);
 			requestInfo.put(MMAPIConstants.JSON_KEY_PROVIDER_ID, providerId);
 			requestInfo.put(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId);
 			requestInfo.put(MMAPIConstants.JSON_KEY_DURATION, duration);

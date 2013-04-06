@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import org.json.JSONObject;
 
+import com.google.android.gms.maps.model.Marker;
 import com.mobmonkey.mobmonkey.fragments.*;
 import com.mobmonkey.mobmonkey.fragments.FavoritesFragment.OnMMLocationSelectListener;
 import com.mobmonkey.mobmonkey.fragments.FavoritesFragment.OnMapIconClickListener;
