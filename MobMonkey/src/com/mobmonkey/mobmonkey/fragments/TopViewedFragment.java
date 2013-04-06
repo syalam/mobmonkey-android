@@ -35,6 +35,7 @@ public class TopViewedFragment extends MMFragment {
 	private ListView lvtopviewed;
 	private JSONArray topViewed;
 	private LinkedList<String> mediaUrl = new LinkedList<String>();
+	private LinkedList<String> mediaType = new LinkedList<String>();
 	private SharedPreferences userPrefs;
 	private boolean isLoading = true;
 	
@@ -86,8 +87,14 @@ public class TopViewedFragment extends MMFragment {
 		
 		//Log.d(TAG, topViewed.toString());
 		for(int i = 0; i < topViewedItems.length; i++) {
-			topViewedItems[i] = new MMTopviewedItem(topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME), 
-													mediaUrl.get(i));
+			if(mediaType.get(i).equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
+				topViewedItems[i] = new MMTopviewedItem(topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME), 
+														mediaUrl.get(i), false);
+			} else if(mediaType.get(i).equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
+				topViewedItems[i] = new MMTopviewedItem(topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME), 
+														mediaUrl.get(i), true);
+			}
+			
 		}
 		
 		return topViewedItems;
@@ -100,15 +107,10 @@ public class TopViewedFragment extends MMFragment {
 			try {
 				JSONObject jObj = new JSONObject((String)obj);
 				JSONArray mediaArray = jObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA);
-				Log.d(TAG, "mediaArray: " + mediaArray.toString());
 				
 				mediaUrl.add(mediaArray.getJSONObject(0).getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
-				Log.d(TAG, "mediaUrl: " + mediaArray.getJSONObject(0).getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
-				
-				Log.d(TAG, "mediaUrl Size: " + mediaUrl.size());
-				
+				mediaType.add(mediaArray.getJSONObject(0).getString(MMAPIConstants.JSON_KEY_TYPE));
 				if(mediaUrl.size() == mediaArray.length()) {
-					Log.d(TAG, "finish loading");
 					MMTopviewedArrayAdapter adapter = new MMTopviewedArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, getTopViewedItems());
 					lvtopviewed.setAdapter(adapter);
 				}
