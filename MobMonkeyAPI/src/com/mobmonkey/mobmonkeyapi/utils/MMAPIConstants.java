@@ -103,6 +103,7 @@ public final class MMAPIConstants {
 	public static final String KEY_RADIUS_IN_YARDS = "radiusInYards";
 	public static final String KEY_STATE = "state";
 	public static final String KEY_USE_OAUTH = "useOAuth";
+	public static final String KEY_OAUTH_USER = "oAuthUser";
 	public static final String KEY_USER = "MobMonkey-user";
 	public static final String KEY_ZIP = "zip";
 	
@@ -159,6 +160,7 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_BOOKMARK_COUNT = "bookmarkCount";
 	public static final String JSON_KEY_CATEGORY_ID = "categoryId";
 	public static final String JSON_KEY_CATEGORY_IDS = "categoryIds";
+	public static final String JSON_KEY_CONTENT_TYPE = "contentType";
 	public static final String JSON_KEY_COUNTRY_CODE = "countryCode";
 	public static final String JSON_KEY_DESCRIPTION = "description";	
 	public static final String JSON_KEY_DISTANCE = "distance";
@@ -188,15 +190,15 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_RECURRING = "recurring";
 	public static final String JSON_KEY_REGION = "region";
 	public static final String JSON_KEY_REQUEST_DATE = "requestDate";
+	public static final String JSON_KEY_REQUEST_TYPE = "requestType";
 	public static final String JSON_KEY_SCHEDULEDATE = "scheduleDate";
 	public static final String JSON_KEY_STATUS = "status";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
+	public static final String JSON_KEY_TYPE = "type";
 	public static final String JSON_KEY_WEBSITE = "website";
 	public static final String JSON_KEY_REQUESTID = "requestId";
 	public static final String JSON_KEY_MEDIADATA = "mediaData";
 	public static final String JSON_KEY_UPLOADEDDATE = "uploadedDate";
-	public static final String JSON_KEY_REQUEST_TYPE = "requestType";
-	public static final String JSON_KEY_CONTENT_TYPE = "contentType";
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;

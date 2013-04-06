@@ -151,6 +151,7 @@ public class TwitterAuthScreen extends Activity {
 					setResult(MMAPIConstants.RESULT_CODE_SUCCESS);
 					userPrefsEditor.putString(MMAPIConstants.KEY_USER, twitterAccessToken.getScreenName());
 					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, twitterAccessToken.getToken());
+					userPrefsEditor.putString("TRUE", MMAPIConstants.KEY_OAUTH_USER);
 					userPrefsEditor.commit();
 				} else if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_NOT_FOUND)) {
 					Intent resultIntent = new Intent();

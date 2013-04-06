@@ -267,6 +267,8 @@ public class SignInScreen extends Activity {
 			Log.d(TAG, TAG + "onCompleted");
 			if(user != null) {
 				requestEmail = false;
+				//userPrefsEditor.putString("TRUE", MMAPIConstants.KEY_OAUTH_USER);
+				//userPrefsEditor.commit();
 				facebookUser = user;
 			}
 		}

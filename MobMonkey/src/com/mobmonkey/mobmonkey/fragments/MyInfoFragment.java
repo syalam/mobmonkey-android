@@ -78,9 +78,27 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	etGender = (EditText) view.findViewById(R.id.etgender);
     	birthdate = Calendar.getInstance();
     	
-    	etEmailAddress.setOnKeyListener(MyInfoFragment.this);
-    	etBirthdate.setOnTouchListener(MyInfoFragment.this);
-    	etGender.setOnTouchListener(MyInfoFragment.this);
+    	if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING) == "facebook")
+    	{
+    		etFirstName.setFocusable(false);
+    		etFirstName.setClickable(false);
+    		
+    		etLastName.setFocusable(false);
+    		etLastName.setClickable(false);
+    		
+    		etBirthdate.setFocusable(false);
+    		etBirthdate.setClickable(false);
+    		
+    		etBirthdate.setFocusable(false);
+    		etBirthdate.setClickable(false);
+    	}
+    	else
+    	{
+    		etEmailAddress.setOnKeyListener(MyInfoFragment.this);
+        	etBirthdate.setOnTouchListener(MyInfoFragment.this);
+        	etGender.setOnTouchListener(MyInfoFragment.this);
+    	}
+    	
     	
 		return view;
 	}

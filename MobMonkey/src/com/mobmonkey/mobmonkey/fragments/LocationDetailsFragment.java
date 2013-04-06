@@ -13,6 +13,7 @@ import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMUtility;
 import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMMediaAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -21,6 +22,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -226,19 +228,20 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			for(int i = 0; i < mediaJArr.length(); i++) {
 				JSONObject jObj = mediaJArr.getJSONObject(i);
 				
-				String mediaType = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
+				String mediaType = jObj.getString(MMAPIConstants.JSON_KEY_TYPE);
 			
 				if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING)) {
 					vvStream.setVideoURI(Uri.parse(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
 					vvStream.setMediaController(new MediaController(getActivity()));
-					tvStreamExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm"));
+					tvStreamExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
 					vvStream.setVideoURI(Uri.parse(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
 					vvStream.setMediaController(new MediaController(getActivity()));
-					tvVideoExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm"));
+					tvVideoExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
 					// TODO: load image from mediaUrl using asynctask and possibly lazy image loader? dont save image locally since it may not be the most up-to-date image
-					tvImageExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm"));
+					MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
+					tvImageExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 				}
 			}
 	
@@ -308,6 +311,13 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+	
+	private class LoadImageCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			ivImage.setImageBitmap((Bitmap) obj);
 		}
 	}
 	
