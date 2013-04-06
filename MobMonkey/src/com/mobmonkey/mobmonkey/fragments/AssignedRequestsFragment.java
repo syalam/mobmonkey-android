@@ -217,7 +217,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		    	fos.close();
 		    	  
 		    	// encode to base64
-		    	
+		    	String videoEncoded = "";
 		    	BufferedInputStream in = new BufferedInputStream(new FileInputStream(tmpFile));
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
 				long fileLength = tmpFile.length();
@@ -226,9 +226,17 @@ public class AssignedRequestsFragment extends MMFragment {
 		        while ((bytesRead = in.read(b)) != -1) {
 		        	bos.write(b, 0, bytesRead);
 		        }
-		        byte[] ficheroAEnviar = bos.toByteArray();
-		        String videoEncoded = Base64.encodeToString(ficheroAEnviar, Base64.DEFAULT);
-
+		        try {
+		        	byte[] ficheroAEnviar = bos.toByteArray();
+			        videoEncoded = Base64.encodeToString(ficheroAEnviar, Base64.DEFAULT);
+		        } catch (OutOfMemoryError err) {
+		        	Log.d(TAG, "OutOfMemoryError");
+		        	byte[] bv = bos.toByteArray();
+		        	Base64.encode(bv, Base64.DEFAULT);
+		        	
+		        	videoEncoded = new String(bv, "UTF-8");
+		        }
+		        
 		    	// send base64 file to server
 		        MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
 						   MMConstants.PARTNER_ID, 
