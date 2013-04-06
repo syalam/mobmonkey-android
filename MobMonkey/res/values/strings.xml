@@ -73,7 +73,7 @@
 	<!-- Trending Now Fragment -->
 	<string name="tv_title_trendingnow">What\'s Trending Now!</string>
 	<string-array name="trending_category">
-		<item>Bookmarks</item>
+		<item>Favorites</item>
 		<item>My Interests</item>
 		<item>Top Viewed</item>
 		<item>Near Me</item>
@@ -155,7 +155,7 @@
 	<string name="toast_add_favorite">Successfully added location to favorites</string>
 	<string name="toast_remove_favorite">Successfully removed location to favorites</string>
 	
-		<!-- Make a Request Screen -->
+	<!-- Make a Request Screen -->
 	<string name="tv_add_message">Add Message</string>
 	<string name="tv_schedule_request">Schedule Request</string>
 	<string name="tv_stay_active_for">Stay Active For</string>
