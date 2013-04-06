@@ -97,9 +97,9 @@ public class MMAnswerRequestAdapter {
 					// put tempfile into FileEntity
 					FileEntity reqEntity = new FileEntity(tempfile, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 			        httppost.setEntity(reqEntity);
-			        
-			        // delete tempfile
-			        tempfile.delete();
+//			        
+//			        // delete tempfile
+//			        tempfile.delete();
 			        
 			        new MMPostAsyncTask(mmCallback).execute(httppost);
 			        
