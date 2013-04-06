@@ -24,8 +24,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -248,6 +251,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
 					vvStream.setVideoURI(Uri.parse(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
 					vvStream.setMediaController(new MediaController(getActivity()));
+					vvStream.seekTo(1);
 					tvVideoExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 					videoMediaCount++;
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
