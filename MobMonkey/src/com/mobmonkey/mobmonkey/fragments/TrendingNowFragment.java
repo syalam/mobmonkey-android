@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.mobmonkey.mobmonkey.R;
@@ -94,16 +95,22 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + 
+				MMAPIConstants.DEFAULT_SPACE + ((TextView) view.findViewById(R.id.tvtrending)).getText().toString() + 
+				getString(R.string.pd_ellipses));
 		switch (position) {
 			// bookmarks
 			case 0:
+				// TODO: to be removed when this is implemented
+				MMProgressDialog.dismissDialog();
 				break;
 			// my interests
 			case 1:
+				// TODO: to be removed when this is implemented
+				MMProgressDialog.dismissDialog();
 				break;
 			// top viewed
 			case 2:
-				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + " Top Viewed...");
 				MMTrendingAdapter.getTrending(new TrendingCallback(position), 
 									 		  "topviewed", 
 											  "week", 
@@ -122,6 +129,8 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 				break;
 			// near me
 			case 3:
+				// TODO: to be removed when this is implemented
+				MMProgressDialog.dismissDialog();
 				break;
 		}
 	}
@@ -219,6 +228,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
+				Log.d(TAG, TAG + "topViewed: " + ((String) obj));
 				listener.onTrendingItemClick(position, ((String) obj));
 			}
 		}
@@ -238,19 +248,18 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 				MMProgressDialog.dismissDialog();
 				try {
 					JSONObject jObj = new JSONObject((String)obj);
-					Log.d(TAG, TAG + jObj.getString("bookmarkCount"));
 					MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
 					for(int i = 0; i < data.length; i++) {
 						MMTrendingItem item = new MMTrendingItem();
 						item.title = getResources().getStringArray(R.array.trending_category)[i];
 						
-						if(item.title.equalsIgnoreCase("bookmarks")) {
+						if(i == 0) {
 							item.counter = jObj.getString(MMAPIConstants.JSON_KEY_BOOKMARK_COUNT);
-						} else if(item.title.equalsIgnoreCase("my interests")) {
+						} else if(i == 1) {
 							item.counter = jObj.getString(MMAPIConstants.JSON_KEY_INTEREST_COUNT);
-						} else if(item.title.equalsIgnoreCase("top viewed")) {
+						} else if(i == 2) {
 							item.counter = jObj.getString(MMAPIConstants.JSON_KEY_TOP_VIEWED_COUNT);
-						} else if(item.title.equalsIgnoreCase("near me")) {
+						} else if(i == 3) {
 							item.counter = jObj.getString(MMAPIConstants.JSON_KEY_NEARBY_COUNT);
 						}
 						
