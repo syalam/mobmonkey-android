@@ -15,11 +15,15 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -48,14 +52,16 @@ public class CategoriesFragment extends MMFragment {
 	private double longitudeValue;
 	private double latitudeValue;
 	
-	private ListView lvSubCategories;
 	private TextView tvNavigationBarText;
+	private EditText etSearch;
+	private ListView lvSubCategories;
 	
 	private ArrayList<String> subCategories;
 	private JSONArray categoriesArray;
 	
 	private OnSubCategoryItemClickListener subCategoryItemClickListener;
 	private OnNoCategoryItemClickListener noCategoryItemClickListener;
+	private String searchText;
 	private String searchSubCategory;
 	private boolean hasResults = false;
 	private String results;
@@ -71,8 +77,10 @@ public class CategoriesFragment extends MMFragment {
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_categories_screen, container, false);
-		lvSubCategories = (ListView) view.findViewById(R.id.lvsubcategory);
 		tvNavigationBarText = (TextView) view.findViewById(R.id.navtitle);
+		etSearch = (EditText) view.findViewById(R.id.etsearch);
+		lvSubCategories = (ListView) view.findViewById(R.id.lvsubcategory);
+		
 		tvNavigationBarText.setText(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));		
 		
 		init();
@@ -167,20 +175,52 @@ public class CategoriesFragment extends MMFragment {
 	private void checkCategorySelected(String selectedSubCategory, JSONObject subCategory) throws JSONException {
 		if(searchSubCategory == null) {
 			searchSubCategory = selectedSubCategory;
-			Log.d(TAG, TAG + "null hasResults: " + hasResults);
 			searchSubCategory(selectedSubCategory, subCategory);
 		} else if(!searchSubCategory.equals(selectedSubCategory)) {
-			Log.d(TAG, TAG + "not null hasResults: " + hasResults);
 			searchSubCategory = selectedSubCategory;
 			searchSubCategory(selectedSubCategory, subCategory);
 		} else if(!hasResults) {
-			Log.d(TAG, TAG + "same nothasResults: " + hasResults);
 			searchSubCategory = selectedSubCategory;
 			searchSubCategory(selectedSubCategory, subCategory);
 		} else {
-			Log.d(TAG, TAG + "same hashasResults: " + hasResults);
 			noCategoryItemClickListener.onNoCategoryItemClick(true, selectedSubCategory, results);
 		}
+	}
+	
+	private void setSearchByText() {
+		etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				Log.d(TAG, TAG + "actionId: " + actionId);
+				if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+					searchText = etSearch.getText().toString();
+					searchByText();
+				}
+				return true;
+			}
+		});
+		
+		if(!MMLocationManager.isGPSEnabled()) {
+			etSearch.setFocusable(false);
+			etSearch.setFocusableInTouchMode(false);
+			etSearch.setClickable(false);
+		}
+	}
+	
+	private void searchByText() {
+		// TODO: add subcategory to search by text
+		MMSearchLocationAdapter.searchLocationWithText(
+				new SearchCallback(), 
+				Double.toString(longitudeValue), 
+				Double.toString(latitudeValue), 
+				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
+				searchText,
+				MMAPIConstants.DEFAULT_STRING,
+				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+				MMConstants.PARTNER_ID);
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_SPACE + searchText + getString(R.string.pd_ellipses));
+    	InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 	}
 	
 	private void searchSubCategory(String selectedSubCategory, JSONObject subCategory) throws JSONException {
@@ -199,6 +239,24 @@ public class CategoriesFragment extends MMFragment {
 	
 	public interface OnSubCategoryItemClickListener {
 		public void onSubCategoryItemClick(JSONArray subCategories, String selectedCategory);
+	}
+	
+    /**
+     * Custom {@link MMCallback} specifically for {@link SearchScreen} to be processed after receiving response from MobMonkey server.
+     * @author Dezapp, LLC
+     *
+     */
+	private class SearchCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
+			if(obj != null) {
+				Log.d(TAG, TAG + "Response: " + ((String) obj));
+				
+				noCategoryItemClickListener.onNoCategoryItemClick(true, searchText, ((String) obj));
+			}
+		}
 	}
 	
 	private class SearchSubCategoryCallback implements MMCallback {

@@ -90,7 +90,6 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	}
 	
 	private void inboxUpdate() {
-		
 		inboxItems = new MMInboxItem[getResources().getStringArray(R.array.inbox_category).length];
 		for(int i = 0; i < inboxItems.length; i++) {
 			inboxItems[i] = new MMInboxItem();
@@ -122,10 +121,20 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	public interface OnInboxItemClickListener {
 		public void onInboxItemClick(int position, String requests);
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class OpenRequestCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -147,31 +156,12 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		}
 	}
 	
-	private class AssignedRequestCallback implements MMCallback {
-		@Override
-		public void processCallback(Object obj) {
-			if(obj != null) {
-				try {
-					JSONArray jArr = new JSONArray((String) obj);
-					
-					inboxRequests[2] = jArr;
-					
-					inboxItems[2].counter = Integer.toString(jArr.length());
-					
-					if(jArr.length() > 0) {
-						arrayAdapter.isEnabled(2);
-					}
-					
-					arrayAdapter.notifyDataSetChanged();
-				} catch (JSONException ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-	}
-	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class AnsweredRequestCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
@@ -198,5 +188,33 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 			
 		}
 		
+	}
+	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class AssignedRequestCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				try {
+					JSONArray jArr = new JSONArray((String) obj);
+					
+					inboxRequests[2] = jArr;
+					
+					inboxItems[2].counter = Integer.toString(jArr.length());
+					
+					if(jArr.length() > 0) {
+						arrayAdapter.isEnabled(2);
+					}
+					
+					arrayAdapter.notifyDataSetChanged();
+				} catch (JSONException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
 	}
 }

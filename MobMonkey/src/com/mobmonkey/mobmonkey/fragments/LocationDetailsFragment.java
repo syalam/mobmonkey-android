@@ -24,11 +24,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -157,6 +154,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			case R.id.ibsharemedia:
 				break;
 			case R.id.ibstream:
+				ibStream.setSelected(true);
+				ibVideo.setSelected(false);
+				ibImage.setSelected(false);
 				vvStream.setVisibility(View.VISIBLE);
 				ivImage.setVisibility(View.INVISIBLE);
 				tvStreamExpiryDate.setVisibility(View.VISIBLE);
@@ -164,6 +164,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				tvImageExpiryDate.setVisibility(View.INVISIBLE);
 				break;
 			case R.id.ibvideo:
+				ibStream.setSelected(false);
+				ibVideo.setSelected(true);
+				ibImage.setSelected(false);
 				vvStream.setVisibility(View.VISIBLE);
 				ivImage.setVisibility(View.INVISIBLE);
 				tvStreamExpiryDate.setVisibility(View.INVISIBLE);
@@ -171,11 +174,18 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				tvImageExpiryDate.setVisibility(View.INVISIBLE);
 				break;
 			case R.id.ibimage:
+				ibStream.setSelected(false);
+				ibVideo.setSelected(false);
+				ibImage.setSelected(true);
 				vvStream.setVisibility(View.INVISIBLE);
 				ivImage.setVisibility(View.VISIBLE);
 				tvStreamExpiryDate.setVisibility(View.INVISIBLE);
 				tvVideoExpiryDate.setVisibility(View.INVISIBLE);
 				tvImageExpiryDate.setVisibility(View.VISIBLE);
+				break;
+			case R.id.ivimage:
+				Intent videoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("rtsp://v3.cache8.c.youtube.com/CiILENy73wIaGQmXovF6e-Rf-BMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp"));
+				startActivity(videoIntent);
 				break;
 		}
 	}
@@ -252,6 +262,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					vvStream.setVideoURI(Uri.parse(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
 					vvStream.setMediaController(new MediaController(getActivity()));
 					vvStream.seekTo(1);
+					vvStream.requestLayout();
 					tvVideoExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 					videoMediaCount++;
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
@@ -270,6 +281,20 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			if(imageMediaCount > 0) {
 				tvImageMediaCount.setText(imageMediaCount + MMAPIConstants.DEFAULT_STRING);
 			}
+			
+			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
+			ibStream.setOnClickListener(LocationDetailsFragment.this);
+			ibVideo.setOnClickListener(LocationDetailsFragment.this);
+			ibImage.setOnClickListener(LocationDetailsFragment.this);
+		} else {
+			llMedia.setVisibility(View.VISIBLE);
+			MMImageLoaderAdapter.loadImage(new LoadImageCallback(), "http://i.imgur.com/T0Va07Y.jpg");
+			ivImage.setOnClickListener(LocationDetailsFragment.this);
+			
+//			vvStream.setVideoURI(Uri.parse("rtsp://v3.cache8.c.youtube.com/CiILENy73wIaGQmXovF6e-Rf-BMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp"));
+//			vvStream.setMediaController(new MediaController(getActivity()));
+//			vvStream.seekTo(1);
+//			vvStream.requestLayout();
 			
 			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
 			ibStream.setOnClickListener(LocationDetailsFragment.this);
