@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,12 @@ import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
+/**
+ * Android {@link Fragment} to display Answered Requests.
+ * @author Dezapp, LLC
+ *
+ */
+
 public class AnsweredRequestsFragment extends MMFragment {
 
 	private static final String TAG = "AnsweredRequestsFragment";
@@ -34,6 +41,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 	private int positionClicked;
 	private Location location;
 	private MMAnsweredRequestArrayAdapter arrayAdapter;
+
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,6 +71,14 @@ public class AnsweredRequestsFragment extends MMFragment {
 
 	}
 
+	/**
+	 * function that generate an array of {@link MMAnsweredRequestItem} and returns it.
+	 * @return {@link MMAnsweredRequestItem[]}
+	 * @throws JSONException
+	 * @throws NumberFormatException
+	 * @throws ParseException
+	 */
+	
 	private MMAnsweredRequestItem[] getAnsweredRequestItems() throws JSONException, NumberFormatException, ParseException {
 		MMAnsweredRequestItem[] answeredRequestItems = new MMAnsweredRequestItem[answeredRequests.length()];
 
@@ -93,6 +109,10 @@ public class AnsweredRequestsFragment extends MMFragment {
 		return answeredRequestItems;
 	}
 	
+	/**
+	 * The {@link OnItemClickListener} for {@link ListView} in AnsweredRequestsFragment.
+	 *
+	 */
 	private class onAnsweredRequestsClick implements OnItemClickListener {
 
 		@Override

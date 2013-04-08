@@ -8,12 +8,14 @@ import org.json.JSONObject;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkey.utils.MMAssignedRequestsItem;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkey.utils.MMOpenedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMOpenedRequestsItem;
@@ -23,6 +25,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
+ * Android {@link Fragment} to display Open requests Fragment.
  * @author Dezapp, LLC
  *
  */
@@ -68,6 +71,13 @@ public class OpenedRequestsFragment extends MMFragment {
 		
 	}
 	
+	/**
+	 * function that generate an array of {@link MMOpenedRequestsItem} and returns it.
+	 * @return {@link MMOpenedRequestsItem[]}
+	 * @throws JSONException
+	 * @throws NumberFormatException
+	 * @throws ParseException
+	 */
 	private MMOpenedRequestsItem[] getOpenedRequestItems() throws JSONException, NumberFormatException, ParseException {
 		MMOpenedRequestsItem[] openedRequestItems = new MMOpenedRequestsItem[openedRequests.length()];
 
