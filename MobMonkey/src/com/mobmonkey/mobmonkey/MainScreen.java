@@ -27,8 +27,8 @@ import com.google.android.gcm.GCMRegistrar;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.ServerUtility;
-import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
@@ -213,8 +213,7 @@ public class MainScreen extends TabActivity {
 		}
 		
 		if(MMLocationManager.isGPSEnabled()) {
-			MMBookmarksAdapter.getBookmarks(new FavoritesCallback(), 
-											"bookmarks", 
+			MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 											MMConstants.PARTNER_ID, 
 											userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 											userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));

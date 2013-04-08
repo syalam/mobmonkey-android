@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mobmonkey.mobmonkey.MMVideoPlayerScreen;
 import com.mobmonkey.mobmonkey.MakeARequestScreen;
 import com.mobmonkey.mobmonkey.R;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
@@ -12,7 +13,7 @@ import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMUtility;
-import com.mobmonkey.mobmonkeyapi.adapters.MMBookmarksAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMMediaAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -24,7 +25,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,11 +36,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.VideoView;
 
 /**
  * @author Dezapp, LLC
@@ -63,8 +61,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private TextView tvFavorite;
 	
 	private LinearLayout llMedia;
-	private VideoView vvStream;
+	private ImageView ivStream;
+	private ImageView ivVideo;
 	private ImageView ivImage;
+	private ImageView ivStreamPlay;
+	private ImageView ivVideoPlay;
 	private TextView tvStreamExpiryDate;
 	private TextView tvVideoExpiryDate;
 	private TextView tvImageExpiryDate;
@@ -77,6 +78,13 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private TextView tvImageMediaCount;
 	
 	private OnLocationDetailsItemClickListener listener;
+	
+	private String mediaResults;
+	private boolean retrieveMedia = false;
+	private boolean hasStreamExpiryDate = false;
+	private boolean hasVideoExpiryDate = false;
+	private boolean hasImageExpiryDate = false;
+	private View mediaButtonSelected;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,8 +102,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		tvFavorite = (TextView) view.findViewById(R.id.tvfavorite);
 		
 		llMedia = (LinearLayout) view.findViewById(R.id.llmedia);
-		vvStream = (VideoView) view.findViewById(R.id.vvstream);
+		ivStream = (ImageView) view.findViewById(R.id.ivstream);
+		ivVideo = (ImageView) view.findViewById(R.id.ivvideo);
 		ivImage = (ImageView) view.findViewById(R.id.ivimage);
+		ivStreamPlay = (ImageView) view.findViewById(R.id.ivstreamplay);
+		ivVideoPlay = (ImageView) view.findViewById(R.id.ivvideoplay);
 		tvStreamExpiryDate = (TextView) view.findViewById(R.id.tvstreamexpirydate);
 		tvVideoExpiryDate = (TextView) view.findViewById(R.id.tvvideoexpirydate);
 		tvImageExpiryDate = (TextView) view.findViewById(R.id.tvimageexpirydate);
@@ -115,14 +126,20 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			}
 			locationDetails = new JSONObject(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 			
-			MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_retrieving_media));
-			MMMediaAdapter.retrieveAllMediaForLocation(new MediaCallback(), 
-					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
-					MMConstants.PARTNER_ID, 
-					locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
-					locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID));
-			
+			if(!retrieveMedia) {
+				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_retrieving_media));
+				MMMediaAdapter.retrieveAllMediaForLocation(new MediaCallback(), 
+						userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+						MMConstants.PARTNER_ID, 
+						locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
+						locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID));
+			} else {
+				hasMedia();
+				if(mediaButtonSelected != null) {
+					onClick(mediaButtonSelected);
+				}
+			}
 			Log.d(TAG, TAG + "Location Details: " + locationDetails.toString());
 			setLocationDetails();
 		} catch (JSONException e) {
@@ -142,50 +159,33 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 
 	@Override
 	public void onClick(View view) {
+		Intent intent;
 		switch(view.getId()) {
 			case R.id.llmakerequest:
-				Intent intent = new Intent(getActivity(), MakeARequestScreen.class);
+				intent = new Intent(getActivity(), MakeARequestScreen.class);
 				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, locationDetails.toString());
 				startActivity(intent);
 				break;
 			case R.id.llfavorite:
 				favoriteClicked();
 				break;
+			case R.id.ivstreamplay:
+				break;
+			case R.id.ivvideoplay:
+				intent = new Intent(getActivity(), MMVideoPlayerScreen.class);
+				intent.putExtra(MMAPIConstants.JSON_KEY_MEDIA_URL, "rtsp://v3.cache8.c.youtube.com/CiILENy73wIaGQmXovF6e-Rf-BMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp");
+				startActivity(intent);
+				break;
 			case R.id.ibsharemedia:
 				break;
 			case R.id.ibstream:
-				ibStream.setSelected(true);
-				ibVideo.setSelected(false);
-				ibImage.setSelected(false);
-				vvStream.setVisibility(View.VISIBLE);
-				ivImage.setVisibility(View.INVISIBLE);
-				tvStreamExpiryDate.setVisibility(View.VISIBLE);
-				tvVideoExpiryDate.setVisibility(View.INVISIBLE);
-				tvImageExpiryDate.setVisibility(View.INVISIBLE);
+				streamMediaSelected();
 				break;
 			case R.id.ibvideo:
-				ibStream.setSelected(false);
-				ibVideo.setSelected(true);
-				ibImage.setSelected(false);
-				vvStream.setVisibility(View.VISIBLE);
-				ivImage.setVisibility(View.INVISIBLE);
-				tvStreamExpiryDate.setVisibility(View.INVISIBLE);
-				tvVideoExpiryDate.setVisibility(View.VISIBLE);
-				tvImageExpiryDate.setVisibility(View.INVISIBLE);
+				videoMediaSelected();
 				break;
 			case R.id.ibimage:
-				ibStream.setSelected(false);
-				ibVideo.setSelected(false);
-				ibImage.setSelected(true);
-				vvStream.setVisibility(View.INVISIBLE);
-				ivImage.setVisibility(View.VISIBLE);
-				tvStreamExpiryDate.setVisibility(View.INVISIBLE);
-				tvVideoExpiryDate.setVisibility(View.INVISIBLE);
-				tvImageExpiryDate.setVisibility(View.VISIBLE);
-				break;
-			case R.id.ivimage:
-				Intent videoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("rtsp://v3.cache8.c.youtube.com/CiILENy73wIaGQmXovF6e-Rf-BMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp"));
-				startActivity(videoIntent);
+				imageMediaSelected();
 				break;
 		}
 	}
@@ -238,7 +238,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
-	private void hasMedia(String mediaResults) throws JSONException {		
+	private void hasMedia() throws JSONException {		
 		JSONObject mediaJObj = new JSONObject(mediaResults); 
 		JSONArray mediaJArr = mediaJObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA);
 		
@@ -252,50 +252,52 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				JSONObject jObj = mediaJArr.getJSONObject(i);
 				
 				String mediaType = jObj.getString(MMAPIConstants.JSON_KEY_TYPE);
-			
+				Log.d(TAG, TAG + "expiry date: " + jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE));
+				
 				if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING)) {
-					vvStream.setVideoURI(Uri.parse(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
-					vvStream.setMediaController(new MediaController(getActivity()));
 					tvStreamExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+					hasStreamExpiryDate = true;
 					streamMediaCount++;
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
-					vvStream.setVideoURI(Uri.parse(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
-					vvStream.setMediaController(new MediaController(getActivity()));
-					vvStream.seekTo(1);
-					vvStream.requestLayout();
 					tvVideoExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+					hasVideoExpiryDate = true;
 					videoMediaCount++;
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
 					MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
 					tvImageExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+					hasStreamExpiryDate = true;
 					imageMediaCount++;
 				}
 			}
 			
 			if(streamMediaCount > 0) {
+				ivStreamPlay.setClickable(true);
 				tvStreamMediaCount.setText(streamMediaCount + MMAPIConstants.DEFAULT_STRING);
 			}
 			if(videoMediaCount > 0) {
+				ivVideoPlay.setClickable(true);
 				tvVideoMediaCount.setText(videoMediaCount + MMAPIConstants.DEFAULT_STRING);
 			}
 			if(imageMediaCount > 0) {
 				tvImageMediaCount.setText(imageMediaCount + MMAPIConstants.DEFAULT_STRING);
 			}
 			
+			ivStreamPlay.setOnClickListener(LocationDetailsFragment.this);
+			ivVideoPlay.setOnClickListener(LocationDetailsFragment.this);
 			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
 			ibStream.setOnClickListener(LocationDetailsFragment.this);
 			ibVideo.setOnClickListener(LocationDetailsFragment.this);
 			ibImage.setOnClickListener(LocationDetailsFragment.this);
 		} else {
 			llMedia.setVisibility(View.VISIBLE);
+			hasImageExpiryDate = true;
+			tvImageExpiryDate.setText("30m");
 			MMImageLoaderAdapter.loadImage(new LoadImageCallback(), "http://i.imgur.com/T0Va07Y.jpg");
-			ivImage.setOnClickListener(LocationDetailsFragment.this);
 			
-//			vvStream.setVideoURI(Uri.parse("rtsp://v3.cache8.c.youtube.com/CiILENy73wIaGQmXovF6e-Rf-BMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp"));
-//			vvStream.setMediaController(new MediaController(getActivity()));
-//			vvStream.seekTo(1);
-//			vvStream.requestLayout();
+			ivVideoPlay.setClickable(true);
 			
+			ivStreamPlay.setOnClickListener(LocationDetailsFragment.this);
+			ivVideoPlay.setOnClickListener(LocationDetailsFragment.this);
 			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
 			ibStream.setOnClickListener(LocationDetailsFragment.this);
 			ibVideo.setOnClickListener(LocationDetailsFragment.this);
@@ -303,43 +305,84 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	private void streamMediaSelected() {
+		mediaButtonSelected = ibStream;
+		ibStream.setSelected(true);
+		ibVideo.setSelected(false);
+		ibImage.setSelected(false);
+		ivStream.setVisibility(View.VISIBLE);
+		ivVideo.setVisibility(View.INVISIBLE);
+		ivImage.setVisibility(View.INVISIBLE);
+		ivStreamPlay.setVisibility(View.VISIBLE);
+		ivVideoPlay.setVisibility(View.INVISIBLE);
+		if(hasStreamExpiryDate) {
+			tvStreamExpiryDate.setVisibility(View.VISIBLE);
+		}
+		tvVideoExpiryDate.setVisibility(View.INVISIBLE);
+		tvImageExpiryDate.setVisibility(View.INVISIBLE);
+	}
+	
+	private void videoMediaSelected() {
+		mediaButtonSelected = ibVideo;
+		ibStream.setSelected(false);
+		ibVideo.setSelected(true);
+		ibImage.setSelected(false);
+		ivStream.setVisibility(View.INVISIBLE);
+		ivVideo.setVisibility(View.VISIBLE);
+		ivImage.setVisibility(View.INVISIBLE);
+		ivStreamPlay.setVisibility(View.INVISIBLE);
+		ivVideoPlay.setVisibility(View.VISIBLE);
+		tvStreamExpiryDate.setVisibility(View.INVISIBLE);
+		if(hasVideoExpiryDate) {
+			tvVideoExpiryDate.setVisibility(View.VISIBLE);
+		}
+		tvImageExpiryDate.setVisibility(View.INVISIBLE);
+	}
+	
+	private void imageMediaSelected() {
+		mediaButtonSelected = ibImage;
+		ibStream.setSelected(false);
+		ibVideo.setSelected(false);
+		ibImage.setSelected(true);
+		ivStream.setVisibility(View.INVISIBLE);
+		ivVideo.setVisibility(View.INVISIBLE);
+		ivImage.setVisibility(View.VISIBLE);
+		ivStreamPlay.setVisibility(View.INVISIBLE);
+		ivVideoPlay.setVisibility(View.INVISIBLE);
+		tvStreamExpiryDate.setVisibility(View.INVISIBLE);
+		tvVideoExpiryDate.setVisibility(View.INVISIBLE);
+		if(hasImageExpiryDate) {
+			tvImageExpiryDate.setVisibility(View.VISIBLE);
+		}
+	}
+	
 	private void favoriteClicked() {
 		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_updating_favorites));
-		if(tvFavorite.getText().toString().equals(getString(R.string.tv_favorite))) {
-			try {
+		try {
+			if(tvFavorite.getText().toString().equals(getString(R.string.tv_favorite))) {
 				// Make a server call and add to favorites
-				MMBookmarksAdapter.createBookmark(new AddFavoriteCallback(), 
-												"bookmarks", 
+				MMFavoritesAdapter.addFavorite(new AddFavoriteCallback(),  
 												locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
 												locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
 												MMConstants.PARTNER_ID, 
 												userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 												userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			
-		// remove current location information from bookmark
-		} else if(tvFavorite.getText().toString().equals(getString(R.string.tv_remove_favorite))) {
-			try {				
+			} else if(tvFavorite.getText().toString().equals(getString(R.string.tv_remove_favorite))) {
 				// Make a server call remove from favorites
-				MMBookmarksAdapter.deleteBookmark(new RemoveFavoriteCallback(), 
-												  "bookmarks", 
+				MMFavoritesAdapter.removeFavorite(new RemoveFavoriteCallback(),  
 												  locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
 												  locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
 												  MMConstants.PARTNER_ID, 
 												  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 												  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
-				
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
+		} catch(JSONException e) {
+			
 		}
 	}
 	
 	private void updateFavoritesList() {
-		MMBookmarksAdapter.getBookmarks(new FavoritesCallback(), 
-				MMAPIConstants.URL_BOOKMARKS, 
+		MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 				MMConstants.PARTNER_ID, 
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
@@ -357,7 +400,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			if(obj != null) {
 				Log.d(TAG, TAG + "mediaResults: " + (String) obj);
 				try {
-					hasMedia((String) obj);
+					retrieveMedia = true;
+					mediaResults = (String) obj;
+					hasMedia();
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

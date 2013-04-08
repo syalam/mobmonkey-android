@@ -119,6 +119,11 @@
 		    
 		</activity>
 		
+		<activity android:name=".MMVideoPlayerScreen"
+		    android:screenOrientation="landscape">
+		    
+		</activity>
+		
 		<activity android:name=".FavoritesActivity"
 		    android:screenOrientation="portrait">
 		    

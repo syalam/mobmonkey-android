@@ -54,9 +54,16 @@
 		            android:paddingLeft="3dp"
 		            android:paddingRight="3dp">
 					
-		            <VideoView android:id="@+id/vvstream"
+		            <ImageView android:id="@+id/ivstream"
 		                android:layout_width="match_parent"
 		                android:layout_height="200dp"/>
+		            
+		            <ImageView android:id="@+id/ivstreamplay"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_gravity="center"
+		                android:background="@drawable/btn_play_video"
+		                android:clickable="false"/>
 					
 					<TextView android:id="@+id/tvstreamexpirydate"
 						android:layout_width="wrap_content"
@@ -70,6 +77,17 @@
 						android:textColor="@android:color/white"
 						android:visibility="invisible"/>
 		            
+		            <ImageView android:id="@+id/ivvideo"
+		                android:layout_width="match_parent"
+		                android:layout_height="200dp"/>
+		            
+		            <ImageView android:id="@+id/ivvideoplay"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_gravity="center"
+		                android:background="@drawable/btn_play_video"
+		                android:clickable="false"/>
+					
 					<TextView android:id="@+id/tvvideoexpirydate"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
