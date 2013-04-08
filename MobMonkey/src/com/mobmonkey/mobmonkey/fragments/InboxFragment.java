@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
+ * Android {@link Fragment} to display Inbox Fragment.
  * @author Dezapp, LLC
  *
  */
@@ -41,6 +43,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	private OnInboxItemClickListener listener;
 	
 	private JSONArray[] inboxRequests;
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -89,6 +92,9 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		
 	}
 	
+	/**
+	 * Update Inbox {@link ListView} when first started or resume.
+	 */
 	private void inboxUpdate() {
 		inboxItems = new MMInboxItem[getResources().getStringArray(R.array.inbox_category).length];
 		for(int i = 0; i < inboxItems.length; i++) {
@@ -122,8 +128,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	}
 	
 	/**
-	 * 
-	 * @author Dezapp, LLC
+	 * The {@link OnItemClickListener} for {@link ListView} in InboxFragment.
 	 *
 	 */
 	public interface OnInboxItemClickListener {
@@ -131,8 +136,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	}
 	
 	/**
-	 * 
-	 * @author Dezapp, LLC
+	 * {@link MMCallback} function. Get call Opened requests.
 	 *
 	 */
 	private class OpenRequestCallback implements MMCallback {
@@ -157,8 +161,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	}
 	
 	/**
-	 * 
-	 * @author Dezapp, LLC
+	 * {@link MMCallback} function. Get call Answered requests.
 	 *
 	 */
 	private class AnsweredRequestCallback implements MMCallback {
@@ -191,8 +194,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	}
 	
 	/**
-	 * 
-	 * @author Dezapp, LLC
+	 * {@link MMCallback} function. Get call Assigned requests.
 	 *
 	 */
 	private class AssignedRequestCallback implements MMCallback {

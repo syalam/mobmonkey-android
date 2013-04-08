@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
 import android.util.Base64OutputStream;
@@ -38,6 +39,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkey.utils.MMAnsweredRequestItem;
 import com.mobmonkey.mobmonkey.utils.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMAssignedRequestsItem;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
@@ -50,6 +52,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
+ * Android {@link Fragment} to display Assigned Requests.
  * @author Dezapp, LLC
  *
  */
@@ -97,6 +100,13 @@ public class AssignedRequestsFragment extends MMFragment {
 	public void onFragmentBackPressed() {
 		
 	}
+	/**
+	 * function that generate an array of {@link MMAssignedRequestsItem} and returns it.
+	 * @return {@link MMAssignedRequestsItem[]}
+	 * @throws JSONException
+	 * @throws NumberFormatException
+	 * @throws ParseException
+	 */
 	
 	private MMAssignedRequestsItem[] getAssignedRequestItems() throws JSONException, NumberFormatException, ParseException {
 		MMAssignedRequestsItem[] assginedRequestItems = new MMAssignedRequestsItem[assignedRequests.length()];
@@ -128,6 +138,10 @@ public class AssignedRequestsFragment extends MMFragment {
 		return assginedRequestItems;
 	}
 	
+	/**
+	 * The {@link OnItemClickListener} for {@link ListView} in AssignedRequestsFragment.
+	 *
+	 */
 	private class onAssignedRequestsClick implements OnItemClickListener {
 
 		@Override
@@ -159,7 +173,12 @@ public class AssignedRequestsFragment extends MMFragment {
 		}
 		
 	}
-
+	
+	/**
+	 * Gets the return media file, image, or video, and convert it into {@link Base64} string. The function then sends the
+	 * {@link Base64} to the server via {@link MMAnswerRequestAdapter}.
+	 */
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -249,12 +268,17 @@ public class AssignedRequestsFragment extends MMFragment {
 						   MMAPIConstants.MEDIA_TYPE_VIDEO);
 		        
 		    } catch (IOException e) {
-		    		
+		    	e.printStackTrace();
 		    } catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
 	}
+	
+	/**
+	 * {@link MMCallback} function. Get call after successfully fulfilled a request.
+	 *
+	 */
 	
 	private class mmAnswerRequest implements MMCallback {
 
@@ -265,34 +289,18 @@ public class AssignedRequestsFragment extends MMFragment {
 		
 	}
 	
+	/**
+	 * Returns the real path of a file from its {@link Uri}
+	 * 
+	 * @param {@link Uri} of a file
+	 * @return {@link String} of the real path of an {@link Uri}.
+	 */
+	
 	public String getRealPathFromURI(Uri contentUri) {
 	    String[] proj = { MediaStore.Images.Media.DATA };
 	    Cursor cursor = getActivity().managedQuery(contentUri, proj, null, null, null);
 	    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 	    cursor.moveToFirst();
 	    return cursor.getString(column_index);
-	}
-	
-	public void encode(File file, OutputStream base64OutputStream) {
-		  
-//		  IOUtils.copy(is, out);
-		  
-		  byte[] buffer = new byte[1024];
-		  try {
-			  InputStream is = new FileInputStream(file);
-			  OutputStream out = new Base64OutputStream(base64OutputStream, Base64.DEFAULT);
-			  
-			  int len = is.read(buffer);
-			  while (len != -1) {
-			      out.write(buffer, 0, len);
-			      len = is.read(buffer);
-			  }
-			  
-			  is.close();
-			  out.close();
-		  } catch (IOException ex) {
-			  
-		  }
-		  
 	}
 }

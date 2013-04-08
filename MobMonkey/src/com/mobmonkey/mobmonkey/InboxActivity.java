@@ -13,6 +13,7 @@ import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkeyapi.adapters.MMAnswerRequestAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -21,10 +22,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
+import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 
 /**
+ * Android {@link Activity} screen displays the Inbox screen.
  * @author Dezapp, LLC
- *
+ * 
  */
 public class InboxActivity extends FragmentActivity implements OnInboxItemClickListener {
 	FragmentManager fragmentManager;
@@ -48,6 +52,10 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 		}
 		
 	}
+	
+	/**
+	 * {@link OnItemClickListener} for the {@link ListView} in Inbox screen.
+	 */
 	
 	/*
 	 * (non-Javadoc)

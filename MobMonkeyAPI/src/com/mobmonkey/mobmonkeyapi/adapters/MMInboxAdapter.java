@@ -9,10 +9,21 @@ import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMGetAsyncTask;
 
+/**
+ * @author Dezapp, LLC
+ * The adapter for pulling information of Inbox from the server 
+ */
 public class MMInboxAdapter {
 	private static String TAG = "MMInboxAdapter";
 	private static String inboxURL;
 	
+	/**
+	 * Get all open requests that have been fulfilled or waiting to be fulfilled.
+	 * @param {@link MMCallback} 
+	 * @param partnerId
+	 * @param Email address
+	 * @param Password
+	 */
 	public static void getOpenRequests(MMCallback mmCallback,
 									   // headers
 									   String partnerId,
@@ -31,6 +42,13 @@ public class MMInboxAdapter {
 		new MMGetAsyncTask(mmCallback).execute(httpget);
 	}
 	
+	/**
+	 * Get all requests that have been assigned to you from the checkin API.
+	 * @param {@link MMCallback} 
+	 * @param partnerId
+	 * @param Email address
+	 * @param Password
+	 */
 	public static void getAssignedRequests(MMCallback mmCallback,
 										   // headers
 										   String partnerId,
