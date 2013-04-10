@@ -21,6 +21,7 @@ public class FilterScreen extends Activity implements OnCheckedChangeListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_hold);
 		setContentView(R.layout.filter_screen);
 		
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
@@ -44,7 +45,7 @@ public class FilterScreen extends Activity implements OnCheckedChangeListener {
 
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
-		int searchRadius = 0;
+		int searchRadius = MMAPIConstants.SEARCH_RADIUS_HALF_MILE;
 		
 		switch(checkedId) {
 			case R.id.rbhalfmile:
@@ -71,6 +72,7 @@ public class FilterScreen extends Activity implements OnCheckedChangeListener {
 	public void onBackPressed() {
 		userPrefsEditor.commit();
 		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
 	}
 	
 	private int getCheckedRadioButton() {

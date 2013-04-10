@@ -57,8 +57,10 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 	@Override
 	public void onMapIconClicked(int which) {
 		if(which == MMAPIConstants.FAVORITES_FRAGMENT_MAP) {
-			fragmentManager.beginTransaction().replace(R.id.llfragmentcontainer, 
-					fragmentStack.push(new FavoritesMapFragment())).commit();
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+			fragmentTransaction.replace(R.id.llfragmentcontainer,fragmentStack.push(new FavoritesMapFragment()));
+			fragmentTransaction.commit();
 		} else if(which == MMAPIConstants.FAVORITES_FRAGMENT_LIST) {		
 			fragmentManager.beginTransaction().remove(fragmentStack.pop());
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

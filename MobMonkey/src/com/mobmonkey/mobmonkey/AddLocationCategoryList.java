@@ -43,13 +43,24 @@ public class AddLocationCategoryList extends Activity{
 
 	JSONArray categories;
 	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.slide_right_in, R.anim.slide_hold);
 		setContentView(R.layout.add_location_select_category_screen);
 		categoriesList = (ListView) findViewById(R.id.categoryList);
 		navigationbarText = (TextView) findViewById(R.id.navtitle);
 		navigationbarText.setText(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
 		init();
+	}
+
+    /* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 	}
 	
 	private void init()

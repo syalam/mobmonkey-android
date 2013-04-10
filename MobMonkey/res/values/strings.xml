@@ -169,6 +169,8 @@
 	<string name="btn_send_photo_request">Send Photo Request</string>
 	<string name="btn_send_text_request">Send Text Request</string>
 	
+	<string name="toast_no_message_detected">No message detected, please compose a message before making a text request.</string>
+	
 	<string name="pd_sending_request">Sending request&#8230;</string>
 	
 	<!-- Add Message Screen -->

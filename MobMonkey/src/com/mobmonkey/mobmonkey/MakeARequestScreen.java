@@ -151,19 +151,11 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		if(view.getId() == R.id.btnsentrequest) {
 			Log.d(TAG, "sent request");
 			
-			MMProgressDialog.displayDialog(MakeARequestScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_sending_request));
-			MMSendRequestAdapter.sendRequest(new SendRequestCallback(), 
-											 message,
-											 scheduleDate, 
-											 providerId,
-											 locationId,
-											 duration,
-											 radiusInYards,
-											 repeatRate,
-											 mediaType, 
-											 MMConstants.PARTNER_ID,
-											 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-											 userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING));
+			if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_TEXT) && message.equals(MMAPIConstants.DEFAULT_STRING)) {
+				Toast.makeText(MakeARequestScreen.this, R.string.toast_no_message_detected, Toast.LENGTH_SHORT).show();
+			} else {
+				sendRequest();
+			}
 		}
 	}
 	
@@ -319,6 +311,22 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			mmelvScheduleRequest.setAdapter(mmArrayAdapter);
 			mmelvScheduleRequest.invalidate();
 		}
+	}
+	
+	private void sendRequest() {
+		MMProgressDialog.displayDialog(MakeARequestScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_sending_request));
+		MMSendRequestAdapter.sendRequest(new SendRequestCallback(), 
+										 message,
+										 scheduleDate, 
+										 providerId,
+										 locationId,
+										 duration,
+										 radiusInYards,
+										 repeatRate,
+										 mediaType, 
+										 MMConstants.PARTNER_ID,
+										 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+										 userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING));
 	}
 	
 	/**

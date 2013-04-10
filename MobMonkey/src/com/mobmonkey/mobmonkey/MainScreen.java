@@ -24,6 +24,7 @@ import android.widget.TabWidget;
 import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
+import com.mobmonkey.mobmonkey.utils.GCMIntentService;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.ServerUtility;

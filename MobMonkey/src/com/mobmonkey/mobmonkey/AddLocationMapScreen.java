@@ -43,11 +43,21 @@ public class AddLocationMapScreen extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_hold);
 		setContentView(R.layout.add_location_map_screen);
 		
 		init(); 
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.FragmentActivity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
+	}
+
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnaddloc:

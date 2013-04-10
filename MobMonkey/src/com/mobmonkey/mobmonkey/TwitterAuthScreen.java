@@ -50,11 +50,21 @@ public class TwitterAuthScreen extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.slide_right_in, R.anim.slide_hold);
 		setContentView(R.layout.twitter_auth_screen);
 		init();
 		startTwitterAuth();
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
+	}
+
 	/**
 	 * Initialize all the variables to be used in {@link TwitterAuthScreen}
 	 */
@@ -162,6 +172,7 @@ public class TwitterAuthScreen extends Activity {
 					Toast.makeText(TwitterAuthScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 				}
 				finish();
+				overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
