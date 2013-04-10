@@ -118,7 +118,7 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 				mmFragment.onFragmentBackPressed();
 				
 				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+				fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
 				fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
 				fragmentTransaction.commit();
 			}
@@ -130,7 +130,7 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 	
 	private void performTransaction(MMFragment mmFragment) {
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+		fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
 		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.push(mmFragment));
 		fragmentTransaction.commit();		
 	}

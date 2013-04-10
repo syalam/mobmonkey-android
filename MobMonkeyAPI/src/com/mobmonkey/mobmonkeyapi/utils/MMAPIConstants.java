@@ -222,5 +222,11 @@ public final class MMAPIConstants {
 	public static final String MEDIA_CONTENT_MPEG = "video/mpeg";
 	public static final String MEDIA_CONTENT_QUICKTIME = "video/quicktime";
 	
+	// Repeat rate
+	public static final String REQUEST_REPEAT_RATE_NONE = "none";
+	public static final String REQUEST_REPEAT_RATE_DAILY = "daily";
+	public static final String REQUEST_REPEAT_RATE_WEEKLY = "weekly";
+	public static final String REQUEST_REPEAT_RATE_MONTHLY = "monthly";
+	
 	public static final String INTENT_FILTER_DISPLAY_MESSAGE = "com.mobmonkey.mobmonkey.DISPLAY_MESSAGE";
 }

@@ -5,17 +5,13 @@ import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.TextView;
 
 /**
  * @author Dezapp, LLC
@@ -36,6 +32,7 @@ public class AddMessageScreen extends Activity implements OnItemClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_hold);
 		setContentView(R.layout.add_message_screen);
 		init();
 	}
@@ -54,6 +51,7 @@ public class AddMessageScreen extends Activity implements OnItemClickListener {
 			setResult(RESULT_OK, messageIntent);
 		}
 		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 	}
 
 	/*

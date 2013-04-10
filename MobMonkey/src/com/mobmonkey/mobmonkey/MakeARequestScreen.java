@@ -20,9 +20,11 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
+import com.facebook.widget.ProfilePictureView;
 import com.mobmonkey.mobmonkey.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
+import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMSegmentedRadioGroup;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSendRequestAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
@@ -41,6 +43,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	private MMExpandedListView mmelvScheduleRequest;
 	private Button btnSendRequest;
 	
+	private Calendar requestCal;
 	private String message;
 	private String scheduleRequest;
 	private String mediaType;
@@ -53,7 +56,8 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	private String scheduleDate;
 	private int duration;
 	private JSONObject jObj;
-	private String repeating = "none";
+	private boolean repeat = true;
+	private String repeatRate;
 	private int radiusInYards = 50; //TODO: Remove hard-coded value for radius
 	
 	private SharedPreferences userPrefs;
@@ -66,6 +70,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_hold);
 		setContentView(R.layout.make_a_request_screen);
 		
 		init();
@@ -124,9 +129,14 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			}
 		} else if (adapterView == mmelvScheduleRequest) {
 			if(position == 0) {
-				Intent addMessageIntent = new Intent(MakeARequestScreen.this, ScheduleRequestScreen.class);
-				addMessageIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_MESSAGE, scheduleRequest);
-				startActivityForResult(addMessageIntent, MMAPIConstants.REQUEST_CODE_SCHEDULE_REQUEST);
+				Intent scheduleRequestIntent = new Intent(MakeARequestScreen.this, ScheduleRequestScreen.class);
+				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_MESSAGE, scheduleRequest);
+				if(requestCal != null) {
+					scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME, requestCal);
+				}
+				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, repeat);
+				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, repeatRate);
+				startActivityForResult(scheduleRequestIntent, MMAPIConstants.REQUEST_CODE_SCHEDULE_REQUEST);
 			}
 		}
 	}
@@ -141,6 +151,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		if(view.getId() == R.id.btnsentrequest) {
 			Log.d(TAG, "sent request");
 			
+			MMProgressDialog.displayDialog(MakeARequestScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_sending_request));
 			MMSendRequestAdapter.sendRequest(new SendRequestCallback(), 
 											 message,
 											 scheduleDate, 
@@ -148,7 +159,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 											 locationId,
 											 duration,
 											 radiusInYards,
-											 repeating,
+											 repeatRate,
 											 mediaType, 
 											 MMConstants.PARTNER_ID,
 											 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
@@ -169,7 +180,16 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			processScheduleRequestResult(resultCode, data);
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
+	}
+
 	/**
 	 * 
 	 */
@@ -188,11 +208,9 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		rgStayActive.setOnCheckedChangeListener(MakeARequestScreen.this);
 		
 		setSingleItemAddMessage();
-		mmelvAddMessage.setAdapter(mmArrayAdapter);
 		mmelvAddMessage.setOnItemClickListener(MakeARequestScreen.this);
 		
 		setSingleScheduleRequest();
-		mmelvScheduleRequest.setAdapter(mmArrayAdapter);
 		mmelvScheduleRequest.setOnItemClickListener(MakeARequestScreen.this);
 		
 		switch(rgStayActive.getCheckedRadioButtonId()) {
@@ -219,7 +237,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -228,6 +246,8 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		labels = new String[] {getString(R.string.tv_add_message)};
 		indicatorIcons = new int[] {R.drawable.listview_accessory_indicator};
 		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
+		mmelvAddMessage.setAdapter(mmArrayAdapter);
+		mmelvAddMessage.invalidate();
 	}
 	
 	/**
@@ -249,20 +269,23 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 				public void onClick(View v) {
 					message = MMAPIConstants.DEFAULT_STRING;
 					setSingleItemAddMessage();
-					mmelvAddMessage.setAdapter(mmArrayAdapter);
-					mmelvAddMessage.invalidate();
 				}
 			});
+			mmelvAddMessage.setAdapter(mmArrayAdapter);
+			mmelvAddMessage.invalidate();
 		}
-		mmelvAddMessage.setAdapter(mmArrayAdapter);
-		mmelvAddMessage.invalidate();
 	}
 	
 	private void setSingleScheduleRequest() {
+		requestCal = null;
+		repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_NONE;
+		scheduleRequest = MMAPIConstants.DEFAULT_STRING;
 		icons = new int[] {android.R.drawable.ic_menu_today};
 		labels = new String[] {getString(R.string.tv_schedule_request)};
 		indicatorIcons = new int[] {R.drawable.listview_accessory_indicator};
 		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
+		mmelvScheduleRequest.setAdapter(mmArrayAdapter);
+		mmelvScheduleRequest.invalidate();
 	}
 	
 	/**
@@ -271,16 +294,16 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	 * @param data
 	 */
 	private void processScheduleRequestResult(int resultCode, Intent data) {
-		if(resultCode == RESULT_CANCELED) {
-			
-		} else if(resultCode == RESULT_OK) {
-			scheduleDate = ((Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME)).getTimeInMillis() + MMAPIConstants.DEFAULT_STRING;
-			repeating = data.getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
+		if(resultCode == RESULT_OK) {
+			repeat = data.getBooleanExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, true);
+			repeatRate = data.getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
+			Log.d(TAG, TAG + "repeatRate: " + repeatRate);
 			
 			SimpleDateFormat sdfTime = new SimpleDateFormat("KK:mm a");
 			SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
 			
-			Calendar requestCal = (Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
+			requestCal = (Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
+			scheduleDate = Long.toString(requestCal.getTimeInMillis());
 			
 			String scheduleMessage = sdfTime.format(requestCal.getTime()) + " on " + sdfDate.format(requestCal.getTime());
 			
@@ -290,29 +313,34 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					scheduleRequest = MMAPIConstants.DEFAULT_STRING;
 					setSingleScheduleRequest();
-					mmelvScheduleRequest.setAdapter(mmArrayAdapter);
-					mmelvScheduleRequest.invalidate();
 				}
 			});
+			mmelvScheduleRequest.setAdapter(mmArrayAdapter);
+			mmelvScheduleRequest.invalidate();
 		}
-		
-		mmelvScheduleRequest.setAdapter(mmArrayAdapter);
-		mmelvScheduleRequest.invalidate();
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class SendRequestCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
 			if(obj != null) {
 				try {
 					JSONObject response = new JSONObject((String)obj);
 					if(response.getString(MMAPIConstants.KEY_RESPONSE_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
 						Toast.makeText(MakeARequestScreen.this, R.string.toast_request_successful, Toast.LENGTH_SHORT).show();
+						finish();
+						overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
+					} else {
+						Toast.makeText(MakeARequestScreen.this, response.getString(MMAPIConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
 					}
-					finish();
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

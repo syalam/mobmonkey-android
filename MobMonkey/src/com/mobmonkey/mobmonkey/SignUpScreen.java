@@ -80,6 +80,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, TAG + "onCreate");
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_hold);
         
         setContentView(R.layout.signup_screen);
         
@@ -201,7 +202,16 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 		}
 	}
 	
-    /**
+    /* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
+	}
+
+	/**
      * Handler for when {@link Button}s or any other {@link View}s are clicked.
      * @param view {@link View} that is clicked
      */

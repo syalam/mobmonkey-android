@@ -108,7 +108,7 @@ public class SignInScreen extends Activity {
 			}
 		}
 	}
-	
+
 	/**
 	 * Handler for when {@link Button}s or any other {@link View}s are clicked.
 	 * @param view {@link View} that is clicked

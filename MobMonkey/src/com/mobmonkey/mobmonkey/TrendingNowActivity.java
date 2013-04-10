@@ -75,6 +75,7 @@ public class TrendingNowActivity extends FragmentActivity implements OnTrendingI
 			mmFragment.onFragmentBackPressed();
 			
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
 			fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
 			fragmentTransaction.commit();
 		}
@@ -85,6 +86,7 @@ public class TrendingNowActivity extends FragmentActivity implements OnTrendingI
 	
 	private void performTransaction(MMFragment mmFragment) {
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
 		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.push(mmFragment));
 		fragmentTransaction.commit();
 	}

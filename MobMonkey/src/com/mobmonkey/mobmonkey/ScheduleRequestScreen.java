@@ -42,6 +42,8 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 	
 	private NumericWheelAdapter numericWheelAdapter;
 	
+	private Calendar requestCal;
+	private Calendar currCal;
 	private String repeatRate;
 	
 	/*
@@ -51,6 +53,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.slide_right_in, R.anim.slide_hold);
 		setContentView(R.layout.schedule_request_screen);
 		
 		wvDay = (WheelView) findViewById(R.id.wheelday);
@@ -62,21 +65,27 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		
 		rgRepeating.setOnCheckedChangeListener(ScheduleRequestScreen.this);
 		
-		repeatRate = ((RadioButton) findViewById(R.id.rbdaily)).getText().toString();
+		requestCal = Calendar.getInstance();
+		currCal = Calendar.getInstance();
+		repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_DAILY;
 		
-		Calendar calendar = Calendar.getInstance();
+		if(getIntent().getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME) != null) {
+			requestCal = (Calendar) getIntent().getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
+		}
 		
-		wvDay.setViewAdapter(new DayArrayAdapter(ScheduleRequestScreen.this, calendar));
-		wvDay.setCurrentItem(MMAPIConstants.DAYS_PREVIOUS);
+		setRepeating();
+		
+		wvDay.setViewAdapter(new DayArrayAdapter(ScheduleRequestScreen.this, currCal));
+		wvDay.setCurrentItem(MMAPIConstants.DAYS_PREVIOUS + requestCal.get(Calendar.DAY_OF_YEAR) - currCal.get(Calendar.DAY_OF_YEAR));
 		
 		numericWheelAdapter = new NumericWheelAdapter(ScheduleRequestScreen.this, 1, 12);
 		numericWheelAdapter.setItemResource(R.layout.wheel_text_item);
 		numericWheelAdapter.setItemTextResource(R.id.text);
 		wvHours.setViewAdapter(numericWheelAdapter);
-		if(calendar.get(Calendar.HOUR) == 0) {
+		if(requestCal.get(Calendar.HOUR) == 0) {
 			wvHours.setCurrentItem(11);
 		} else {
-			wvHours.setCurrentItem(calendar.get(Calendar.HOUR) - 1);
+			wvHours.setCurrentItem(requestCal.get(Calendar.HOUR) - 1);
 		}
 		wvHours.setCyclic(true);
 		wvHours.addChangingListener(ScheduleRequestScreen.this);
@@ -85,7 +94,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		numericWheelAdapter.setItemResource(R.layout.wheel_text_item);
 		numericWheelAdapter.setItemTextResource(R.id.text);
 		wvMins.setViewAdapter(numericWheelAdapter);
-		wvMins.setCurrentItem(calendar.get(Calendar.MINUTE));
+		wvMins.setCurrentItem(requestCal.get(Calendar.MINUTE));
 		wvMins.setCyclic(true);
 		wvMins.addChangingListener(ScheduleRequestScreen.this);
 		
@@ -93,7 +102,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
         ampmAdapter.setItemResource(R.layout.wheel_text_item);
         ampmAdapter.setItemTextResource(R.id.text);
         wvAMPM.setViewAdapter(ampmAdapter);
-        wvAMPM.setCurrentItem(calendar.get(Calendar.AM_PM));
+        wvAMPM.setCurrentItem(requestCal.get(Calendar.AM_PM));
 	}
 	
 	/*
@@ -131,39 +140,69 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.RadioGroup.OnCheckedChangeListener#onCheckedChanged(android.widget.RadioGroup, int)
+	 */
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		switch(checkedId) {
 			case R.id.rbdaily:
-				repeatRate = ((RadioButton) findViewById(R.id.rbdaily)).getText().toString().toLowerCase();
+				repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_DAILY;
 				break;
 			case R.id.rbweekly:
-				repeatRate = ((RadioButton) findViewById(R.id.rbweekly)).getText().toString().toLowerCase();
+				repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_WEEKLY;
 				break;
 			case R.id.rbmonthly:
-				repeatRate = ((RadioButton) findViewById(R.id.rbmonthly)).getText().toString().toLowerCase();
+				repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_MONTHLY;
 				break;
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
 	@Override
 	public void onBackPressed() {
 		setResult(RESULT_CANCELED);
 		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 	}
 
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsetschedule:
 				getDateAndTime();
-				getRepeating();
 				break;
 		}
 	}
 	
-	private void getRepeating() {
+	private void setRepeating() {
+		tbRepeating.setChecked(getIntent().getBooleanExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, true));
+		rgRepeating.check(getCheckedRadioButton());
+	}
+	
+	private int getCheckedRadioButton() {
+		repeatRate = getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
 		
-		
+		if(repeatRate.equals(MMAPIConstants.REQUEST_REPEAT_RATE_DAILY)) {
+			return R.id.rbdaily;
+		} else if(repeatRate.equals(MMAPIConstants.REQUEST_REPEAT_RATE_WEEKLY)) {
+			return R.id.rbweekly;
+		} else if(repeatRate.equals(MMAPIConstants.REQUEST_REPEAT_RATE_MONTHLY)) {
+			return R.id.rbmonthly;
+		} else {
+			return R.id.rbdaily;
+		}
+	}
+	
+	private String getRepeating() {
+		if(tbRepeating.isChecked()) {
+			return repeatRate;
+		} else {
+			return MMAPIConstants.REQUEST_REPEAT_RATE_NONE;
+		}
 	}
 
 	private void getDateAndTime() {
@@ -172,12 +211,10 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		Log.d(TAG, TAG + "mins: " + wvMins.getCurrentItem());
 		Log.d(TAG, TAG + "am/pm: " + wvAMPM.getCurrentItem());
 		
-		int day = wvDay.getCurrentItem() - MMAPIConstants.DAYS_PREVIOUS;
+		int day = wvDay.getCurrentItem() - MMAPIConstants.DAYS_PREVIOUS - (requestCal.get(Calendar.DAY_OF_YEAR) - currCal.get(Calendar.DAY_OF_YEAR));
 		int hour = wvHours.getCurrentItem() + 1;
 		int min = wvMins.getCurrentItem();
 		int ampm = wvAMPM.getCurrentItem();
-		
-		Calendar requestCal = Calendar.getInstance(TimeZone.getDefault());
 		
 		requestCal.set(Calendar.HOUR, hour);
 		requestCal.set(Calendar.MINUTE, min);
@@ -205,15 +242,11 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		} else {
 			scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME, requestCal);
 			scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, tbRepeating.isChecked());
-			if(tbRepeating.isChecked()) {
-				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, repeatRate);
-			}
-			else {
-				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, "none");
-			}
+			scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, getRepeating());
 			
 			setResult(RESULT_OK, scheduleRequestIntent);
 			finish();
+			overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 		}
 	}
 	

@@ -169,6 +169,8 @@
 	<string name="btn_send_photo_request">Send Photo Request</string>
 	<string name="btn_send_text_request">Send Text Request</string>
 	
+	<string name="pd_sending_request">Sending request&#8230;</string>
+	
 	<!-- Add Message Screen -->
 	<string name="tv_message">Message</string>
 	<string-array name="tv_default_message">
