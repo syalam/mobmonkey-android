@@ -279,4 +279,65 @@ public class MMUserAdapter extends MMAdapter {
 		
 		new MMGetAsyncTask(mmCallback).execute(httpGet);
 	}
+	
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param emailAddress
+	 * @param password
+	 * @param partnerId
+	 * @param newPassword
+	 * @param firstName
+	 * @param lastName
+	 * @param birthday
+	 * @param gender
+	 * @param city
+	 * @param state
+	 * @param zip
+	 * @param acceptedtos
+	 */
+	public static void updateUserInfo(MMCallback mmCallback,
+									  String emailAddress,
+									  String password,
+									  String partnerId,
+									  String newPassword,
+									  String firstName,
+									  String lastName,
+									  long birthday,
+									  int gender,
+									  String city,
+									  String state,
+									  String zip,
+									  boolean acceptedtos) {
+		createUriBuilderInstance(MMAPIConstants.URI_PATH_USER);
+		createParamsInstance();
+		
+		try {
+			if(!newPassword.equals(MMAPIConstants.DEFAULT_STRING)) {
+				params.put(MMAPIConstants.KEY_PASSWORD, newPassword);
+			}
+			params.put(MMAPIConstants.KEY_FIRST_NAME, firstName);
+			params.put(MMAPIConstants.KEY_LAST_NAME, lastName);
+			params.put(MMAPIConstants.KEY_BIRTHDATE, birthday);
+			params.put(MMAPIConstants.KEY_GENDER, gender);
+			params.put(MMAPIConstants.KEY_CITY, city);
+			params.put(MMAPIConstants.KEY_STATE, state);
+			params.put(MMAPIConstants.KEY_ZIP, zip);
+			params.put(MMAPIConstants.KEY_ACCEPTEDTOS, acceptedtos);
+			
+			HttpPost httpPost = new HttpPost(uriBuilder.toString());
+			StringEntity stringEntity = new StringEntity(params.toString());
+			httpPost.setEntity(stringEntity);
+			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+			httpPost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
+			httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
+			
+			new MMPostAsyncTask(mmCallback).execute(httpPost);
+		} catch (JSONException ex) {
+			ex.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
 }

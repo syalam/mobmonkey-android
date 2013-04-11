@@ -1,6 +1,7 @@
 package com.mobmonkey.mobmonkey.fragments;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,19 +21,22 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
-import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
 
 /**
+ * Android {@link Fragment} screen displays the user's information.
  * @author Dezapp, LLC
  *
  */
@@ -42,11 +46,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	private SharedPreferences userPrefs;
 	
 	private InputMethodManager inputMethodManager;
-	private EditText etFirstName;
-	private EditText etLastName;
-	private EditText etEmailAddress;
-	private EditText etBirthdate;
-	private EditText etGender;
+	private EditText etFirstName, etLastName, etEmailAddress, etNewPassword, etConfirmPassword, etBirthdate, etGender;
 	private MotionEvent prevEvent;
 	
 	private Calendar birthdate;
@@ -74,11 +74,16 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	etEmailAddress.setFocusable(false);
 		etEmailAddress.setFocusableInTouchMode(false);
 		etEmailAddress.setClickable(false);
+		etNewPassword = (EditText) view.findViewById(R.id.etnewpassword);
+		etConfirmPassword = (EditText) view.findViewById(R.id.etconfirmpassword);
     	etBirthdate = (EditText) view.findViewById(R.id.etbirthdate);
     	etGender = (EditText) view.findViewById(R.id.etgender);
     	birthdate = Calendar.getInstance();
     	
-    	if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING) == "facebook")
+    	Log.d(TAG, "User has login with " + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING) + " account.");
+    	
+    	// if user signed in with facebook account, they can edit nothing in this screen.
+    	if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING).equals(MMAPIConstants.OAUTH_PROVIDER_FACEBOOK))
     	{
     		etFirstName.setFocusable(false);
     		etFirstName.setClickable(false);
@@ -91,14 +96,42 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     		
     		etBirthdate.setFocusable(false);
     		etBirthdate.setClickable(false);
+    		
+    		// make new password and confirm password disappear
+    		etNewPassword.setVisibility(View.GONE);
+    		etConfirmPassword.setVisibility(View.GONE);
     	}
-    	else
-    	{
-    		etEmailAddress.setOnKeyListener(MyInfoFragment.this);
+    	// if user signed in with twitter account, they can edit every fields except email and password
+    	else if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING).equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER)) {
+    		
+    		// disable email
+    		etEmailAddress.setFocusable(false);
+    		etEmailAddress.setClickable(false);
+    		
+    		// disable password
+    		etNewPassword.setFocusable(false);
+    		etNewPassword.setClickable(false);
+    		etConfirmPassword.setFocusable(false);
+    		etConfirmPassword.setClickable(false);
+    		
+    		// set Listener to birth date, and Gender fields
+    		etBirthdate.setOnTouchListener(MyInfoFragment.this);
+    		etGender.setOnTouchListener(MyInfoFragment.this);
+    		
+    		// make new password and confirm password disappear
+    		etNewPassword.setVisibility(View.GONE);
+    		etConfirmPassword.setVisibility(View.GONE);
+    	} 
+    	// if user signed in with mobmonkey account, they can edit all fields but the email.
+    	else {
+    		//etEmailAddress.setOnKeyListener(MyInfoFragment.this);
+    		// disable email
+    		etEmailAddress.setFocusable(false);
+    		etEmailAddress.setClickable(false);
+    		
         	etBirthdate.setOnTouchListener(MyInfoFragment.this);
         	etGender.setOnTouchListener(MyInfoFragment.this);
     	}
-    	
     	
 		return view;
 	}
@@ -106,7 +139,29 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	@Override
 	public void onFragmentBackPressed() {
 		//TODO: add call to server to update the user information
-		
+		Log.d(TAG, response.toString());
+		// check if newPassword is the same as confirm password
+		String newPassword = etNewPassword.getText().toString(), 
+			   confirmPassword = etConfirmPassword.getText().toString();
+		if(newPassword.equals(confirmPassword)) {
+			try {
+				MMUserAdapter.updateUserInfo(new UserInfoUpdateCallback(), 
+													   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+													   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+													   MMConstants.PARTNER_ID, 
+													   newPassword, 
+													   etFirstName.getText().toString(), 
+													   etLastName.getText().toString(), 
+													   response.getLong(MMAPIConstants.KEY_BIRTHDATE), 
+													   convertGender(), 
+													   response.getString(MMAPIConstants.KEY_CITY), 
+													   response.getString(MMAPIConstants.KEY_STATE), 
+													   response.getString(MMAPIConstants.KEY_ZIP), 
+													   response.getBoolean(MMAPIConstants.KEY_ACCEPTEDTOS));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -234,7 +289,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
         	else if(response.getInt(MMAPIConstants.KEY_GENDER) == MMAPIConstants.NUM_FEMALE)
         		etGender.setText(MMAPIConstants.TEXT_FEMALE);
         	birthdate.setTimeInMillis(response.getLong(MMAPIConstants.KEY_BIRTHDATE));
-        	etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MM-dd-yyyy"));
+        	etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
     	} catch(Exception e)
     	{
     		e.printStackTrace();
@@ -255,6 +310,13 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 				}
 			}
 		}
-		
 	}
+    
+    private class UserInfoUpdateCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			Log.d(TAG, (String) obj);
+		}
+    }
 }

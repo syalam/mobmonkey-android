@@ -143,6 +143,22 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		
 	}
 	
+	@Override
+	public void onResume() {
+		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
+		for(int i = 0; i < data.length; i++) {
+			data[i] = new MMTrendingItem();
+			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
+			data[i].counter = "0";
+		}
+		
+		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, data);
+		lvTrending.setAdapter(arrayAdapter);
+		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
+		
+		super.onResume();
+	}
+
 	/**
 	 * 
 	 * @return

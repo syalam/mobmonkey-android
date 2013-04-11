@@ -92,6 +92,12 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		
 	}
 	
+	@Override
+	public void onResume() {
+		inboxUpdate();
+		super.onResume();
+	}
+	
 	/**
 	 * Update Inbox {@link ListView} when first started or resume.
 	 */
