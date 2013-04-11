@@ -7,7 +7,7 @@ import com.facebook.Session;
 import com.mobmonkey.mobmonkey.R;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
-import com.mobmonkey.mobmonkeyapi.adapters.MMSignOutAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMUserAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
@@ -65,7 +65,7 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsignout:
-				MMSignOutAdapter.signOut(new SignOutCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+				MMUserAdapter.signOut(new SignOutCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
 				progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_out), true, false);
 			break;

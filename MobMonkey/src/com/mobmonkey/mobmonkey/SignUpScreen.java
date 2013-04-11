@@ -16,7 +16,8 @@ import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
-import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
+import com.mobmonkey.mobmonkey.utils.MMUtility;
+import com.mobmonkey.mobmonkeyapi.adapters.MMUserAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
@@ -194,7 +195,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 				if(!requestEmail) {
 					userPrefsEditor.putString(MMAPIConstants.KEY_USER, Session.getActiveSession().getAccessToken());
 					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, (String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
-					MMSignUpAdapter.signUpNewUserFacebook(new SignUpCallback(), Session.getActiveSession().getAccessToken(), 
+					MMUserAdapter.signUpNewUserFacebook(new SignUpCallback(), Session.getActiveSession().getAccessToken(), 
 							(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
 		    		MMProgressDialog.displayDialog(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_facebook));
 				}
@@ -278,7 +279,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	if(checkFirstName()) {
 			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
 			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
-    		MMSignUpAdapter.signUpNewUser(new SignUpCallback(), 
+    		MMUserAdapter.signUpNewUser(new SignUpCallback(), 
     				etFirstName.getText().toString(), 
     				etLastName.getText().toString(), 
     				etEmailAddress.getText().toString(), 
@@ -469,9 +470,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     			@Override
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
-					Date tempDate = new Date(birthdate.get(Calendar.YEAR) - 1900, birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH));
-					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
-					etBirthdate.setText(simpleDateFormat.format(tempDate));
+					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
 				}
 			})
 			.setNegativeButton(R.string.ad_btn_cancel, null)

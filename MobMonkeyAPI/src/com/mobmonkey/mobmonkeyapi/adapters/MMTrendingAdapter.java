@@ -2,16 +2,22 @@ package com.mobmonkey.mobmonkeyapi.adapters;
 
 import org.apache.http.client.methods.HttpGet;
 
-import android.net.Uri;
-import android.net.Uri.Builder;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMGetAsyncTask;
 
-public class MMTrendingAdapter {
+public class MMTrendingAdapter extends MMAdapter {
 	private static String TAG = "MMTrendingAdapter: ";
+	
+	/**
+	 * Private class to prevent the instantiation of this class outside the scope of this class
+	 */
+	private MMTrendingAdapter() {
+		throw new AssertionError();
+	}
 	
 	public static void getTrending(MMCallback mmCallback,
 								   // path parameters
@@ -30,11 +36,8 @@ public class MMTrendingAdapter {
 								   String partnerId,
 								   String emailAddress,
 								   String password) {
-		
-		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
-		uriBuilder.appendPath(MMAPIConstants.URI_PATH_TRENDING)
-			.appendPath(type)
-		   .appendQueryParameter("timeSpan", timeSpan);
+		createUriBuilderInstance(MMAPIConstants.URI_PATH_TRENDING, type);
+		uriBuilder.appendQueryParameter("timeSpan", timeSpan);
 		
 		// if nearby is true, append required parameters
 		if(nearby) {

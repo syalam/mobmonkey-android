@@ -2,10 +2,10 @@ package com.mobmonkey.mobmonkeyapi.adapters;
 
 import org.apache.http.client.methods.HttpGet;
 
-import android.net.Uri;
-import android.net.Uri.Builder;
+import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMGetAsyncTask;
 
@@ -13,14 +13,22 @@ import com.mobmonkey.mobmonkeyapi.utils.MMGetAsyncTask;
  * @author Dezapp, LLC
  *
  */
-public class MMMediaAdapter {
+public class MMMediaAdapter extends MMAdapter {
 	private static final String TAG = "MMMediaAdapter: ";
-	private static String mediaURL = MMAPIConstants.MOBMONKEY_URL + "media";
+	
+	/**
+	 * Private class to prevent the instantiation of this class outside the scope of this class
+	 */
+	private MMMediaAdapter() {
+		throw new AssertionError();
+	}
 	
 	public static void retrieveAllMediaForLocation(MMCallback mmCallback, String emailAddress, String password, String partnerId, String locationId, String providerId) {
-		Builder uriBuilder = Uri.parse(mediaURL).buildUpon();
+		createUriBuilderInstance(MMAPIConstants.URI_PATH_MEDIA);
 		uriBuilder.appendQueryParameter(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId)
 			.appendQueryParameter(MMAPIConstants.JSON_KEY_PROVIDER_ID, providerId);
+		
+		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
 		HttpGet httpGet = new HttpGet(uriBuilder.toString());
 		httpGet.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);

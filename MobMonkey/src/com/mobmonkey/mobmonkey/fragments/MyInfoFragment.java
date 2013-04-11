@@ -10,7 +10,7 @@ import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMUtility;
-import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMUserAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
@@ -60,7 +60,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
         
 		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading_user_info));
 		
-		MMSignUpAdapter.getUserInfo(new UserInfoCallback(), MMConstants.PARTNER_ID,
+		MMUserAdapter.getUserInfo(new UserInfoCallback(), MMConstants.PARTNER_ID,
 				 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 		

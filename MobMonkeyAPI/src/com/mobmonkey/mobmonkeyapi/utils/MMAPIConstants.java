@@ -34,10 +34,13 @@ public final class MMAPIConstants {
 	public static final String URI_PATH_LOCATION = "location";
 	public static final String URI_PATH_MEDIA = "media";
 	public static final String URI_PATH_OPENREQUESTS = "openrequests";
+	public static final String URI_PATH_REGISTEREMAIL = "registeremail";
 	public static final String URI_PATH_REQUESTMEDIA = "requestmedia";
 	public static final String URI_PATH_SEARCH = "search";
+	public static final String URI_PATH_SIGNIN = "signin";
 	public static final String URI_PATH_SIGNOUT = "signout";
 	public static final String URI_PATH_TRENDING = "trending";
+	public static final String URI_PATH_USER = "user";
 	
 	public static final String TAB_TITLE_TRENDING_NOW = "Trending Now";
 	public static final String TAB_TITLE_INBOX = "Inbox";

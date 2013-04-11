@@ -26,6 +26,7 @@ import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMSegmentedRadioGroup;
+import com.mobmonkey.mobmonkey.utils.MMUtility;
 import com.mobmonkey.mobmonkeyapi.adapters.MMSendRequestAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -291,13 +292,11 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			repeatRate = data.getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
 			Log.d(TAG, TAG + "repeatRate: " + repeatRate);
 			
-			SimpleDateFormat sdfTime = new SimpleDateFormat("KK:mm a");
-			SimpleDateFormat sdfDate = new SimpleDateFormat("MM/dd/yyyy");
-			
 			requestCal = (Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
 			scheduleDate = Long.toString(requestCal.getTimeInMillis());
 			
-			String scheduleMessage = sdfTime.format(requestCal.getTime()) + " on " + sdfDate.format(requestCal.getTime());
+			String scheduleMessage = MMUtility.getDate(requestCal.getTimeInMillis(), "KK:mm a") + 
+					" on " + MMUtility.getDate(requestCal.getTimeInMillis(), "MM/dd/yyyy");
 			
 			icons = new int[] {android.R.drawable.ic_menu_today, android.R.drawable.ic_menu_today};
 			labels = new String[] {getString(R.string.tv_schedule_request), scheduleMessage};

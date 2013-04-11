@@ -14,8 +14,7 @@ import com.facebook.model.GraphUser;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
-import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
-import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMUserAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMDeviceUUID;
@@ -101,7 +100,7 @@ public class SignInScreen extends Activity {
 					requestEmail = true;
 					Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 				} else {
-					MMSignUpAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
+					MMUserAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
 							(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
 					MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_facebook));
 				}
@@ -155,7 +154,7 @@ public class SignInScreen extends Activity {
 		requestEmail = true;
 		
 		// TODO: hardcoded values, to be removed
-		etEmailAddress.setText("duds411@yahoo.com");
+		etEmailAddress.setText("Wilson@dezapp.com");
 		etPassword.setText("helloworld123");
 	}
 	
@@ -166,7 +165,7 @@ public class SignInScreen extends Activity {
 		if(checkEmailAddress()) {
 			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
 			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
-			MMSignInAdapter.signInUser(new SignInCallback(), etEmailAddress.getText().toString(), etPassword.getText().toString(), MMConstants.PARTNER_ID);
+			MMUserAdapter.signInUser(new SignInCallback(), etEmailAddress.getText().toString(), etPassword.getText().toString(), MMConstants.PARTNER_ID);
     		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in));
 		}
 	}

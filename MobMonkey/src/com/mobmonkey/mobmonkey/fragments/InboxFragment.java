@@ -114,7 +114,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 					  					   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 			
 			// get all the answered request, and then update the badge counter
-			MMInboxAdapter.getOpenRequests(new AnsweredRequestCallback(), 
+			MMInboxAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
 										   MMConstants.PARTNER_ID, 
 										   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 										   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));

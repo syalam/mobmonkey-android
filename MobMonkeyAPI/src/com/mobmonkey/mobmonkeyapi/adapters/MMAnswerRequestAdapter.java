@@ -5,20 +5,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.management.MemoryManagerMXBean;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import android.net.Uri;
-import android.net.Uri.Builder;
 import android.os.Environment;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMPostAsyncTask;
 
@@ -27,11 +24,15 @@ import com.mobmonkey.mobmonkeyapi.utils.MMPostAsyncTask;
  * @author Dezapp, LLC
  *  
  */
-public class MMAnswerRequestAdapter {
+public class MMAnswerRequestAdapter extends MMAdapter {
+	private static String TAG = "MMAnswerRequestAdapter: ";
 	
-	private static String TAG = "MMAnswerRequestAdapter";
-//	private static String AnswerRequestURL;
-	private static JSONObject mediaInfo;
+	/**
+	 * Private class to prevent the instantiation of this class outside the scope of this class
+	 */
+	private MMAnswerRequestAdapter() {
+		throw new AssertionError();
+	}
 	
 	/**
 	 * Answer a request.
@@ -46,7 +47,6 @@ public class MMAnswerRequestAdapter {
 	 * @param mediaData. The Base64 encoded media data.
 	 * @param mediaType. The type of media file. Takes either "video" or "image".
 	 */
-	
 	public static void AnswerRequest(MMCallback mmCallback,
 							   // headers
 							   String partnerId,
@@ -59,17 +59,16 @@ public class MMAnswerRequestAdapter {
 							   String mediaData,
 							   String mediaType) {
 		
-		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
-		uriBuilder.appendPath(MMAPIConstants.URI_PATH_MEDIA)
-			.appendPath(mediaType);
+		createUriBuilderInstance(MMAPIConstants.URI_PATH_MEDIA, mediaType);
+		createParamsInstance();
+		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
-		mediaInfo = new JSONObject();
 		try {
 			//AnswerRequestURL = MMAPIConstants.TEST_MOBMONKEY_URL + "media/" + mediaType;
-			mediaInfo.put(MMAPIConstants.JSON_KEY_REQUEST_ID, requestID);
-			mediaInfo.put(MMAPIConstants.JSON_KEY_REQUEST_TYPE, requestType);
-			mediaInfo.put(MMAPIConstants.JSON_KEY_CONTENT_TYPE, contentType);
-			mediaInfo.put(MMAPIConstants.JSON_KEY_MEDIA_DATA, mediaData);
+			params.put(MMAPIConstants.JSON_KEY_REQUEST_ID, requestID);
+			params.put(MMAPIConstants.JSON_KEY_REQUEST_TYPE, requestType);
+			params.put(MMAPIConstants.JSON_KEY_CONTENT_TYPE, contentType);
+			params.put(MMAPIConstants.JSON_KEY_MEDIA_DATA, mediaData);
 			
 			HttpPost httppost = new HttpPost(uriBuilder.toString());
 			// add header
@@ -80,7 +79,7 @@ public class MMAnswerRequestAdapter {
 			
 			// might cause outofmemory
 			try {
-				StringEntity stringEntity = new StringEntity(mediaInfo.toString());
+				StringEntity stringEntity = new StringEntity(params.toString());
 				httppost.setEntity(stringEntity);
 				new MMPostAsyncTask(mmCallback).execute(httppost);
 				
@@ -95,7 +94,7 @@ public class MMAnswerRequestAdapter {
 					File tempfile = new File(root, "mobmonkeyMediaInfo");
 					FileWriter writer = new FileWriter(tempfile);
 					BufferedWriter bw = new BufferedWriter(writer);
-					mediaInfo = null;
+					params = null;
 					
 					// try to write small piece of data into bufferedwriter
 					bw.write("{");

@@ -13,7 +13,7 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
-import com.mobmonkey.mobmonkeyapi.adapters.MMSignInAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMUserAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
@@ -80,7 +80,7 @@ public class TwitterAuthScreen extends Activity {
 	 * 		{@link WebViewClient} will handle the callback url for Twitter authentication.
 	 */
 	@SuppressLint("SetJavaScriptEnabled")
-	private void startTwitterAuth() {		
+	private void startTwitterAuth() {
 		ConfigurationBuilder builder = new ConfigurationBuilder();
 		builder.setOAuthConsumerKey(MMConstants.TWITTER_CONSUMER_KEY);
 		builder.setOAuthConsumerSecret(MMConstants.TWITTER_CONSUMER_SECRET);
@@ -96,6 +96,7 @@ public class TwitterAuthScreen extends Activity {
 			wvTwitterAuth.getSettings().setJavaScriptEnabled(true);
 			wvTwitterAuth.setWebViewClient(new MobMonkeyWebViewClient());
 			wvTwitterAuth.loadUrl(requestToken.getAuthenticationURL());
+			MMProgressDialog.dismissDialog();
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
@@ -109,7 +110,7 @@ public class TwitterAuthScreen extends Activity {
 		try {
 			if(uri.getQueryParameter(MMAPIConstants.TWITTER_OAUTH_VERIFIER) != null) {
 				twitterAccessToken = twitter.getOAuthAccessToken(requestToken, uri.getQueryParameter(MMAPIConstants.TWITTER_OAUTH_VERIFIER));
-				MMSignInAdapter.signInUserTwitter(new TwitterAuthCallback(), twitterAccessToken.getToken(), twitterAccessToken.getScreenName(), MMConstants.PARTNER_ID);
+				MMUserAdapter.signInUserTwitter(new TwitterAuthCallback(), twitterAccessToken.getToken(), twitterAccessToken.getScreenName(), MMConstants.PARTNER_ID);
 				
 				int requestCode = getIntent().getIntExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.DEFAULT_INT);
 				
@@ -161,7 +162,7 @@ public class TwitterAuthScreen extends Activity {
 					setResult(MMAPIConstants.RESULT_CODE_SUCCESS);
 					userPrefsEditor.putString(MMAPIConstants.KEY_USER, twitterAccessToken.getScreenName());
 					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, twitterAccessToken.getToken());
-					userPrefsEditor.putString("TRUE", MMAPIConstants.KEY_OAUTH_USER);
+					userPrefsEditor.putBoolean(MMAPIConstants.KEY_OAUTH_USER, true);
 					userPrefsEditor.commit();
 				} else if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_NOT_FOUND)) {
 					Intent resultIntent = new Intent();

@@ -2,10 +2,6 @@ package com.mobmonkey.mobmonkeyapi.adapters;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.json.JSONObject;
-
-import android.net.Uri;
-import android.net.Uri.Builder;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.*;
@@ -15,18 +11,22 @@ import com.mobmonkey.mobmonkeyapi.utils.*;
  * @author Dezapp, LLC
  * 
  */
-public final class MMSearchLocationAdapter {
+public final class MMSearchLocationAdapter extends MMAdapter {
 	private static final String TAG = "MMSearchLocationAdapter: ";
-		
+	
+	/**
+	 * Private class to prevent the instantiation of this class outside the scope of this class
+	 */
+	private MMSearchLocationAdapter() {
+		throw new AssertionError();
+	}
+	
 	private static void searchLocation(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String categoryID, String user, String auth, String partnerId) {
-		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
-		uriBuilder.appendPath(MMAPIConstants.URI_PATH_SEARCH)
-			.appendPath(MMAPIConstants.URI_PATH_LOCATION);	
-		
+		createUriBuilderInstance(MMAPIConstants.URI_PATH_SEARCH, MMAPIConstants.URI_PATH_LOCATION);
+		createParamsInstance();
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
 		try {
-			JSONObject params = new JSONObject();
 			params.put(MMAPIConstants.KEY_LONGITUDE, longitude);
 			params.put(MMAPIConstants.KEY_LATITUDE, latitude);
 			params.put(MMAPIConstants.KEY_RADIUS_IN_YARDS, searchRadius);

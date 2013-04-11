@@ -2,24 +2,29 @@ package com.mobmonkey.mobmonkeyapi.adapters;
 
 import org.apache.http.client.methods.HttpGet;
 
-import android.net.Uri;
-import android.net.Uri.Builder;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeyapi.utils.MMAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMGetAsyncTask;
 
-public class MMCategoryAdapter {
+public class MMCategoryAdapter extends MMAdapter {
 	private static final String TAG = "MMCategories: ";
+	
+	/**
+	 * Private class to prevent the instantiation of this class outside the scope of this class
+	 */
+	private MMCategoryAdapter() {
+		throw new AssertionError();
+	}
 	
 	public static void getTopLevelCategories(MMCallback mmCallback, String user, String auth, String partnerId) {
 		getCategories(mmCallback, "1", user, auth, partnerId);
 	}
 	
 	public static void getCategories(MMCallback mmCallback, String categoryId, String user, String auth, String partnerId) {		
-		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
-		uriBuilder.appendPath(MMAPIConstants.URI_PATH_CATEGORY);
+		createUriBuilderInstance(MMAPIConstants.URI_PATH_CATEGORY);
 		
 		Log.d(TAG, TAG + "categoryURL: " + uriBuilder.toString());
 		

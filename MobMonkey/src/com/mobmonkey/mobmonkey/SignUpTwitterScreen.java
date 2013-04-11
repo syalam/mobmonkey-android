@@ -10,7 +10,8 @@ import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
-import com.mobmonkey.mobmonkeyapi.adapters.MMSignUpAdapter;
+import com.mobmonkey.mobmonkey.utils.MMUtility;
+import com.mobmonkey.mobmonkeyapi.adapters.MMUserAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
@@ -202,9 +203,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
     		.setPositiveButton(R.string.ad_btn_choose, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
-					Date tempDate = new Date(birthdate.get(Calendar.YEAR) - 1900, birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH));
-					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
-					etBirthdate.setText(simpleDateFormat.format(tempDate));
+					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
 				}
 			})
 			.setNegativeButton(R.string.ad_btn_cancel, null)
@@ -232,7 +231,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
      */
     private void signUpTwitter() {
     	if(checkFirstName()) {
-    		MMSignUpAdapter.signUpNewUserTwitter(new SignUpTwitterCallback(), 
+    		MMUserAdapter.signUpNewUserTwitter(new SignUpTwitterCallback(), 
     				etFirstName.getText().toString(), 
     				etLastName.getText().toString(), 
     				getIntent().getStringExtra(MMAPIConstants.KEY_OAUTH_TOKEN), 
