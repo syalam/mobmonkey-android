@@ -85,7 +85,13 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private boolean hasVideoExpiryDate = false;
 	private boolean hasImageExpiryDate = false;
 	private View mediaButtonSelected;
+	private String mediaStreamUrl;
+	private String mediaVideoUrl;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
@@ -157,6 +163,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.view.View.OnClickListener#onClick(android.view.View)
+	 */
 	@Override
 	public void onClick(View view) {
 		Intent intent;
@@ -170,10 +180,13 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				favoriteClicked();
 				break;
 			case R.id.ivstreamplay:
+				intent = new Intent(getActivity(), MMVideoPlayerScreen.class);
+				intent.putExtra(MMAPIConstants.JSON_KEY_MEDIA_URL, mediaStreamUrl);
+				startActivity(intent);
 				break;
 			case R.id.ivvideoplay:
 				intent = new Intent(getActivity(), MMVideoPlayerScreen.class);
-				intent.putExtra(MMAPIConstants.JSON_KEY_MEDIA_URL, "rtsp://v3.cache8.c.youtube.com/CiILENy73wIaGQmXovF6e-Rf-BMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp");
+				intent.putExtra(MMAPIConstants.JSON_KEY_MEDIA_URL, mediaVideoUrl);
 				startActivity(intent);
 				break;
 			case R.id.ibsharemedia:
@@ -190,6 +203,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
+	 */
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
 		if(position == 0) {
@@ -201,11 +218,19 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkey.utils.MMFragment#onFragmentBackPressed()
+	 */
 	@Override
 	public void onFragmentBackPressed() {
 		
 	}
 	
+	/**
+	 * Function that set all the details of the current location
+	 * @throws JSONException
+	 */
 	private void setLocationDetails() throws JSONException {
 		tvLocNameTitle.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_NAME));
 		tvLocName.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_NAME));
@@ -238,6 +263,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	/**
+	 * Function that handles the processing of the result from retrieve all media call to the server
+	 * @throws JSONException
+	 */
 	private void hasMedia() throws JSONException {		
 		JSONObject mediaJObj = new JSONObject(mediaResults); 
 		JSONArray mediaJArr = mediaJObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA);
@@ -248,24 +277,39 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		
 		if(mediaJArr.length() > 0) {
 			llMedia.setVisibility(View.VISIBLE);
+			
+			boolean hasFirstStreamMedia = false;
+			boolean hasFirstVideoMedia = false;
+			boolean hasFirstImageMedia = false;
+			
 			for(int i = 0; i < mediaJArr.length(); i++) {
 				JSONObject jObj = mediaJArr.getJSONObject(i);
 				
 				String mediaType = jObj.getString(MMAPIConstants.JSON_KEY_TYPE);
-				Log.d(TAG, TAG + "expiry date: " + jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE));
 				
 				if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING)) {
-					tvStreamExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
-					hasStreamExpiryDate = true;
+					if(!hasFirstStreamMedia) {
+						mediaStreamUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
+						tvStreamExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						hasStreamExpiryDate = true;
+						hasFirstStreamMedia = true;
+					}
 					streamMediaCount++;
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
-					tvVideoExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
-					hasVideoExpiryDate = true;
+					if(!hasFirstVideoMedia) {
+						mediaVideoUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
+						tvVideoExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						hasVideoExpiryDate = true;
+						hasFirstVideoMedia = true;
+					}
 					videoMediaCount++;
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
-					MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
-					tvImageExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
-					hasStreamExpiryDate = true;
+					if(!hasFirstImageMedia) {
+						MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
+						tvImageExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						hasImageExpiryDate = true;
+						hasFirstImageMedia = true;
+					}
 					imageMediaCount++;
 				}
 			}
@@ -306,6 +350,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 //		}
 	}
 	
+	/**
+	 * Function to handle the event of when the user clicked on the stream media button
+	 */
 	private void streamMediaSelected() {
 		mediaButtonSelected = ibStream;
 		ibStream.setSelected(true);
@@ -323,6 +370,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		tvImageExpiryDate.setVisibility(View.INVISIBLE);
 	}
 	
+	/**
+	 * Function to handle the event of when the user clicked on the video media button
+	 */
 	private void videoMediaSelected() {
 		mediaButtonSelected = ibVideo;
 		ibStream.setSelected(false);
@@ -340,6 +390,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		tvImageExpiryDate.setVisibility(View.INVISIBLE);
 	}
 	
+	/**
+	 * Function to handle the event of when the user clicked on the image media button
+	 */
 	private void imageMediaSelected() {
 		mediaButtonSelected = ibImage;
 		ibStream.setSelected(false);
@@ -357,6 +410,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	/**
+	 * Function to handle the event of when the user clicks on favorite/remove favorite
+	 */
 	private void favoriteClicked() {
 		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_updating_favorites));
 		try {
@@ -382,6 +438,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	/**
+	 * Function that makes a call to the server to request the updated favorites list after user either add/remove favorite for the current location
+	 */
 	private void updateFavoritesList() {
 		MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 				MMConstants.PARTNER_ID, 
@@ -389,10 +448,20 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 	}
 	
+	/**
+	 * Listener for when user clicks on phone field, address field, or add notifications field of the location details
+	 * @author Dezapp, LLC
+	 *
+	 */
 	public interface OnLocationDetailsItemClickListener {
 		public void onLocationDetailsItem(int position, Object obj);
 	}
 	
+	/**
+	 * Callback to handle the result after making retrieve all media call to the server
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class MediaCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -411,6 +480,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	/**
+	 * Callback to display the image it retrieve from the mediaurl
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class LoadImageCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -418,6 +492,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	/**
+	 * Callback to handle the result after making add favorite call to the server
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class AddFavoriteCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -436,6 +515,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	/**
+	 * Callback to handle the result after making remove favorite call to the server
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class RemoveFavoriteCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -454,6 +538,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	/**
+	 * Callback to update the user's favorites list in app data after making get favorites call to the server
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class FavoritesCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {

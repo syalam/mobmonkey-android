@@ -64,6 +64,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.slide_right_in, R.anim.slide_hold);
 		setContentView(R.layout.signup_twitter_screen);
 		
 		init();
@@ -77,6 +78,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 		super.onBackPressed();
 		Log.d(TAG, TAG + "onBackPressed");
 		setResult(Activity.RESULT_CANCELED);
+		overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 	}
 
     /**
@@ -359,6 +361,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, getIntent().getStringExtra(MMAPIConstants.KEY_OAUTH_TOKEN));
 					userPrefsEditor.commit();
 					finish();
+					overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 				} else {
 					Toast.makeText(SignUpTwitterScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_SHORT).show();
 				}

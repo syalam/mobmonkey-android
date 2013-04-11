@@ -78,7 +78,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		wvDay.setViewAdapter(new DayArrayAdapter(ScheduleRequestScreen.this, currCal));
 		wvDay.setCurrentItem(MMAPIConstants.DAYS_PREVIOUS + requestCal.get(Calendar.DAY_OF_YEAR) - currCal.get(Calendar.DAY_OF_YEAR));
 		
-		numericWheelAdapter = new NumericWheelAdapter(ScheduleRequestScreen.this, 1, 12);
+		numericWheelAdapter = new NumericWheelAdapter(ScheduleRequestScreen.this, 1, 12, "%02d");
 		numericWheelAdapter.setItemResource(R.layout.wheel_text_item);
 		numericWheelAdapter.setItemTextResource(R.id.text);
 		wvHours.setViewAdapter(numericWheelAdapter);

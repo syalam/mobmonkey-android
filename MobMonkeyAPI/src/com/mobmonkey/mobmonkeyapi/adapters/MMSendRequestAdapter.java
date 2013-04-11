@@ -8,6 +8,9 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.Uri;
+import android.net.Uri.Builder;
+
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 import com.mobmonkey.mobmonkeyapi.utils.MMPostAsyncTask;
@@ -19,7 +22,6 @@ import com.mobmonkey.mobmonkeyapi.utils.MMPutAsyncTask;
  */
 public class MMSendRequestAdapter {
 	private static final String TAG = "MMSendRequestAdapter: ";
-	private static String sendRequestUrl;
 	private static JSONObject requestInfo;
 	
 	public static void sendRequest(MMCallback mmCallback,
@@ -33,9 +35,10 @@ public class MMSendRequestAdapter {
 								   String mediaType, 
 								   String partnerId,
 								   String emailAddress,
-								   String password) {
-		
-		sendRequestUrl = MMAPIConstants.TEST_MOBMONKEY_URL + "requestmedia/" + mediaType;
+								   String password) {		
+		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
+		uriBuilder.appendPath(MMAPIConstants.URI_PATH_REQUESTMEDIA)
+			.appendPath(mediaType);
 		
 		try {
 			HttpPost httpPost;
@@ -60,7 +63,7 @@ public class MMSendRequestAdapter {
 					freq = 2629740000L;
 				requestInfo.put(MMAPIConstants.JSON_KEY_FREQUENCY_IN_MS, freq);
 			}
-			httpPost = new HttpPost(sendRequestUrl);
+			httpPost = new HttpPost(uriBuilder.toString());
 			StringEntity stringEntity = new StringEntity(requestInfo.toString());
 			httpPost.setEntity(stringEntity);
 			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);

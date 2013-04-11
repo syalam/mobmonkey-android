@@ -1,10 +1,11 @@
 package com.mobmonkey.mobmonkeyapi.adapters;
 
-import org.apache.http.Header;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONObject;
 
+import android.net.Uri;
+import android.net.Uri.Builder;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.*;
@@ -16,8 +17,40 @@ import com.mobmonkey.mobmonkeyapi.utils.*;
  */
 public final class MMSearchLocationAdapter {
 	private static final String TAG = "MMSearchLocationAdapter: ";
-	
-	private static String searchLocationURL;
+		
+	private static void searchLocation(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String categoryID, String user, String auth, String partnerId) {
+		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
+		uriBuilder.appendPath(MMAPIConstants.URI_PATH_SEARCH)
+			.appendPath(MMAPIConstants.URI_PATH_LOCATION);	
+		
+		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
+		
+		try {
+			JSONObject params = new JSONObject();
+			params.put(MMAPIConstants.KEY_LONGITUDE, longitude);
+			params.put(MMAPIConstants.KEY_LATITUDE, latitude);
+			params.put(MMAPIConstants.KEY_RADIUS_IN_YARDS, searchRadius);
+			params.put(MMAPIConstants.KEY_NAME, name);
+			if(!categoryID.equals(MMAPIConstants.DEFAULT_STRING)) {
+				params.put(MMAPIConstants.KEY_CATEGORY_IDS, categoryID);
+			}
+			
+			StringEntity stringEntity = new StringEntity(params.toString());
+			
+			Log.d(TAG, TAG + "params: " + params.toString());
+			
+			HttpPost httpPost = new HttpPost(uriBuilder.toString());
+			httpPost.setEntity(stringEntity);
+			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+			httpPost.setHeader(MMAPIConstants.KEY_USER, user);
+			httpPost.setHeader(MMAPIConstants.KEY_AUTH, auth);
+			
+			new MMPostAsyncTask(mmCallback).execute(httpPost);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Function that searches locations with the specific input text
@@ -30,41 +63,25 @@ public final class MMSearchLocationAdapter {
 	 * @param auth The password of the user if signed in normally with email or the provider OAuth token if signed in through social networks
 	 * @param partnerId MobMonkey unique partner id
 	 */
-	public static void searchLocationWithText(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String categoryID, String user, String auth, String partnerId) {
-		searchLocationURL = MMAPIConstants.TEST_MOBMONKEY_URL + "search/location";
-		
-		Log.d(TAG, TAG + "searchLocationURL: " + searchLocationURL);
-		
-		try {
-			JSONObject params = new JSONObject();
-			params.put(MMAPIConstants.KEY_LONGITUDE, longitude);
-			params.put(MMAPIConstants.KEY_LATITUDE, latitude);
-			params.put(MMAPIConstants.KEY_RADIUS_IN_YARDS, searchRadius);
-			params.put(MMAPIConstants.KEY_NAME, name);
-			if(categoryID != "")
-				params.put(MMAPIConstants.KEY_CATEGORY_IDS, categoryID);
-						
-			StringEntity stringEntity = new StringEntity(params.toString());
-			
-			Log.d(TAG, TAG + "params: " + params.toString());
-			
-			HttpPost httpPost = new HttpPost(searchLocationURL);
-			httpPost.setEntity(stringEntity);
-			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMAPIConstants.KEY_USER, user);
-			httpPost.setHeader(MMAPIConstants.KEY_AUTH, auth);
-			
-			for(Header header : httpPost.getAllHeaders()) {
-				Log.d(TAG, TAG + "name: " + header.getName() + " value: " + header.getValue());
-			}
-			
-			new MMPostAsyncTask(mmCallback).execute(httpPost);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static void searchLocationWithText(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String user, String auth, String partnerId) {
+		searchLocation(mmCallback, longitude, latitude, searchRadius, name, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
 	}
 
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param longitude
+	 * @param latitude
+	 * @param searchRadius
+	 * @param categoryID
+	 * @param user
+	 * @param auth
+	 * @param partnerId
+	 */
+	public static void searchLocationWithCategoryId(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String categoryID, String user, String auth, String partnerId) {
+		searchLocation(mmCallback, longitude, latitude, searchRadius, MMAPIConstants.DEFAULT_STRING, categoryID, user, auth, partnerId);
+	}
+	
 	/**
 	 * Function that searches all nearby location with the input text to be {@link MMAPIConstants#DEFAULT_STRING}
 	 * @param mmCallback The {@link MMCallback} to handle the response from MobMonkey server after posting the search location url
@@ -76,7 +93,6 @@ public final class MMSearchLocationAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void searchAllNearby(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String user, String auth, String partnerId) {
-		Log.d(TAG, TAG + "searchAllNearby");
-		searchLocationWithText(mmCallback, longitude, latitude, searchRadius, MMAPIConstants.DEFAULT_STRING, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
+		searchLocation(mmCallback, longitude, latitude, searchRadius, MMAPIConstants.DEFAULT_STRING, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
 	}
 }

@@ -48,6 +48,7 @@ public class AddLocationScreen extends Activity {
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_hold);
 		setContentView(R.layout.add_location_screen);
 		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
 		editPrefs = userPrefs.edit();
@@ -94,6 +95,7 @@ public class AddLocationScreen extends Activity {
 	    	editPrefs.remove(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
 	    }
 	    super.onBackPressed();
+		overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
 	}
 	
 	private void init(){
@@ -238,6 +240,7 @@ public class AddLocationScreen extends Activity {
 //					locationDetailsScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
 //					startActivity(locationDetailsScreenIntent);
 					finish();
+					overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

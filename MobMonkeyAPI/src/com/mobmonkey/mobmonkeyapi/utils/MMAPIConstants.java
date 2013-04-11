@@ -24,8 +24,20 @@ public final class MMAPIConstants {
 	public static final double DEFAULT_DOUBLE = 1.0d;
 
 	public static final String MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
-	public static final String TEST_MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
+
+	public static final String URI_PATH_ASSIGNEDREQUESTS = "assignedrequests";
+	public static final String URI_PATH_CATEGORY = "category";
+	public static final String URI_PATH_CHECKIN = "checkin";
+	public static final String URI_PATH_FAVORITES = "bookmarks";
+	public static final String URI_PATH_INBOX = "inbox";
+	public static final String URI_PATH_LOCATION = "location";
+	public static final String URI_PATH_MEDIA = "media";
+	public static final String URI_PATH_OPENREQUESTS = "openrequests";
+	public static final String URI_PATH_REQUESTMEDIA = "requestmedia";
+	public static final String URI_PATH_SEARCH = "search";
+	public static final String URI_PATH_SIGNOUT = "signout";
+	public static final String URI_PATH_TRENDING = "trending";
 	
 	public static final String TAB_TITLE_TRENDING_NOW = "Trending Now";
 	public static final String TAB_TITLE_INBOX = "Inbox";

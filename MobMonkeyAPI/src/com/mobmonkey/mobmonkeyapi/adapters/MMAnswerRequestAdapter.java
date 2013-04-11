@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.management.MemoryManagerMXBean;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
@@ -12,6 +13,8 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.Uri;
+import android.net.Uri.Builder;
 import android.os.Environment;
 import android.util.Log;
 
@@ -27,7 +30,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMPostAsyncTask;
 public class MMAnswerRequestAdapter {
 	
 	private static String TAG = "MMAnswerRequestAdapter";
-	private static String AnswerRequestURL;
+//	private static String AnswerRequestURL;
 	private static JSONObject mediaInfo;
 	
 	/**
@@ -54,9 +57,11 @@ public class MMAnswerRequestAdapter {
 							   int requestType,
 							   String contentType,
 							   String mediaData,
-							   String mediaType
-							   ) {
-		AnswerRequestURL = MMAPIConstants.TEST_MOBMONKEY_URL + "media/" + mediaType;
+							   String mediaType) {
+		
+		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
+		uriBuilder.appendPath(MMAPIConstants.URI_PATH_MEDIA)
+			.appendPath(mediaType);
 		
 		mediaInfo = new JSONObject();
 		try {
@@ -66,7 +71,7 @@ public class MMAnswerRequestAdapter {
 			mediaInfo.put(MMAPIConstants.JSON_KEY_CONTENT_TYPE, contentType);
 			mediaInfo.put(MMAPIConstants.JSON_KEY_MEDIA_DATA, mediaData);
 			
-			HttpPost httppost = new HttpPost(AnswerRequestURL);
+			HttpPost httppost = new HttpPost(uriBuilder.toString());
 			// add header
 			httppost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 			httppost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);

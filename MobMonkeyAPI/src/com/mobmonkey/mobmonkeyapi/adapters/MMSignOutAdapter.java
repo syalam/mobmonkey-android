@@ -19,7 +19,6 @@ import com.mobmonkey.mobmonkeyapi.utils.MMDeviceUUID;
  */
 public final class MMSignOutAdapter {
 	private final static String TAG = "MMSignOutAdapter: ";
-	private static String signOutURL;
 	
 	/**
 	 * Private class to prevent the instantiation of this class outside the scope of this class
@@ -36,14 +35,11 @@ public final class MMSignOutAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signOut(MMCallback mmCallback, String user, String auth, String partnerId) {
-		signOutURL = MMAPIConstants.TEST_MOBMONKEY_URL + "signout/" + MMAPIConstants.DEVICE_TYPE + "/" + MMDeviceUUID.getDeviceUUID().toString();
-		
-		signOutURL = MMAPIConstants.MOBMONKEY_URL + "signout";
-		
-		Builder uriBuilder = Uri.parse(signOutURL).buildUpon();
-		uriBuilder.appendPath(MMAPIConstants.DEVICE_TYPE).appendPath(MMDeviceUUID.getDeviceUUID().toString());
-		
-//		Log.d(TAG, TAG + "signOutURL: " + signOutURL);
+		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
+		uriBuilder.appendPath(MMAPIConstants.URI_PATH_SIGNOUT)
+			.appendPath(MMAPIConstants.DEVICE_TYPE)
+			.appendPath(MMDeviceUUID.getDeviceUUID().toString());
+
 		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder.toString());
 		
 		HttpPost httpPost = new HttpPost(uriBuilder.toString());

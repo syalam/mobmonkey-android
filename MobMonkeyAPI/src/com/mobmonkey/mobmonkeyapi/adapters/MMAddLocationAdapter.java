@@ -2,31 +2,31 @@ package com.mobmonkey.mobmonkeyapi.adapters;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.Uri;
+import android.net.Uri.Builder;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
-import com.mobmonkey.mobmonkeyapi.utils.MMDeviceUUID;
-import com.mobmonkey.mobmonkeyapi.utils.MMPostAsyncTask;
 import com.mobmonkey.mobmonkeyapi.utils.MMPutAsyncTask;
 
 public class MMAddLocationAdapter {
 	private final static String TAG = "MMAddLocation: ";
-	private static String addLocationURL;
 	private static JSONObject userInfo;
 	
 	public static void addLocation(MMCallback mmCallback, String emailAddress, String password, String partnerId, String address, String description, 
 			String address_ext, String categoryIds, String countryCode, String latitude, String locality, String longitude, String name, String neighborhood, String phoneNumber,
 			String postCode, String providerId, String region, String website) {
-		addLocationURL = MMAPIConstants.TEST_MOBMONKEY_URL + "location";
 		
-		Log.d(TAG, TAG + "signInURL: " + addLocationURL);
+		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
+			uriBuilder.appendPath(MMAPIConstants.URI_PATH_LOCATION);
+		
+		Log.d(TAG, TAG + "signInURL: " + uriBuilder.toString());
 
 		try{
 			
@@ -48,7 +48,7 @@ public class MMAddLocationAdapter {
 			
 			Log.d(TAG, TAG + "userInfo: " + userInfo.toString());
 			
-			HttpPut httpPut = new HttpPut(addLocationURL);
+			HttpPut httpPut = new HttpPut(uriBuilder.toString());
 			StringEntity stringEntity = new StringEntity(userInfo.toString());
 			httpPut.setEntity(stringEntity);
 			httpPut.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);

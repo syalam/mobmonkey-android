@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -44,7 +45,7 @@ import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
  * @author Dezapp, LLC
  *
  */
-public class CategoriesFragment extends MMFragment {
+public class CategoriesFragment extends MMFragment implements OnItemClickListener {
 	private static final String TAG = "CategoriesFragment: ";
 	
 	private SharedPreferences userPrefs;
@@ -81,8 +82,6 @@ public class CategoriesFragment extends MMFragment {
 		etSearch = (EditText) view.findViewById(R.id.etsearch);
 		lvSubCategories = (ListView) view.findViewById(R.id.lvsubcategory);
 		
-		tvNavigationBarText.setText(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));		
-		
 		init();
 		
 		return view;
@@ -102,7 +101,29 @@ public class CategoriesFragment extends MMFragment {
 			}
 		}
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
+	 */
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+		try {
+			JSONObject subCategory = categoriesArray.getJSONObject(position);
+			JSONArray subCategoriesArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(getActivity(), subCategory.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)));
+			String selectedSubCategory = subCategory.getString(Locale.getDefault().getLanguage());
+			
+			if(!subCategoriesArray.isNull(0)) {
+				subCategoryItemClickListener.onSubCategoryItemClick(subCategoriesArray, selectedSubCategory);
+			} else {
+				checkCategorySelected(selectedSubCategory, subCategory);
+			}
+		} 
+		catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.mobmonkey.mobmonkey.utils.MMFragment#onFragmentBackPressed()
 	 */
@@ -115,6 +136,8 @@ public class CategoriesFragment extends MMFragment {
 	 * 
 	 */
 	private void init() {
+		tvNavigationBarText.setText(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
+		setSearchByText();
 		getCurrentLocation();
 		
 		try {
@@ -126,42 +149,19 @@ public class CategoriesFragment extends MMFragment {
 				subCategories.add(category.getString(Locale.getDefault().getLanguage()));
 			}
 			
-	        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, subCategories) {
-				@Override
-				public View getView(int position, View convertView, ViewGroup parent) {
-					View view = super.getView(position, convertView, parent);
-					TextView eventText = (TextView) view.findViewById(android.R.id.text1);
-					eventText.setTypeface(null, Typeface.BOLD);
-					return view;
-				}
-	        };
+	        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.mm_simple_listview_row, R.id.tvlabel, subCategories);
 	        
 	        lvSubCategories.setAdapter(arrayAdapter);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}		
 		
-		lvSubCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				try {
-					JSONObject subCategory = categoriesArray.getJSONObject(position);
-					JSONArray subCategoriesArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(getActivity(), subCategory.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)));
-					String selectedSubCategory = subCategory.getString(Locale.getDefault().getLanguage());
-					
-					if(!subCategoriesArray.isNull(0)) {
-						subCategoryItemClickListener.onSubCategoryItemClick(subCategoriesArray, selectedSubCategory);
-					} else {
-						checkCategorySelected(selectedSubCategory, subCategory);
-					}
-				} 
-				catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		lvSubCategories.setOnItemClickListener(CategoriesFragment.this);
 	}
 	
+	/**
+	 * 
+	 */
 	private void getCurrentLocation() {
 		if(location != null) {
 			longitudeValue = location.getLongitude();
@@ -172,6 +172,12 @@ public class CategoriesFragment extends MMFragment {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param selectedSubCategory
+	 * @param subCategory
+	 * @throws JSONException
+	 */
 	private void checkCategorySelected(String selectedSubCategory, JSONObject subCategory) throws JSONException {
 		if(searchSubCategory == null) {
 			searchSubCategory = selectedSubCategory;
@@ -187,6 +193,9 @@ public class CategoriesFragment extends MMFragment {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void setSearchByText() {
 		etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -206,6 +215,9 @@ public class CategoriesFragment extends MMFragment {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void searchByText() {
 		// TODO: add subcategory to search by text
 		MMSearchLocationAdapter.searchLocationWithText(
@@ -214,7 +226,6 @@ public class CategoriesFragment extends MMFragment {
 				Double.toString(latitudeValue), 
 				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
 				searchText,
-				MMAPIConstants.DEFAULT_STRING,
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 				MMConstants.PARTNER_ID);
@@ -223,20 +234,30 @@ public class CategoriesFragment extends MMFragment {
 		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 	}
 	
+	/**
+	 * 
+	 * @param selectedSubCategory
+	 * @param subCategory
+	 * @throws JSONException
+	 */
 	private void searchSubCategory(String selectedSubCategory, JSONObject subCategory) throws JSONException {
 		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_locating) + MMAPIConstants.DEFAULT_SPACE + selectedSubCategory + getString(R.string.pd_ellipses));
-		MMSearchLocationAdapter.searchLocationWithText(
+		MMSearchLocationAdapter.searchLocationWithCategoryId(
 				new MMSearchResultsCallback(getActivity(), selectedSubCategory, new SearchSubCategoryCallback()), 
 				Double.toString(longitudeValue), 
 				Double.toString(latitudeValue), 
 				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
-				MMAPIConstants.DEFAULT_STRING,
 				subCategory.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID),
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 				MMConstants.PARTNER_ID);
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	public interface OnSubCategoryItemClickListener {
 		public void onSubCategoryItemClick(JSONArray subCategories, String selectedCategory);
 	}
@@ -259,6 +280,11 @@ public class CategoriesFragment extends MMFragment {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class SearchSubCategoryCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {

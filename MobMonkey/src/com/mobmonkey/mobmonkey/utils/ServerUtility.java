@@ -2,7 +2,6 @@
 package com.mobmonkey.mobmonkey.utils;
 
 import com.google.android.gcm.GCMRegistrar;
-import com.mobmonkey.mobmonkey.GCMIntentService;
 
 import android.content.Context;
 import android.util.Log;

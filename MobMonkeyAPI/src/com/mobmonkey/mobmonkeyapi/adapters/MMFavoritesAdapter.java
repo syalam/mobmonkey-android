@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.net.Uri;
+import android.net.Uri.Builder;
 
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
@@ -21,7 +22,6 @@ import com.mobmonkey.mobmonkeyapi.utils.MMPostAsyncTask;
 public class MMFavoritesAdapter {
 
 	private final static String TAG = "MMBookmarks: ";
-	private static String bookmarkURL;
 	private static JSONObject bookmarkInfo;
 	
 	/* HTTP POST http://api.mobmonkey.com/rest/bookmarks
@@ -36,13 +36,15 @@ public class MMFavoritesAdapter {
 									  String partnerId,
 									  String emailAddress,
 									  String password) {
-		bookmarkURL = MMAPIConstants.TEST_MOBMONKEY_URL + "bookmarks";
+		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
+		uriBuilder.appendPath(MMAPIConstants.URI_PATH_FAVORITES);
+		
 		try {
 			bookmarkInfo = new JSONObject();
 			bookmarkInfo.put(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId);
 			bookmarkInfo.put(MMAPIConstants.JSON_KEY_PROVIDER_ID, providerId);
 			
-			HttpPost httpPost = new HttpPost(bookmarkURL);
+			HttpPost httpPost = new HttpPost(uriBuilder.toString());
 			StringEntity stringEntity = new StringEntity(bookmarkInfo.toString());
 			httpPost.setEntity(stringEntity);
 			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
@@ -62,10 +64,11 @@ public class MMFavoritesAdapter {
 	public static void getFavorites(MMCallback mmCallback,
 									String partnerId,
 									String emailAddress,
-									String password) {
-		bookmarkURL = MMAPIConstants.TEST_MOBMONKEY_URL + "bookmarks";
+									String password) {		
+		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
+		uriBuilder.appendPath(MMAPIConstants.URI_PATH_FAVORITES);
 		
-		HttpGet HttpGet = new HttpGet(bookmarkURL);
+		HttpGet HttpGet = new HttpGet(uriBuilder.toString());
 
 		HttpGet.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
 		HttpGet.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
@@ -73,7 +76,6 @@ public class MMFavoritesAdapter {
 		HttpGet.setHeader(MMAPIConstants.KEY_AUTH, password);
 		
 		new MMGetAsyncTask(mmCallback).execute(HttpGet);
-		
 	}
 	
 	public static void removeFavorite(MMCallback mmCallback,
@@ -82,9 +84,9 @@ public class MMFavoritesAdapter {
 									  String partnerId,
 									  String emailAddress,
 									  String password) {
-		
-		Uri.Builder uriBuilder = Uri.parse(bookmarkURL).buildUpon();
-		uriBuilder.appendQueryParameter(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId)
+		Uri.Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
+		uriBuilder.appendPath(MMAPIConstants.URI_PATH_FAVORITES)
+			.appendQueryParameter(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId)
 			.appendQueryParameter(MMAPIConstants.JSON_KEY_PROVIDER_ID, providerId);
 		
 		HttpDelete httpDelete = new HttpDelete(uriBuilder.toString());

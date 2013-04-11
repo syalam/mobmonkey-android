@@ -548,6 +548,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 						userPrefsEditor.commit();
 						startActivity(new Intent(SignUpScreen.this, MainScreen.class));
 						finish();
+						overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 					} else {
 						Toast.makeText(SignUpScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 					}

@@ -203,12 +203,11 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 					} else if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
 						JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
 						MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_locating) + MMAPIConstants.DEFAULT_SPACE + topLevelCategories[position] + getString(R.string.pd_ellipses));
-						MMSearchLocationAdapter.searchLocationWithText(
+						MMSearchLocationAdapter.searchLocationWithCategoryId(
 								new MMSearchResultsCallback(getActivity(), topLevelCategories[position], null), 
 								Double.toString(longitudeValue), 
 								Double.toString(latitudeValue), 
 								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
-								MMAPIConstants.DEFAULT_STRING,
 								cats.getJSONArray(topLevelCategories[position]).getJSONObject(0).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID),
 								userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 								userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
@@ -237,7 +236,6 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 				Double.toString(latitudeValue), 
 				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
 				searchCategory,
-				MMAPIConstants.DEFAULT_STRING,
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 				MMConstants.PARTNER_ID);

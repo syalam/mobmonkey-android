@@ -1,4 +1,4 @@
-package com.mobmonkey.mobmonkey;
+package com.mobmonkey.mobmonkey.utils;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -11,7 +11,10 @@ import com.google.android.gcm.GCMBroadcastReceiver;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
-import com.mobmonkey.mobmonkey.utils.ServerUtility;
+import com.mobmonkey.mobmonkey.MainScreen;
+import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkey.R.drawable;
+import com.mobmonkey.mobmonkey.R.string;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 
 public class GCMIntentService extends GCMBaseIntentService{
