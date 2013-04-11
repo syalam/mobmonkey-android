@@ -226,7 +226,6 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 				Double.toString(latitudeValue), 
 				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
 				searchText,
-				MMAPIConstants.DEFAULT_STRING,
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 				MMConstants.PARTNER_ID);
@@ -243,12 +242,11 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	 */
 	private void searchSubCategory(String selectedSubCategory, JSONObject subCategory) throws JSONException {
 		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_locating) + MMAPIConstants.DEFAULT_SPACE + selectedSubCategory + getString(R.string.pd_ellipses));
-		MMSearchLocationAdapter.searchLocationWithText(
+		MMSearchLocationAdapter.searchLocationWithCategoryId(
 				new MMSearchResultsCallback(getActivity(), selectedSubCategory, new SearchSubCategoryCallback()), 
 				Double.toString(longitudeValue), 
 				Double.toString(latitudeValue), 
 				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
-				MMAPIConstants.DEFAULT_STRING,
 				subCategory.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID),
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
