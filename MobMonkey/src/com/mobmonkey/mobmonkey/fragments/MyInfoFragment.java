@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkey.SignInScreen;
 import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
@@ -53,6 +54,8 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	
 	private JSONObject response;
 	
+	private String newPassword, confirmPassword;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
@@ -83,7 +86,8 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	Log.d(TAG, "User has login with " + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING) + " account.");
     	
     	// if user signed in with facebook account, they can edit nothing in this screen.
-    	if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING).equals(MMAPIConstants.OAUTH_PROVIDER_FACEBOOK))
+    	if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING)
+    			.equals(MMAPIConstants.OAUTH_PROVIDER_FACEBOOK))
     	{
     		etFirstName.setFocusable(false);
     		etFirstName.setClickable(false);
@@ -91,18 +95,25 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     		etLastName.setFocusable(false);
     		etLastName.setClickable(false);
     		
+    		etEmailAddress.setFocusable(false);
+    		etEmailAddress.setClickable(false);
+    		
     		etBirthdate.setFocusable(false);
     		etBirthdate.setClickable(false);
     		
     		etBirthdate.setFocusable(false);
     		etBirthdate.setClickable(false);
+    		
+    		etGender.setFocusable(false);
+    		etGender.setClickable(false);
     		
     		// make new password and confirm password disappear
     		etNewPassword.setVisibility(View.GONE);
     		etConfirmPassword.setVisibility(View.GONE);
     	}
     	// if user signed in with twitter account, they can edit every fields except email and password
-    	else if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING).equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER)) {
+    	else if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING).
+    			equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER)) {
     		
     		// disable email
     		etEmailAddress.setFocusable(false);
@@ -141,23 +152,24 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 		//TODO: add call to server to update the user information
 		Log.d(TAG, response.toString());
 		// check if newPassword is the same as confirm password
-		String newPassword = etNewPassword.getText().toString(), 
-			   confirmPassword = etConfirmPassword.getText().toString();
-		if(newPassword.equals(confirmPassword)) {
+		newPassword = etNewPassword.getText().toString(); 
+		confirmPassword = etConfirmPassword.getText().toString();
+		if(checkFields()) {
+			
 			try {
 				MMUserAdapter.updateUserInfo(new UserInfoUpdateCallback(), 
-													   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-													   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
-													   MMConstants.PARTNER_ID, 
-													   newPassword, 
-													   etFirstName.getText().toString(), 
-													   etLastName.getText().toString(), 
-													   response.getLong(MMAPIConstants.KEY_BIRTHDATE), 
-													   convertGender(), 
-													   response.getString(MMAPIConstants.KEY_CITY), 
-													   response.getString(MMAPIConstants.KEY_STATE), 
-													   response.getString(MMAPIConstants.KEY_ZIP), 
-													   response.getBoolean(MMAPIConstants.KEY_ACCEPTEDTOS));
+										   	 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+										   	 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+										   	 MMConstants.PARTNER_ID, 
+										   	 newPassword, 
+										   	 etFirstName.getText().toString(), 
+										   	 etLastName.getText().toString(), 
+										   	 response.getLong(MMAPIConstants.KEY_BIRTHDATE), 
+										   	 convertGender(), 
+										   	 response.getString(MMAPIConstants.KEY_CITY), 
+										   	 response.getString(MMAPIConstants.KEY_STATE), 
+										   	 response.getString(MMAPIConstants.KEY_ZIP), 
+										   	 response.getBoolean(MMAPIConstants.KEY_ACCEPTEDTOS));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -207,8 +219,14 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	@Override
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
 		if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-			inputMethodManager.hideSoftInputFromWindow(etEmailAddress.getWindowToken(), 0);
-			return true;
+			if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING).
+	    			equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER)) {
+				inputMethodManager.hideSoftInputFromWindow(etLastName.getWindowToken(), 0);
+				return true;
+			} else {
+				inputMethodManager.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
+			}
+			
 		}
 		return false;
 	}
@@ -295,6 +313,47 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     		e.printStackTrace();
     	}
     }
+    
+    private boolean checkFields() {
+    	if(etFirstName.getText().toString().equals(MMAPIConstants.DEFAULT_STRING)) {
+    		// alert: First name cannot be empty.
+    		displayAlert(1);
+    		return false;
+    	}
+    	else
+    		return checkLastName();
+    }
+    
+    private boolean checkLastName() {
+    	if(etLastName.getText().toString().equals(MMAPIConstants.DEFAULT_STRING)) {
+    		// alert: Last name cannot be empty.
+    		displayAlert(1);
+    		return false;
+    	}
+    	else
+    		return checkPassword();
+    }
+    
+    private boolean checkPassword() {
+    	if(newPassword.equals(MMAPIConstants.DEFAULT_STRING)) {
+    		// if new password is empty, set it to old password.
+    		newPassword = userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING);
+    		return true;
+    	} else if(!newPassword.equals(confirmPassword)){
+    		// alert: new password and confirm password is not the same.
+    		displayAlert(1);
+    		return false;
+    	}
+    	return true;
+    }
+    
+    private void displayAlert(int messageId) {
+		new AlertDialog.Builder(getActivity())
+			.setTitle(R.string.app_name)
+			.setMessage(messageId)
+			.setNeutralButton(android.R.string.ok, null)
+			.show();
+	}
     
     private class UserInfoCallback implements MMCallback {
 		@Override

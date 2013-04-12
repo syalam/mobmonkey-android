@@ -316,6 +316,7 @@ public class MMUserAdapter extends MMAdapter {
 			if(!newPassword.equals(MMAPIConstants.DEFAULT_STRING)) {
 				params.put(MMAPIConstants.KEY_PASSWORD, newPassword);
 			}
+			
 			params.put(MMAPIConstants.KEY_FIRST_NAME, firstName);
 			params.put(MMAPIConstants.KEY_LAST_NAME, lastName);
 			params.put(MMAPIConstants.KEY_BIRTHDATE, birthday);
@@ -324,6 +325,8 @@ public class MMUserAdapter extends MMAdapter {
 			params.put(MMAPIConstants.KEY_STATE, state);
 			params.put(MMAPIConstants.KEY_ZIP, zip);
 			params.put(MMAPIConstants.KEY_ACCEPTEDTOS, acceptedtos);
+			
+			Log.d(TAG, params.toString());
 			
 			HttpPost httpPost = new HttpPost(uriBuilder.toString());
 			StringEntity stringEntity = new StringEntity(params.toString());
