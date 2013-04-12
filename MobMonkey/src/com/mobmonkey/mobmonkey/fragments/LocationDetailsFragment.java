@@ -333,21 +333,21 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			ibVideo.setOnClickListener(LocationDetailsFragment.this);
 			ibImage.setOnClickListener(LocationDetailsFragment.this);
 		}
-//		else {
-//			llMedia.setVisibility(View.VISIBLE);
-//			hasImageExpiryDate = true;
-//			tvImageExpiryDate.setText("30m");
+		else {
+			llMedia.setVisibility(View.VISIBLE);
+			hasVideoExpiryDate = true;
+			tvVideoExpiryDate.setText("30m");
 //			MMImageLoaderAdapter.loadImage(new LoadImageCallback(), "http://i.imgur.com/T0Va07Y.jpg");
-//			
-//			ivVideoPlay.setClickable(true);
-//			
-//			ivStreamPlay.setOnClickListener(LocationDetailsFragment.this);
-//			ivVideoPlay.setOnClickListener(LocationDetailsFragment.this);
-//			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
-//			ibStream.setOnClickListener(LocationDetailsFragment.this);
-//			ibVideo.setOnClickListener(LocationDetailsFragment.this);
-//			ibImage.setOnClickListener(LocationDetailsFragment.this);
-//		}
+			
+			ivVideoPlay.setClickable(true);
+			
+			ivStreamPlay.setOnClickListener(LocationDetailsFragment.this);
+			ivVideoPlay.setOnClickListener(LocationDetailsFragment.this);
+			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
+			ibStream.setOnClickListener(LocationDetailsFragment.this);
+			ibVideo.setOnClickListener(LocationDetailsFragment.this);
+			ibImage.setOnClickListener(LocationDetailsFragment.this);
+		}
 	}
 	
 	/**
