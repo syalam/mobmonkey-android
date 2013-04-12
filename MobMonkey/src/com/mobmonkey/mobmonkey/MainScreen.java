@@ -12,6 +12,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -32,6 +34,7 @@ import com.mobmonkey.mobmonkeyapi.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
@@ -73,7 +76,21 @@ public class MainScreen extends TabActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION) {
 			if(MMLocationManager.isGPSEnabled()) {
-				checkForGPSAccess();
+//				checkForGPSAccess();
+				Location location = MMLocationManager.getGPSLocation(new MMLocationListener());
+				if(location == null) {
+					new AlertDialog.Builder(MainScreen.this)
+			    	.setTitle(R.string.ad_title_no_location)
+			    	.setMessage(R.string.ad_message_no_location)
+			    	.setCancelable(false)
+			    	.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
+				        public void onClick(DialogInterface dialog, int which) {
+				    		userPrefsEditor.putBoolean(MMAPIConstants.SHARED_PREFS_KEY_LOCATION_AVAILABLE, false);
+				    		userPrefsEditor.commit();
+				        }
+			    	})
+			    	.show();
+				}
 			} else {
 				noGPSEnabled();
 			}
@@ -283,11 +300,13 @@ public class MainScreen extends TabActivity {
 					if(jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
 						Toast.makeText(MainScreen.this, jObj.getString(MMAPIConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
+						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS);
+					} else {
+						userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, (String) obj);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, (String) obj);
 				userPrefsEditor.commit();
 			}
 			

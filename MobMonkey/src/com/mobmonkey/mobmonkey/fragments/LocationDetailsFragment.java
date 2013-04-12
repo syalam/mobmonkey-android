@@ -140,16 +140,17 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						MMConstants.PARTNER_ID, 
 						locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
 						locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID));
+				setLocationDetails();
 			} else {
+				setLocationDetails();
 				hasMedia();
 				if(mediaButtonSelected != null) {
 					onClick(mediaButtonSelected);
 				}
 			}
-			Log.d(TAG, TAG + "Location Details: " + locationDetails.toString());
-			setLocationDetails();
 		} catch (JSONException e) {
 			e.printStackTrace();
+			llFavorite.setClickable(false);
 		}
 				
 		return view;		
@@ -335,8 +336,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 //		else {
 //			llMedia.setVisibility(View.VISIBLE);
-//			hasImageExpiryDate = true;
-//			tvImageExpiryDate.setText("30m");
+//			hasVideoExpiryDate = true;
+//			tvVideoExpiryDate.setText("30m");
 //			MMImageLoaderAdapter.loadImage(new LoadImageCallback(), "http://i.imgur.com/T0Va07Y.jpg");
 //			
 //			ivVideoPlay.setClickable(true);
@@ -470,9 +471,15 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			if(obj != null) {
 				Log.d(TAG, TAG + "mediaResults: " + (String) obj);
 				try {
+					JSONObject jObj = new JSONObject((String) obj);
 					retrieveMedia = true;
 					mediaResults = (String) obj;
-					hasMedia();
+					if(jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
+						Toast.makeText(getActivity(), jObj.getString(MMAPIConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+						llFavorite.setClickable(false);
+					} else {
+						hasMedia();
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

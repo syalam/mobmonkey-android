@@ -263,5 +263,7 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	<string name="ad_no_city">Please enter a city</string>
 	<string name="ad_no_state">Please enter a state</string>
 	<string name="ad_no_zip">Please enter a zip code</string>
+	<string name="ad_title_no_location">Location unavailable</string>
+	<string name="ad_message_no_location">GPS location is currently unavailable.</string>
 
 </resources>
