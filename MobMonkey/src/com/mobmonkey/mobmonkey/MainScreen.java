@@ -76,9 +76,9 @@ public class MainScreen extends TabActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION) {
 			if(MMLocationManager.isGPSEnabled()) {
+//				checkForGPSAccess();
 				Location location = MMLocationManager.getGPSLocation(new MMLocationListener());
-				if(location != null)
-				{
+				if(location == null) {
 					new AlertDialog.Builder(MainScreen.this)
 			    	.setTitle(R.string.ad_title_no_location)
 			    	.setMessage(R.string.ad_message_no_location)
@@ -90,7 +90,6 @@ public class MainScreen extends TabActivity {
 				        }
 			    	})
 			    	.show();
-
 				}
 			} else {
 				noGPSEnabled();
