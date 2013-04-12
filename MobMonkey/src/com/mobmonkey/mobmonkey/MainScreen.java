@@ -283,11 +283,13 @@ public class MainScreen extends TabActivity {
 					if(jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
 						Toast.makeText(MainScreen.this, jObj.getString(MMAPIConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
+						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS);
+					} else {
+						userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, (String) obj);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, (String) obj);
 				userPrefsEditor.commit();
 			}
 			
