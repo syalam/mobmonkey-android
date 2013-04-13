@@ -80,31 +80,41 @@ public class SignInScreen extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.d(TAG, TAG + "onActivityResult");
 		
-		if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
-			MMProgressDialog.dismissDialog();
-			
-			if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
-				Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
-				startActivity(new Intent(SignInScreen.this, MainScreen.class));
-			} else if(resultCode == MMAPIConstants.RESULT_CODE_NOT_FOUND) {
-				// TODO: inform user
-			}
-		} else {
-			Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
-			if(!requestEmail) {
-				userPrefsEditor.putString(MMAPIConstants.KEY_USER, (String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
-				userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, 	Session.getActiveSession().getAccessToken());
-				String emailAddress = (String)facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL);
-				Log.d(TAG, TAG + "Email address: " + emailAddress);
-				if(emailAddress == null) {
-					requestEmail = true;
-					Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
-				} else {
-					MMUserAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
-							(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
-					MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_facebook));
+		switch(requestCode) {
+			case MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH:
+				MMProgressDialog.dismissDialog();
+				
+				if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
+					Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
+					startActivity(new Intent(SignInScreen.this, MainScreen.class));
+				} else if(resultCode == MMAPIConstants.RESULT_CODE_NOT_FOUND) {
+					Intent signUpTwitterIntent = (Intent) data.clone();
+					signUpTwitterIntent.setClass(SignInScreen.this, SignUpTwitterScreen.class);
+					startActivityForResult(signUpTwitterIntent, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER);
 				}
-			}
+				break;
+			case MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER:
+				if(resultCode == RESULT_OK) {
+					startActivity(new Intent(SignInScreen.this, MainScreen.class));
+				}
+				break;
+			default:
+				Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+				if(!requestEmail) {
+					userPrefsEditor.putString(MMAPIConstants.KEY_USER, (String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
+					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, 	Session.getActiveSession().getAccessToken());
+					userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
+					String emailAddress = (String)facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL);
+					Log.d(TAG, TAG + "Email address: " + emailAddress);
+					if(emailAddress == null) {
+						requestEmail = true;
+						Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
+					} else {
+						MMUserAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
+								(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
+						MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_facebook));
+					}
+				}
 		}
 	}
 
@@ -165,6 +175,7 @@ public class SignInScreen extends Activity {
 		if(checkEmailAddress()) {
 			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
 			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
+			userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING);
 			MMUserAdapter.signInUser(new SignInCallback(), etEmailAddress.getText().toString(), etPassword.getText().toString(), MMConstants.PARTNER_ID);
     		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in));
 		}

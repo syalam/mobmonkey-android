@@ -69,10 +69,9 @@ public final class MMAPIConstants {
 	// SharePreferences Key
 	public static final String USER_PREFS = "User Preferences";
 	public static final String SHARED_PREFS_KEY_ALL_CATEGORIES = "All categories";
-	public static final String SHARED_PREFS_KEY_BOOKMARKS = "bookmarks";
 	public static final String SHARED_PREFS_KEY_CATEGORY_LIST = "categoryList";
+	public static final String SHARED_PREFS_KEY_FAVORITES = "favorites";
 	public static final String SHARED_PREFS_KEY_HISTORY = "history";
-	public static final String SHARED_PREFS_KEY_LOCATION_AVAILABLE = "location available";
 	public static final String SHARED_PREFS_KEY_NARROW_BY_LIVE_VIDEO = "Narrow by live video";
 	public static final String SHARED_PREFS_KEY_SEARCH_RADIUS = "Search radius";
 	public static final String SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES = "Top level categories";

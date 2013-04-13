@@ -473,7 +473,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 * 
 	 */
 	private void buttonAddLocClick() {
-		if(MMLocationManager.isGPSEnabled()) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			if(smfResultLocations.getView().getVisibility() == View.INVISIBLE) {
 				startActivity(new Intent(getActivity(), AddLocationScreen.class));
 			} else {

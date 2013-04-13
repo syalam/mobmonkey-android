@@ -1,9 +1,7 @@
 private package com.mobmonkey.mobmonkey;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 
 import org.json.JSONException;
@@ -195,6 +193,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 				if(!requestEmail) {
 					userPrefsEditor.putString(MMAPIConstants.KEY_USER, Session.getActiveSession().getAccessToken());
 					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, (String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
+					userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
 					MMUserAdapter.signUpNewUserFacebook(new SignUpCallback(), Session.getActiveSession().getAccessToken(), 
 							(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
 		    		MMProgressDialog.displayDialog(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_facebook));
@@ -279,6 +278,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	if(checkFirstName()) {
 			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
 			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
+			userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING);
     		MMUserAdapter.signUpNewUser(new SignUpCallback(), 
     				etFirstName.getText().toString(), 
     				etLastName.getText().toString(), 

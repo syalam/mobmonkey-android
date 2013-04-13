@@ -111,12 +111,12 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.ibmap:
-				if(MMLocationManager.isGPSEnabled()) {
+				if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 					mapIconClickListener.onMapIconClicked(MMAPIConstants.FAVORITES_FRAGMENT_LIST);
 				}
 				break;
 			case R.id.btnaddloc:
-				if(MMLocationManager.isGPSEnabled()) {
+				if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 					Toast.makeText(getActivity(), R.string.toast_tap_location_to_add, Toast.LENGTH_LONG).show();
 					addLocClicked = true;
 					btnAddLoc.setVisibility(View.INVISIBLE);
@@ -173,7 +173,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(MMLocationManager.isGPSEnabled()) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			try {
 				refreshFavorites();
 			} catch (JSONException e) {
@@ -205,7 +205,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	 * @throws JSONException 
 	 */
 	private void refreshFavorites() throws JSONException {
-		String favorites = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING);
+		String favorites = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING);
 		if(!favorites.equals(MMAPIConstants.DEFAULT_STRING)) {
 			favoritesList = new JSONArray(favorites);
 		} else {

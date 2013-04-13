@@ -56,6 +56,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	
 	private JSONObject response;
 	
+	private String oAuthProvider;
 	private String newPassword, confirmPassword;
 	
 	@Override
@@ -90,10 +91,10 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	
     	Log.d(TAG, "User has login with " + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING) + " account.");
     	
-    	// if user signed in with facebook account, they can edit nothing in this screen.
-    	if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING)
-    			.equals(MMAPIConstants.OAUTH_PROVIDER_FACEBOOK))
-    	{
+    	oAuthProvider = userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING);
+    	
+    	// if user signed in with Facebook account, they can edit nothing in this screen.
+    	if(oAuthProvider.equals(MMAPIConstants.OAUTH_PROVIDER_FACEBOOK)) {
     		etFirstName.setFocusable(false);
     		etFirstName.setClickable(false);
     		
@@ -117,8 +118,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     		etConfirmPassword.setVisibility(View.GONE);
     	}
     	// if user signed in with twitter account, they can edit every fields except email and password
-    	else if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING).
-    			equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER)) {
+    	else if(oAuthProvider.equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER)) {
     		
     		// disable email
     		etEmailAddress.setFocusable(false);
@@ -141,8 +141,6 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	} 
     	// if user signed in with mobmonkey account, they can edit all fields but the email.
     	else {
-    		//etEmailAddress.setOnKeyListener(MyInfoFragment.this);
-    		// disable email
     		etEmailAddress.setFocusable(false);
     		etEmailAddress.setClickable(false);
     		
@@ -235,14 +233,13 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	@Override
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
 		if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-			if(userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING).
-	    			equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER)) {
+			if(oAuthProvider.equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER)) {
 				inputMethodManager.hideSoftInputFromWindow(etLastName.getWindowToken(), 0);
 				return true;
 			} else {
 				inputMethodManager.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
+				return true;
 			}
-			
 		}
 		return false;
 	}

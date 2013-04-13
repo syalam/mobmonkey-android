@@ -127,8 +127,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		tvImageMediaCount = (TextView) view.findViewById(R.id.tvimagemediacount);
 		
 		try {
-			if(!userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING).equals(MMAPIConstants.DEFAULT_STRING)) {
-				favoritesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, MMAPIConstants.DEFAULT_STRING));
+			if(!userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING).equals(MMAPIConstants.DEFAULT_STRING)) {
+				favoritesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING));
 			} else {
 				favoritesList = new JSONArray();
 			}
@@ -584,7 +584,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "response: " + ((String) obj));
-				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, (String) obj);
+				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
 				userPrefsEditor.commit();
 			}
 		}

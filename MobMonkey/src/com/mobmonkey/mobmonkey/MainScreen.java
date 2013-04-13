@@ -76,21 +76,7 @@ public class MainScreen extends TabActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION) {
 			if(MMLocationManager.isGPSEnabled()) {
-//				checkForGPSAccess();
-				Location location = MMLocationManager.getGPSLocation(new MMLocationListener());
-				if(location == null) {
-					new AlertDialog.Builder(MainScreen.this)
-			    	.setTitle(R.string.ad_title_no_location)
-			    	.setMessage(R.string.ad_message_no_location)
-			    	.setCancelable(false)
-			    	.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
-				        public void onClick(DialogInterface dialog, int which) {
-				    		userPrefsEditor.putBoolean(MMAPIConstants.SHARED_PREFS_KEY_LOCATION_AVAILABLE, false);
-				    		userPrefsEditor.commit();
-				        }
-			    	})
-			    	.show();
-				}
+				checkForGPSAccess();
 			} else {
 				noGPSEnabled();
 			}
@@ -109,7 +95,7 @@ public class MainScreen extends TabActivity {
 	 * there is no GPS access.
 	 */
 	private void checkForGPSAccess() {
-		if (!MMLocationManager.isGPSEnabled()) {
+		if(!MMLocationManager.isGPSEnabled()) {
 			new AlertDialog.Builder(MainScreen.this)
 	    	.setTitle(R.string.ad_title_enable_gps)
 	    	.setMessage(R.string.ad_message_enable_gps)
@@ -126,16 +112,26 @@ public class MainScreen extends TabActivity {
 		        }
 	    	})
 	    	.show();
+	    } else if(MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+			new AlertDialog.Builder(MainScreen.this)
+	    	.setTitle(R.string.ad_title_no_location)
+	    	.setMessage(R.string.ad_message_no_location)
+	    	.setCancelable(false)
+	    	.setNeutralButton(R.string.ad_btn_ok, null)
+	    	.show();
 	    } else {
 			init();
 	    }
 	}
 	
+	/**
+	 * 
+	 */
 	private void noGPSEnabled() {
     	new AlertDialog.Builder(MainScreen.this)
 	    	.setIcon(android.R.drawable.ic_dialog_alert)
-	    	.setTitle("Warning")
-	    	.setMessage("You have not enabled GPS, some features are not accessible")
+	    	.setTitle(R.string.ad_title_no_gps_warning)
+	    	.setMessage(R.string.ad_message_no_gps)
 	    	.setCancelable(false)
 	    	.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
 				@Override
@@ -146,6 +142,9 @@ public class MainScreen extends TabActivity {
 	    	.show();
 	}
 	
+	/**
+	 * 
+	 */
 	private void init() {		
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(MMAPIConstants.INTENT_FILTER_DISPLAY_MESSAGE));
 		registerGCM();
@@ -160,6 +159,9 @@ public class MainScreen extends TabActivity {
 		tabHost.setCurrentTab(0);
 	}
 	
+	/**
+	 * 
+	 */
 	private void registerGCM() {
 		GCMRegistrar.checkDevice(MainScreen.this);
 		GCMRegistrar.checkManifest(MainScreen.this);
@@ -212,7 +214,7 @@ public class MainScreen extends TabActivity {
 	private void getAllCategories() {
 		Log.d(TAG, TAG + "getAllCategories: " + userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
 		
-		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled()) {
+		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 
 			MMCategoryAdapter.getAllCategories(
@@ -223,6 +225,9 @@ public class MainScreen extends TabActivity {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void getAllFavorites() {		
 		if(MMProgressDialog.isProgressDialogNull()) {
 			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
@@ -230,7 +235,7 @@ public class MainScreen extends TabActivity {
 			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 		}
 		
-		if(MMLocationManager.isGPSEnabled()) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 											MMConstants.PARTNER_ID, 
 											userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
@@ -241,6 +246,11 @@ public class MainScreen extends TabActivity {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class RegisterGCMAsyncTask extends AsyncTask<String, Void, Void> {
 		Context context;
 		
@@ -289,6 +299,11 @@ public class MainScreen extends TabActivity {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class FavoritesCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -300,9 +315,9 @@ public class MainScreen extends TabActivity {
 					if(jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
 						Toast.makeText(MainScreen.this, jObj.getString(MMAPIConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
-						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS);
+						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES);
 					} else {
-						userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_BOOKMARKS, (String) obj);
+						userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

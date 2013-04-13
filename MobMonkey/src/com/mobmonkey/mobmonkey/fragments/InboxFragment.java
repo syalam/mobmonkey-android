@@ -24,6 +24,7 @@ import com.mobmonkey.mobmonkey.utils.MMInboxItem;
 import com.mobmonkey.mobmonkeyapi.adapters.MMInboxAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 /**
@@ -112,7 +113,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		arrayAdapter = new MMInboxArrayAdapter(getActivity(), R.layout.inbox_list_row, inboxItems);
 		lvInbox.setAdapter(arrayAdapter);
 		
-		if(MMLocationManager.isGPSEnabled()) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			// get all the open request, and then update the badge counter
 			MMInboxAdapter.getOpenRequests(new OpenRequestCallback(), 
 										   MMConstants.PARTNER_ID, 

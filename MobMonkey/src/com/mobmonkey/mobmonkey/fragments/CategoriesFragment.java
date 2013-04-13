@@ -156,7 +156,11 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			e.printStackTrace();
 		}		
 		
-		lvSubCategories.setOnItemClickListener(CategoriesFragment.this);
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+			lvSubCategories.setEnabled(false);
+		} else {
+			lvSubCategories.setOnItemClickListener(CategoriesFragment.this);
+		}
 	}
 	
 	/**
@@ -208,7 +212,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			}
 		});
 		
-		if(!MMLocationManager.isGPSEnabled()) {
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
 			etSearch.setFocusable(false);
 			etSearch.setFocusableInTouchMode(false);
 			etSearch.setClickable(false);
@@ -219,7 +223,6 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	 * 
 	 */
 	private void searchByText() {
-		// TODO: add subcategory to search by text
 		MMSearchLocationAdapter.searchLocationWithText(
 				new SearchCallback(), 
 				Double.toString(longitudeValue), 

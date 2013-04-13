@@ -119,7 +119,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 				startActivity(new Intent(getActivity(), FilterScreen.class));
 				break;
 			case R.id.btnaddloc:
-				if(MMLocationManager.isGPSEnabled()) {
+				if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 					startAddLocationMapScreen();
 				}
 				break;
@@ -158,7 +158,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 			}
 		});
 		
-		if(!MMLocationManager.isGPSEnabled()) {
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
 			etSearch.setFocusable(false);
 			etSearch.setFocusableInTouchMode(false);
 			etSearch.setClickable(false);
@@ -182,7 +182,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 			}
 		});
 		
-		if(!MMLocationManager.isGPSEnabled()) {
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
 			elvSearchNoCategory.setEnabled(false);
 		}
 	}
@@ -221,7 +221,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 			}
 		});
 		
-		if(!MMLocationManager.isGPSEnabled()) {
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
 			elvSearchCategory.setEnabled(false);
 		}
 	}

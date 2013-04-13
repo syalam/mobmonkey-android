@@ -196,7 +196,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	 * @param categoryIds
 	 */
 	private void trending(String categoryIds) {
-		if(MMLocationManager.isGPSEnabled()) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			Location location = MMLocationManager.getGPSLocation(new MMLocationListener());
 			
 			MMTrendingAdapter.getTrending(new CountOnlyCallback(), 

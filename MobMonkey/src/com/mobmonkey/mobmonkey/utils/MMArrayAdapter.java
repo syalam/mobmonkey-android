@@ -2,6 +2,7 @@ package com.mobmonkey.mobmonkey.utils;
 
 import com.mobmonkey.mobmonkey.R;
 
+import com.mobmonkey.mobmonkeyapi.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeyapi.utils.MMLocationManager;
 
 import android.content.Context;
@@ -69,7 +70,7 @@ public class MMArrayAdapter extends ArrayAdapter<Object> {
 		if(icons.length != 0)
 			viewHolder.ivIcon.setImageResource(icons[position]);
         viewHolder.tvLabel.setText(items[position]);
-        if(!MMLocationManager.isGPSEnabled()) {
+        if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
         	viewHolder.tvLabel.setTextColor(Color.GRAY);
         }
         	
