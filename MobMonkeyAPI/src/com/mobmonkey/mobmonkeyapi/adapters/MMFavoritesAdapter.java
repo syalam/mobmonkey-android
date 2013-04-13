@@ -49,6 +49,8 @@ public class MMFavoritesAdapter extends MMAdapter {
 			params.put(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId);
 			params.put(MMAPIConstants.JSON_KEY_PROVIDER_ID, providerId);
 			
+			Log.d(TAG, TAG + "params: " + params.toString());
+			
 			HttpPost httpPost = new HttpPost(uriBuilder.toString());
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPost.setEntity(stringEntity);

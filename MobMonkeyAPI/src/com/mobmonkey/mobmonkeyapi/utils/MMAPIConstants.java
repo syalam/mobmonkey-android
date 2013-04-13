@@ -105,6 +105,7 @@ public final class MMAPIConstants {
 	public static final String KEY_GENDER = "gender";	
 	public static final String KEY_LAST_NAME = "lastName";
 	public static final String KEY_LATITUDE = "latitude";
+	public static final String KEY_LOCALITY = "locality";
 	public static final String KEY_LONGITUDE = "longitude";
 	public static final String KEY_NAME = "name";
 	public static final String KEY_OAUTH_PROVIDER = "OauthProvider";
@@ -114,10 +115,13 @@ public final class MMAPIConstants {
 	public static final String KEY_PARTNER_ID = "MobMonkey-partnerId";
 	public static final String KEY_PASSWORD = "password";
 	public static final String KEY_PHONE_NUMBER = "phoneNumber";
+	public static final String KEY_POST_CODE = "postcode";
 	public static final String KEY_PROVIDER = "provider";
 	public static final String KEY_PROVIDER_USERNAME = "providerUserName";
 	public static final String KEY_RADIUS_IN_YARDS = "radiusInYards";
+	public static final String KEY_REGION = "region";
 	public static final String KEY_STATE = "state";
+	public static final String KEY_STREET_ADDRESS = "streetAddress";
 	public static final String KEY_USE_OAUTH = "useOAuth";
 	public static final String KEY_OAUTH_USER = "oAuthUser";
 	public static final String KEY_USER = "MobMonkey-user";

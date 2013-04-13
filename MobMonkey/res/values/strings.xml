@@ -150,7 +150,8 @@
 	<string name="tv_add_notifications">Add Notifications</string>
 	<string name="tv_favorite">Favorite</string>
 	<string name="tv_remove_favorite">Remove favorite</string>
-	<string name="pd_retrieving_media">Retrieving available media&#8230;</string>
+	<string name="pd_loading_location_information">Loading location information&#8230;</string>
+<!-- 	<string name="pd_retrieving_media">Retrieving available media&#8230;</string> -->
 	<string name="pd_updating_favorites">Updating favorites&#8230;</string>
 	<string name="toast_add_favorite">Successfully added location to favorites</string>
 	<string name="toast_remove_favorite">Successfully removed location to favorites</string>

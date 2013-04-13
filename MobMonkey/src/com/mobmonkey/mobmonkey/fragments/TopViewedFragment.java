@@ -21,7 +21,7 @@ import com.mobmonkey.mobmonkey.utils.MMConstants;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 import com.mobmonkey.mobmonkey.utils.MMTopviewedArrayAdapter;
 import com.mobmonkey.mobmonkey.utils.MMTopviewedItem;
-import com.mobmonkey.mobmonkeyapi.adapters.MMMediaAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMLocationDetailsAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
@@ -70,7 +70,7 @@ public class TopViewedFragment extends MMFragment {
 				String locationID = jArr.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LOCATION_ID);
 				String providerID = jArr.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_PROVIDER_ID);
 				
-				MMMediaAdapter.retrieveAllMediaForLocation(new MedaiCallBack(), 
+				MMLocationDetailsAdapter.retrieveAllMediaForLocation(new MedaiCallBack(), 
 														   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 														   userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING),
 														   MMConstants.PARTNER_ID,

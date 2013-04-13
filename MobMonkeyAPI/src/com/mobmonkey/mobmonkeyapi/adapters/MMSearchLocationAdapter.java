@@ -30,6 +30,9 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 			params.put(MMAPIConstants.KEY_LONGITUDE, longitude);
 			params.put(MMAPIConstants.KEY_LATITUDE, latitude);
 			params.put(MMAPIConstants.KEY_RADIUS_IN_YARDS, searchRadius);
+			if(!name.equals(MMAPIConstants.DEFAULT_STRING)) {
+				params.put(MMAPIConstants.KEY_NAME, name);
+			}
 			params.put(MMAPIConstants.KEY_NAME, name);
 			if(!categoryID.equals(MMAPIConstants.DEFAULT_STRING)) {
 				params.put(MMAPIConstants.KEY_CATEGORY_IDS, categoryID);
@@ -67,6 +70,34 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 		searchLocation(mmCallback, longitude, latitude, searchRadius, name, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
 	}
 
+	public static void searchLocationByAddress(MMCallback mmCallback, String streetAddress, String locality, String region, String postcode, String user, String auth, String partnerId) {
+		createUriBuilderInstance(MMAPIConstants.URI_PATH_SEARCH, MMAPIConstants.URI_PATH_LOCATION);
+		createParamsInstance();
+		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
+		
+		try {
+			params.put(MMAPIConstants.KEY_STREET_ADDRESS, streetAddress);
+			params.put(MMAPIConstants.KEY_LOCALITY, locality);
+			params.put(MMAPIConstants.KEY_REGION, region);
+			params.put(MMAPIConstants.KEY_POST_CODE, postcode);
+			
+			StringEntity stringEntity = new StringEntity(params.toString());
+			
+			Log.d(TAG, TAG + "params: " + params.toString());
+			
+			HttpPost httpPost = new HttpPost(uriBuilder.toString());
+			httpPost.setEntity(stringEntity);
+			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+			httpPost.setHeader(MMAPIConstants.KEY_USER, user);
+			httpPost.setHeader(MMAPIConstants.KEY_AUTH, auth);
+			
+			new MMPostAsyncTask(mmCallback).execute(httpPost);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * 
 	 * @param mmCallback

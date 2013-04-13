@@ -15,7 +15,8 @@ import com.mobmonkey.mobmonkey.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkey.utils.MMUtility;
 import com.mobmonkey.mobmonkeyapi.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMImageLoaderAdapter;
-import com.mobmonkey.mobmonkeyapi.adapters.MMMediaAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMLocationDetailsAdapter;
+import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
@@ -50,6 +51,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
 	private JSONArray favoritesList;
+	private JSONObject location;
 	private JSONObject locationDetails;
 	
 	private TextView tvLocNameTitle;
@@ -80,7 +82,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private OnLocationDetailsItemClickListener listener;
 	
 	private String mediaResults;
-	private boolean retrieveMedia = false;
+	private boolean retrieveLocationDetails = false;
 	private boolean hasStreamExpiryDate = false;
 	private boolean hasVideoExpiryDate = false;
 	private boolean hasImageExpiryDate = false;
@@ -130,17 +132,22 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			} else {
 				favoritesList = new JSONArray();
 			}
-			locationDetails = new JSONObject(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			location = new JSONObject(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 			
-			if(!retrieveMedia) {
-				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_retrieving_media));
-				MMMediaAdapter.retrieveAllMediaForLocation(new MediaCallback(), 
+			if(!retrieveLocationDetails) {
+				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading_location_information));
+				MMLocationDetailsAdapter.getLocationDetails(new LocationCallback(), 
+						location.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
+						location.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
+						userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+						MMConstants.PARTNER_ID);
+				MMLocationDetailsAdapter.retrieveAllMediaForLocation(new MediaCallback(), 
 						userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 						MMConstants.PARTNER_ID, 
-						locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
-						locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID));
-				setLocationDetails();
+						location.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
+						location.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID));
 			} else {
 				setLocationDetails();
 				hasMedia();
@@ -457,6 +464,30 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	public interface OnLocationDetailsItemClickListener {
 		public void onLocationDetailsItem(int position, Object obj);
 	}
+
+	private class LocationCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				Log.d(TAG, TAG + "Response: " + ((String) obj));
+				try {
+					locationDetails = new JSONObject((String) obj);
+					
+					if(locationDetails.has(MMAPIConstants.JSON_KEY_STATUS)) {
+						Toast.makeText(getActivity(), "unable to load location information", Toast.LENGTH_LONG).show();
+						getActivity().onBackPressed();
+					} else {
+						retrieveLocationDetails = true;
+						setLocationDetails();
+					}
+					
+					setLocationDetails();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Callback to handle the result after making retrieve all media call to the server
@@ -472,12 +503,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				Log.d(TAG, TAG + "mediaResults: " + (String) obj);
 				try {
 					JSONObject jObj = new JSONObject((String) obj);
-					retrieveMedia = true;
-					mediaResults = (String) obj;
-					if(jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
-						Toast.makeText(getActivity(), jObj.getString(MMAPIConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
-						llFavorite.setClickable(false);
-					} else {
+					if(!jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
+						mediaResults = (String) obj;
 						hasMedia();
 					}
 				} catch (JSONException e) {
