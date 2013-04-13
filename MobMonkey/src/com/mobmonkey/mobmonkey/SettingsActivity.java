@@ -4,20 +4,24 @@ import java.util.Stack;
 
 import com.mobmonkey.mobmonkey.fragments.*;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
+import com.mobmonkey.mobmonkey.utils.MMFragment.OnFragmentFinishListener;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.MotionEvent;
 
 /**
  * @author Dezapp, LLC
  *
  */
-public class SettingsActivity extends FragmentActivity implements SettingsFragment.OnItemClickListener {
-	FragmentManager fragmentManager;
-	Stack<MMFragment> fragmentStack;
+public class SettingsActivity extends FragmentActivity implements SettingsFragment.OnItemClickListener, OnFragmentFinishListener {
+	private static final String TAG = "SettingsActivtiy: ";
+	private FragmentManager fragmentManager;
+	private Stack<MMFragment> fragmentStack;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,21 @@ public class SettingsActivity extends FragmentActivity implements SettingsFragme
 		}
 	}
 	
+	@Override
+	public void onFragmentFinish() {		
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentStack.pop();
+		fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
+		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
+		fragmentTransaction.commit();
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		Log.d(TAG, TAG + "Hank got touched");
+		return super.onTouchEvent(event);
+	}
+
 	/**
 	 * Handler when back button is pressed, it will not close and destroy the current {@link Activity} but instead it will remain on the current {@link Activity}
 	 */
@@ -65,14 +84,8 @@ public class SettingsActivity extends FragmentActivity implements SettingsFragme
 	@Override
 	public void onBackPressed() {		
 		if(fragmentStack.size() > 1) {
-			MMFragment mmFragment = fragmentStack.pop();
-			
+			MMFragment mmFragment = fragmentStack.peek();
 			mmFragment.onFragmentBackPressed();
-			
-			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-			fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
-			fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
-			fragmentTransaction.commit();
 		}
 		
 		moveTaskToBack(true);

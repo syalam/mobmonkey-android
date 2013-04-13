@@ -219,7 +219,12 @@
 	<!-- My Info Fragment -->
 	<string name="tv_title_my_info">My Info</string>
 	
+	<string name="ad_message_first_name_empty">First name cannot be empty.</string>
+	<string name="ad_message_last_name_empty">Last name cannot be empty.</string>
+	<string name="ad_message_password_not_match">New password and confirm password do not match.</string>
+	
 	<string name="pd_loading_user_info">Loading user info&#8230;</string>
+	<string name="pd_updating_user_info">Updating user info&#8230;</string>
 	
 	<!-- Social Networks Fragment -->
 	<string name="tv_title_socialnetworks">Social Networks</string>

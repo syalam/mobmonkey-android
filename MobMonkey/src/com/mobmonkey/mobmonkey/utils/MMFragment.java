@@ -7,7 +7,11 @@ import android.support.v4.app.Fragment;
  *
  */
 public abstract class MMFragment extends Fragment {
-
+	protected OnFragmentFinishListener onFragmentFinishListener;
+	
 	public abstract void onFragmentBackPressed();
 	
+	public interface OnFragmentFinishListener {
+		public void onFragmentFinish();
+	}
 }

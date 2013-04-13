@@ -313,10 +313,7 @@ public class MMUserAdapter extends MMAdapter {
 		createParamsInstance();
 		
 		try {
-			if(!newPassword.equals(MMAPIConstants.DEFAULT_STRING)) {
-				params.put(MMAPIConstants.KEY_PASSWORD, newPassword);
-			}
-			
+			params.put(MMAPIConstants.KEY_PASSWORD, newPassword);
 			params.put(MMAPIConstants.KEY_FIRST_NAME, firstName);
 			params.put(MMAPIConstants.KEY_LAST_NAME, lastName);
 			params.put(MMAPIConstants.KEY_BIRTHDATE, birthday);

@@ -3,6 +3,7 @@ package com.mobmonkey.mobmonkey.fragments;
 import com.mobmonkey.mobmonkey.R;
 import com.mobmonkey.mobmonkey.utils.MMFragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,15 @@ public class SocialNetworksFragment extends MMFragment {
 	}
 
 	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if(activity instanceof OnFragmentFinishListener) {
+			onFragmentFinishListener = (OnFragmentFinishListener) activity;
+		}
+	}
+
+	@Override
 	public void onFragmentBackPressed() {
-		
+		onFragmentFinishListener.onFragmentFinish();
 	}
 }
