@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
+import android.widget.ScrollView;
 
 /**
  * Android {@link Fragment} screen displays the user's information.
@@ -70,6 +72,9 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 		View view = inflater.inflate(R.layout.fragment_myinfo_screen, container, false);
     	
     	inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+    	
+    	ScrollView svMyInfo = (ScrollView) view.findViewById(R.id.svmyinfo);
+    	svMyInfo.setOnTouchListener(MyInfoFragment.this);
     	
     	etFirstName = (EditText) view.findViewById(R.id.etfirstname);
     	etLastName = (EditText) view.findViewById(R.id.etlastname);
@@ -126,6 +131,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     		etConfirmPassword.setClickable(false);
     		
     		// set Listener to birth date, and Gender fields
+    		etLastName.setOnKeyListener(MyInfoFragment.this);
     		etBirthdate.setOnTouchListener(MyInfoFragment.this);
     		etGender.setOnTouchListener(MyInfoFragment.this);
     		
@@ -140,6 +146,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     		etEmailAddress.setFocusable(false);
     		etEmailAddress.setClickable(false);
     		
+    		etConfirmPassword.setOnKeyListener(MyInfoFragment.this);
         	etBirthdate.setOnTouchListener(MyInfoFragment.this);
         	etGender.setOnTouchListener(MyInfoFragment.this);
     	}
@@ -148,28 +155,35 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	}
 
 	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if(activity instanceof OnFragmentFinishListener) {
+			onFragmentFinishListener = (OnFragmentFinishListener) activity;
+		}
+	}
+
+	@Override
 	public void onFragmentBackPressed() {
-		//TODO: add call to server to update the user information
 		Log.d(TAG, response.toString());
 		// check if newPassword is the same as confirm password
 		newPassword = etNewPassword.getText().toString(); 
 		confirmPassword = etConfirmPassword.getText().toString();
 		if(checkFields()) {
-			
 			try {
 				MMUserAdapter.updateUserInfo(new UserInfoUpdateCallback(), 
 										   	 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
 										   	 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
 										   	 MMConstants.PARTNER_ID, 
 										   	 newPassword, 
-										   	 etFirstName.getText().toString(), 
-										   	 etLastName.getText().toString(), 
+										   	 etFirstName.getText().toString(),
+										   	 etLastName.getText().toString(),
 										   	 response.getLong(MMAPIConstants.KEY_BIRTHDATE), 
 										   	 convertGender(), 
 										   	 response.getString(MMAPIConstants.KEY_CITY), 
 										   	 response.getString(MMAPIConstants.KEY_STATE), 
 										   	 response.getString(MMAPIConstants.KEY_ZIP), 
 										   	 response.getBoolean(MMAPIConstants.KEY_ACCEPTEDTOS));
+				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_updating_user_info));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -185,6 +199,8 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
      */
     @Override
 	public boolean onTouch(View v, MotionEvent event) {
+    	Log.d(TAG, TAG + "Hank got touched again");
+    	Log.d(TAG, TAG + "view id: " + v.getId() + "  scrollview id: " + R.id.svmyinfo);
 		if(event.getAction() == MotionEvent.ACTION_DOWN) {
 			prevEvent = event;
 		}
@@ -273,7 +289,12 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     			@Override
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
-					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MM-dd-yyyy"));
+					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
+					try {
+						response.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
 			})
 			.setNegativeButton(R.string.ad_btn_cancel, null)
@@ -315,33 +336,42 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     }
     
     private boolean checkFields() {
-    	if(etFirstName.getText().toString().equals(MMAPIConstants.DEFAULT_STRING)) {
+    	if(TextUtils.isEmpty(etFirstName.getText().toString())) {
     		// alert: First name cannot be empty.
-    		displayAlert(1);
+    		displayAlert(R.string.ad_message_first_name_empty);
     		return false;
     	}
-    	else
+    	else {
     		return checkLastName();
+    	}
     }
     
     private boolean checkLastName() {
-    	if(etLastName.getText().toString().equals(MMAPIConstants.DEFAULT_STRING)) {
+    	if(TextUtils.isEmpty(etLastName.getText().toString())) {
     		// alert: Last name cannot be empty.
-    		displayAlert(1);
+    		displayAlert(R.string.ad_message_last_name_empty);
     		return false;
     	}
-    	else
+    	else {
     		return checkPassword();
+    	}
     }
     
     private boolean checkPassword() {
-    	if(newPassword.equals(MMAPIConstants.DEFAULT_STRING)) {
-    		// if new password is empty, set it to old password.
-    		newPassword = userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING);
-    		return true;
+    	if(TextUtils.isEmpty(newPassword)) {
+    		if(TextUtils.isEmpty(confirmPassword)) {
+    			// if both new password and confirn password are empty, set it to the old password.
+        		newPassword = userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING);
+        		return true;
+        	// else, if confirm password is not empty, and new password is empty, alert user.
+    		} else {
+    			displayAlert(R.string.ad_message_password_not_match);
+    			return false;
+    		}
+    	// if new password and confirm password are not the same, alert user.
     	} else if(!newPassword.equals(confirmPassword)){
     		// alert: new password and confirm password is not the same.
-    		displayAlert(1);
+    		displayAlert(R.string.ad_message_password_not_match);
     		return false;
     	}
     	return true;
@@ -372,10 +402,20 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	}
     
     private class UserInfoUpdateCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
-			Log.d(TAG, (String) obj);
+			MMProgressDialog.dismissDialog();
+			
+			if(obj != null) {
+				try {
+					JSONObject jObj = new JSONObject((String) obj);
+					if(jObj.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+						onFragmentFinishListener.onFragmentFinish();
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
 		}
     }
 }
