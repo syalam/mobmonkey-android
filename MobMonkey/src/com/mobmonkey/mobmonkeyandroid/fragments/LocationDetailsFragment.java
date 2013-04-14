@@ -383,6 +383,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		public void onLocationDetailsItem(int position, Object obj);
 	}
 
+	/**
+	 * Callback to handle the result after making retrieve location info call to the server
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class LocationCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {

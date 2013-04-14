@@ -73,6 +73,10 @@ public class MainScreen extends TabActivity {
 		checkForGPSAccess();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION) {
@@ -85,6 +89,10 @@ public class MainScreen extends TabActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.ActivityGroup#onDestroy()
+	 */
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(mHandleMessageReceiver);
@@ -126,7 +134,7 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * 
+	 * Function that create an {@link AlertDialog} to the user if the GPS is not enabled alerting them some features are not accessible without GPS
 	 */
 	private void noGPSEnabled() {
     	new AlertDialog.Builder(MainScreen.this)
@@ -144,7 +152,7 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * 
+	 * Initialize all the variables to be used in {@link MainScreen}
 	 */
 	private void init() {		
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(MMAPIConstants.INTENT_FILTER_DISPLAY_MESSAGE));
@@ -161,7 +169,7 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * 
+	 * Function that registers the Google Cloud Message service
 	 */
 	private void registerGCM() {
 		GCMRegistrar.checkDevice(MainScreen.this);
@@ -210,7 +218,7 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * Function that gets all the categories from the server
+	 * Function to get all the categories from the server
 	 */
 	private void getAllCategories() {
 		Log.d(TAG, TAG + "getAllCategories: " + userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
@@ -227,12 +235,10 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * 
+	 * Function to get all the user's favorites from the server
 	 */
 	private void getAllFavorites() {		
-		if(MMProgressDialog.isProgressDialogNull()) {
-			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
-		} else if(!MMProgressDialog.isProgressDialogShowing()) {
+		if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
 			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 		}
 		
@@ -248,7 +254,7 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * 
+	 * {@link AsyncTask} to register Google Cloud Message in the background
 	 * @author Dezapp, LLC
 	 *
 	 */
@@ -259,6 +265,10 @@ public class MainScreen extends TabActivity {
 			this.context = context;
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see android.os.AsyncTask#doInBackground(Params[])
+		 */
 		@Override
 		protected Void doInBackground(String... params) {
 			boolean registered = ServerUtility.register(context, params[0]);
@@ -278,7 +288,7 @@ public class MainScreen extends TabActivity {
 	/**
 	 * Callback that gets all the category information
 	 * @author Dezapp, LLC
-	 * @param obj obj is the JSON response from the server
+	 *
 	 */ 
 	private class CategoriesCallback implements MMCallback {
 		@Override
@@ -301,7 +311,7 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * 
+	 * Callback to update the user's favorites list in app data after making get favorites call to the server
 	 * @author Dezapp, LLC
 	 *
 	 */
@@ -312,18 +322,19 @@ public class MainScreen extends TabActivity {
 				MMProgressDialog.dismissDialog();
 				Log.d(TAG, TAG + "FavoritesCallback: " + ((String) obj));
 				try {
+					userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
+					userPrefsEditor.commit();
+					
 					JSONObject jObj = new JSONObject((String) obj);
 					if(jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
 						Toast.makeText(MainScreen.this, jObj.getString(MMAPIConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
 						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES);
-					} else {
-						userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
+						userPrefsEditor.commit();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				userPrefsEditor.commit();
 			}
 			
 			setTabs();
