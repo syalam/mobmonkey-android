@@ -71,7 +71,7 @@
 				
 			</FrameLayout>
 			
-			<com.mobmonkey.mobmonkey.utils.MMExpandedListView android:id="@+id/elvsearchnocategory"
+			<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/elvsearchnocategory"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_margin="10dp"
@@ -81,7 +81,7 @@
 				android:divider="@drawable/listview_divider"
 				android:dividerHeight="1dp"/>
 			
-			<com.mobmonkey.mobmonkey.utils.MMExpandedListView android:id="@+id/elvsearchcategory"
+			<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/elvsearchcategory"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_margin="10dp"

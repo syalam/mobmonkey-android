@@ -53,10 +53,10 @@
 		  </intent-filter>
 		</receiver>
 	
-	<service android:name="com.mobmonkey.mobmonkey.utils.GCMIntentService" 
+	<service android:name="com.mobmonkey.mobmonkeyandroid.utils.GCMIntentService" 
 	    	 android:enabled="true"/>
 	
-		<activity android:name=".SignInScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.SignInScreen"
 			android:screenOrientation="portrait">
 			
 			<intent-filter>
@@ -66,106 +66,106 @@
 			
         </activity>
 		
-		<activity android:name=".TwitterAuthScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.TwitterAuthScreen"
 		    android:screenOrientation="portrait">
 
 		</activity>
 		
-		<activity android:name=".SignUpScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.SignUpScreen"
 		    android:windowSoftInputMode="stateHidden"
 		    android:screenOrientation="portrait">
 
 		</activity>
 		
-		<activity android:name=".TermsofuseScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.TermsofuseScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name="com.mobmonkey.mobmonkey.SignUpTwitterScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.SignUpTwitterScreen"
 		    android:windowSoftInputMode="stateHidden"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".MainScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.MainScreen"
 		    android:screenOrientation="portrait"
    		    android:windowSoftInputMode="adjustPan|adjustResize">
 		    
 		</activity>
 		
-		<activity android:name=".TrendingNowActivity"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.TrendingNowActivity"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 
-		<activity android:name=".InboxActivity"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.InboxActivity"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".SearchActivity"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.SearchActivity"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".FilterScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.FilterScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".MakeARequestScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.MakeARequestScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".MMVideoPlayerScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.MMVideoPlayerScreen"
 		    android:screenOrientation="landscape">
 		    
 		</activity>
 		
-		<activity android:name=".FavoritesActivity"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.FavoritesActivity"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".SettingsActivity"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.SettingsActivity"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".AddLocationScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.AddLocationScreen"
 		    android:windowSoftInputMode="stateHidden"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 
-		<activity android:name=".AddLocationMapScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.AddLocationMapScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".AddMessageScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.AddMessageScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".ScheduleRequestScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.ScheduleRequestScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".CategoryListScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.CategoryListScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".AddLocationCategoryList"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.AddLocationCategoryList"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
-		<activity android:name=".SubscribeScreen"
+		<activity android:name="com.mobmonkey.mobmonkeyandroid.SubscribeScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>

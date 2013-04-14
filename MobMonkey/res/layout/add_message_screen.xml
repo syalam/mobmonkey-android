@@ -34,7 +34,7 @@
 			    android:maxLines="3"
 			    android:lines="3"/>
 			
-			<com.mobmonkey.mobmonkey.utils.MMExpandedListView android:id="@+id/mmelvdefaultmessage"
+			<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/mmelvdefaultmessage"
 			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
 			    android:layout_margin="10dp"

@@ -22,37 +22,37 @@
 	        android:layout_height="wrap_content"
 	        android:orientation="vertical">
 					
-	        	<com.mobmonkey.mobmonkey.utils.MMSegmentedRadioGroup android:id="@+id/rgrequests"
+	        	<com.mobmonkey.mobmonkeyandroid.utils.MMSegmentedRadioGroup android:id="@+id/rgrequests"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_margin="10dip"
 					android:orientation="horizontal"
 					android:checkedButton="@+id/rbvideorequest">
 					
-					<com.mobmonkey.mobmonkey.utils.MMCenteredRadioImageButton
+					<com.mobmonkey.mobmonkeyandroid.utils.MMCenteredRadioImageButton
 						android:id="@id/rbvideorequest"
 						android:minWidth="40dip"
 						android:minHeight="60dip"
 						android:layout_weight="1"
 						android:button="@android:drawable/ic_menu_camera"/>
 					
-					<com.mobmonkey.mobmonkey.utils.MMCenteredRadioImageButton
+					<com.mobmonkey.mobmonkeyandroid.utils.MMCenteredRadioImageButton
 						android:id="@+id/rbphotorequest"
 						android:minWidth="40dip"
 						android:minHeight="60dip"
 						android:layout_weight="1"
 						android:button="@android:drawable/ic_menu_gallery"/>
 					
-					<com.mobmonkey.mobmonkey.utils.MMCenteredRadioImageButton
+					<com.mobmonkey.mobmonkeyandroid.utils.MMCenteredRadioImageButton
 						android:id="@+id/rbtextrequest"
 						android:minWidth="40dip"
 						android:minHeight="60dip"
 						android:layout_weight="1"
 						android:button="@android:drawable/ic_menu_send"/>
 			
-				</com.mobmonkey.mobmonkey.utils.MMSegmentedRadioGroup>
+				</com.mobmonkey.mobmonkeyandroid.utils.MMSegmentedRadioGroup>
 				
-				<com.mobmonkey.mobmonkey.utils.MMExpandedListView android:id="@+id/mmelvaddmessage"
+				<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/mmelvaddmessage"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_margin="10dp"
@@ -62,7 +62,7 @@
 					android:divider="@drawable/listview_divider"
 					android:dividerHeight="1dp"/>
 				
-				<com.mobmonkey.mobmonkey.utils.MMExpandedListView android:id="@+id/mmelvschedulerequest"
+				<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/mmelvschedulerequest"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_margin="10dp"

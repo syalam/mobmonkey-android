@@ -161,7 +161,7 @@
 <!-- 	<string name="pd_retrieving_media">Retrieving available media&#8230;</string> -->
 	<string name="pd_updating_favorites">Updating favorites&#8230;</string>
 	
-	<string name="toast_unable_to_load_location_info">unable to load location information</string>
+	<string name="toast_unable_to_load_location_info">Unable to load location information</string>
 	<string name="toast_add_favorite">Successfully added location to favorites</string>
 	<string name="toast_remove_favorite">Successfully removed location to favorites</string>
 	
