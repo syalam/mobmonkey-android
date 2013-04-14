@@ -16,7 +16,6 @@ import com.mobmonkey.mobmonkey.utils.MMUtility;
 import com.mobmonkey.mobmonkeyapi.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeyapi.adapters.MMLocationDetailsAdapter;
-import com.mobmonkey.mobmonkeyapi.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeyapi.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeyapi.utils.MMCallback;
 
@@ -63,18 +62,13 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private TextView tvFavorite;
 	
 	private LinearLayout llMedia;
-	private ImageView ivStream;
-	private ImageView ivVideo;
-	private ImageView ivImage;
-	private ImageView ivStreamPlay;
-	private ImageView ivVideoPlay;
-	private TextView tvStreamExpiryDate;
-	private TextView tvVideoExpiryDate;
-	private TextView tvImageExpiryDate;
+	private ImageView ivMedia;
+	private ImageButton ibPlay;
+	private TextView tvExpiryDate;
 	private ImageButton ibShareMedia;
-	private ImageButton ibStream;
-	private ImageButton ibVideo;
-	private ImageButton ibImage;
+	private ImageView ivtnStream;
+	private ImageView ivtnVideo;
+	private ImageView ivtnImage;
 	private TextView tvStreamMediaCount;
 	private TextView tvVideoMediaCount;
 	private TextView tvImageMediaCount;
@@ -83,12 +77,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	
 	private String mediaResults;
 	private boolean retrieveLocationDetails = false;
-	private boolean hasStreamExpiryDate = false;
-	private boolean hasVideoExpiryDate = false;
-	private boolean hasImageExpiryDate = false;
 	private View mediaButtonSelected;
-	private String mediaStreamUrl;
-	private String mediaVideoUrl;
+	private String mediaStreamVideoUrl;
 	
 	/*
 	 * (non-Javadoc)
@@ -110,18 +100,13 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		tvFavorite = (TextView) view.findViewById(R.id.tvfavorite);
 		
 		llMedia = (LinearLayout) view.findViewById(R.id.llmedia);
-		ivStream = (ImageView) view.findViewById(R.id.ivstream);
-		ivVideo = (ImageView) view.findViewById(R.id.ivvideo);
-		ivImage = (ImageView) view.findViewById(R.id.ivimage);
-		ivStreamPlay = (ImageView) view.findViewById(R.id.ivstreamplay);
-		ivVideoPlay = (ImageView) view.findViewById(R.id.ivvideoplay);
-		tvStreamExpiryDate = (TextView) view.findViewById(R.id.tvstreamexpirydate);
-		tvVideoExpiryDate = (TextView) view.findViewById(R.id.tvvideoexpirydate);
-		tvImageExpiryDate = (TextView) view.findViewById(R.id.tvimageexpirydate);
+		ivMedia = (ImageView) view.findViewById(R.id.ivmedia);
+		ibPlay = (ImageButton) view.findViewById(R.id.ibplay);
+		tvExpiryDate = (TextView) view.findViewById(R.id.tvexpirydate);
 		ibShareMedia = (ImageButton) view.findViewById(R.id.ibsharemedia);
-		ibStream = (ImageButton) view.findViewById(R.id.ibstream);
-		ibVideo = (ImageButton) view.findViewById(R.id.ibvideo);
-		ibImage = (ImageButton) view.findViewById(R.id.ibimage);
+		ivtnStream = (ImageView) view.findViewById(R.id.ivtnstream);
+		ivtnVideo = (ImageView) view.findViewById(R.id.ivtnvideo);
+		ivtnImage = (ImageView) view.findViewById(R.id.ivtnimage);
 		tvStreamMediaCount = (TextView) view.findViewById(R.id.tvstreammediacount);
 		tvVideoMediaCount = (TextView) view.findViewById(R.id.tvvideomediacount);
 		tvImageMediaCount = (TextView) view.findViewById(R.id.tvimagemediacount);
@@ -187,26 +172,12 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			case R.id.llfavorite:
 				favoriteClicked();
 				break;
-			case R.id.ivstreamplay:
+			case R.id.ibplay:
 				intent = new Intent(getActivity(), MMVideoPlayerScreen.class);
-				intent.putExtra(MMAPIConstants.JSON_KEY_MEDIA_URL, mediaStreamUrl);
-				startActivity(intent);
-				break;
-			case R.id.ivvideoplay:
-				intent = new Intent(getActivity(), MMVideoPlayerScreen.class);
-				intent.putExtra(MMAPIConstants.JSON_KEY_MEDIA_URL, mediaVideoUrl);
+				intent.putExtra(MMAPIConstants.JSON_KEY_MEDIA_URL, mediaStreamVideoUrl);
 				startActivity(intent);
 				break;
 			case R.id.ibsharemedia:
-				break;
-			case R.id.ibstream:
-				streamMediaSelected();
-				break;
-			case R.id.ibvideo:
-				videoMediaSelected();
-				break;
-			case R.id.ibimage:
-				imageMediaSelected();
 				break;
 		}
 	}
@@ -286,9 +257,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		if(mediaJArr.length() > 0) {
 			llMedia.setVisibility(View.VISIBLE);
 			
-			boolean hasFirstStreamMedia = false;
-			boolean hasFirstVideoMedia = false;
-			boolean hasFirstImageMedia = false;
+			boolean isFirstMedia = true;
 			
 			for(int i = 0; i < mediaJArr.length(); i++) {
 				JSONObject jObj = mediaJArr.getJSONObject(i);
@@ -296,126 +265,74 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				String mediaType = jObj.getString(MMAPIConstants.JSON_KEY_TYPE);
 				
 				if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING)) {
-					if(!hasFirstStreamMedia) {
-						mediaStreamUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
-						tvStreamExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
-						hasStreamExpiryDate = true;
-						hasFirstStreamMedia = true;
+					if(isFirstMedia) {
+						mediaStreamVideoUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
+						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						ibPlay.setVisibility(View.VISIBLE);
+						ibPlay.setOnClickListener(LocationDetailsFragment.this);
+						isFirstMedia = false;
 					}
 					streamMediaCount++;
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
-					if(!hasFirstVideoMedia) {
-						mediaVideoUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
-						tvVideoExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
-						hasVideoExpiryDate = true;
-						hasFirstVideoMedia = true;
+					if(isFirstMedia) {
+						mediaStreamVideoUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
+						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						ibPlay.setVisibility(View.VISIBLE);
+						ibPlay.setOnClickListener(LocationDetailsFragment.this);
+						isFirstMedia = false;
 					}
 					videoMediaCount++;
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
-					if(!hasFirstImageMedia) {
+					if(isFirstMedia) {
 						MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
-						tvImageExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
-						hasImageExpiryDate = true;
-						hasFirstImageMedia = true;
+						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						isFirstMedia = false;
 					}
 					imageMediaCount++;
 				}
 			}
 			
 			if(streamMediaCount > 0) {
-				ivStreamPlay.setClickable(true);
+				ivtnStream.setBackgroundResource(R.drawable.tn_hasmedia_stream);
 				tvStreamMediaCount.setText(streamMediaCount + MMAPIConstants.DEFAULT_STRING);
 			}
 			if(videoMediaCount > 0) {
-				ivVideoPlay.setClickable(true);
+				ivtnVideo.setBackgroundResource(R.drawable.tn_hasmedia_video);
 				tvVideoMediaCount.setText(videoMediaCount + MMAPIConstants.DEFAULT_STRING);
 			}
 			if(imageMediaCount > 0) {
+				ivtnImage.setBackgroundResource(R.drawable.tn_hasmedia_image);
 				tvImageMediaCount.setText(imageMediaCount + MMAPIConstants.DEFAULT_STRING);
 			}
 			
-			ivStreamPlay.setOnClickListener(LocationDetailsFragment.this);
-			ivVideoPlay.setOnClickListener(LocationDetailsFragment.this);
 			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
-			ibStream.setOnClickListener(LocationDetailsFragment.this);
-			ibVideo.setOnClickListener(LocationDetailsFragment.this);
-			ibImage.setOnClickListener(LocationDetailsFragment.this);
 		}
+		// TODO: to be removed, for testing only
 //		else {
 //			llMedia.setVisibility(View.VISIBLE);
-//			hasVideoExpiryDate = true;
-//			tvVideoExpiryDate.setText("30m");
-//			MMImageLoaderAdapter.loadImage(new LoadImageCallback(), "http://i.imgur.com/T0Va07Y.jpg");
+//			tvExpiryDate.setText("30m");
+////			MMImageLoaderAdapter.loadImage(new LoadImageCallback(), "http://i.imgur.com/T0Va07Y.jpg");
 //			
-//			ivVideoPlay.setClickable(true);
+//			mediaStreamVideoUrl = "http://www.tools4movies.com/dvd_catalyst_profile_samples/Harold%20Kumar%203%20Christmas%20tablet.mp4";
+//			ibPlay.setVisibility(View.VISIBLE);
+//			ibPlay.setOnClickListener(LocationDetailsFragment.this);
+//			streamMediaCount = 1;
 //			
-//			ivStreamPlay.setOnClickListener(LocationDetailsFragment.this);
-//			ivVideoPlay.setOnClickListener(LocationDetailsFragment.this);
+//			if(streamMediaCount > 0) {
+//				ivtnStream.setBackgroundResource(R.drawable.tn_hasmedia_stream);
+//				tvStreamMediaCount.setText(streamMediaCount + MMAPIConstants.DEFAULT_STRING);
+//			}
+//			if(videoMediaCount > 0) {
+//				ivtnVideo.setBackgroundResource(R.drawable.tn_hasmedia_video);
+//				tvVideoMediaCount.setText(videoMediaCount + MMAPIConstants.DEFAULT_STRING);
+//			}
+//			if(imageMediaCount > 0) {
+//				ivtnImage.setBackgroundResource(R.drawable.tn_hasmedia_image);
+//				tvImageMediaCount.setText(imageMediaCount + MMAPIConstants.DEFAULT_STRING);
+//			}
+//			
 //			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
-//			ibStream.setOnClickListener(LocationDetailsFragment.this);
-//			ibVideo.setOnClickListener(LocationDetailsFragment.this);
-//			ibImage.setOnClickListener(LocationDetailsFragment.this);
 //		}
-	}
-	
-	/**
-	 * Function to handle the event of when the user clicked on the stream media button
-	 */
-	private void streamMediaSelected() {
-		mediaButtonSelected = ibStream;
-		ibStream.setSelected(true);
-		ibVideo.setSelected(false);
-		ibImage.setSelected(false);
-		ivStream.setVisibility(View.VISIBLE);
-		ivVideo.setVisibility(View.INVISIBLE);
-		ivImage.setVisibility(View.INVISIBLE);
-		ivStreamPlay.setVisibility(View.VISIBLE);
-		ivVideoPlay.setVisibility(View.INVISIBLE);
-		if(hasStreamExpiryDate) {
-			tvStreamExpiryDate.setVisibility(View.VISIBLE);
-		}
-		tvVideoExpiryDate.setVisibility(View.INVISIBLE);
-		tvImageExpiryDate.setVisibility(View.INVISIBLE);
-	}
-	
-	/**
-	 * Function to handle the event of when the user clicked on the video media button
-	 */
-	private void videoMediaSelected() {
-		mediaButtonSelected = ibVideo;
-		ibStream.setSelected(false);
-		ibVideo.setSelected(true);
-		ibImage.setSelected(false);
-		ivStream.setVisibility(View.INVISIBLE);
-		ivVideo.setVisibility(View.VISIBLE);
-		ivImage.setVisibility(View.INVISIBLE);
-		ivStreamPlay.setVisibility(View.INVISIBLE);
-		ivVideoPlay.setVisibility(View.VISIBLE);
-		tvStreamExpiryDate.setVisibility(View.INVISIBLE);
-		if(hasVideoExpiryDate) {
-			tvVideoExpiryDate.setVisibility(View.VISIBLE);
-		}
-		tvImageExpiryDate.setVisibility(View.INVISIBLE);
-	}
-	
-	/**
-	 * Function to handle the event of when the user clicked on the image media button
-	 */
-	private void imageMediaSelected() {
-		mediaButtonSelected = ibImage;
-		ibStream.setSelected(false);
-		ibVideo.setSelected(false);
-		ibImage.setSelected(true);
-		ivStream.setVisibility(View.INVISIBLE);
-		ivVideo.setVisibility(View.INVISIBLE);
-		ivImage.setVisibility(View.VISIBLE);
-		ivStreamPlay.setVisibility(View.INVISIBLE);
-		ivVideoPlay.setVisibility(View.INVISIBLE);
-		tvStreamExpiryDate.setVisibility(View.INVISIBLE);
-		tvVideoExpiryDate.setVisibility(View.INVISIBLE);
-		if(hasImageExpiryDate) {
-			tvImageExpiryDate.setVisibility(View.VISIBLE);
-		}
 	}
 	
 	/**
@@ -474,7 +391,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					locationDetails = new JSONObject((String) obj);
 					
 					if(locationDetails.has(MMAPIConstants.JSON_KEY_STATUS)) {
-						Toast.makeText(getActivity(), "unable to load location information", Toast.LENGTH_LONG).show();
+						Toast.makeText(getActivity(), R.string.toast_unable_to_load_location_info, Toast.LENGTH_LONG).show();
 						getActivity().onBackPressed();
 					} else {
 						retrieveLocationDetails = true;
@@ -522,7 +439,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private class LoadImageCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-			ivImage.setImageBitmap((Bitmap) obj);
+			ivMedia.setImageBitmap((Bitmap) obj);
 		}
 	}
 	

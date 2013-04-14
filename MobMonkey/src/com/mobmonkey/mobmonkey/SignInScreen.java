@@ -81,6 +81,16 @@ public class SignInScreen extends Activity {
 		Log.d(TAG, TAG + "onActivityResult");
 		
 		switch(requestCode) {
+			case MMAPIConstants.REQUEST_CODE_TOS_FACEBOOK:
+				if(userPrefs.getBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, false)) {
+					Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
+				}
+				break;
+			case MMAPIConstants.REQUEST_CODE_TOS_TWITTER:
+				if(userPrefs.getBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_TWITTER, false)) {
+					launchTwitterAuthScreen();
+				}
+				break;
 			case MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH:
 				MMProgressDialog.dismissDialog();
 				
@@ -88,6 +98,7 @@ public class SignInScreen extends Activity {
 					Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
 					startActivity(new Intent(SignInScreen.this, MainScreen.class));
 				} else if(resultCode == MMAPIConstants.RESULT_CODE_NOT_FOUND) {
+					Toast.makeText(SignInScreen.this, R.string.toast_new_twitter_user, Toast.LENGTH_SHORT).show();
 					Intent signUpTwitterIntent = (Intent) data.clone();
 					signUpTwitterIntent.setClass(SignInScreen.this, SignUpTwitterScreen.class);
 					startActivityForResult(signUpTwitterIntent, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER);
@@ -168,6 +179,20 @@ public class SignInScreen extends Activity {
 		etPassword.setText("a1a2a3");
 	}
 	
+	private void launchToS(int requestCode) {
+		Intent openToSIntent = new Intent(SignInScreen.this, TermsofuseScreen.class);
+		openToSIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON, true);
+		openToSIntent.putExtra(MMAPIConstants.REQUEST_CODE, requestCode);
+		startActivityForResult(openToSIntent, requestCode);
+	}
+	
+	private void launchTwitterAuthScreen() {
+		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_launch_twitter_auth_screen));
+		Intent twitterAuthIntent = new Intent(SignInScreen.this, TwitterAuthScreen.class);
+		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
+		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
+	}
+	
 	/**
 	 * Functional that handles the normal user sign in with email through MobMonkey
 	 */
@@ -185,7 +210,11 @@ public class SignInScreen extends Activity {
      * Function that handles the user sign in with Facebook API
      */
 	private void signInFacebook() {
-		Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
+		if(!userPrefs.getBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, false)) {
+			launchToS(MMAPIConstants.REQUEST_CODE_TOS_FACEBOOK);
+		} else {
+			Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
+		}
 	}
 	
     /**
@@ -196,10 +225,11 @@ public class SignInScreen extends Activity {
      * 		launchMode singleTask is that this {@link Activity} can only be created once, if it was destroyed and recreated, it will cause an {@link IllegalStateException} error.
      */
 	private void signInTwitter() {
-		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_launch_twitter_auth_screen));
-		Intent twitterAuthIntent = new Intent(SignInScreen.this, TwitterAuthScreen.class);
-		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
-		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
+		if(!userPrefs.getBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_TWITTER, false)) {
+			launchToS(MMAPIConstants.REQUEST_CODE_TOS_TWITTER);
+		} else {
+			launchTwitterAuthScreen();
+		}
 	}
 	
 	/**

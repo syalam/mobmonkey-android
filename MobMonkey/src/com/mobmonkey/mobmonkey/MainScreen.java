@@ -74,7 +74,7 @@ public class MainScreen extends TabActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION) {
+		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION) {
 			if(MMLocationManager.isGPSEnabled()) {
 				checkForGPSAccess();
 			} else {
@@ -103,7 +103,7 @@ public class MainScreen extends TabActivity {
 	    	.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int which) {
 		            // Launch settings, allowing user to make a change
-		            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION);
+		            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION);
 		        }
 	    	})
 	    	.setNegativeButton(R.string.ad_btn_no, new DialogInterface.OnClickListener() {

@@ -54,58 +54,18 @@
 		            android:paddingLeft="3dp"
 		            android:paddingRight="3dp">
 					
-		            <ImageView android:id="@+id/ivstream"
+		            <ImageView android:id="@+id/ivmedia"
 		                android:layout_width="match_parent"
 		                android:layout_height="200dp"/>
 		            
-		            <ImageView android:id="@+id/ivstreamplay"
+		            <ImageButton android:id="@+id/ibplay"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:layout_gravity="center"
 		                android:background="@drawable/btn_play_video"
-		                android:clickable="false"/>
-					
-					<TextView android:id="@+id/tvstreamexpirydate"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="right"
-						android:layout_marginTop="10dp"
-						android:layout_marginRight="10dp"
-						android:gravity="center"
-						android:drawableLeft="@drawable/ic_dialog_time"
-						android:drawablePadding="5dp"
-						android:textColor="@android:color/white"
-						android:visibility="invisible"/>
-		            
-		            <ImageView android:id="@+id/ivvideo"
-		                android:layout_width="match_parent"
-		                android:layout_height="200dp"/>
-		            
-		            <ImageView android:id="@+id/ivvideoplay"
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:layout_gravity="center"
-		                android:background="@drawable/btn_play_video"
-		                android:clickable="false"/>
-					
-					<TextView android:id="@+id/tvvideoexpirydate"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="right"
-						android:layout_marginTop="10dp"
-						android:layout_marginRight="10dp"
-						android:gravity="center"
-						android:drawableLeft="@drawable/ic_dialog_time"
-						android:drawablePadding="5dp"
-						android:textColor="@android:color/white"
-						android:visibility="invisible"/>
-   					
-		            <ImageView android:id="@+id/ivimage"
-		                android:layout_width="match_parent"
-		                android:layout_height="200dp"
 		                android:visibility="invisible"/>
 					
-					<TextView android:id="@+id/tvimageexpirydate"
+					<TextView android:id="@+id/tvexpirydate"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_gravity="right"
@@ -137,10 +97,10 @@
 		                android:layout_marginRight="5dp"
 		                android:layout_weight="1">
 			                
-						<ImageButton android:id="@+id/ibstream"
+						<ImageView android:id="@+id/ivtnstream"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
-							android:background="@drawable/btn_media_stream"/>
+							android:background="@drawable/tn_media_stream"/>
 						
 						<TextView android:id="@+id/tvstreammediacount"
 						    android:layout_width="wrap_content"
@@ -157,10 +117,10 @@
 			        	android:layout_marginRight="5dp"
 		                android:layout_weight="1">
 			                
-						<ImageButton android:id="@+id/ibvideo"
+						<ImageView android:id="@+id/ivtnvideo"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
-							android:background="@drawable/btn_media_video"/>
+							android:background="@drawable/tn_media_video"/>
 						
 						<TextView android:id="@+id/tvvideomediacount"
 						    android:layout_width="wrap_content"
@@ -176,10 +136,10 @@
 		                android:layout_height="wrap_content"
 		                android:layout_weight="1">
 			                
-						<ImageButton android:id="@+id/ibimage"
+						<ImageView android:id="@+id/ivtnimage"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
-							android:background="@drawable/btn_media_image"/>
+							android:background="@drawable/tn_media_image"/>
 						
 						<TextView android:id="@+id/tvimagemediacount"
 						    android:layout_width="wrap_content"

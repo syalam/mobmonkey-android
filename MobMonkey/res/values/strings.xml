@@ -26,6 +26,7 @@
 	<string name="pd_signing_in_facebook">Signing in via Facebook&#8230;</string>
 	<string name="pd_signing_in_twitter">Signing in via Twitter&#8230;</string>
 	
+	<string name="toast_new_twitter_user">New Twitter user, please sign up with your user info</string>
 	<string name="toast_sign_in_successful">Successfully signed in</string>
 	
 	<!-- SignUp Screen -->
@@ -155,9 +156,12 @@
 	<string name="tv_add_notifications">Add Notifications</string>
 	<string name="tv_favorite">Favorite</string>
 	<string name="tv_remove_favorite">Remove favorite</string>
+	
 	<string name="pd_loading_location_information">Loading location information&#8230;</string>
 <!-- 	<string name="pd_retrieving_media">Retrieving available media&#8230;</string> -->
 	<string name="pd_updating_favorites">Updating favorites&#8230;</string>
+	
+	<string name="toast_unable_to_load_location_info">unable to load location information</string>
 	<string name="toast_add_favorite">Successfully added location to favorites</string>
 	<string name="toast_remove_favorite">Successfully removed location to favorites</string>
 	
@@ -256,6 +260,9 @@ Nam ornare consequat leo eget tincidunt. Mauris vulputate molestie congue. Aliqu
 Duis leo quam, faucibus vitae aliquet vitae, sagittis sed augue. Nunc sit amet magna vitae massa semper consectetur laoreet in justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel quam est, sit amet adipiscing leo. Donec tellus justo, egestas dignissim molestie a, pretium eget nisl. Duis mollis metus eget mauris ullamcorper auctor. In hac habitasse platea dictumst. Mauris interdum dignissim viverra. Suspendisse ac ipsum nisl. Sed sagittis posuere nulla. Mauris id eros nec diam porttitor posuere vitae eget orci.
 
 Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis et auctor diam aliquet. Maecenas ligula tellus, suscipit sed eleifend at, condimentum dictum augue. Aliquam vel urna neque, sit amet malesuada massa. In fringilla facilisis dictum. Aliquam a erat at sem iaculis sollicitudin eu gravida mauris. Mauris eu sapien risus, vel laoreet metus. Pellentesque quis velit lacus. Aliquam sit amet dolor nisi, sed aliquet erat.</string>
+	
+	<string name="btn_reject">Reject</string>
+	<string name="btn_accept">Accept</string>
 	
 	<!-- Add Location Screen -->
 	<string name="toast_tap_location_to_add">Tap on the location you would like to add on the map</string>

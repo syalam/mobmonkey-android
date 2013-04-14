@@ -90,16 +90,6 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
         
         init();
     }
-
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
     
     /**
      * {@link OnKeyListener} handle when user finished entering confirmed password and go to the birthdate {@link EditText}, removes the soft keyboard
@@ -175,6 +165,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 					startActivity(new Intent(SignUpScreen.this, MainScreen.class));
 					finish();
 				} else if(resultCode == MMAPIConstants.RESULT_CODE_NOT_FOUND) {
+					Toast.makeText(SignUpScreen.this, R.string.toast_new_twitter_user, Toast.LENGTH_SHORT).show();
 					Intent signUpTwitterIntent = (Intent) data.clone();
 					signUpTwitterIntent.setClass(SignUpScreen.this, SignUpTwitterScreen.class);
 					startActivityForResult(signUpTwitterIntent, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER);
@@ -296,8 +287,10 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      * Function that handles the user sign up with Facebook API
      */
     private void signUpFacebook() {
-    	if(checkAcceptedToS()) {    		
+    	if(checkAcceptedToS()) {
     		Session.openActiveSession(SignUpScreen.this, true, new SessionStatusCallback());
+    		userPrefsEditor.putBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, true);
+    		userPrefsEditor.commit();
     	}
     }
 
@@ -311,6 +304,8 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      */
     private void signUpTwitter() {    	
     	if(checkAcceptedToS()) {
+    		userPrefsEditor.putBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_TWITTER, true);
+    		userPrefsEditor.commit();
     		MMProgressDialog.displayDialog(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_launch_twitter_auth_screen));
     		Intent twitterAuthIntent = new Intent(SignUpScreen.this, TwitterAuthScreen.class);
     		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);

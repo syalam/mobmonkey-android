@@ -75,6 +75,8 @@ public final class MMAPIConstants {
 	public static final String SHARED_PREFS_KEY_NARROW_BY_LIVE_VIDEO = "Narrow by live video";
 	public static final String SHARED_PREFS_KEY_SEARCH_RADIUS = "Search radius";
 	public static final String SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES = "Top level categories";
+	public static final String SHARED_PREFS_KEY_TOS_FACEBOOK = "ToS Facebook";
+	public static final String SHARED_PREFS_KEY_TOS_TWITTER = "ToS Twitter";
 	
 	// Intent extra/Bundle key values
 	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
@@ -88,6 +90,7 @@ public final class MMAPIConstants {
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
+	public static final String KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON = "ToS display button";
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
 	
 	// MobMonkey server call key values
@@ -155,16 +158,15 @@ public final class MMAPIConstants {
 	// Request code values
 	public static final String REQUEST_CODE = "Request code";
 	
-	public static final int REQUEST_CODE_IMAGE = 1;
-	public static final int REQUEST_CODE_VIDEO = 2;
-	public static final int REQUEST_CODE_SIGN_IN_TWITTER_AUTH = 1000;
-	public static final int REQUEST_CODE_SIGN_UP_TWITTER_AUTH = 1001;
-	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2000;
-	public static final int REQUEST_CODE_TURN_ON_GPS_ADD_LOCATION = 10000;
-	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_TEXT = 10001;
-	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_ALL_NEARBY = 10002;
-	public static final int REQUEST_CODE_TURN_ON_GPS_HISTORY = 10003;
-	public static final int REQUEST_CODE_TURN_ON_GPS_SEARCH_CATEGORY = 10004;
+
+	public static final int REQUEST_CODE_TOS_FACEBOOK = 1000;
+	public static final int REQUEST_CODE_TOS_TWITTER = 2000;
+	public static final int REQUEST_CODE_SIGN_IN_TWITTER_AUTH = 2001;
+	public static final int REQUEST_CODE_SIGN_UP_TWITTER_AUTH = 2002;
+	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2003;
+	public static final int REQUEST_CODE_TURN_ON_GPS_LOCATION = 5000;
+	public static final int REQUEST_CODE_IMAGE = 10000;
+	public static final int REQUEST_CODE_VIDEO = 10001;
 	public static final int REQUEST_CODE_ADD_MESSAGE = 100000;
 	public static final int REQUEST_CODE_SCHEDULE_REQUEST = 100001;
 	
