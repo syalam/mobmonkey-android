@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 
 public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMAnsweredRequestItem>{
 	private Context context; 

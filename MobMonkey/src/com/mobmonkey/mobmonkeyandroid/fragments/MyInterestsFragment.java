@@ -1,7 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
-import com.mobmonkey.mobmonkey.R;
-import com.mobmonkey.mobmonkey.R.layout;
+import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.R.layout;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 
 import android.app.Activity;

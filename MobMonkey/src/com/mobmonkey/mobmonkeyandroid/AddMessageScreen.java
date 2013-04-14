@@ -1,6 +1,6 @@
 package com.mobmonkey.mobmonkeyandroid;
 
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 

@@ -7,7 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.util.Log;
 
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.SearchFragment.OnNoCategoryItemClickListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;

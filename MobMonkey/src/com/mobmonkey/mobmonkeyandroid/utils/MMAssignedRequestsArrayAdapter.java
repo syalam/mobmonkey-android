@@ -1,6 +1,6 @@
 package com.mobmonkey.mobmonkeyandroid.utils;
 
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 
 import android.app.Activity;
 import android.content.Context;

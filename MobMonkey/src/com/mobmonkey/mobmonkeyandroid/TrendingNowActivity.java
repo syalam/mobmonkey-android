@@ -2,7 +2,7 @@ package com.mobmonkey.mobmonkeyandroid;
 
 import java.util.Stack;
 
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.TopViewedFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.TrendingNowFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.TrendingNowFragment.OnTrendingItemClickListener;

@@ -11,9 +11,9 @@ import com.google.android.gcm.GCMBroadcastReceiver;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
-import com.mobmonkey.mobmonkey.R;
-import com.mobmonkey.mobmonkey.R.drawable;
-import com.mobmonkey.mobmonkey.R.string;
+import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.R.drawable;
+import com.mobmonkey.mobmonkeyandroid.R.string;
 import com.mobmonkey.mobmonkeyandroid.MainScreen;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 

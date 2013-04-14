@@ -26,7 +26,7 @@ import android.widget.TabWidget;
 import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.GCMIntentService;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.ServerUtility;

@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.MMVideoPlayerScreen;
 import com.mobmonkey.mobmonkeyandroid.MakeARequestScreen;
 import com.mobmonkey.mobmonkeyandroid.utils.MMArrayAdapter;
@@ -17,6 +17,7 @@ import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMLocationDetailsAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMToast;
 
@@ -397,7 +398,21 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					locationDetails = new JSONObject((String) obj);
 					
 					if(locationDetails.has(MMAPIConstants.JSON_KEY_STATUS)) {
-						MMToast.makeToastWithImage(getActivity(), getActivity().getResources().getDrawable(android.R.drawable.ic_menu_close_clear_cancel), getActivity().getString(R.string.toast_unable_to_load_location_info));
+						MMLocationDetailsAdapter.cancelRetrieveAllMediaForLocation();
+						MMProgressDialog.dismissDialog();
+						
+						LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+						View customDialog = inflater.inflate(com.mobmonkey.mobmonkeysdk.R.layout.mmtoast, null);
+						ImageView ivToastImage = (ImageView)customDialog.findViewById(R.id.ivtoastimage);
+						ivToastImage.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
+						
+						TextView ivToastText = (TextView)customDialog.findViewById(R.id.tvtoasttext);
+						ivToastText.setText(R.string.toast_unable_to_load_location_info);
+						MMDialog.displayCustomDialog(getActivity(), customDialog);
+						
+//						MMToast.makeToastWithImage(getActivity().getApplicationContext(), 
+//								getActivity().getResources().getDrawable(android.R.drawable.ic_menu_close_clear_cancel), 
+//								getActivity().getString(R.string.toast_unable_to_load_location_info)).show();
 
 						getActivity().onBackPressed();
 					} else {

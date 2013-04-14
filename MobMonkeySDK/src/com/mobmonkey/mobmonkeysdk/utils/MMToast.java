@@ -15,13 +15,8 @@ import android.widget.Toast;
  * @author Dezapp, LLC
  *
  */
-public class MMToast extends Toast {
-	
-	public MMToast(Context context) {
-		super(context);
-	}
-
-	public static MMToast makeToastWithImage(Context context, Drawable image, String text) {
+public class MMToast {
+	public static Toast makeToastWithImage(Context context, Drawable image, String text) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		View toastView = inflater.inflate(R.layout.mmtoast, null);
@@ -31,11 +26,11 @@ public class MMToast extends Toast {
 		TextView ivToastText = (TextView)toastView.findViewById(R.id.tvtoasttext);
 		ivToastText.setText(text);
 		
-		MMToast mmToast = new MMToast(context);
-		mmToast.setGravity(Gravity.BOTTOM, 0, 120);
-		mmToast.setDuration(Toast.LENGTH_LONG);
-		mmToast.setView(toastView);
+		Toast toast = new Toast(context);
+		toast.setGravity(Gravity.BOTTOM, 0, 120);
+		toast.setDuration(Toast.LENGTH_SHORT);
+		toast.setView(toastView);
 		
-		return mmToast;
+		return toast;
 	}
 }

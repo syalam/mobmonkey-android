@@ -1,6 +1,6 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSocialNetworkArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSocialNetworkItem;

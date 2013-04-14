@@ -5,7 +5,7 @@ import java.util.Stack;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.*;
 import com.mobmonkey.mobmonkeyandroid.fragments.CategoriesFragment.OnSubCategoryItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment.OnLocationDetailsItemClickListener;

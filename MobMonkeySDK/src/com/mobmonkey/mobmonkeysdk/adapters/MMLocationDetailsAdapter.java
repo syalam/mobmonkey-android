@@ -16,6 +16,8 @@ import com.mobmonkey.mobmonkeysdk.utils.MMGetAsyncTask;
 public class MMLocationDetailsAdapter extends MMAdapter {
 	private static final String TAG = "MMMediaAdapter: ";
 	
+	private static MMGetAsyncTask mmGetAsyncTask;
+	
 	/**
 	 * Private class to prevent the instantiation of this class outside the scope of this class
 	 */
@@ -52,6 +54,15 @@ public class MMLocationDetailsAdapter extends MMAdapter {
 		httpGet.setHeader(MMAPIConstants.KEY_USER, emailAddress);
 		httpGet.setHeader(MMAPIConstants.KEY_AUTH, password);
 		
-		new MMGetAsyncTask(mmCallback).execute(httpGet);	
+		mmGetAsyncTask = new MMGetAsyncTask(mmCallback);
+		mmGetAsyncTask.execute(httpGet);
+	}
+	
+	public static void cancelRetrieveAllMediaForLocation() {
+		if(mmGetAsyncTask != null) {
+			if(!mmGetAsyncTask.isCancelled()) {
+				mmGetAsyncTask.cancel(true);
+			}
+		}
 	}
 }

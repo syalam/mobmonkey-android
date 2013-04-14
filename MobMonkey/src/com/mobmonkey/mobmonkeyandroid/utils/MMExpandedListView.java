@@ -1,6 +1,6 @@
 package com.mobmonkey.mobmonkeyandroid.utils;
 
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 
 import android.content.Context;
 import android.graphics.Canvas;

@@ -27,7 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.mobmonkey.mobmonkey.R;
+import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.AddLocationMapScreen;
 import com.mobmonkey.mobmonkeyandroid.FilterScreen;
 import com.mobmonkey.mobmonkeyandroid.utils.MMArrayAdapter;
