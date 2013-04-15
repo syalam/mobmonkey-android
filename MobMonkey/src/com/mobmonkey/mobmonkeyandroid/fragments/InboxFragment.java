@@ -6,9 +6,11 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.mobmonkey.mobmonkeyandroid.AssignedRequestsScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
@@ -60,7 +63,6 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		inboxRequests = new JSONArray[4];
 		
 		lvInbox.setOnItemClickListener(InboxFragment.this);
-		inboxUpdate();
 		return view;
 	}
 
@@ -82,6 +84,9 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+//		Intent intent = new Intent(getActivity(), AssignedRequestsScreen.class);
+//		intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS, inboxRequests[position].toString());
+//		startActivity(intent);
 		listener.onInboxItemClick(position, inboxRequests[position].toString());
 	}
 	
@@ -208,6 +213,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
+				Log.d(TAG, "AssignedRequest: " + (String) obj);
 				try {
 					JSONArray jArr = new JSONArray((String) obj);
 					

@@ -42,6 +42,7 @@ public final class MMAPIConstants {
 	public static final String URI_PATH_TRENDING = "trending";
 	public static final String URI_PATH_USER = "user";
 	
+	public static final String TAB_TITLE_CURRENT_TAG = "Current tab tag";
 	public static final String TAB_TITLE_TRENDING_NOW = "Trending Now";
 	public static final String TAB_TITLE_INBOX = "Inbox";
 	public static final String TAB_TITLE_SEARCH = "Search";

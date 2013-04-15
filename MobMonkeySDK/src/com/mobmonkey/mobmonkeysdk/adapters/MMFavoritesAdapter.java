@@ -19,7 +19,9 @@ import com.mobmonkey.mobmonkeysdk.utils.MMGetAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMPostAsyncTask;
 
 public class MMFavoritesAdapter extends MMAdapter {
-	private final static String TAG = "MMFavorites: ";
+	private final static String TAG = "MMFavorites";
+	
+	private static MMGetAsyncTask mmGetAsyncTask;
 	
 	/**
 	 * Private class to prevent the instantiation of this class outside the scope of this class
@@ -71,7 +73,7 @@ public class MMFavoritesAdapter extends MMAdapter {
 	public static void getFavorites(MMCallback mmCallback,
 									String partnerId,
 									String emailAddress,
-									String password) {		
+									String password) {
 		createUriBuilderInstance(MMAPIConstants.URI_PATH_FAVORITES);
 		
 		HttpGet HttpGet = new HttpGet(uriBuilder.toString());
@@ -81,7 +83,8 @@ public class MMFavoritesAdapter extends MMAdapter {
 		HttpGet.setHeader(MMAPIConstants.KEY_USER, emailAddress);
 		HttpGet.setHeader(MMAPIConstants.KEY_AUTH, password);
 		
-		new MMGetAsyncTask(mmCallback).execute(HttpGet);
+		mmGetAsyncTask = new MMGetAsyncTask(mmCallback);
+		mmGetAsyncTask.execute(HttpGet);
 	}
 	
 	public static void removeFavorite(MMCallback mmCallback,
@@ -102,5 +105,13 @@ public class MMFavoritesAdapter extends MMAdapter {
 		httpDelete.setHeader(MMAPIConstants.KEY_AUTH, password);
 		
 		new MMDeleteAsyncTask(mmCallback).execute(httpDelete);
+	}
+	
+	public static void cancelGetFavorites() {
+		if(mmGetAsyncTask != null) {
+			if(!mmGetAsyncTask.isCancelled()) {
+				mmGetAsyncTask.cancel(true);
+			}
+		}
 	}
 }

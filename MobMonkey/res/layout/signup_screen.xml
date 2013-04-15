@@ -44,7 +44,7 @@
 				android:layout_marginLeft="20dp"
 				android:layout_marginRight="20dp"
 				android:hint="@string/et_hint_emailaddress"
-				android:inputType="text"/>
+				android:inputType="textEmailAddress"/>
 			
 			<EditText android:id="@+id/etpassword"
 				android:layout_width="match_parent"

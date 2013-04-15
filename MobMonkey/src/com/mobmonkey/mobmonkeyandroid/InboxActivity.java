@@ -12,10 +12,12 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -25,11 +27,14 @@ import android.widget.AdapterView.OnItemClickListener;
  * 
  */
 public class InboxActivity extends FragmentActivity implements OnInboxItemClickListener {
-	FragmentManager fragmentManager;
-	Stack<MMFragment> fragmentStack;
+	private static final String TAG = "InboxActivity"; 
+	
+	private FragmentManager fragmentManager;
+	private Stack<MMFragment> fragmentStack;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d(TAG, TAG + ":onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_fragmentcontainer);
 		
@@ -50,7 +55,6 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 	/**
 	 * {@link OnItemClickListener} for the {@link ListView} in Inbox screen.
 	 */
-	
 	/*
 	 * (non-Javadoc)
 	 * @see com.mobmonkey.mobmonkey.fragments.InboxFragment.OnInboxItemClickListener#onInboxItemClick(int, java.lang.String)
@@ -79,6 +83,12 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 		performTransaction(mmFragment);
 	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.d(TAG, TAG + ":onActivityResult");
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 	/**
 	 * Handler when back button is pressed, it will not close and destroy the current {@link Activity} but instead it will remain on the current {@link Activity}
 	 */

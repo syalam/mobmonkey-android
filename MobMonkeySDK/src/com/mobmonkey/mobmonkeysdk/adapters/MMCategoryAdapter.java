@@ -10,7 +10,9 @@ import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMGetAsyncTask;
 
 public class MMCategoryAdapter extends MMAdapter {
-	private static final String TAG = "MMCategories: ";
+	private static final String TAG = "MMCategories";
+	
+	private static MMGetAsyncTask mmGetAsyncTask;
 	
 	/**
 	 * Private class to prevent the instantiation of this class outside the scope of this class
@@ -34,10 +36,19 @@ public class MMCategoryAdapter extends MMAdapter {
 		httpGet.setHeader(MMAPIConstants.KEY_USER, user);
 		httpGet.setHeader(MMAPIConstants.KEY_AUTH, auth);
 		
-		new MMGetAsyncTask(mmCallback).execute(httpGet);
+		mmGetAsyncTask = new MMGetAsyncTask(mmCallback);
+		mmGetAsyncTask.execute(httpGet);
 	}
 	
 	public static void getAllCategories(MMCallback mmCallback, String user, String auth, String partnerId) {
 		getCategories(mmCallback, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
+	}
+	
+	public static void cancelGetAllCategories() {
+		if(mmGetAsyncTask != null) {
+			if(!mmGetAsyncTask.isCancelled()) {
+				mmGetAsyncTask.cancel(true);
+			}
+		}
 	}
 }

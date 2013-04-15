@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.AsyncTask;
@@ -44,7 +45,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
  *
  */
 public class MainScreen extends TabActivity {
-	protected static final String TAG = "MainScreen: ";
+	protected static final String TAG = "MainScreen";
 
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
@@ -79,6 +80,8 @@ public class MainScreen extends TabActivity {
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.d(TAG, TAG + ":onActivityResult");
+		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION) {
 			if(MMLocationManager.isGPSEnabled()) {
 				checkForGPSAccess();
@@ -86,15 +89,25 @@ public class MainScreen extends TabActivity {
 				noGPSEnabled();
 			}
 		}
-		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		Log.d(TAG, "onConfigurationChanged");
+		super.onConfigurationChanged(newConfig);
+//		MMProgressDialog.dismissDialog();
+//		MMCategoryAdapter.cancelGetAllCategories();
+//		MMFavoritesAdapter.cancelGetFavorites();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.ActivityGroup#onDestroy()
 	 */
 	@Override
 	protected void onDestroy() {
+		Log.d(TAG, TAG + ":onDestroy");
+		MMProgressDialog.dismissDialog();
 		unregisterReceiver(mHandleMessageReceiver);
 		super.onDestroy();
 	}
@@ -154,7 +167,8 @@ public class MainScreen extends TabActivity {
 	/**
 	 * Initialize all the variables to be used in {@link MainScreen}
 	 */
-	private void init() {		
+	private void init() {
+		Log.d(TAG, "init");
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(MMAPIConstants.INTENT_FILTER_DISPLAY_MESSAGE));
 		registerGCM();
 		
@@ -165,7 +179,7 @@ public class MainScreen extends TabActivity {
 		
 		getAllCategories();
 		getAllFavorites();
-		tabHost.setCurrentTab(0);
+//		tabHost.setCurrentTabByTag("tab" + userPrefs.getString(MMAPIConstants.TAB_TITLE_CURRENT_TAG, MMAPIConstants.TAB_TITLE_TRENDING_NOW));
 	}
 	
 	/**
@@ -195,6 +209,9 @@ public class MainScreen extends TabActivity {
 		addTab(MMAPIConstants.TAB_TITLE_SEARCH, R.drawable.tab_search, SearchActivity.class);
 		addTab(MMAPIConstants.TAB_TITLE_FAVORITES, R.drawable.tab_favorites, FavoritesActivity.class);
 		addTab(MMAPIConstants.TAB_TITLE_SETTINGS, R.drawable.tab_settings, SettingsActivity.class);
+		
+		Log.d(TAG, "current tab: " + userPrefs.getInt(MMAPIConstants.TAB_TITLE_CURRENT_TAG, 0));
+		tabHost.setCurrentTab(userPrefs.getInt(MMAPIConstants.TAB_TITLE_CURRENT_TAG, 0));
 	}
 	
 	/**
@@ -215,17 +232,19 @@ public class MainScreen extends TabActivity {
 		tabSpec.setIndicator(tabIndicator);
 		tabSpec.setContent(intent);
 		tabHost.addTab(tabSpec);
+		Log.d(TAG, "" + tabSpec.getTag());
 	}
 	
 	/**
 	 * Function to get all the categories from the server
 	 */
 	private void getAllCategories() {
-		Log.d(TAG, TAG + "getAllCategories: " + userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
-		
 		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
-
+			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
+				MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+			}
+			
+			MMCategoryAdapter.cancelGetAllCategories();
 			MMCategoryAdapter.getAllCategories(
 					new CategoriesCallback(), 
 					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
@@ -237,12 +256,13 @@ public class MainScreen extends TabActivity {
 	/**
 	 * Function to get all the user's favorites from the server
 	 */
-	private void getAllFavorites() {		
+	private void getAllFavorites() {
 		if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
 			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 		}
 		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+			MMFavoritesAdapter.cancelGetFavorites();
 			MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 											MMConstants.PARTNER_ID, 
 											userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 

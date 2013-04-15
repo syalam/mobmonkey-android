@@ -248,9 +248,9 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	requestEmail = true;
     	
     	// TODO: Hardcoded values, to be removed
-    	etFirstName.setText("Wilson");
-    	etLastName.setText("Xie");
-    	etEmailAddress.setText("Wilson@dezapp.com");
+    	etFirstName.setText("Hank");
+    	etLastName.setText("Bananas");
+    	etEmailAddress.setText("hank.bananas@gmail.com");
     	etPassword.setText("helloworld123");
     	etPasswordConfirm.setText("helloworld123");
     }
