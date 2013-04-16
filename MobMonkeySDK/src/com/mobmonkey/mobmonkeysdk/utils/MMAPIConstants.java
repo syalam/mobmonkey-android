@@ -191,6 +191,7 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_FREQUENCY_IN_MS = "frequencyInMS";
 	public static final String JSON_KEY_IMAGES = "images";
 	public static final String JSON_KEY_INTEREST_COUNT = "interestCount";
+	public static final String JSON_KEY_ISRECURRING = "isRecurring";
 	public static final String JSON_KEY_LATITUDE = "latitude";
 	public static final String JSON_KEY_LOCALITY = "locality";
 	public static final String JSON_KEY_LOCATION_ID = "locationId";
