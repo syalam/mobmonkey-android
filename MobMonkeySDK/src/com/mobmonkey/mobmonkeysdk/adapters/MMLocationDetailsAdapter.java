@@ -58,6 +58,11 @@ public class MMLocationDetailsAdapter extends MMAdapter {
 		mmGetAsyncTask.execute(httpGet);
 	}
 	
+	public static void shareMediaForLocation(MMCallback mmCallback) {
+		// TODO: implement for Share Media functionality
+
+	}
+	
 	public static void cancelRetrieveAllMediaForLocation() {
 		if(mmGetAsyncTask != null) {
 			if(!mmGetAsyncTask.isCancelled()) {
