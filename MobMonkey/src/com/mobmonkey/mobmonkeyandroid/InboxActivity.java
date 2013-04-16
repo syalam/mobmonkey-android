@@ -13,6 +13,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -49,7 +50,6 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 			InboxFragment inboxFragment = new InboxFragment();
 			fragmentManager.beginTransaction().add(R.id.llfragmentcontainer, fragmentStack.push(inboxFragment)).commit();
 		}
-		
 	}
 	
 	/**
@@ -83,6 +83,12 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 		performTransaction(mmFragment);
 	}
 	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		Log.d(TAG, TAG + ":onConfigurationChanged");
+		super.onConfigurationChanged(newConfig);
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d(TAG, TAG + ":onActivityResult");
