@@ -56,27 +56,29 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		
 		lvTrending = (ListView) view.findViewById(R.id.lvtrending);
 		
-		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
-		for(int i = 0; i < data.length; i++) {
-			data[i] = new MMTrendingItem();
-			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
-			data[i].counter = "0";
-		}
+		getCountOnly();
 		
-		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, data);
-		lvTrending.setAdapter(arrayAdapter);
-		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
-		
-		try {
-			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
-			categories = cats.toJSONArray(cats.names());
-					//new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
-					  //MMAPIConstants.DEFAULT_STRING));
-			
-			trending(findTopTenCategories());
-		} catch (JSONException ex) {
-			ex.printStackTrace();
-		}
+//		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
+//		for(int i = 0; i < data.length; i++) {
+//			data[i] = new MMTrendingItem();
+//			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
+//			data[i].counter = "0";
+//		}
+//		
+//		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, data);
+//		lvTrending.setAdapter(arrayAdapter);
+//		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
+//		
+//		try {
+//			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+//			categories = cats.toJSONArray(cats.names());
+//					//new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, 
+//					  //MMAPIConstants.DEFAULT_STRING));
+//			
+//			trending(findTopTenCategories());
+//		} catch (JSONException ex) {
+//			ex.printStackTrace();
+//		}
 		
 		return view;
 	}
@@ -145,16 +147,8 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	
 	@Override
 	public void onResume() {
-		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
-		for(int i = 0; i < data.length; i++) {
-			data[i] = new MMTrendingItem();
-			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
-			data[i].counter = "0";
-		}
 		
-		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, data);
-		lvTrending.setAdapter(arrayAdapter);
-		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
+		getCountOnly();
 		
 		super.onResume();
 	}
@@ -215,6 +209,28 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 										  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
 		} else {
 			MMProgressDialog.dismissDialog();
+		}
+	}
+	
+	public void getCountOnly() {
+		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
+		for(int i = 0; i < data.length; i++) {
+			data[i] = new MMTrendingItem();
+			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
+			data[i].counter = "0";
+		}
+		
+		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, data);
+		lvTrending.setAdapter(arrayAdapter);
+		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
+		
+		try {
+			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+			categories = cats.toJSONArray(cats.names());
+			
+			trending(findTopTenCategories());
+		} catch (JSONException ex) {
+			ex.printStackTrace();
 		}
 	}
 	

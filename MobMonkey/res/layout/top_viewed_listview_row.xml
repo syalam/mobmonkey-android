@@ -6,7 +6,9 @@
     
 	<TextView android:id="@+id/topviewedimagetitle"
 	    	  android:layout_width="match_parent"
-	    	  android:layout_height="wrap_content"/>
+	    	  android:layout_height="wrap_content"
+	    	  android:textStyle="bold"
+	    	  android:textSize="20sp"/>
 	<ImageView android:id="@+id/topviewedimage"
 	    	   android:layout_width="match_parent"
 	    	   android:layout_height="wrap_content"/>

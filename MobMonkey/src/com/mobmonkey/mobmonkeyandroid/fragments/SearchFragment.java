@@ -141,8 +141,8 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 			DecimalFormat twoDForm = new DecimalFormat("#.######");
 			latitudeValue = Double.valueOf(twoDForm.format(latitudeValue));
 			longitudeValue = Double.valueOf(twoDForm.format(longitudeValue));
-			latitudeValue = 33.415153;
-			longitudeValue = -111.903949;
+			//latitudeValue = 33.415153;
+			//longitudeValue = -111.903949;
 		}
 	}
 	

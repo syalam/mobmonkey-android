@@ -135,6 +135,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						MMConstants.PARTNER_ID, 
 						location.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
 						location.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID));
+				MMLocationDetailsAdapter.shareMediaForLocation(new ShareMediaCallback());
 			} else {
 				setLocationDetails();
 				hasMedia();
@@ -180,6 +181,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				startActivity(intent);
 				break;
 			case R.id.ibsharemedia:
+				// TODO: fill in appropriate items for Share Media functionality
+				//intent = new Intent(getActivity(), class);
+				//intent.putExtra(name, value);
+				//startActivity(intent);
+				System.out.println("yay");
 				break;
 		}
 	}
@@ -308,6 +314,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			}
 			
 			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
+
 		}
 		// TODO: to be removed, for testing only
 //		else {
@@ -452,6 +459,19 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			}
 		}
 	}
+	
+	/**
+	 * Callback to handle the result from a Share Media request
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class ShareMediaCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {			
+			// TODO: Implement callback to handle Share Media functionality
+
+		}
+	}	
 	
 	/**
 	 * Callback to display the image it retrieve from the mediaurl
