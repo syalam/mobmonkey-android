@@ -1,26 +1,38 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsItem;
+import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMOpenedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMOpenedRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
+import com.mobmonkey.mobmonkeysdk.adapters.MMRequestMediaAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 
@@ -36,6 +48,8 @@ public class OpenedRequestsFragment extends MMFragment {
 	private Location location;
 	private JSONArray openedRequests;
 	private MMOpenedRequestsArrayAdapter arrayAdapter;
+	private int clickedPosition;
+	private SharedPreferences userPrefs;
 	
 	/*
 	 * (non-Javadoc)
@@ -43,6 +57,7 @@ public class OpenedRequestsFragment extends MMFragment {
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
 		View view = inflater.inflate(R.layout.fragment_openedrequests_screen, container, false);
 		lvOpenedRequests = (ListView) view.findViewById(R.id.lvopenrequests);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
@@ -51,6 +66,7 @@ public class OpenedRequestsFragment extends MMFragment {
 			openedRequests = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS));
 			arrayAdapter = new MMOpenedRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
 			lvOpenedRequests.setAdapter(arrayAdapter);
+			lvOpenedRequests.setOnItemClickListener(new DeleteRequestListener());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (NumberFormatException e) {
@@ -105,5 +121,72 @@ public class OpenedRequestsFragment extends MMFragment {
 		}
 		
 		return openedRequestItems;
+	}
+	
+	private void deleteRequest() {
+		try {
+			MMRequestMediaAdapter.deleteMedia(new DeleteRequestCallback(), 
+											  MMConstants.PARTNER_ID, 
+											  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
+											  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING),
+											  openedRequests.getJSONObject(clickedPosition).getString(MMAPIConstants.JSON_KEY_REQUEST_ID), 
+											  openedRequests.getJSONObject(clickedPosition).getString(MMAPIConstants.JSON_KEY_RECURRING));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public class DeleteRequestListener implements OnItemClickListener {
+
+		@Override
+		public void onItemClick(AdapterView<?> adapter, View view, int position,
+				long id) {
+			clickedPosition = position;
+			new AlertDialog.Builder(getActivity())
+				.setTitle("Open Requests")
+				.setMessage("Delete Request?")
+				.setCancelable(false)
+				.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						deleteRequest();
+					}
+					
+				})
+				.setNegativeButton("Cancel", null)
+				.show();
+		}
+	}
+	
+	private class DeleteRequestCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			Log.d(TAG, (String)obj);
+			try {
+				MMOpenedRequestsItem[] items, data;
+				data = getOpenedRequestItems();
+				items = new MMOpenedRequestsItem[data.length - 1];
+				
+				for(int i = 0; i < data.length; i++) {
+					if(i < clickedPosition) {
+						items[i] = data[i];
+					} else if (i > clickedPosition) {
+						items[i-1] = data[i];
+					}
+				}
+				
+				arrayAdapter = new MMOpenedRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, items);
+				lvOpenedRequests.setAdapter(arrayAdapter);
+				lvOpenedRequests.invalidate();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 }
