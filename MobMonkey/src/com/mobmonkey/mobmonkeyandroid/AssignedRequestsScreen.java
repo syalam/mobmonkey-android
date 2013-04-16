@@ -100,14 +100,14 @@ public class AssignedRequestsScreen extends Activity {
 			MMAssignedRequestsItem item = new MMAssignedRequestsItem();
 			item.title = jObj.getString(MMAPIConstants.JSON_KEY_NAME_OF_LOCATION);
 			if(jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE).equals(MMAPIConstants.DEFAULT_STRING_NULL)) {
-				item.message = MMAPIConstants.DEFAULT_STRING;
+				item.message = MMAPIConstants.DEFAULT_STRING_EMPTY;
 			} else {
 				item.message = jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE);
 			}
 			
 			//date can be null. leave time as a blank string if its null
 			if(jObj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE).compareTo(MMAPIConstants.DEFAULT_STRING_NULL) == 0) {
-				item.time = MMAPIConstants.DEFAULT_STRING;
+				item.time = MMAPIConstants.DEFAULT_STRING_EMPTY;
 			}
 			else {
 				item.time = MMUtility.getDate(Long.parseLong(jObj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE)), "MMMM dd hh:mma");
@@ -186,8 +186,8 @@ public class AssignedRequestsScreen extends Activity {
 			try {
 				MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
 											   MMConstants.PARTNER_ID, 
-											   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-											   userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING), 
+											   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+											   userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING_EMPTY), 
 											   assignedRequests.getJSONObject(positionClicked).getString(MMAPIConstants.JSON_KEY_REQUEST_ID),
 											   assignedRequests.getJSONObject(positionClicked).getInt(MMAPIConstants.JSON_KEY_REQUEST_TYPE),
 											   MMAPIConstants.MEDIA_CONTENT_JPEG,
@@ -244,8 +244,8 @@ public class AssignedRequestsScreen extends Activity {
 		    	// send base64 file to server
 		        MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
 						   MMConstants.PARTNER_ID, 
-						   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-						   userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING), 
+						   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+						   userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING_EMPTY), 
 						   assignedRequests.getJSONObject(positionClicked).getString(MMAPIConstants.JSON_KEY_REQUEST_ID),
 						   assignedRequests.getJSONObject(positionClicked).getInt(MMAPIConstants.JSON_KEY_REQUEST_TYPE),
 						   MMAPIConstants.MEDIA_CONTENT_MP4,

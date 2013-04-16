@@ -25,7 +25,7 @@ public class MMCategories extends Activity {
 		String[] topLevelCategoriesList;
 		
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
-			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING_EMPTY));
 			topLevelCategoriesList = getKeys(cats);
 //			JSONArray allCategories = cats.toJSONArray(cats.names());
 //			JSONObject category = null;
@@ -64,7 +64,7 @@ public class MMCategories extends Activity {
 		
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
 			subCategoriesList = new JSONArray();
-			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING_EMPTY));
 			JSONArray allCategories = cats.toJSONArray(cats.names());
 			JSONObject subCat = null;
 			for(int i=0; i < allCategories.length(); i++) {
@@ -88,7 +88,7 @@ public class MMCategories extends Activity {
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
 		{
 			subCategoriesList = new JSONArray();
-			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING));
+			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING_EMPTY));
 			JSONArray topCategory = cats.getJSONArray(categoryName);
 			for(int i=0; i < topCategory.length(); i++)
 			{

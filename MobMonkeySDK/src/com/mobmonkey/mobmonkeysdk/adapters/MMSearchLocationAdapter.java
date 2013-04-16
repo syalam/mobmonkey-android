@@ -30,11 +30,11 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 			params.put(MMAPIConstants.KEY_LONGITUDE, longitude);
 			params.put(MMAPIConstants.KEY_LATITUDE, latitude);
 			params.put(MMAPIConstants.KEY_RADIUS_IN_YARDS, searchRadius);
-			if(!name.equals(MMAPIConstants.DEFAULT_STRING)) {
+			if(!name.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
 				params.put(MMAPIConstants.KEY_NAME, name);
 			}
 			params.put(MMAPIConstants.KEY_NAME, name);
-			if(!categoryID.equals(MMAPIConstants.DEFAULT_STRING)) {
+			if(!categoryID.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
 				params.put(MMAPIConstants.KEY_CATEGORY_IDS, categoryID);
 			}
 			
@@ -67,7 +67,7 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void searchLocationWithText(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String user, String auth, String partnerId) {
-		searchLocation(mmCallback, longitude, latitude, searchRadius, name, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
+		searchLocation(mmCallback, longitude, latitude, searchRadius, name, MMAPIConstants.DEFAULT_STRING_EMPTY, user, auth, partnerId);
 	}
 
 	public static void searchLocationByAddress(MMCallback mmCallback, String streetAddress, String locality, String region, String postcode, String user, String auth, String partnerId) {
@@ -110,7 +110,7 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 	 * @param partnerId
 	 */
 	public static void searchLocationWithCategoryId(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String categoryID, String user, String auth, String partnerId) {
-		searchLocation(mmCallback, longitude, latitude, searchRadius, MMAPIConstants.DEFAULT_STRING, categoryID, user, auth, partnerId);
+		searchLocation(mmCallback, longitude, latitude, searchRadius, MMAPIConstants.DEFAULT_STRING_EMPTY, categoryID, user, auth, partnerId);
 	}
 	
 	/**
@@ -124,6 +124,6 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void searchAllNearby(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String user, String auth, String partnerId) {
-		searchLocation(mmCallback, longitude, latitude, searchRadius, MMAPIConstants.DEFAULT_STRING, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
+		searchLocation(mmCallback, longitude, latitude, searchRadius, MMAPIConstants.DEFAULT_STRING_EMPTY, MMAPIConstants.DEFAULT_STRING_EMPTY, user, auth, partnerId);
 	}
 }

@@ -15,17 +15,22 @@ public final class MMAPIConstants {
 	}
 	
 	// MobMonkey default data values
-	public static final String DEFAULT_STRING = "";
+	public static final String DEFAULT_STRING_EMPTY = "";
+	public static final String DEFAULT_STRING_COMMA = ",";
+	public static final String DEFAULT_STRING_COMMA_SPACE = ", ";
+	public static final String DEFAULT_STRING_NEWLINE = "\n";
 	public static final String DEFAULT_STRING_NULL = "null";
-	public static final String DEFAULT_SPACE = " ";
-	public static final String DEFAULT_NEWLINE = "\n";
-	public static final String COMMA_SPACE = ", ";
+	public static final String DEFAULT_STRING_SPACE = " ";
 	public static final int DEFAULT_INT = -1;
+	public static final int DEFAULT_INT_ZERO = 0;
 	public static final double DEFAULT_DOUBLE = 1.0d;
 
-	public static final String MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
+	public static final String DECIMAL_FORMAT_SIX = "#.######";
+	
+	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
-
+	
+	// Uri path values
 	public static final String URI_PATH_ASSIGNEDREQUESTS = "assignedrequests";
 	public static final String URI_PATH_CATEGORY = "category";
 	public static final String URI_PATH_CHECKIN = "checkin";
@@ -39,8 +44,20 @@ public final class MMAPIConstants {
 	public static final String URI_PATH_SEARCH = "search";
 	public static final String URI_PATH_SIGNIN = "signin";
 	public static final String URI_PATH_SIGNOUT = "signout";
+	public static final String URI_PATH_TOP_VIEWED = "topviewed";
 	public static final String URI_PATH_TRENDING = "trending";
 	public static final String URI_PATH_USER = "user";
+	
+	// Uri query parameter keys
+	public static final String URI_QUERY_PARAM_KEY_CATEGORY_IDS = "categoryIds";
+	public static final String URI_QUERY_PARAM_KEY_COUNTS_ONLY = "countsonly";
+	public static final String URI_QUERY_PARAM_KEY_FAVORITES_ONLY = "bookmarksonly";
+	public static final String URI_QUERY_PARAM_KEY_LATITUDE = "latitude";
+	public static final String URI_QUERY_PARAM_KEY_LONGITUDE = "longitude";
+	public static final String URI_QUERY_PARAM_KEY_MY_INTEREST = "myinterests";
+	public static final String URI_QUERY_PARAM_KEY_NEARBY = "nearby";
+	public static final String URI_QUERY_PARAM_KEY_RADIUS = "radius";
+	public static final String URI_QUERY_PARAM_KEY_TIME_SPAN = "timeSpan";
 	
 	public static final String TAB_TITLE_CURRENT_TAG = "Current tab tag";
 	public static final String TAB_TITLE_TRENDING_NOW = "Trending Now";
@@ -129,10 +146,6 @@ public final class MMAPIConstants {
 	public static final String KEY_OAUTH_USER = "oAuthUser";
 	public static final String KEY_USER = "MobMonkey-user";
 	public static final String KEY_ZIP = "zip";
-	
-	// MobMonkey server url
-	public static final String URL_BOOKMARKS = "bookmarks";
-	public static final String URL_TOPVIEWED = "topviewed";
 	
 	// MobMonkey server response key values
 	public static final String KEY_RESPONSE_STATUS = "status";

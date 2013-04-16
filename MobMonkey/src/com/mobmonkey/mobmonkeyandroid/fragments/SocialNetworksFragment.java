@@ -42,16 +42,16 @@ public class SocialNetworksFragment extends MMFragment {
 		
 		data[0] = new MMSocialNetworkItem();
 		data[0].title = getActivity().getResources().getStringArray(R.array.social_networks_name)[0];
-		data[0].isOn = userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING)
+		data[0].isOn = userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY)
 							.equals(MMAPIConstants.OAUTH_PROVIDER_FACEBOOK) ? true:false;
 		
 		data[1] = new MMSocialNetworkItem();
 		data[1].title = getActivity().getResources().getStringArray(R.array.social_networks_name)[1];
-		data[1].isOn = userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING)
+		data[1].isOn = userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY)
 							.equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER) ? true:false;
 		
 		
-		Log.d(TAG, "Provider: " + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING));
+		Log.d(TAG, "Provider: " + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY));
 		return data;
 	}
 

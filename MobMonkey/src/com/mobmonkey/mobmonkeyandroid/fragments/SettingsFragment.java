@@ -65,9 +65,9 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsignout:
-				MMUserAdapter.signOut(new SignOutCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID);
-				progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_out), true, false);
+				MMUserAdapter.signOut(new SignOutCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), MMConstants.PARTNER_ID);
+				progressDialog = ProgressDialog.show(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_out), true, false);
 			break;
 		}
 	}

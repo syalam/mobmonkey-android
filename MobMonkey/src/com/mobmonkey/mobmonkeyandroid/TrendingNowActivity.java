@@ -7,7 +7,6 @@ import com.mobmonkey.mobmonkeyandroid.fragments.TopViewedFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.TrendingNowFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.TrendingNowFragment.OnTrendingItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -41,9 +40,8 @@ public class TrendingNowActivity extends FragmentActivity implements OnTrendingI
 	}
 	
 	@Override
-	public void onTrendingItemClick(int position, String trends) {
+	public void onTrendingItemClick(int position) {
 		MMFragment mmFragment = null;
-		Bundle data = new Bundle();
 		
 		switch(position) {
 			case 0:
@@ -52,13 +50,11 @@ public class TrendingNowActivity extends FragmentActivity implements OnTrendingI
 				break;
 			case 2:
 				mmFragment = new TopViewedFragment();
-				data.putString(MMAPIConstants.KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED, trends);
 				break;
 			case 3:
 				break;
 		}
 		
-		mmFragment.setArguments(data);
 		performTransaction(mmFragment);
 	}
 	

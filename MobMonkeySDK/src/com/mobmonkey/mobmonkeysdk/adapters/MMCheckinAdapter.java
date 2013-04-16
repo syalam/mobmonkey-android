@@ -23,14 +23,12 @@ public class MMCheckinAdapter extends MMAdapter {
 		throw new AssertionError();
 	}
 	
-	public static void checkIn(MMCallback mmCallback,
-								// headers
-							   String partnerId,
-							   String emailAddress,
+	public static void checkInUser(MMCallback mmCallback,
+							   double latitude, 
+							   double longitude, 
+							   String emailAddress, 
 							   String password,
-							   // body
-							   double latitude,
-							   double longitude) {
+							   String partnerId) {
 		
 		createUriBuilderInstance(MMAPIConstants.URI_PATH_CHECKIN);
 		createParamsInstance();

@@ -205,8 +205,8 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	 * @throws JSONException 
 	 */
 	private void refreshFavorites() throws JSONException {
-		String favorites = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING);
-		if(!favorites.equals(MMAPIConstants.DEFAULT_STRING)) {
+		String favorites = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING_EMPTY);
+		if(!favorites.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
 			favoritesList = new JSONArray(favorites);
 		} else {
 			favoritesList = new JSONArray();
@@ -295,7 +295,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
            if (title != null) {
                titleUi.setText(title);
            } else {
-               titleUi.setText(MMAPIConstants.DEFAULT_STRING);
+               titleUi.setText(MMAPIConstants.DEFAULT_STRING_EMPTY);
            }
 
            String snippet = marker.getSnippet();
@@ -303,7 +303,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
            if (snippet != null) {
                snippetUi.setText(snippet);
            } else {
-               snippetUi.setText(MMAPIConstants.DEFAULT_STRING);
+               snippetUi.setText(MMAPIConstants.DEFAULT_STRING_EMPTY);
            }
        }
    }

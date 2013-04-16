@@ -123,7 +123,7 @@ public class AddLocationCategoryList extends Activity{
 							if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST))
 							{
 								boolean remove = false;
-								JSONArray selectedCategoriesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMAPIConstants.DEFAULT_STRING));
+								JSONArray selectedCategoriesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMAPIConstants.DEFAULT_STRING_EMPTY));
 								
 								ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
 								for(int i=0; i<selectedCategoriesList.length(); i++)

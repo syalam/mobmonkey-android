@@ -151,7 +151,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		if(view.getId() == R.id.btnsentrequest) {
 			Log.d(TAG, "sent request");
 			
-			if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_TEXT) && message.equals(MMAPIConstants.DEFAULT_STRING)) {
+			if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_TEXT) && message.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
 				Toast.makeText(MakeARequestScreen.this, R.string.toast_no_message_detected, Toast.LENGTH_SHORT).show();
 			} else {
 				sendRequest();
@@ -192,8 +192,8 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		mmelvScheduleRequest = (MMExpandedListView) findViewById(R.id.mmelvschedulerequest);
 		btnSendRequest = (Button) findViewById(R.id.btnsentrequest);
 		
-		message = MMAPIConstants.DEFAULT_STRING;
-		scheduleRequest = MMAPIConstants.DEFAULT_STRING;
+		message = MMAPIConstants.DEFAULT_STRING_EMPTY;
+		scheduleRequest = MMAPIConstants.DEFAULT_STRING_EMPTY;
 		mediaType = MMAPIConstants.MEDIA_TYPE_VIDEO;
 		
 		rgRequests.setOnCheckedChangeListener(MakeARequestScreen.this);
@@ -259,7 +259,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					message = MMAPIConstants.DEFAULT_STRING;
+					message = MMAPIConstants.DEFAULT_STRING_EMPTY;
 					setSingleItemAddMessage();
 				}
 			});
@@ -271,7 +271,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	private void setSingleScheduleRequest() {
 		requestCal = null;
 		repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_NONE;
-		scheduleRequest = MMAPIConstants.DEFAULT_STRING;
+		scheduleRequest = MMAPIConstants.DEFAULT_STRING_EMPTY;
 		icons = new int[] {android.R.drawable.ic_menu_today};
 		labels = new String[] {getString(R.string.tv_schedule_request)};
 		indicatorIcons = new int[] {R.drawable.listview_accessory_indicator};
@@ -312,7 +312,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	}
 	
 	private void sendRequest() {
-		MMProgressDialog.displayDialog(MakeARequestScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_sending_request));
+		MMProgressDialog.displayDialog(MakeARequestScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_sending_request));
 		MMSendRequestAdapter.sendRequest(new SendRequestCallback(), 
 										 message,
 										 scheduleDate, 
@@ -323,8 +323,8 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 										 repeatRate,
 										 mediaType, 
 										 MMConstants.PARTNER_ID,
-										 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-										 userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING));
+										 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+										 userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING_EMPTY));
 	}
 	
 	/**

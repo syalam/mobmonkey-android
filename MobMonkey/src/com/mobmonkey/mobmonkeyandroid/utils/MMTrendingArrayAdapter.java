@@ -53,19 +53,19 @@ public class MMTrendingArrayAdapter extends ArrayAdapter<MMTrendingItem> {
 		
 		MMTrendingItem item = data[position];
 		vholder.tvLabel.setText(item.title);
-		if(Integer.parseInt(item.counter) > 0) {
+		if(item.counter > 0) {
 			vholder.tvLabel.setTextColor(Color.BLACK);
 		} else {
 			vholder.tvLabel.setTextColor(Color.GRAY);
 		}
-		vholder.tvCounter.setText(item.counter);
+		vholder.tvCounter.setText(Integer.toString(item.counter));
 		
 		return row;
 	}
     
 	@Override
 	public boolean isEnabled(int position) {
-		if(Integer.parseInt(data[position].counter) > 0) {
+		if(data[position].counter > 0) {
 			return true;
 		} else {
 			return false;

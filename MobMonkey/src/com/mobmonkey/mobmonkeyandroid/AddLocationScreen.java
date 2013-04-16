@@ -65,7 +65,7 @@ public class AddLocationScreen extends Activity {
 		super.onResume();
 		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST))
 		{
-			String displayCategoriesSelected = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMAPIConstants.DEFAULT_STRING);
+			String displayCategoriesSelected = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMAPIConstants.DEFAULT_STRING_EMPTY);
 			try {
 				JSONArray selectedCategoriesList = new JSONArray(displayCategoriesSelected);
 				displayCategoriesSelected = null;
@@ -158,8 +158,8 @@ public class AddLocationScreen extends Activity {
 	private void addLocation() throws JSONException {
 		if(checkValues())
 		{
-			MMAddLocationAdapter.addLocation(new AddLocationCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), MMConstants.PARTNER_ID, street, "", "", 
+			MMAddLocationAdapter.addLocation(new AddLocationCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), MMConstants.PARTNER_ID, street, "", "", 
 					categories, "United States", latitude, city, longitude, name, "", 
 					phone, postalCode, "", state, "");
 		}

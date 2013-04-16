@@ -114,24 +114,24 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		tvImageMediaCount = (TextView) view.findViewById(R.id.tvimagemediacount);
 		
 		try {
-			if(!userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING).equals(MMAPIConstants.DEFAULT_STRING)) {
-				favoritesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING));
+			if(!userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING_EMPTY).equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
+				favoritesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING_EMPTY));
 			} else {
 				favoritesList = new JSONArray();
 			}
 			location = new JSONObject(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 			
 			if(!retrieveLocationDetails) {
-				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading_location_information));
+				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading_location_information));
 				MMLocationDetailsAdapter.getLocationDetails(new LocationCallback(), 
 						location.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
 						location.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
-						userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+						userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
 						MMConstants.PARTNER_ID);
 				MMLocationDetailsAdapter.retrieveAllMediaForLocation(new MediaCallback(), 
-						userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+						userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
 						MMConstants.PARTNER_ID, 
 						location.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
 						location.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID));
@@ -201,7 +201,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		} else if(position == 1) {
 			listener.onLocationDetailsItem(position, locationDetails.toString());
 		} else if(position == 2) {
-			listener.onLocationDetailsItem(position, MMAPIConstants.DEFAULT_STRING);
+			listener.onLocationDetailsItem(position, MMAPIConstants.DEFAULT_STRING_EMPTY);
 		}
 	}
 
@@ -221,19 +221,19 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private void setLocationDetails() throws JSONException {
 		tvLocNameTitle.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_NAME));
 		tvLocName.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_NAME));
-		tvMembersFound.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.tv_members_found));
+		tvMembersFound.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_STRING_SPACE + getString(R.string.tv_members_found));
 		
 		int[] icons = new int[]{R.drawable.cat_icon_telephone, R.drawable.cat_icon_map_pin, R.drawable.cat_icon_alarm_clock};
 		int[] indicatorIcons = new int[]{R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator};
 		String[] details = new String[3];
 		String phoneNumber = locationDetails.getString(MMAPIConstants.JSON_KEY_PHONE_NUMBER);
-		if(phoneNumber.equals(MMAPIConstants.DEFAULT_STRING_NULL) || phoneNumber.equals(MMAPIConstants.DEFAULT_STRING)) {
+		if(phoneNumber.equals(MMAPIConstants.DEFAULT_STRING_NULL) || phoneNumber.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
 			details[0] = getString(R.string.tv_no_phone_number_available);
 		} else {
 			details[0] = phoneNumber;
 		}
-		details[1] = locationDetails.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + locationDetails.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
-				locationDetails.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.COMMA_SPACE + locationDetails.getString(MMAPIConstants.JSON_KEY_POSTCODE);
+		details[1] = locationDetails.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_STRING_NEWLINE + locationDetails.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + 
+				locationDetails.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + locationDetails.getString(MMAPIConstants.JSON_KEY_POSTCODE);
 		details[2] = getString(R.string.tv_add_notifications);
 		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(getActivity(), R.layout.mm_listview_row, icons, details, indicatorIcons, android.R.style.TextAppearance_Small, Typeface.DEFAULT, null);
 		elvLocDetails.setAdapter(arrayAdapter);
@@ -302,15 +302,15 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			
 			if(streamMediaCount > 0) {
 				ivtnStream.setBackgroundResource(R.drawable.tn_hasmedia_stream);
-				tvStreamMediaCount.setText(streamMediaCount + MMAPIConstants.DEFAULT_STRING);
+				tvStreamMediaCount.setText(streamMediaCount + MMAPIConstants.DEFAULT_STRING_EMPTY);
 			}
 			if(videoMediaCount > 0) {
 				ivtnVideo.setBackgroundResource(R.drawable.tn_hasmedia_video);
-				tvVideoMediaCount.setText(videoMediaCount + MMAPIConstants.DEFAULT_STRING);
+				tvVideoMediaCount.setText(videoMediaCount + MMAPIConstants.DEFAULT_STRING_EMPTY);
 			}
 			if(imageMediaCount > 0) {
 				ivtnImage.setBackgroundResource(R.drawable.tn_hasmedia_image);
-				tvImageMediaCount.setText(imageMediaCount + MMAPIConstants.DEFAULT_STRING);
+				tvImageMediaCount.setText(imageMediaCount + MMAPIConstants.DEFAULT_STRING_EMPTY);
 			}
 			
 			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
@@ -348,7 +348,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * Function to handle the event of when the user clicks on favorite/remove favorite
 	 */
 	private void favoriteClicked() {
-		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_updating_favorites));
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_updating_favorites));
 		try {
 			if(tvFavorite.getText().toString().equals(getString(R.string.tv_favorite))) {
 				// Make a server call and add to favorites
@@ -356,16 +356,16 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 												locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
 												locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
 												MMConstants.PARTNER_ID, 
-												userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-												userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+												userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+												userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 			} else if(tvFavorite.getText().toString().equals(getString(R.string.tv_remove_favorite))) {
 				// Make a server call remove from favorites
 				MMFavoritesAdapter.removeFavorite(new RemoveFavoriteCallback(),  
 												  locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
 												  locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
 												  MMConstants.PARTNER_ID, 
-												  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-												  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+												  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+												  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 			}
 		} catch(JSONException e) {
 			
@@ -378,8 +378,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private void updateFavoritesList() {
 		MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 				MMConstants.PARTNER_ID, 
-				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 	}
 	
 	/**

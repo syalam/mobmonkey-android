@@ -124,7 +124,7 @@ public class SignInScreen extends Activity {
 					} else {
 						MMUserAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
 								(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
-						MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_facebook));
+						MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_in_facebook));
 					}
 				}
 		}
@@ -188,7 +188,7 @@ public class SignInScreen extends Activity {
 	}
 	
 	private void launchTwitterAuthScreen() {
-		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_launch_twitter_auth_screen));
+		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_launch_twitter_auth_screen));
 		Intent twitterAuthIntent = new Intent(SignInScreen.this, TwitterAuthScreen.class);
 		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
 		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
@@ -201,9 +201,9 @@ public class SignInScreen extends Activity {
 		if(checkEmailAddress()) {
 			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
 			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
-			userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING);
+			userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY);
 			MMUserAdapter.signInUser(new SignInCallback(), etEmailAddress.getText().toString(), etPassword.getText().toString(), MMConstants.PARTNER_ID);
-    		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in));
+    		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_in));
 		}
 	}
 	

@@ -122,20 +122,20 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 			// get all the open request, and then update the badge counter
 			MMInboxAdapter.getOpenRequests(new OpenRequestCallback(), 
 										   MMConstants.PARTNER_ID, 
-					  					   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-					  					   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+					  					   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+					  					   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 			
 			// get all the answered request, and then update the badge counter
 			MMInboxAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
 										   MMConstants.PARTNER_ID, 
-										   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-										   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+										   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+										   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 			
 			// get all the assigned request, and then update the badge counter
 			MMInboxAdapter.getAssignedRequests(new AssignedRequestCallback(), 
 											   MMConstants.PARTNER_ID, 
-											   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-											   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+											   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+											   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 		}
 	}
 	

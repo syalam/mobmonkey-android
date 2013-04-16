@@ -86,13 +86,13 @@ public class OpenedRequestsFragment extends MMFragment {
 			MMOpenedRequestsItem item = new MMOpenedRequestsItem();
 			item.title = jObj.getString(MMAPIConstants.JSON_KEY_NAME_OF_LOCATION);
 			if(jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE).equals(MMAPIConstants.DEFAULT_STRING_NULL)) {
-				item.message = MMAPIConstants.DEFAULT_STRING;
+				item.message = MMAPIConstants.DEFAULT_STRING_EMPTY;
 			} else {
 				item.message = jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE);
 			}
 			//date can be null. leave time as a blank string if its null
 			if(jObj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE).compareTo(MMAPIConstants.DEFAULT_STRING_NULL) == 0) {
-				item.time = MMAPIConstants.DEFAULT_STRING;
+				item.time = MMAPIConstants.DEFAULT_STRING_EMPTY;
 			}
 			else {
 				item.time = MMUtility.getDate(Long.parseLong(jObj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE)), "MMMM dd hh:mma");

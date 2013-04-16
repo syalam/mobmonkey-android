@@ -14,8 +14,7 @@ public class MMAdapter {
 	protected static JSONObject params;
 	
 	public static void createUriBuilderInstance(String... path) {
-		uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL)
-			.buildUpon();
+		uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
 		for(int i = 0; i < path.length; i++) {
 			uriBuilder.appendPath(path[i]);
 		}

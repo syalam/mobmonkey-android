@@ -32,11 +32,13 @@ import com.mobmonkey.mobmonkeyandroid.utils.GCMIntentService;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.ServerUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCategoryAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMCheckinAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
+import com.mobmonkey.mobmonkeysdk.utils.MMPostAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 
 /**
@@ -139,7 +141,12 @@ public class MainScreen extends TabActivity {
 	    	.setTitle(R.string.ad_title_no_location)
 	    	.setMessage(R.string.ad_message_no_location)
 	    	.setCancelable(false)
-	    	.setNeutralButton(R.string.ad_btn_ok, null)
+	    	.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					init();
+				}
+			})
 	    	.show();
 	    } else {
 			init();
@@ -179,6 +186,7 @@ public class MainScreen extends TabActivity {
 		
 		getAllCategories();
 		getAllFavorites();
+		checkUserIn();
 //		tabHost.setCurrentTabByTag("tab" + userPrefs.getString(MMAPIConstants.TAB_TITLE_CURRENT_TAG, MMAPIConstants.TAB_TITLE_TRENDING_NOW));
 	}
 	
@@ -191,7 +199,7 @@ public class MainScreen extends TabActivity {
 		
 		final String regId = GCMRegistrar.getRegistrationId(MainScreen.this);
 		Log.d(TAG, TAG + "regId: " + regId);
-		if (regId.equals(MMAPIConstants.DEFAULT_STRING)) {
+		if (regId.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
 			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
 			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
 			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
@@ -241,14 +249,14 @@ public class MainScreen extends TabActivity {
 	private void getAllCategories() {
 		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
-				MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+				MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 			}
 			
 			MMCategoryAdapter.cancelGetAllCategories();
 			MMCategoryAdapter.getAllCategories(
 					new CategoriesCallback(), 
-					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
 					MMConstants.PARTNER_ID);
 		}
 	}
@@ -258,15 +266,33 @@ public class MainScreen extends TabActivity {
 	 */
 	private void getAllFavorites() {
 		if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
-			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 		}
 		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMFavoritesAdapter.cancelGetFavorites();
 			MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 											MMConstants.PARTNER_ID, 
-											userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-											userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+											userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+											userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+		} else {
+			setTabs();
+			MMProgressDialog.dismissDialog();
+		}
+	}
+	
+	private void checkUserIn() {
+		if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
+			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+		}
+		
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+			MMCheckinAdapter.checkInUser(new CheckUserInCallback(),
+					MMLocationManager.getLocationLatitude(), 
+					MMLocationManager.getLocationLongitude(),
+					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY),
+					MMConstants.PARTNER_ID);
 		} else {
 			setTabs();
 			MMProgressDialog.dismissDialog();
@@ -338,8 +364,8 @@ public class MainScreen extends TabActivity {
 	private class FavoritesCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
 			if(obj != null) {
-				MMProgressDialog.dismissDialog();
 				Log.d(TAG, TAG + "FavoritesCallback: " + ((String) obj));
 				try {
 					userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
@@ -358,6 +384,17 @@ public class MainScreen extends TabActivity {
 			}
 			
 			setTabs();
+		}
+	}
+	
+	private class CheckUserInCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
+			if(obj != null) {
+				Log.d(TAG, TAG + "checkinuser response: " + (String) obj);
+			}
 		}
 	}
 }

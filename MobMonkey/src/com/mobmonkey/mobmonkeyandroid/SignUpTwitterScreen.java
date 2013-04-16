@@ -239,7 +239,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
     				Long.toString(birthdate.getTimeInMillis()), 
     				convertGender(), 
     				MMConstants.PARTNER_ID);
-    		MMProgressDialog.displayDialog(SignUpTwitterScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up));
+    		MMProgressDialog.displayDialog(SignUpTwitterScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up));
     	}
     }
     

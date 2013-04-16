@@ -117,9 +117,9 @@ public class TwitterAuthScreen extends Activity {
 				
 				// Depend on which Activity it was called from, it will display the appropriate signin/signup message
 				if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
-					MMProgressDialog.displayDialog(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_in_twitter));
+					MMProgressDialog.displayDialog(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_in_twitter));
 				} else if(requestCode == MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH) {
-					MMProgressDialog.displayDialog(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_signing_up_twitter));
+					MMProgressDialog.displayDialog(TwitterAuthScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up_twitter));
 				}
 			} else {
 				finish();

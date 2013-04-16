@@ -62,11 +62,11 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 		
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Activity.MODE_PRIVATE);
         
-		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_loading_user_info));
+		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading_user_info));
 		
 		MMUserAdapter.getUserInfo(new UserInfoCallback(), MMConstants.PARTNER_ID,
-				 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-				 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING));
+				 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+				 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 		
 		View view = inflater.inflate(R.layout.fragment_myinfo_screen, container, false);
     	
@@ -87,9 +87,9 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	etGender = (EditText) view.findViewById(R.id.etgender);
     	birthdate = Calendar.getInstance();
     	
-    	Log.d(TAG, "User has login with " + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING) + " account.");
+    	Log.d(TAG, "User has login with " + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY) + " account.");
     	
-    	oAuthProvider = userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING);
+    	oAuthProvider = userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY);
     	
     	// if user signed in with Facebook account, they can edit nothing in this screen.
     	if(oAuthProvider.equals(MMAPIConstants.OAUTH_PROVIDER_FACEBOOK)) {
@@ -167,8 +167,8 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 		if(checkFields()) {
 			try {
 				MMUserAdapter.updateUserInfo(new UserInfoUpdateCallback(), 
-										   	 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-										   	 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING), 
+										   	 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+										   	 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
 										   	 MMConstants.PARTNER_ID, 
 										   	 newPassword, 
 										   	 etFirstName.getText().toString(),
@@ -179,7 +179,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 										   	 response.getString(MMAPIConstants.KEY_STATE), 
 										   	 response.getString(MMAPIConstants.KEY_ZIP), 
 										   	 response.getBoolean(MMAPIConstants.KEY_ACCEPTEDTOS));
-				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING, getString(R.string.pd_updating_user_info));
+				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_updating_user_info));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -356,7 +356,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	if(TextUtils.isEmpty(newPassword)) {
     		if(TextUtils.isEmpty(confirmPassword)) {
     			// if both new password and confirn password are empty, set it to the old password.
-        		newPassword = userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING);
+        		newPassword = userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY);
         		return true;
         	// else, if confirm password is not empty, and new password is empty, alert user.
     		} else {

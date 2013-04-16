@@ -272,7 +272,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
             TextView monthday = (TextView) view.findViewById(R.id.time2_monthday);
             
             if (day == 0) {
-                weekday.setText(MMAPIConstants.DEFAULT_STRING);
+                weekday.setText(MMAPIConstants.DEFAULT_STRING_EMPTY);
                 monthday.setText(R.string.tv_today);
                 monthday.setTextColor(0xFF0000F0);
             } else {
@@ -293,7 +293,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 
 		@Override
 		protected CharSequence getItemText(int index) {
-			return MMAPIConstants.DEFAULT_STRING;
+			return MMAPIConstants.DEFAULT_STRING_EMPTY;
 		}
 	}
 }

@@ -135,8 +135,8 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	 * @throws JSONException 
 	 */
 	private void refreshFavorites() throws JSONException {
-		String favorites = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING);
-		if(!favorites.equals(MMAPIConstants.DEFAULT_STRING)) {
+		String favorites = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING_EMPTY);
+		if(!favorites.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
 			favoritesList = new JSONArray(favorites);
 		} else {
 			favoritesList = new JSONArray();
@@ -157,8 +157,8 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 			favoriteLocations[i] = new MMResultsLocation();
 			favoriteLocations[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			favoriteLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles));
-			favoriteLocations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
-									jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE));
+			favoriteLocations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + 
+											MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE));
 		}
 		
 		// reverse array

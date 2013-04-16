@@ -41,7 +41,7 @@ public class MMCategoryAdapter extends MMAdapter {
 	}
 	
 	public static void getAllCategories(MMCallback mmCallback, String user, String auth, String partnerId) {
-		getCategories(mmCallback, MMAPIConstants.DEFAULT_STRING, user, auth, partnerId);
+		getCategories(mmCallback, MMAPIConstants.DEFAULT_STRING_EMPTY, user, auth, partnerId);
 	}
 	
 	public static void cancelGetAllCategories() {

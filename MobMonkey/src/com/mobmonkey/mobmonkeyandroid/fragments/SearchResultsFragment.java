@@ -111,7 +111,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		tvSearchResultsTitle.setText(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
 		
 		try {
-			if(!getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS).equals(MMAPIConstants.DEFAULT_STRING)) {
+			if(!getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS).equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
 				searchResults = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
 			} else {
 				searchResults = new JSONArray();
@@ -278,9 +278,10 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 				JSONObject jObj = searchResults.getJSONObject(i);
 				resultLocations[i] = new MMResultsLocation();
 				resultLocations[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
-				resultLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + MMAPIConstants.DEFAULT_SPACE + getString(R.string.miles));
-				resultLocations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.COMMA_SPACE + 
-										jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE));
+				resultLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + MMAPIConstants.DEFAULT_STRING_SPACE + 
+						getString(R.string.miles));
+				resultLocations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + 
+										jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE));
 			}
 	}
 	
@@ -311,8 +312,8 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 * @throws JSONException
 	 */
 	private boolean getLocationHistory() throws JSONException {
-		String history = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING);
-		if(!history.equals(MMAPIConstants.DEFAULT_STRING)) {
+		String history = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING_EMPTY);
+		if(!history.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
 			locationHistory = new JSONArray(history);
 			return true;
 		} else {
@@ -575,7 +576,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
             if (title != null) {
                 titleUi.setText(title);
             } else {
-                titleUi.setText(MMAPIConstants.DEFAULT_STRING);
+                titleUi.setText(MMAPIConstants.DEFAULT_STRING_EMPTY);
             }
 
             String snippet = marker.getSnippet();
@@ -583,7 +584,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
             if (snippet != null) {
                 snippetUi.setText(snippet);
             } else {
-                snippetUi.setText(MMAPIConstants.DEFAULT_STRING);
+                snippetUi.setText(MMAPIConstants.DEFAULT_STRING_EMPTY);
             }
         }
     }
