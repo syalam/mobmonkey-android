@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsItem;
@@ -164,21 +165,36 @@ public class OpenRequestsFragment extends MMFragment {
 		public void processCallback(Object obj) {
 			Log.d(TAG, (String)obj);
 			try {
-				MMOpenRequestsItem[] items, data;
-				data = getOpenedRequestItems();
-				items = new MMOpenRequestsItem[data.length - 1];
-				
-				for(int i = 0; i < data.length; i++) {
-					if(i < clickedPosition) {
-						items[i] = data[i];
-					} else if (i > clickedPosition) {
-						items[i-1] = data[i];
+				JSONObject jObj = new JSONObject((String)obj);
+				if(jObj.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+					MMOpenRequestsItem[] items, data;
+					data = getOpenedRequestItems();
+					items = new MMOpenRequestsItem[data.length - 1];
+					
+					for(int i = 0; i < data.length; i++) {
+						if(i < clickedPosition) {
+							items[i] = data[i];
+						} else if (i > clickedPosition) {
+							items[i-1] = data[i];
+						}
 					}
+					
+					arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, items);
+					lvOpenedRequests.setAdapter(arrayAdapter);
+					lvOpenedRequests.invalidate();
+					
+					Toast.makeText(getActivity().getApplicationContext(), 
+							   "You have successfully deleted a request.", 
+							   Toast.LENGTH_LONG)
+							   .show();
+				}
+				else {
+					Toast.makeText(getActivity().getApplicationContext(), 
+								   "An error has occured while deleting a request.", 
+								   Toast.LENGTH_LONG)
+								   .show();
 				}
 				
-				arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, items);
-				lvOpenedRequests.setAdapter(arrayAdapter);
-				lvOpenedRequests.invalidate();
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			} catch (JSONException e) {
