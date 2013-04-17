@@ -178,10 +178,6 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMTrendingAdapter.getTrendingCounts(new TrendingCountsCallback(),
 											   MMAPIConstants.SEARCH_TIME_DAY,
-											   MMLocationManager.getLocationLatitude(),
-											   MMLocationManager.getLocationLongitude(),
-											   MMAPIConstants.SEARCH_RADIUS_FIVE_MILE,
-											   categoryIds,
 											   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY),
 											   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY),
 											   MMConstants.PARTNER_ID);

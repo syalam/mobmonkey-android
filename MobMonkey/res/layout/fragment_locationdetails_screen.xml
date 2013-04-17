@@ -53,7 +53,7 @@
 		            android:layout_height="wrap_content"
 		            android:paddingLeft="3dp"
 		            android:paddingRight="3dp">
-					
+		            
 		            <ImageView android:id="@+id/ivmedia"
 		                android:layout_width="match_parent"
 		                android:layout_height="200dp"/>

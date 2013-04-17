@@ -55,23 +55,12 @@ public class MMTrendingAdapter extends MMAdapter {
 	 */
 	public static void getTrendingCounts(MMCallback mmCallback,
 									   	String timeSpan,
-									   	double latitude,
-									   	double longitude,
-									   	int radius,
-									   	String categoryIds,
 									   	String emailAddress,
 									   	String password,
 									   	String partnerId) {
 		createUriBuilderInstance(MMAPIConstants.URI_PATH_TRENDING, MMAPIConstants.URI_PATH_TOP_VIEWED);
 		uriBuilder.appendQueryParameter(MMAPIConstants.URI_QUERY_PARAM_KEY_TIME_SPAN, timeSpan)
-				  .appendQueryParameter(MMAPIConstants.URI_QUERY_PARAM_KEY_COUNTS_ONLY, Boolean.toString(true))
-				  .appendQueryParameter(MMAPIConstants.URI_QUERY_PARAM_KEY_NEARBY, Boolean.toString(true))
-				  .appendQueryParameter(MMAPIConstants.URI_QUERY_PARAM_KEY_LATITUDE, Double.toString(latitude))
-				  .appendQueryParameter(MMAPIConstants.URI_QUERY_PARAM_KEY_LONGITUDE, Double.toString(longitude))
-				  .appendQueryParameter(MMAPIConstants.URI_QUERY_PARAM_KEY_RADIUS, Integer.toString(radius))
-				  .appendQueryParameter(MMAPIConstants.URI_QUERY_PARAM_KEY_FAVORITES_ONLY, Boolean.toString(true))
-				  .appendQueryParameter(MMAPIConstants.URI_QUERY_PARAM_KEY_MY_INTEREST, Boolean.toString(true))
-				  .appendQueryParameter(MMAPIConstants.URI_QUERY_PARAM_KEY_CATEGORY_IDS, categoryIds);
+				  .appendQueryParameter(MMAPIConstants.URI_QUERY_PARAM_KEY_COUNTS_ONLY, Boolean.toString(true));
 		
 		getTrending(mmCallback, emailAddress, password, partnerId);
 	}

@@ -27,7 +27,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Video.Thumbnails;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +47,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.VideoView;
 
 /**
  * @author Dezapp, LLC
@@ -64,6 +71,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private TextView tvFavorite;
 	
 	private LinearLayout llMedia;
+//	private VideoView vvMedia;
 	private ImageView ivMedia;
 	private ImageButton ibPlay;
 	private TextView tvExpiryDate;
@@ -102,6 +110,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		tvFavorite = (TextView) view.findViewById(R.id.tvfavorite);
 		
 		llMedia = (LinearLayout) view.findViewById(R.id.llmedia);
+//		vvMedia = (VideoView) view.findViewById(R.id.vvmedia);
 		ivMedia = (ImageView) view.findViewById(R.id.ivmedia);
 		ibPlay = (ImageButton) view.findViewById(R.id.ibplay);
 		tvExpiryDate = (TextView) view.findViewById(R.id.tvexpirydate);
@@ -275,6 +284,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING)) {
 					if(isFirstMedia) {
 						mediaStreamVideoUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
+//						vvMedia.setVideoURI(Uri.parse(mediaStreamVideoUrl));
+//						vvMedia.seekTo(1);
+						MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+						mmr.setDataSource(getActivity(), Uri.parse(mediaStreamVideoUrl));
+						ivMedia.setImageBitmap(mmr.getFrameAtTime(1000));
 						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 						ibPlay.setVisibility(View.VISIBLE);
 						ibPlay.setOnClickListener(LocationDetailsFragment.this);
@@ -284,6 +298,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
 					if(isFirstMedia) {
 						mediaStreamVideoUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
+						Log.d(TAG, TAG + "mediaStreamVideoUrl: " + mediaStreamVideoUrl);
+						MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+						mmr.setDataSource(getActivity(), Uri.parse(mediaStreamVideoUrl));
+						
+						ivMedia.setImageBitmap(ThumbnailUtils.createVideoThumbnail(mediaStreamVideoUrl, Thumbnails.MICRO_KIND));
 						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 						ibPlay.setVisibility(View.VISIBLE);
 						ibPlay.setOnClickListener(LocationDetailsFragment.this);

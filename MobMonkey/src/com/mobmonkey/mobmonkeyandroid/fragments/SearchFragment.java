@@ -52,10 +52,10 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 	
 	private SharedPreferences userPrefs;
 	
-	private Location location;
-	private double longitudeValue;
-	private double latitudeValue;
-	
+//	private Location location;
+//	private double longitudeValue;
+//	private double latitudeValue;
+//	
 	private String[] topLevelCategories;
 	
 	private Button btnFilter;
@@ -76,7 +76,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
+//		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_search_screen, container, false);
 		btnFilter = (Button) view.findViewById(R.id.btnfilter);
@@ -90,7 +90,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 		
 		try {
 			topLevelCategories = MMCategories.getTopLevelCategories(getActivity().getApplicationContext());
-			getCurrentLocation();
+//			getCurrentLocation();
 			setSearchByText();
 			setSearchNoCategory();
 			setSearchCategory();
@@ -134,17 +134,17 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 
 	}
 	
-	private void getCurrentLocation() {
-		if(location != null) {
-			longitudeValue = location.getLongitude();
-			latitudeValue = location.getLatitude();
-			DecimalFormat twoDForm = new DecimalFormat("#.######");
-			latitudeValue = Double.valueOf(twoDForm.format(latitudeValue));
-			longitudeValue = Double.valueOf(twoDForm.format(longitudeValue));
-			//latitudeValue = 33.415153;
-			//longitudeValue = -111.903949;
-		}
-	}
+//	private void getCurrentLocation() {
+//		if(location != null) {
+//			longitudeValue = location.getLongitude();
+//			latitudeValue = location.getLatitude();
+//			DecimalFormat twoDForm = new DecimalFormat("#.######");
+//			latitudeValue = Double.valueOf(twoDForm.format(latitudeValue));
+//			longitudeValue = Double.valueOf(twoDForm.format(longitudeValue));
+//			//latitudeValue = 33.415153;
+//			//longitudeValue = -111.903949;
+//		}
+//	}
 	
 	private void setSearchByText() {
 		etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -207,8 +207,8 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 						MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_locating) + MMAPIConstants.DEFAULT_STRING_SPACE + topLevelCategories[position] + getString(R.string.pd_ellipses));
 						MMSearchLocationAdapter.searchLocationWithCategoryId(
 								new MMSearchResultsCallback(getActivity(), topLevelCategories[position], null), 
-								Double.toString(longitudeValue), 
-								Double.toString(latitudeValue), 
+								Double.toString(MMLocationManager.getLocationLongitude()), 
+								Double.toString(MMLocationManager.getLocationLatitude()), 
 								userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
 								cats.getJSONArray(topLevelCategories[position]).getJSONObject(0).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID),
 								userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
@@ -234,8 +234,8 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 	private void searchByText() {
 		MMSearchLocationAdapter.searchLocationWithText(
 				new SearchCallback(), 
-				Double.toString(longitudeValue), 
-				Double.toString(latitudeValue), 
+				Double.toString(MMLocationManager.getLocationLongitude()), 
+				Double.toString(MMLocationManager.getLocationLatitude()), 
 				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
 				searchCategory,
 				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
@@ -249,7 +249,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 	private void searchAllNearbyLocations() {
 		Log.d(TAG, TAG + "search radius: " + userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE));
 		
-		MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), Double.toString(longitudeValue), Double.toString(latitudeValue), 
+		MMSearchLocationAdapter.searchAllNearby(new SearchCallback(), Double.toString(MMLocationManager.getLocationLongitude()), Double.toString(MMLocationManager.getLocationLatitude()), 
 				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), userPrefs.getString(MMAPIConstants.KEY_USER, 
 				MMAPIConstants.DEFAULT_STRING_EMPTY), userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), MMConstants.PARTNER_ID);
 		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_search_all_nearby));
