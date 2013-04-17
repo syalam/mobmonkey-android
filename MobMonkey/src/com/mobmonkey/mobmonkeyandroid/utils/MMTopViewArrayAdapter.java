@@ -1,5 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid.utils;
 
+import java.util.LinkedList;
+
 import com.mobmonkey.mobmonkeyandroid.R;
 
 import android.app.Activity;
@@ -11,16 +13,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MMTopviewedArrayAdapter extends ArrayAdapter<MMTopviewedItem> {
+public class MMTopViewArrayAdapter extends ArrayAdapter<MMTopViewItem> {
 	private Context context; 
 	private  int layoutResourceId;    
-	private MMTopviewedItem data[] = null;
+	private LinkedList<MMTopViewItem> data = null;
     
-    public MMTopviewedArrayAdapter(Context context, int layoutResourceId, MMTopviewedItem[] data) {
-        
+    public MMTopViewArrayAdapter(Context context, int layoutResourceId, LinkedList<MMTopViewItem> data) {
     	super(context, layoutResourceId, data);
-        this.layoutResourceId = layoutResourceId;
         this.context = context;
+        this.layoutResourceId = layoutResourceId;
         this.data = data;
     }
 
@@ -47,9 +48,9 @@ public class MMTopviewedArrayAdapter extends ArrayAdapter<MMTopviewedItem> {
 			vholder = (ViewHolder) row.getTag();
 		}
 		
-		MMTopviewedItem item = data[position];
-		vholder.tvLabel.setText(item.title);
-		vholder.ivIcon.setImageBitmap(item.imageIcon);
+		MMTopViewItem item = data.get(position);
+		vholder.tvLabel.setText(item.getTitle());
+		vholder.ivIcon.setImageBitmap(item.getImageMedia());
 		
 		return row;
 	}

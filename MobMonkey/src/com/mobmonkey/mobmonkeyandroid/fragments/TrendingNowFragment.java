@@ -74,9 +74,9 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
-		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + 
-				MMAPIConstants.DEFAULT_STRING_SPACE + ((TextView) view.findViewById(R.id.tvtrending)).getText().toString() + 
-				getString(R.string.pd_ellipses));
+//		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + 
+//				MMAPIConstants.DEFAULT_STRING_SPACE + ((TextView) view.findViewById(R.id.tvtrending)).getText().toString() + 
+//				getString(R.string.pd_ellipses));
 		switch (position) {
 			// bookmarks
 			case 0:

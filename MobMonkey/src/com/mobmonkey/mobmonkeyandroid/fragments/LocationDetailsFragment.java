@@ -299,10 +299,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					if(isFirstMedia) {
 						mediaStreamVideoUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
 						Log.d(TAG, TAG + "mediaStreamVideoUrl: " + mediaStreamVideoUrl);
-						MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-						mmr.setDataSource(getActivity(), Uri.parse(mediaStreamVideoUrl));
-						
-						ivMedia.setImageBitmap(ThumbnailUtils.createVideoThumbnail(mediaStreamVideoUrl, Thumbnails.MICRO_KIND));
+//						MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+//						mmr.setDataSource(getActivity(), Uri.parse(mediaStreamVideoUrl));
+//						
+//						ivMedia.setImageBitmap(ThumbnailUtils.createVideoThumbnail(mediaStreamVideoUrl, Thumbnails.MICRO_KIND));
 						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 						ibPlay.setVisibility(View.VISIBLE);
 						ibPlay.setOnClickListener(LocationDetailsFragment.this);

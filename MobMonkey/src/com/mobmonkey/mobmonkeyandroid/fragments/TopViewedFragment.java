@@ -1,6 +1,5 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
-import java.io.IOException;
 import java.util.LinkedList;
 
 import org.json.JSONArray;
@@ -9,6 +8,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,13 +19,12 @@ import android.widget.ListView;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMTopviewedArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMTopviewedItem;
-import com.mobmonkey.mobmonkeysdk.adapters.MMLocationDetailsAdapter;
+import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewItem;
+import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMTrendingAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
@@ -39,17 +38,15 @@ public class TopViewedFragment extends MMFragment {
 	
 	private ListView lvtopviewed;
 	private JSONArray topViewed;
-	private LinkedList<String> mediaUrl = new LinkedList<String>();
-	private LinkedList<String> mediaType = new LinkedList<String>();
+	private LinkedList<MMTopViewItem> topViewedItems;
 	private SharedPreferences userPrefs;
-//	private boolean isLoading = true;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
 		View view = inflater.inflate(R.layout.fragment_topviewed_screen, container, false);
 		lvtopviewed = (ListView) view.findViewById(R.id.lvtopviewed);
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
-		
+		topViewedItems = new LinkedList<MMTopViewItem>();
 		getTrending();
 		return view;
 	}
@@ -80,45 +77,20 @@ public class TopViewedFragment extends MMFragment {
 	private void getMediaForAllLocation() {
 		try {
 			for(int i = 0; i < topViewed.length(); i++) {
-				String locationID = topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LOCATION_ID);
-				String providerID = topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_PROVIDER_ID);
+				JSONObject jObj = topViewed.getJSONObject(i);
+				JSONObject jObjMedia = jObj.getJSONObject(MMAPIConstants.JSON_KEY_MEDIA);
+				if(jObjMedia.getString(MMAPIConstants.JSON_KEY_TYPE).equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
+					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObjMedia.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
+				} else if(jObjMedia.getString(MMAPIConstants.JSON_KEY_TYPE).equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
+					// TODO: create thumbnail from video
+				}
 				
-				MMLocationDetailsAdapter.retrieveAllMediaForLocation(new MediaCallBack(), 
-														   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-														   userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING_EMPTY),
-														   MMConstants.PARTNER_ID,
-														   locationID, 
-														   providerID);
+				topViewedItems.add(new MMTopViewItem());
+				topViewedItems.get(i).setTitle(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			}
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}
-	}
-	
-	private MMTopviewedItem[] getTopViewedItems() {
-		MMTopviewedItem topViewedItems[] = new MMTopviewedItem[topViewed.length()];
-		try {
-			//Log.d(TAG, topViewed.toString());
-			for(int i = 0; i < topViewedItems.length; i++) {
-				if(mediaType.get(i).equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
-					topViewedItems[i] = new MMTopviewedItem(topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME), 
-															mediaUrl.get(i), false);
-				} else if(mediaType.get(i).equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
-					topViewedItems[i] = new MMTopviewedItem(topViewed.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME), 
-															mediaUrl.get(i), true);
-				}
-			
-				Log.d(TAG, "title: " + topViewedItems[i].title);
-			}
-		} catch (IOException ex) {
-			Log.d(TAG, "IOExcpetion at getTopViewedItems()");
-			ex.printStackTrace();
-		} catch (JSONException e) {
-			Log.d(TAG, "JSONException at getTopViewedItems()");
-			e.printStackTrace();
-		}
-		
-		return topViewedItems;
 	}
 	
 	/**
@@ -135,6 +107,7 @@ public class TopViewedFragment extends MMFragment {
 				Log.d(TAG, TAG + "topViewed: " + ((String) obj));
 				try {
 					topViewed = new JSONArray((String) obj);
+					Log.d(TAG, TAG + topViewed.toString());
 					getMediaForAllLocation();
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -150,26 +123,26 @@ public class TopViewedFragment extends MMFragment {
 		}
 	}
 	
-	private class MediaCallBack implements MMCallback {
-		@Override
-		public void processCallback(Object obj) {
-			try {
-				JSONObject jObj = new JSONObject((String)obj);
-				JSONArray mediaArray = jObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA);
-				
-				mediaUrl.add(mediaArray.getJSONObject(0).getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
-				mediaType.add(mediaArray.getJSONObject(0).getString(MMAPIConstants.JSON_KEY_TYPE));
-				if(mediaUrl.size() > 0) {
-					MMTopviewedArrayAdapter adapter = new MMTopviewedArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, getTopViewedItems());
-					lvtopviewed.setAdapter(adapter);
-					adapter.notifyDataSetChanged();
-				}
-				
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			
+	/**
+	 * Callback to display the image it retrieve from the mediaurl
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class LoadImageCallback implements MMCallback {
+		int topViewedLocation;
+		
+		public LoadImageCallback(int topViewedLocation) {
+			this.topViewedLocation = topViewedLocation;
 		}
 		
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				topViewedItems.get(topViewedLocation).setImageMedia((Bitmap) obj);
+				MMTopViewArrayAdapter adapter = new MMTopViewArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, topViewedItems);
+				lvtopviewed.setAdapter(adapter);
+				adapter.notifyDataSetChanged();
+			}
+		}
 	}
 }
