@@ -35,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -44,6 +45,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
+import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMAnswerRequestAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
@@ -279,6 +281,8 @@ public class AssignedRequestsFragment extends MMFragment {
 		    	e.printStackTrace();
 		    } catch (JSONException e) {
 				e.printStackTrace();
+			} catch (OutOfMemoryError e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -293,6 +297,45 @@ public class AssignedRequestsFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			Log.d(TAG, (String) obj);
+			try {
+				JSONObject jObj = new JSONObject((String)obj);
+				if(jObj.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+					MMAssignedRequestsItem[] items, data;
+					data = getAssignedRequestItems();
+					items = new MMAssignedRequestsItem[data.length - 1];
+					
+					for(int i = 0; i < data.length; i++) {
+						if(i < positionClicked) {
+							items[i] = data[i];
+						} else if (i > positionClicked) {
+							items[i-1] = data[i];
+						}
+					}
+					
+					assignedRequests = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS));
+					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, items);
+					lvAssignedRequests.setAdapter(arrayAdapter);
+					lvAssignedRequests.invalidate();
+					
+					Toast.makeText(getActivity().getApplicationContext(), 
+							   "You have successfully fulfilled a request.", 
+							   Toast.LENGTH_LONG)
+							   .show();
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(), 
+							   "An error has occured while uploading media.", 
+							   Toast.LENGTH_LONG)
+							   .show();
+				}
+				
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}
