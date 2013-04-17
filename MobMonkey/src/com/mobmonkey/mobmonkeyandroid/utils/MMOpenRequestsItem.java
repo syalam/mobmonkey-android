@@ -2,16 +2,16 @@ package com.mobmonkey.mobmonkeyandroid.utils;
 
 import java.io.IOException;
 
-public class MMOpenedRequestsItem {
+public class MMOpenRequestsItem {
 
 	public String title, dis, message, time;
 	public int icon, mediaType;
 	
-	public MMOpenedRequestsItem() {
+	public MMOpenRequestsItem() {
 		super();
 	}
 	
-	public MMOpenedRequestsItem(String title, String dis, String message, String time, int icon, int mediaType) throws IOException {
+	public MMOpenRequestsItem(String title, String dis, String message, String time, int icon, int mediaType) throws IOException {
 		super();
 		this.title = title;
 		this.dis = dis;

@@ -6,7 +6,7 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.AnsweredRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.AssignedRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.InboxFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.OpenedRequestsFragment;
+import com.mobmonkey.mobmonkeyandroid.fragments.OpenRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.InboxFragment.OnInboxItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
@@ -64,7 +64,7 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 		MMFragment mmFragment = null;
 		switch(position) {
 			case 0:
-				mmFragment = new OpenedRequestsFragment();
+				mmFragment = new OpenRequestsFragment();
 				break;
 			case 1:
 				mmFragment = new AnsweredRequestsFragment();

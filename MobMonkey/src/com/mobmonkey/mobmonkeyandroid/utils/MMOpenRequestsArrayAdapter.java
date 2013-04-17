@@ -11,13 +11,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MMOpenedRequestsArrayAdapter extends ArrayAdapter<MMOpenedRequestsItem>{
+public class MMOpenRequestsArrayAdapter extends ArrayAdapter<MMOpenRequestsItem>{
 	
 	private Context context;
 	private int layoutResourceId;
-	private MMOpenedRequestsItem data[] = null;
+	private MMOpenRequestsItem data[] = null;
     
-    public MMOpenedRequestsArrayAdapter(Context context, int layoutResourceId, MMOpenedRequestsItem[] data) {
+    public MMOpenRequestsArrayAdapter(Context context, int layoutResourceId, MMOpenRequestsItem[] data) {
     	super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -50,7 +50,7 @@ public class MMOpenedRequestsArrayAdapter extends ArrayAdapter<MMOpenedRequestsI
 			vholder = (ViewHolder) row.getTag();
 		}
 		
-		MMOpenedRequestsItem item = data[position];
+		MMOpenRequestsItem item = data[position];
 		vholder.tvTitle.setText(item.title);
 		vholder.tvDis.setText(item.dis);
 		vholder.tvMessage.setText(item.message);

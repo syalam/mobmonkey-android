@@ -27,8 +27,8 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMOpenedRequestsArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMOpenedRequestsItem;
+import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMRequestMediaAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
@@ -41,13 +41,13 @@ import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
  * @author Dezapp, LLC
  *
  */
-public class OpenedRequestsFragment extends MMFragment {
+public class OpenRequestsFragment extends MMFragment {
 	private static final String TAG = "OpenRequestsScreen: ";
 	
 	private ListView lvOpenedRequests;
 	private Location location;
-	private JSONArray openedRequests;
-	private MMOpenedRequestsArrayAdapter arrayAdapter;
+	private JSONArray openRequests;
+	private MMOpenRequestsArrayAdapter arrayAdapter;
 	private int clickedPosition;
 	private SharedPreferences userPrefs;
 	
@@ -58,13 +58,13 @@ public class OpenedRequestsFragment extends MMFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
-		View view = inflater.inflate(R.layout.fragment_openedrequests_screen, container, false);
+		View view = inflater.inflate(R.layout.fragment_openrequests_screen, container, false);
 		lvOpenedRequests = (ListView) view.findViewById(R.id.lvopenrequests);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		try {
-			openedRequests = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS));
-			arrayAdapter = new MMOpenedRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
+			openRequests = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS));
+			arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
 			lvOpenedRequests.setAdapter(arrayAdapter);
 			lvOpenedRequests.setOnItemClickListener(new DeleteRequestListener());
 		} catch (JSONException e) {
@@ -88,18 +88,18 @@ public class OpenedRequestsFragment extends MMFragment {
 	}
 	
 	/**
-	 * function that generate an array of {@link MMOpenedRequestsItem} and returns it.
+	 * function that generate an array of {@link MMOpenRequestsItem} and returns it.
 	 * @return {@link MMOpenedRequestsItem[]}
 	 * @throws JSONException
 	 * @throws NumberFormatException
 	 * @throws ParseException
 	 */
-	private MMOpenedRequestsItem[] getOpenedRequestItems() throws JSONException, NumberFormatException, ParseException {
-		MMOpenedRequestsItem[] openedRequestItems = new MMOpenedRequestsItem[openedRequests.length()];
+	private MMOpenRequestsItem[] getOpenedRequestItems() throws JSONException, NumberFormatException, ParseException {
+		MMOpenRequestsItem[] openedRequestItems = new MMOpenRequestsItem[openRequests.length()];
 
-		for(int i = 0; i < openedRequests.length(); i++) {
-			JSONObject jObj = openedRequests.getJSONObject(i);
-			MMOpenedRequestsItem item = new MMOpenedRequestsItem();
+		for(int i = 0; i < openRequests.length(); i++) {
+			JSONObject jObj = openRequests.getJSONObject(i);
+			MMOpenRequestsItem item = new MMOpenRequestsItem();
 			item.title = jObj.getString(MMAPIConstants.JSON_KEY_NAME_OF_LOCATION);
 			if(jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE).equals(MMAPIConstants.DEFAULT_STRING_NULL)) {
 				item.message = MMAPIConstants.DEFAULT_STRING_EMPTY;
@@ -127,10 +127,10 @@ public class OpenedRequestsFragment extends MMFragment {
 		try {
 			MMRequestMediaAdapter.deleteMedia(new DeleteRequestCallback(), 
 											  MMConstants.PARTNER_ID, 
-											  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING), 
-											  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING),
-											  openedRequests.getJSONObject(clickedPosition).getString(MMAPIConstants.JSON_KEY_REQUEST_ID), 
-											  openedRequests.getJSONObject(clickedPosition).getString(MMAPIConstants.JSON_KEY_RECURRING));
+											  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+											  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY),
+											  openRequests.getJSONObject(clickedPosition).getString(MMAPIConstants.JSON_KEY_REQUEST_ID), 
+											  openRequests.getJSONObject(clickedPosition).getString(MMAPIConstants.JSON_KEY_RECURRING));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -164,9 +164,9 @@ public class OpenedRequestsFragment extends MMFragment {
 		public void processCallback(Object obj) {
 			Log.d(TAG, (String)obj);
 			try {
-				MMOpenedRequestsItem[] items, data;
+				MMOpenRequestsItem[] items, data;
 				data = getOpenedRequestItems();
-				items = new MMOpenedRequestsItem[data.length - 1];
+				items = new MMOpenRequestsItem[data.length - 1];
 				
 				for(int i = 0; i < data.length; i++) {
 					if(i < clickedPosition) {
@@ -176,7 +176,7 @@ public class OpenedRequestsFragment extends MMFragment {
 					}
 				}
 				
-				arrayAdapter = new MMOpenedRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, items);
+				arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, items);
 				lvOpenedRequests.setAdapter(arrayAdapter);
 				lvOpenedRequests.invalidate();
 			} catch (NumberFormatException e) {

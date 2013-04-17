@@ -94,14 +94,14 @@
 	<!--  Inbox Fragment -->
 	<string name="tv_title_inbox">Inbox</string>
 	<string-array name="inbox_category">
-	    <item>Opened Requests</item>
+	    <item>Open Requests</item>
 	    <item>Answered Requests</item>
 	    <item>Assigned Requests</item>
 	    <item>Notifications</item>
 	</string-array>
 	
-	<!-- Opened Requests Fragment -->
-	<string name="tv_title_openrequests">Opened Requests</string>
+	<!-- Open Requests Fragment -->
+	<string name="tv_title_openrequests">Open Requests</string>
 	
 	<!-- Answered Requests Fragment -->
 	<string name="tv_title_answeredrequests">Answered Requests</string>
