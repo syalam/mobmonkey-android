@@ -13,12 +13,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MMTopViewArrayAdapter extends ArrayAdapter<MMTopViewItem> {
+public class MMTopViewedArrayAdapter extends ArrayAdapter<MMTopViewedItem> {
 	private Context context; 
 	private  int layoutResourceId;    
-	private LinkedList<MMTopViewItem> data = null;
+	private LinkedList<MMTopViewedItem> data = null;
     
-    public MMTopViewArrayAdapter(Context context, int layoutResourceId, LinkedList<MMTopViewItem> data) {
+    public MMTopViewedArrayAdapter(Context context, int layoutResourceId, LinkedList<MMTopViewedItem> data) {
     	super(context, layoutResourceId, data);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
@@ -48,7 +48,7 @@ public class MMTopViewArrayAdapter extends ArrayAdapter<MMTopViewItem> {
 			vholder = (ViewHolder) row.getTag();
 		}
 		
-		MMTopViewItem item = data.get(position);
+		MMTopViewedItem item = data.get(position);
 		vholder.tvLabel.setText(item.getTitle());
 		vholder.ivIcon.setImageBitmap(item.getImageMedia());
 		

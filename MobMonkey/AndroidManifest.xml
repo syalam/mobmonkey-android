@@ -116,6 +116,17 @@
 		    
 		</activity>
 		
+		<activity android:name=".ExpandedThumbnailScreen"
+		    android:theme="@android:style/Theme.Dialog"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
+		
+		<activity android:name=".LocationDetailsMediaScreen"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
+		
 		<activity android:name=".MakeARequestScreen"
 		    android:screenOrientation="portrait">
 		    

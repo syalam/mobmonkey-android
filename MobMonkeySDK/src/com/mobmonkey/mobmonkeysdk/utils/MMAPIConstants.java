@@ -101,9 +101,13 @@ public final class MMAPIConstants {
 	// Intent extra/Bundle key values
 	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
 	public static final String KEY_INTENT_EXTRA_DISPLAY_MAP = "Display map";
+	public static final String KEY_INTENT_EXTRA_IMAGE_MEDIA = "Image media";
 	public static final String KEY_INTENT_EXTRA_INBOX_REQUESTS = "Inbox requests";
 	public static final String KEY_INTENT_EXTRA_LOCATION = "Location";
 	public static final String KEY_INTENT_EXTRA_LOCATION_DETAILS = "Location details";
+	public static final String KEY_INTENT_EXTRA_MEDIA_TYPE = "Media type";
+	public static final String KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH = "Media thumbnail width";
+	public static final String KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT = "Media thumbnail height";
 	public static final String KEY_INTENT_EXTRA_MESSAGE = "Message";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING = "Repeating";

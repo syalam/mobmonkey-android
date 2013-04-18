@@ -12,12 +12,12 @@ import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
 
-public class MMTopViewItem {
+public class MMTopViewedItem {
 
 	private String title;
 	private Bitmap imageMedia;
 	
-	public MMTopViewItem() {
+	public MMTopViewedItem() {
 		super();
 	}
 
