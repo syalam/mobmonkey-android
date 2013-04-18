@@ -1,32 +1,30 @@
 package com.mobmonkey.mobmonkeyandroid.utils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMImageLoaderTask;
+import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 
 public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMAnsweredRequestItem>{
 	
@@ -57,9 +55,12 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMAnsweredReques
 			try {
 				vholder.tvTitle = (TextView) row.findViewById(R.id.tvansweredrequests_title);
 				vholder.ivImage = (ImageView) row.findViewById(R.id.ivansweredrequests_media_image);
-				vholder.vvVideo = (VideoView) row.findViewById(R.id.vvansweredrequests_media_video);
 				vholder.btnAccept = (ImageButton) row.findViewById(R.id.ibtnansweredrequests_accept);
 				vholder.btnReject = (ImageButton) row.findViewById(R.id.ibtnansweredrequests_reject);
+				
+				vholder.btnPlay = (ImageButton) row.findViewById(R.id.ibtvansweredrequest_play);
+				vholder.tvExp = (TextView) row.findViewById(R.id.tvansweredrequest_expirydate);
+				vholder.btnOverlay = (ImageButton) row.findViewById(R.id.ibtvansweredrequest_moreoverlay);
 			} catch (NullPointerException ex) {
 				ex.printStackTrace();
 			}
@@ -72,23 +73,38 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMAnsweredReques
 		MMAnsweredRequestItem item = data[position];
 		vholder.tvTitle.setText(item.title);
 		
+		// set time
+		Date date = new Date();
+		long expiretime = Long.parseLong(item.time) - date.getTime();
+		expiretime = TimeUnit.MILLISECONDS.toMinutes(expiretime);
+		vholder.tvExp.setText(MMAPIConstants.DEFAULT_STRING_SPACE + expiretime + "m");
+		
 		// image type
 		if(item.mediaType == 1) {
-			vholder.ivImage.setVisibility(View.VISIBLE);
-
+			vholder.btnPlay.setVisibility(View.GONE);
+			vholder.tvExp.setVisibility(View.VISIBLE);
+			vholder.btnOverlay.setVisibility(View.VISIBLE);
 			Log.d(TAG, "imgURI: " + item.mediaUri.toString());
-			vholder.ivImage.setImageBitmap(loadBitmap(item.mediaUri.toString()));
+			
+			Bitmap bm = loadBitmap(item.mediaUri.toString());
+			vholder.ivImage.setImageBitmap(bm);
 		} 
 		// videow type
 		else if(item.mediaType == 2) {
-			vholder.vvVideo.setVisibility(View.VISIBLE);
+			vholder.tvExp.setVisibility(View.VISIBLE);
+			vholder.btnOverlay.setVisibility(View.VISIBLE);
+			vholder.btnPlay.setVisibility(View.VISIBLE);
 			
-			if(item.mediaUri != null)
-				vholder.vvVideo.setVideoURI(item.mediaUri);
+			// create thumbnail for video
+			
+			// set ivImage to thumbnail
+			
+			// add playbutton on it
+			
 		}
 		
 		// if fulfilled, hide buttons
-		if(item.isFulfilled) {
+		if(item.isAccepted) {
 			vholder.btnAccept.setVisibility(View.GONE);
 			vholder.btnReject.setVisibility(View.GONE);
 		}
@@ -98,9 +114,8 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMAnsweredReques
     
 	private class ViewHolder {
         ImageView ivImage;
-        VideoView vvVideo;
-        ImageButton btnAccept, btnReject;
-        TextView tvTitle;
+        ImageButton btnAccept, btnReject, btnPlay, btnOverlay;
+        TextView tvTitle, tvExp;
     }
 	
 	public static Bitmap loadBitmap(String url) {

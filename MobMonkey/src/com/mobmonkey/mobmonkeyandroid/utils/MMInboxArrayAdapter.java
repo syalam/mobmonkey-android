@@ -26,7 +26,7 @@ public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
 
 	@Override
 	public boolean isEnabled(int position) {
-		if(Integer.parseInt(data[position].counter) > 0) {
+		if(data[position].containCounter > 0) {
 			return true;
 		} else {
 			return false;
@@ -58,7 +58,7 @@ public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
 		
 		MMInboxItem item = data[position];
 		vholder.tvLabel.setText(item.title);
-		if(Integer.parseInt(item.counter) > 0) {
+		if(item.containCounter > 0) {
 			vholder.tvLabel.setTextColor(Color.BLACK);
 		} else {
 			vholder.tvLabel.setTextColor(Color.GRAY);

@@ -191,6 +191,7 @@ public final class MMAPIConstants {
 	public static final int RESULT_CODE_NOT_FOUND = 404;
 	
 	// JSON key values
+	public static final String JSON_KEY_ACCEPTED = "accepted";
 	public static final String JSON_KEY_ADDRESS = "address";
 	public static final String JSON_KEY_ADDRESS_EXT = "address_ext";
 	public static final String JSON_KEY_ASSIGNED_REQUESTS = "assignedrequests";

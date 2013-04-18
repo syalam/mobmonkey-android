@@ -297,9 +297,12 @@ public class AssignedRequestsFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			Log.d(TAG, (String) obj);
+			// if successfully uploaded a media, refresh list
 			try {
-				JSONObject jObj = new JSONObject((String)obj);
-				if(jObj.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+				JSONObject jObj = new JSONObject((String) obj);
+				// if success
+				if(jObj.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)){
+					
 					MMAssignedRequestsItem[] items, data;
 					data = getAssignedRequestItems();
 					items = new MMAssignedRequestsItem[data.length - 1];
@@ -312,30 +315,70 @@ public class AssignedRequestsFragment extends MMFragment {
 						}
 					}
 					
-					assignedRequests = new JSONArray((String)obj);
 					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, items);
 					lvAssignedRequests.setAdapter(arrayAdapter);
 					lvAssignedRequests.invalidate();
 					
+					Toast.makeText(getActivity().getApplicationContext(),
+								   "You have successfully fulfilled a request.",
+								   Toast.LENGTH_LONG).
+								   show();
+				} 
+				// if fail
+				else {
 					Toast.makeText(getActivity().getApplicationContext(), 
-							   "You have successfully fulfilled a request.", 
-							   Toast.LENGTH_LONG)
-							   .show();
-				} else {
-					Toast.makeText(getActivity().getApplicationContext(), 
-							   "An error has occured while uploading media.", 
-							   Toast.LENGTH_LONG)
-							   .show();
+							   	   "An error has occured while uploading media.", 
+							   	   Toast.LENGTH_LONG)
+							   	   .show();
 				}
-				
-				
-			} catch (JSONException e) {
+			} catch(JSONException e) {
 				e.printStackTrace();
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
+			
+			
+//			try {
+//				JSONObject jObj = new JSONObject((String)obj);
+//				if(jObj.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+//					MMAssignedRequestsItem[] items, data;
+//					data = getAssignedRequestItems();
+//					items = new MMAssignedRequestsItem[data.length - 1];
+//					
+//					for(int i = 0; i < data.length; i++) {
+//						if(i < positionClicked) {
+//							items[i] = data[i];
+//						} else if (i > positionClicked) {
+//							items[i-1] = data[i];
+//						}
+//					}
+//					
+//					assignedRequests = new JSONArray((String)obj);
+//					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, data = getAssignedRequestItems());
+//					lvAssignedRequests.setAdapter(arrayAdapter);
+//					lvAssignedRequests.invalidate();
+//					
+//					Toast.makeText(getActivity().getApplicationContext(), 
+//							   "You have successfully fulfilled a request.", 
+//							   Toast.LENGTH_LONG)
+//							   .show();
+//				} else {
+//					Toast.makeText(getActivity().getApplicationContext(), 
+//							   "An error has occured while uploading media.", 
+//							   Toast.LENGTH_LONG)
+//							   .show();
+//				}
+//				
+//				
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			} catch (NumberFormatException e) {
+//				e.printStackTrace();
+//			} catch (ParseException e) {
+//				e.printStackTrace();
+//			}
 		}
 		
 	}

@@ -97,7 +97,12 @@ public class AnsweredRequestsFragment extends MMFragment {
 				item.mediaType = jObj.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
 				
 				// is fulfilled
-				item.isFulfilled = jObj.getBoolean(MMAPIConstants.JSON_KEY_MARKASREAD);
+				item.isAccepted = media.getBoolean(MMAPIConstants.JSON_KEY_ACCEPTED);
+				
+				// expiry date
+				item.time = media.getString(MMAPIConstants.JSON_KEY_EXPIRY_DATE);
+				
+				item.context = getActivity();
 			}
 			// if no data for media, ignore it and prints out rest of the data
 			else {
@@ -109,7 +114,12 @@ public class AnsweredRequestsFragment extends MMFragment {
 				item.mediaType = jObj.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
 				
 				// is fulfilled
-				item.isFulfilled = jObj.getBoolean(MMAPIConstants.JSON_KEY_MARKASREAD);
+				item.isAccepted = false;
+				
+				// expiry date
+				item.time = MMAPIConstants.DEFAULT_STRING_EMPTY;
+				
+				item.context = getActivity();
 			}
 			
 			answeredRequestItems[i] = item;
