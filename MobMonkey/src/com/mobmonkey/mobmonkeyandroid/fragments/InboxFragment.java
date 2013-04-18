@@ -155,14 +155,19 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 				
 				if(openRequestCount > 0) {
 					inboxItems[0].counter = Integer.toString(openRequestCount);
+					inboxItems[0].containCounter = openRequestCount;
 					arrayAdapter.isEnabled(0);
 				}
+				
 				if(answeredRequestsCount > 0) {
-					inboxItems[1].counter = Integer.toString(answeredRequestsCount);
+					inboxItems[1].counter = Integer.toString(fulfilledUnreadCount);
+					inboxItems[1].containCounter = answeredRequestsCount;
 					arrayAdapter.isEnabled(1);
 				}
+				
 				if(assignedRequestsCount > 0) {
-					inboxItems[2].counter = Integer.toString(assignedRequestsCount);
+					inboxItems[2].counter = Integer.toString(assignedUnreadRequests);
+					inboxItems[2].containCounter = assignedRequestsCount;
 					arrayAdapter.isEnabled(2);
 				}
 				arrayAdapter.notifyDataSetChanged();
@@ -172,40 +177,5 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		}
 		
 	}
-
-//	
-//	/**
-//	 * {@link MMCallback} function. Get call Answered requests.
-//	 *
-//	 */
-//	private class AnsweredRequestCallback implements MMCallback {
-//		@Override
-//		public void processCallback(Object obj) {
-//			if(obj != null) {
-//				try {
-//					JSONArray jArr = new JSONArray((String) obj);
-//					JSONArray newJarr = new JSONArray();
-//					for(int i = 0; i < jArr.length(); i++) {
-//						JSONObject jObj = jArr.getJSONObject(i);
-//						if(jObj.getBoolean("requestFulfilled")) {
-//							newJarr.put(jObj);
-//						}
-//					}
-//					inboxRequests[2] = newJarr;
-//					
-//					inboxItems[2].counter = Integer.toString(newJarr.length());
-//					
-//					if(newJarr.length() > 0) {
-//						arrayAdapter.isEnabled(2);
-//					}
-//				} catch (JSONException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//			
-//		}
-//		
-//	}
-//	
 
 }

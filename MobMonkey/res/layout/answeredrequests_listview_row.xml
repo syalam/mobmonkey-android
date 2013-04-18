@@ -28,19 +28,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp">
-	 	<ImageView 
-	 	    android:id="@+id/ivansweredrequests_media_image"
-	 	    android:layout_width="wrap_content"
-       		android:layout_height="wrap_content"
-			android:layout_margin="4dp"
-			android:visibility="gone"/>
-	 	
-	 	<VideoView 
-	 	    android:id="@+id/vvansweredrequests_media_video"
-	 	    android:layout_width="wrap_content"
- 	    	android:layout_height="wrap_content"
-			android:layout_margin="4dp"
-			android:visibility="gone"/>
+<!-- 	 	<ImageView  -->
+<!-- 	 	    android:id="@+id/ivansweredrequests_media_image" -->
+<!-- 	 	    android:layout_width="wrap_content" -->
+<!--        		android:layout_height="wrap_content" -->
+<!-- 			android:layout_margin="4dp"/> -->
+			<FrameLayout android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:paddingLeft="3dp"
+		            android:paddingRight="3dp">
+		            
+		            <ImageView android:id="@+id/ivansweredrequests_media_image"
+		                android:layout_width="match_parent"
+		                android:layout_height="200dp"/>
+		            
+		            <ImageButton android:id="@+id/ibtvansweredrequest_play"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_gravity="center"
+		                android:background="@drawable/btn_play_video"
+		                android:visibility="invisible"/>
+					
+					<TextView android:id="@+id/tvansweredrequest_expirydate"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="right"
+						android:layout_marginTop="10dp"
+						android:layout_marginRight="10dp"
+						android:gravity="center"
+						android:drawableLeft="@drawable/ic_dialog_time"
+						android:drawablePadding="5dp"
+						android:textColor="@android:color/white"
+						android:visibility="invisible"/>
+					
+		            <ImageButton android:id="@+id/ibtvansweredrequest_moreoverlay"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_gravity="right|bottom"
+		                android:layout_marginBottom="3dp"
+		                android:layout_marginRight="3dp"
+		                android:background="@drawable/btnmoreoverlay"
+		                android:visibility="invisible"/>
+
+		        </FrameLayout>
     </LinearLayout>
 
 
