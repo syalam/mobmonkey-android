@@ -6,23 +6,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMMediaArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMMediaItem;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
-import com.mobmonkey.mobmonkeysdk.adapters.MMLocationDetailsAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
@@ -34,11 +33,16 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 	private static final String TAG = "LocationDetailsMediaScreen";
 	
 	private RadioGroup rgMedia;
+	private RadioButton rbStream;
+	private RadioButton rbVideo;
+	private RadioButton rbImage;
 	private ListView lvStreamMedia;
 	private ListView lvVideoMedia;
 	private ListView lvImageMedia;
 	
 	private String mediaType;
+	private int mediaWidth;
+	private int mediaHeight;
 	
 	private LinkedList<MMMediaItem> mmStreamMediaItems;
 	private LinkedList<MMMediaItem> mmVideoMediaItems;
@@ -47,6 +51,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 	private boolean retrieveStreamMedia;
 	private boolean retrieveVideoMedia;
 	private boolean retrieveImageMedia;
+	private boolean lastImageMedia;
 	
 	private JSONArray streamMediaUrls;
 	private JSONArray videoMediaUrls;
@@ -62,11 +67,16 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		setContentView(R.layout.location_details_media_screen);
 		
 		rgMedia = (RadioGroup) findViewById(R.id.rgmedia);
+		rbStream = (RadioButton) findViewById(R.id.rbstreammedia);
+		rbVideo = (RadioButton) findViewById(R.id.rbvideomedia);
+		rbImage = (RadioButton) findViewById(R.id.rbimagemedia);
 		lvStreamMedia = (ListView) findViewById(R.id.lvstreammedia);
 		lvVideoMedia = (ListView) findViewById(R.id.lvvideomedia);
 		lvImageMedia = (ListView) findViewById(R.id.lvimagemedia);
 		
 		mediaType = getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_TYPE);
+		mediaWidth = getIntent().getIntExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, MMAPIConstants.DEFAULT_INT);
+		mediaHeight = getIntent().getIntExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, MMAPIConstants.DEFAULT_INT);
 		
 		mmStreamMediaItems = new LinkedList<MMMediaItem>();
 		mmVideoMediaItems = new LinkedList<MMMediaItem>();
@@ -110,15 +120,15 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 	}
 
 	private void getMediaUrls() throws JSONException {
+		streamMediaUrls = new JSONArray(getIntent().getStringExtra(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING));
+		videoMediaUrls = new JSONArray(getIntent().getStringExtra(MMAPIConstants.MEDIA_TYPE_VIDEO));
+		imageMediaUrls = new JSONArray(getIntent().getStringExtra(MMAPIConstants.MEDIA_TYPE_IMAGE));
 		if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING)) {
-			streamMediaUrls = new JSONArray(getIntent().getStringExtra(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING));
-			rbStreamChecked();
+			rbStream.setChecked(true);
 		} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
-			videoMediaUrls = new JSONArray(getIntent().getStringExtra(MMAPIConstants.MEDIA_TYPE_VIDEO));
-			rbVideoChecked();
+			rbVideo.setChecked(true);
 		} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
-			imageMediaUrls = new JSONArray(getIntent().getStringExtra(MMAPIConstants.MEDIA_TYPE_IMAGE));
-			rbImageChecked();
+			rbImage.setChecked(true);
 		}
 	}
 	
@@ -188,6 +198,9 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 			for(int i = 0; i < imageMediaUrls.length(); i++) {
 				JSONObject jObj = imageMediaUrls.getJSONObject(i);
 				MMMediaItem mmMediaItem = new MMMediaItem();
+				if(i == imageMediaUrls.length() - 1) {
+					lastImageMedia = true;
+				}
 				MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
 				mmMediaItem.setIsImage(true);
 				mmMediaItem.setShareMediaOnClickListener(new ShareMediaOnClickListener());
@@ -211,13 +224,13 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				// TODO: create a thumbnail from image
-				mmImageMediaItems.get(mediaPosition).setImageMedia((Bitmap) obj);
+				mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
 				mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new ImageOnClickListener((Bitmap) obj));
-				MMMediaArrayAdapter adapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmImageMediaItems);
-				lvImageMedia.setAdapter(adapter);
-				lvImageMedia.invalidate();
-				retrieveImageMedia = false;
+				if(lastImageMedia) {
+					MMMediaArrayAdapter adapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmImageMediaItems);
+					lvImageMedia.setAdapter(adapter);
+					retrieveImageMedia = false;
+				}
 			}
 		}
 	}
@@ -247,7 +260,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		@Override
 		public void onClick(View v) {
 			// TODO: start a dialog activity to display the full image
-			Intent intent = new Intent();
+			Intent intent = new Intent(LocationDetailsMediaScreen.this, ExpandedThumbnailScreen.class);
 			intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA, imageMedia);
 			startActivity(intent);
 		}		

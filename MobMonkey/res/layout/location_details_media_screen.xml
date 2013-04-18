@@ -55,7 +55,8 @@
 	</RelativeLayout>
 
 	<FrameLayout android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="match_parent"
+		android:padding="5dp">
 		
 	    <ListView android:id="@+id/lvstreammedia"
 	        android:layout_width="match_parent"

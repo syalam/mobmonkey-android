@@ -7,6 +7,8 @@ import com.mobmonkey.mobmonkeyandroid.R;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.ThumbnailUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,9 +23,11 @@ import android.widget.TextView;
  *
  */
 public class MMMediaArrayAdapter extends ArrayAdapter<MMMediaItem> {
-	Context context;
-	int mediaLayoutId;
-	LinkedList<MMMediaItem> mmMediaItems;
+	private static final String TAG = "MMMediaArrayAdapter";
+	
+	private Context context;
+	private int mediaLayoutId;
+	private LinkedList<MMMediaItem> mmMediaItems;
 	
 	public MMMediaArrayAdapter(Context context, int mediaLayoutId, LinkedList<MMMediaItem> mmMediaItems) {
 		super(context, mediaLayoutId, mmMediaItems);

@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mobmonkey.mobmonkeyandroid.ExpandedThumbnailScreen;
 import com.mobmonkey.mobmonkeyandroid.LocationDetailsMediaScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.MMVideoPlayerScreen;
@@ -195,7 +196,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				favoriteClicked();
 				break;
 			case R.id.ivtnmedia:
-				intent = new Intent();
+				intent = new Intent(getActivity(), ExpandedThumbnailScreen.class);
 				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA, imageMedia);
 				startActivity(intent);
 				break;
@@ -214,6 +215,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				intent.putExtra(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING, streamMediaUrl.toString());
 				intent.putExtra(MMAPIConstants.MEDIA_TYPE_VIDEO, videoMediaUrl.toString());
 				intent.putExtra(MMAPIConstants.MEDIA_TYPE_IMAGE, imageMediaUrl.toString());
+				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
+				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
 				startActivity(intent);
 				break;
 			case R.id.ibsharemedia:
@@ -536,7 +539,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		public void processCallback(Object obj) {
 			imageMedia = (Bitmap) obj;
 			// TODO: create a thumbnail from image
-			ivtnMedia.setImageBitmap(imageMedia);
+			ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
 		}
 	}
 	

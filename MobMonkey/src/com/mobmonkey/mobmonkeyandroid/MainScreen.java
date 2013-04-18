@@ -187,7 +187,6 @@ public class MainScreen extends TabActivity {
 		getAllCategories();
 		getAllFavorites();
 		checkUserIn();
-//		tabHost.setCurrentTabByTag("tab" + userPrefs.getString(MMAPIConstants.TAB_TITLE_CURRENT_TAG, MMAPIConstants.TAB_TITLE_TRENDING_NOW));
 	}
 	
 	/**
@@ -217,8 +216,6 @@ public class MainScreen extends TabActivity {
 		addTab(MMAPIConstants.TAB_TITLE_SEARCH, R.drawable.tab_search, SearchActivity.class);
 		addTab(MMAPIConstants.TAB_TITLE_FAVORITES, R.drawable.tab_favorites, FavoritesActivity.class);
 		addTab(MMAPIConstants.TAB_TITLE_SETTINGS, R.drawable.tab_settings, SettingsActivity.class);
-		
-		Log.d(TAG, "current tab: " + userPrefs.getInt(MMAPIConstants.TAB_TITLE_CURRENT_TAG, 0));
 		tabHost.setCurrentTab(userPrefs.getInt(MMAPIConstants.TAB_TITLE_CURRENT_TAG, 0));
 	}
 	
@@ -240,7 +237,6 @@ public class MainScreen extends TabActivity {
 		tabSpec.setIndicator(tabIndicator);
 		tabSpec.setContent(intent);
 		tabHost.addTab(tabSpec);
-		Log.d(TAG, "" + tabSpec.getTag());
 	}
 	
 	/**

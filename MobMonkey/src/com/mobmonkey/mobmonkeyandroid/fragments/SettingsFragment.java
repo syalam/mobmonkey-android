@@ -116,6 +116,8 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 					}
 					Toast.makeText(getActivity(), R.string.toast_sign_out_successful, Toast.LENGTH_SHORT).show();
 				}
+				userPrefsEditor.remove(MMAPIConstants.TAB_TITLE_CURRENT_TAG);
+				userPrefsEditor.commit();
  				getActivity().finish();
 			} catch (JSONException e) {
 				e.printStackTrace();
