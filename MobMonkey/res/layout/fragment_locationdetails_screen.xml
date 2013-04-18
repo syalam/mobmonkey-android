@@ -54,9 +54,10 @@
 		            android:paddingLeft="3dp"
 		            android:paddingRight="3dp">
 		            
-		            <ImageView android:id="@+id/ivmedia"
+		            <ImageView android:id="@+id/ivtnmedia"
 		                android:layout_width="match_parent"
-		                android:layout_height="200dp"/>
+		                android:layout_height="200dp"
+		                android:clickable="false"/>
 		            
 		            <ImageButton android:id="@+id/ibplay"
 		                android:layout_width="wrap_content"
@@ -97,7 +98,7 @@
 		                android:layout_marginRight="5dp"
 		                android:layout_weight="1">
 			                
-						<ImageView android:id="@+id/ivtnstream"
+						<ImageButton android:id="@+id/ibstream"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
 							android:background="@drawable/tn_media_stream"/>
@@ -117,7 +118,7 @@
 			        	android:layout_marginRight="5dp"
 		                android:layout_weight="1">
 			                
-						<ImageView android:id="@+id/ivtnvideo"
+						<ImageButton android:id="@+id/ibvideo"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
 							android:background="@drawable/tn_media_video"/>
@@ -136,7 +137,7 @@
 		                android:layout_height="wrap_content"
 		                android:layout_weight="1">
 			                
-						<ImageView android:id="@+id/ivtnimage"
+						<ImageButton android:id="@+id/ibimage"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
 							android:background="@drawable/tn_media_image"/>

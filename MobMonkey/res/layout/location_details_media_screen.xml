@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+	
+   	<RelativeLayout android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp"
+		android:background="@drawable/navigation_bar">
+		
+			<RadioGroup android:id="@+id/rgmedia"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_centerInParent="true"
+			    android:layout_marginTop="10dp"
+			    android:orientation="horizontal">
+			    
+		    	<RadioButton android:id="@+id/rbstreammedia"
+		    	    android:minWidth="30dp"
+		    	    android:minHeight="30dp"
+		   	    	android:layout_weight="1"
+		    	    android:button="@null"
+		    	    android:gravity="center"
+		    	    android:text="@string/rb_stream"
+		    	    android:textAppearance="?android:attr/textAppearanceSmall"
+		    	    android:textColor="@color/radio_colors"
+		    	    android:background="@drawable/segment_radio_left"/>
+			    
+		    	<RadioButton android:id="@+id/rbvideomedia"
+					android:minWidth="30dp"
+					android:minHeight="30dp"
+					android:layout_weight="1"
+					android:button="@null"
+					android:gravity="center"
+					android:text="@string/rb_video"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="@color/radio_colors"
+					android:background="@drawable/segment_radio_middle"/>
+		    	
+				<RadioButton android:id="@+id/rbimagemedia"
+					android:minWidth="30dp"
+					android:minHeight="30dp"
+					android:layout_weight="1"
+					android:button="@null"
+					android:gravity="center"
+					android:text="@string/rb_image"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="@color/radio_colors"
+					android:background="@drawable/segment_radio_right"/>
+		    	
+			</RadioGroup>
+		
+	</RelativeLayout>
+
+	<FrameLayout android:layout_width="match_parent"
+		android:layout_height="match_parent">
+		
+	    <ListView android:id="@+id/lvstreammedia"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:dividerHeight="0dp"
+	        android:visibility="invisible"/>
+	    
+   	    <ListView android:id="@+id/lvvideomedia"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:dividerHeight="0dp"
+	        android:visibility="invisible"/>
+	    
+		<ListView android:id="@+id/lvimagemedia"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:dividerHeight="0dp"
+			android:visibility="invisible"/>
+		
+   	</FrameLayout>
+	
+</LinearLayout>

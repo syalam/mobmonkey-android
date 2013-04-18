@@ -162,6 +162,11 @@
 	<string name="toast_add_favorite">Successfully added location to favorites</string>
 	<string name="toast_remove_favorite">Successfully removed location to favorites</string>
 	
+	<!-- LocatioDetailsMedia Screen -->
+	<string name="rb_stream">Live Camera</string>
+	<string name="rb_video">Videos</string>
+	<string name="rb_image">Photos</string>
+	
 	<!-- Make a Request Screen -->
 	<string name="tv_add_message">Add Message</string>
 	<string name="tv_schedule_request">Schedule Request</string>

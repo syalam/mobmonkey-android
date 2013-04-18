@@ -19,8 +19,8 @@ import android.widget.ListView;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewItem;
+import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewedArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewedItem;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMTrendingAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
@@ -38,7 +38,7 @@ public class TopViewedFragment extends MMFragment {
 	
 	private ListView lvtopviewed;
 	private JSONArray topViewed;
-	private LinkedList<MMTopViewItem> topViewedItems;
+	private LinkedList<MMTopViewedItem> topViewedItems;
 	private SharedPreferences userPrefs;
 	
 	@Override
@@ -46,7 +46,7 @@ public class TopViewedFragment extends MMFragment {
 		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
 		View view = inflater.inflate(R.layout.fragment_topviewed_screen, container, false);
 		lvtopviewed = (ListView) view.findViewById(R.id.lvtopviewed);
-		topViewedItems = new LinkedList<MMTopViewItem>();
+		topViewedItems = new LinkedList<MMTopViewedItem>();
 		getTrending();
 		return view;
 	}
@@ -85,7 +85,7 @@ public class TopViewedFragment extends MMFragment {
 					// TODO: create thumbnail from video
 				}
 				
-				topViewedItems.add(new MMTopViewItem());
+				topViewedItems.add(new MMTopViewedItem());
 				topViewedItems.get(i).setTitle(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
 			}
 		} catch (JSONException ex) {
@@ -139,7 +139,7 @@ public class TopViewedFragment extends MMFragment {
 		public void processCallback(Object obj) {
 			if(obj != null) {
 				topViewedItems.get(topViewedLocation).setImageMedia((Bitmap) obj);
-				MMTopViewArrayAdapter adapter = new MMTopViewArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, topViewedItems);
+				MMTopViewedArrayAdapter adapter = new MMTopViewedArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, topViewedItems);
 				lvtopviewed.setAdapter(adapter);
 				adapter.notifyDataSetChanged();
 			}
