@@ -58,7 +58,7 @@ public class MMInboxAdapter extends MMAdapter {
 									   String partnerId,
 									   String emailAddress,
 									   String password) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_INBOX, MMAPIConstants.URI_PATH_OPENREQUESTS);
+		createUriBuilderInstance(MMAPIConstants.URI_PATH_INBOX, MMAPIConstants.URI_PATH_ANSWEREDREQUESTS);
 		
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
@@ -83,6 +83,22 @@ public class MMInboxAdapter extends MMAdapter {
 										   String emailAddress,
 										   String password) {
 		createUriBuilderInstance(MMAPIConstants.URI_PATH_INBOX, MMAPIConstants.URI_PATH_ASSIGNEDREQUESTS);
+		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
+		
+		HttpGet httpGet = new HttpGet(uriBuilder.toString());
+		httpGet.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+		httpGet.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+		httpGet.setHeader(MMAPIConstants.KEY_USER, emailAddress);
+		httpGet.setHeader(MMAPIConstants.KEY_AUTH, password);
+		
+		new MMGetAsyncTask(mmCallback).execute(httpGet);
+	}
+	
+	public static void getCounts(MMCallback mmCallback,
+								 String partnerId,
+								 String emailAddress,
+								 String password) {
+		createUriBuilderInstance(MMAPIConstants.URI_PATH_INBOX, MMAPIConstants.URI_PATH_COUNTS);
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
 		HttpGet httpGet = new HttpGet(uriBuilder.toString());

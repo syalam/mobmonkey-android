@@ -31,6 +31,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
+import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMRequestMediaAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -64,15 +65,12 @@ public class OpenRequestsFragment extends MMFragment {
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		try {
-			openRequests = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS));
-			arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
-			lvOpenedRequests.setAdapter(arrayAdapter);
-			lvOpenedRequests.setOnItemClickListener(new DeleteRequestListener());
-		} catch (JSONException e) {
-			e.printStackTrace();
+			// get all the open request, and then update the badge counter
+			MMInboxAdapter.getOpenRequests(new OpenRequestCallback(), 
+										   MMConstants.PARTNER_ID, 
+					  					   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+					  					   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		
@@ -203,6 +201,25 @@ public class OpenRequestsFragment extends MMFragment {
 				e.printStackTrace();
 			}
 		}
-		
+	}
+	private class OpenRequestCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {			
+				try {
+					Log.d(TAG, "OpenRequestCallback: " + (String) obj);
+					openRequests = new JSONArray((String) obj);
+					arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
+					lvOpenedRequests.setAdapter(arrayAdapter);
+					lvOpenedRequests.setOnItemClickListener(new DeleteRequestListener());				
+				} catch (JSONException ex) {
+					ex.printStackTrace();
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

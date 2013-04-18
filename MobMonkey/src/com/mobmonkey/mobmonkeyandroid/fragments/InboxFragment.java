@@ -46,8 +46,6 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	
 	private OnInboxItemClickListener listener;
 	
-	private JSONArray[] inboxRequests;
-	
 	
 	/*
 	 * (non-Javadoc)
@@ -60,7 +58,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		View view = inflater.inflate(R.layout.fragment_inbox_screen, container, false);
 		lvInbox = (ListView) view.findViewById(R.id.lvinbox);
 		
-		inboxRequests = new JSONArray[4];
+		//inboxRequests = new JSONArray[4];
 		
 		lvInbox.setOnItemClickListener(InboxFragment.this);
 		return view;
@@ -87,7 +85,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 //		Intent intent = new Intent(getActivity(), AssignedRequestsScreen.class);
 //		intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS, inboxRequests[position].toString());
 //		startActivity(intent);
-		listener.onInboxItemClick(position, inboxRequests[position].toString());
+		listener.onInboxItemClick(position);
 	}
 	
 	/* (non-Javadoc)
@@ -119,23 +117,12 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		lvInbox.setAdapter(arrayAdapter);
 		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-			// get all the open request, and then update the badge counter
-			MMInboxAdapter.getOpenRequests(new OpenRequestCallback(), 
-										   MMConstants.PARTNER_ID, 
-					  					   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-					  					   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 			
-			// get all the answered request, and then update the badge counter
-			MMInboxAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
-										   MMConstants.PARTNER_ID, 
-										   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-										   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
-			
-			// get all the assigned request, and then update the badge counter
-			MMInboxAdapter.getAssignedRequests(new AssignedRequestCallback(), 
-											   MMConstants.PARTNER_ID, 
-											   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-											   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+			// get counts of each inbox categories
+			MMInboxAdapter.getCounts(new InboxCountsCallback(), 
+									 MMConstants.PARTNER_ID, 
+									 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+									 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 		}
 	}
 	
@@ -144,92 +131,81 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	 *
 	 */
 	public interface OnInboxItemClickListener {
-		public void onInboxItemClick(int position, String requests);
+		public void onInboxItemClick(int position);
 	}
 	
-	/**
-	 * {@link MMCallback} function. Get call Opened requests.
-	 *
-	 */
-	private class OpenRequestCallback implements MMCallback {
+	private class InboxCountsCallback implements MMCallback {
+
 		@Override
 		public void processCallback(Object obj) {
-			if(obj != null) {			
-				try {
-					JSONArray jArr = new JSONArray((String) obj);
-					
-					inboxRequests[0] = jArr;
-					
-					inboxItems[0].counter = Integer.toString(jArr.length());
-					if(jArr.length() > 0) {
-						arrayAdapter.isEnabled(0);
-					}
-					arrayAdapter.notifyDataSetChanged();				
-				} catch (JSONException ex) {
-					ex.printStackTrace();
+			int assignedReadRequests, assignedUnreadRequests, fulfilledUnreadCount, openrequests, fulfilledReadCount;
+			Log.d(TAG, (String) obj);
+			try {
+				JSONObject jObj = new JSONObject((String) obj);
+				
+				assignedReadRequests = jObj.getInt(MMAPIConstants.JSON_KEY_ASSIGNED_READ_REQUESTS);
+				assignedUnreadRequests = jObj.getInt(MMAPIConstants.JSON_KEY_ASSIGNED_UNREAD_REQUESTS);
+				fulfilledUnreadCount = jObj.getInt(MMAPIConstants.JSON_KEY_FULFILLED_UNREAD_COUNT);
+				openrequests = jObj.getInt(MMAPIConstants.JSON_KEY_OPEN_REQUESTS_COUNT);
+				fulfilledReadCount = jObj.getInt(MMAPIConstants.JSON_KEY_FULFILLED_READ_COUNT);
+				
+				int openRequestCount = openrequests,
+					answeredRequestsCount = fulfilledUnreadCount + fulfilledReadCount,
+					assignedRequestsCount = assignedReadRequests + assignedUnreadRequests;
+				
+				if(openRequestCount > 0) {
+					inboxItems[0].counter = Integer.toString(openRequestCount);
+					arrayAdapter.isEnabled(0);
 				}
-			}
-		}
-	}
-	
-	/**
-	 * {@link MMCallback} function. Get call Answered requests.
-	 *
-	 */
-	private class AnsweredRequestCallback implements MMCallback {
-		@Override
-		public void processCallback(Object obj) {
-			if(obj != null) {
-				try {
-					JSONArray jArr = new JSONArray((String) obj);
-					JSONArray newJarr = new JSONArray();
-					for(int i = 0; i < jArr.length(); i++) {
-						JSONObject jObj = jArr.getJSONObject(i);
-						if(jObj.getBoolean("requestFulfilled")) {
-							newJarr.put(jObj);
-						}
-					}
-					inboxRequests[2] = newJarr;
-					
-					inboxItems[2].counter = Integer.toString(newJarr.length());
-					
-					if(newJarr.length() > 0) {
-						arrayAdapter.isEnabled(2);
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
+				if(answeredRequestsCount > 0) {
+					inboxItems[1].counter = Integer.toString(answeredRequestsCount);
+					arrayAdapter.isEnabled(1);
 				}
+				if(assignedRequestsCount > 0) {
+					inboxItems[2].counter = Integer.toString(assignedRequestsCount);
+					arrayAdapter.isEnabled(2);
+				}
+				arrayAdapter.notifyDataSetChanged();
+			} catch (JSONException e) {
+				e.printStackTrace();
 			}
-			
 		}
 		
 	}
-	
-	/**
-	 * {@link MMCallback} function. Get call Assigned requests.
-	 *
-	 */
-	private class AssignedRequestCallback implements MMCallback {
-		@Override
-		public void processCallback(Object obj) {
-			if(obj != null) {
-				Log.d(TAG, "AssignedRequest: " + (String) obj);
-				try {
-					JSONArray jArr = new JSONArray((String) obj);
-					
-					inboxRequests[2] = jArr;
-					
-					inboxItems[2].counter = Integer.toString(jArr.length());
-					
-					if(jArr.length() > 0) {
-						arrayAdapter.isEnabled(2);
-					}
-					
-					arrayAdapter.notifyDataSetChanged();
-				} catch (JSONException ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-	}
+
+//	
+//	/**
+//	 * {@link MMCallback} function. Get call Answered requests.
+//	 *
+//	 */
+//	private class AnsweredRequestCallback implements MMCallback {
+//		@Override
+//		public void processCallback(Object obj) {
+//			if(obj != null) {
+//				try {
+//					JSONArray jArr = new JSONArray((String) obj);
+//					JSONArray newJarr = new JSONArray();
+//					for(int i = 0; i < jArr.length(); i++) {
+//						JSONObject jObj = jArr.getJSONObject(i);
+//						if(jObj.getBoolean("requestFulfilled")) {
+//							newJarr.put(jObj);
+//						}
+//					}
+//					inboxRequests[2] = newJarr;
+//					
+//					inboxItems[2].counter = Integer.toString(newJarr.length());
+//					
+//					if(newJarr.length() > 0) {
+//						arrayAdapter.isEnabled(2);
+//					}
+//				} catch (JSONException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			
+//		}
+//		
+//	}
+//	
+
 }

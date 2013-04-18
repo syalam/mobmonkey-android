@@ -40,14 +40,17 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.fragments.OpenRequestsFragment.DeleteRequestListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAnsweredRequestItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
+import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMAnswerRequestAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
@@ -84,16 +87,13 @@ public class AssignedRequestsFragment extends MMFragment {
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		try {
-			assignedRequests = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS));
-			arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, getAssignedRequestItems());
-			lvAssignedRequests.setAdapter(arrayAdapter);
-			lvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
+			// get all the answered request, and then update the badge counter
+			MMInboxAdapter.getAssignedRequests(new AssignedRequestCallback(), 
+										   	   MMConstants.PARTNER_ID, 
+										   	   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+										   	   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		
 		return view;
@@ -268,14 +268,14 @@ public class AssignedRequestsFragment extends MMFragment {
 		        
 		    	// send base64 file to server
 		        MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
-						   MMConstants.PARTNER_ID, 
-						   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-						   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-						   assignedRequests.getJSONObject(positionClicked).getString(MMAPIConstants.JSON_KEY_REQUEST_ID),
-						   assignedRequests.getJSONObject(positionClicked).getInt(MMAPIConstants.JSON_KEY_REQUEST_TYPE),
-						   MMAPIConstants.MEDIA_CONTENT_MP4,
-						   videoEncoded,
-						   MMAPIConstants.MEDIA_TYPE_VIDEO);
+												     MMConstants.PARTNER_ID, 
+												     userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+												     userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+												     assignedRequests.getJSONObject(positionClicked).getString(MMAPIConstants.JSON_KEY_REQUEST_ID),
+												     assignedRequests.getJSONObject(positionClicked).getInt(MMAPIConstants.JSON_KEY_REQUEST_TYPE),
+												     MMAPIConstants.MEDIA_CONTENT_MP4,
+												     videoEncoded,
+												     MMAPIConstants.MEDIA_TYPE_VIDEO);
 		        
 		    } catch (IOException e) {
 		    	e.printStackTrace();
@@ -312,7 +312,7 @@ public class AssignedRequestsFragment extends MMFragment {
 						}
 					}
 					
-					assignedRequests = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS));
+					assignedRequests = new JSONArray((String)obj);
 					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, items);
 					lvAssignedRequests.setAdapter(arrayAdapter);
 					lvAssignedRequests.invalidate();
@@ -353,5 +353,30 @@ public class AssignedRequestsFragment extends MMFragment {
 	    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 	    cursor.moveToFirst();
 	    return cursor.getString(column_index);
+	}
+	
+	/**
+	 * {@link MMCallback} function. Get call Assigned requests.
+	 *
+	 */
+	private class AssignedRequestCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				Log.d(TAG, "AssignedRequest: " + (String) obj);
+				try {
+					assignedRequests = new JSONArray((String) obj);
+					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, getAssignedRequestItems());
+					lvAssignedRequests.setAdapter(arrayAdapter);
+					lvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
+				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
