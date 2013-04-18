@@ -60,7 +60,7 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 	 * @see com.mobmonkey.mobmonkey.fragments.InboxFragment.OnInboxItemClickListener#onInboxItemClick(int, java.lang.String)
 	 */
 	@Override
-	public void onInboxItemClick(int position, String requests) {
+	public void onInboxItemClick(int position) {
 		MMFragment mmFragment = null;
 		switch(position) {
 			case 0:
@@ -77,9 +77,9 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 				break;
 		}
 		
-		Bundle data = new Bundle();
-		data.putString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS, requests);
-		mmFragment.setArguments(data);
+		//Bundle data = new Bundle();
+		//data.putString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS, requests);
+		//mmFragment.setArguments(data);
 		performTransaction(mmFragment);
 	}
 	

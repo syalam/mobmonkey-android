@@ -6,23 +6,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAnsweredRequestArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAnsweredRequestItem;
+import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
+import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 
@@ -47,20 +52,12 @@ public class AnsweredRequestsFragment extends MMFragment {
 		View view = inflater.inflate(R.layout.fragment_answeredrequests_screen, container, false);
 		lvAnsweredRequests = (ListView) view.findViewById(R.id.lvAnsweredrequests);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
-		
-		try {
-			answeredRequests = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS));
-			arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
-			lvAnsweredRequests.setAdapter(arrayAdapter);
-			lvAnsweredRequests.setOnItemClickListener(new onAnsweredRequestsClick());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
+		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		// get all the assigned request, and then update the badge counter
+		MMInboxAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
+										   MMConstants.PARTNER_ID, 
+										   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+										   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
 		
 		return view;
 	}
@@ -83,27 +80,42 @@ public class AnsweredRequestsFragment extends MMFragment {
 
 		for(int i = 0; i < answeredRequests.length(); i++) {
 			JSONObject jObj = answeredRequests.getJSONObject(i);
+			
 			MMAnsweredRequestItem item = new MMAnsweredRequestItem();
-			item.title = jObj.getString(MMAPIConstants.JSON_KEY_NAME_OF_LOCATION);
-			if(jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE).equals(MMAPIConstants.DEFAULT_STRING_NULL)) {
-				item.message = MMAPIConstants.DEFAULT_STRING_EMPTY;
-			} else {
-				item.message = jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE);
-			}
 			
-			//date can be null. leave time as a blank string if its null
-			if(jObj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE).compareTo(MMAPIConstants.DEFAULT_STRING_NULL) == 0) {
-				item.time = MMAPIConstants.DEFAULT_STRING_EMPTY;
+			// media file can be null
+			if(jObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA).length() > 0) {
+				JSONObject media = jObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA).getJSONObject(0);
+				
+				// title
+				item.title = jObj.getString(MMAPIConstants.JSON_KEY_NAME_OF_LOCATION);
+				
+				// media uri
+				item.mediaUri = Uri.parse(media.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
+				
+				// media type
+				item.mediaType = jObj.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
+				
+				// is fulfilled
+				item.isFulfilled = jObj.getBoolean(MMAPIConstants.JSON_KEY_MARKASREAD);
 			}
+			// if no data for media, ignore it and prints out rest of the data
 			else {
-				item.time = MMUtility.getDate(Long.parseLong(jObj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE)), "MMMM dd hh:mma");
+				
+				// title
+				item.title = jObj.getString(MMAPIConstants.JSON_KEY_NAME_OF_LOCATION);
+				
+				// media type
+				item.mediaType = jObj.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
+				
+				// is fulfilled
+				item.isFulfilled = jObj.getBoolean(MMAPIConstants.JSON_KEY_MARKASREAD);
 			}
-			
-			item.dis = MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles);
-			item.mediaType = jObj.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
 			
 			answeredRequestItems[i] = item;
 		}
+		
+		Log.d(TAG, "size of items: " + answeredRequestItems.length);
 		
 		return answeredRequestItems;
 	}
@@ -119,5 +131,27 @@ public class AnsweredRequestsFragment extends MMFragment {
 			
 		}
 		
+	}
+	
+	private class AnsweredRequestCallback implements MMCallback {
+
+		@Override
+		public void processCallback(Object obj) {
+			Log.d(TAG, (String) obj);
+			if(obj != null) {
+				try {
+					answeredRequests = new JSONArray((String) obj);
+					arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
+					lvAnsweredRequests.setAdapter(arrayAdapter);
+					lvAnsweredRequests.setOnItemClickListener(new onAnsweredRequestsClick());
+				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

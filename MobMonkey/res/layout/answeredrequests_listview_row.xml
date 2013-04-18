@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <LinearLayout 
+   <LinearLayout 
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,47 +21,52 @@
 			android:text="title"
 			android:layout_marginLeft="20dp"
             />
-        <TextView 
-            android:id="@+id/tvansweredrequests_dist"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_marginRight="20dp"
-			android:text="dist"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-            />
+
     </LinearLayout>
-    
-    <TextView 
-        android:id="@+id/tvansweredrequests_message"
+    <LinearLayout 
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="message"
-        android:layout_marginLeft="20dp"
-        />
+        android:layout_margin="4dp">
+	 	<ImageView 
+	 	    android:id="@+id/ivansweredrequests_media_image"
+	 	    android:layout_width="wrap_content"
+       		android:layout_height="wrap_content"
+			android:layout_margin="4dp"
+			android:visibility="gone"/>
+	 	
+	 	<VideoView 
+	 	    android:id="@+id/vvansweredrequests_media_video"
+	 	    android:layout_width="wrap_content"
+ 	    	android:layout_height="wrap_content"
+			android:layout_margin="4dp"
+			android:visibility="gone"/>
+    </LinearLayout>
+
 
     <LinearLayout 
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp">
-        
-        <TextView 
-            android:id="@+id/tvansweredrequests_time"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:text="time"
-            android:layout_weight="3"
-            android:layout_marginLeft="20dp"
-            />
+        android:layout_marginBottom="5dp"
+        android:weightSum="2"
+        android:layout_margin="4dp">
     
-        <ImageView 
-            android:id="@+id/ivansweredrequests_icon"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:id="@+id/ibtnansweredrequests_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:background="@drawable/btnaccept"
             android:layout_weight="1"
-        	android:layout_gravity="right"
-            />
+            android:layout_marginRight="2dp"/>
+
+        <ImageButton
+            android:id="@+id/ibtnansweredrequests_reject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btnreject"
+            android:layout_weight="1"
+            android:layout_marginLeft="2dp" />
         
     </LinearLayout>
     

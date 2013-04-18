@@ -32,8 +32,10 @@ public final class MMAPIConstants {
 	
 	// Uri path values
 	public static final String URI_PATH_ASSIGNEDREQUESTS = "assignedrequests";
+	public static final String URI_PATH_ANSWEREDREQUESTS = "fulfilledrequests";
 	public static final String URI_PATH_CATEGORY = "category";
 	public static final String URI_PATH_CHECKIN = "checkin";
+	public static final String URI_PATH_COUNTS = "counts";
 	public static final String URI_PATH_FAVORITES = "bookmarks";
 	public static final String URI_PATH_INBOX = "inbox";
 	public static final String URI_PATH_LOCATION = "location";
@@ -194,6 +196,11 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_ADDRESS = "address";
 	public static final String JSON_KEY_ADDRESS_EXT = "address_ext";
 	public static final String JSON_KEY_ASSIGNED_REQUESTS = "assignedrequests";
+	public static final String JSON_KEY_ASSIGNED_READ_REQUESTS = "assignedReadRequests";
+	public static final String JSON_KEY_ASSIGNED_UNREAD_REQUESTS = "assignedUnreadRequests";
+	public static final String JSON_KEY_FULFILLED_UNREAD_COUNT = "fulfilledUnreadCount";
+	public static final String JSON_KEY_OPEN_REQUESTS_COUNT = "openrequests";
+	public static final String JSON_KEY_FULFILLED_READ_COUNT = "fulfilledReadCount";
 	public static final String JSON_KEY_BOOKMARK_COUNT = "bookmarkCount";
 	public static final String JSON_KEY_CATEGORY_ID = "categoryId";
 	public static final String JSON_KEY_CATEGORY_IDS = "categoryIds";
@@ -211,6 +218,7 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_LOCALITY = "locality";
 	public static final String JSON_KEY_LOCATION_ID = "locationId";
 	public static final String JSON_KEY_LONGITUDE = "longitude";
+	public static final String JSON_KEY_MARKASREAD = "markAsRead";
 	public static final String JSON_KEY_MEDIA = "media";
 	public static final String JSON_KEY_MEDIA_DATA = "mediaData";
 	public static final String JSON_KEY_MEDIA_TYPE = "mediaType";
@@ -228,6 +236,7 @@ public final class MMAPIConstants {
 	public static final String JSON_KEY_PROVIDER_ID = "providerId";
 	public static final String JSON_KEY_RADIUS_IN_YARDS = "radiusInYards";
 	public static final String JSON_KEY_RECURRING = "recurring";
+	public static final String JSON_KEY_REQUEST_FULFILLED = "requestFulfilled";
 	public static final String JSON_KEY_REGION = "region";
 	public static final String JSON_KEY_REQUEST_DATE = "requestDate";
 	public static final String JSON_KEY_REQUEST_ID = "requestId";
