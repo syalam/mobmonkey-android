@@ -51,7 +51,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 
@@ -95,7 +95,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
@@ -108,11 +108,11 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		smfResultLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmap);
 		lvSearchResults = (ListView) view.findViewById(R.id.lvsearchresults);
 		
-		tvSearchResultsTitle.setText(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
+		tvSearchResultsTitle.setText(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
 		
 		try {
-			if(!getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS).equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
-				searchResults = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
+			if(!getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS).equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
+				searchResults = new JSONArray(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS));
 			} else {
 				searchResults = new JSONArray();
 			}
@@ -185,12 +185,12 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 				
 				// pass information to category screen
 				Bundle bundle = new Bundle();
-				bundle.putString(MMAPIConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
-				bundle.putString(MMAPIConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
-				bundle.putString(MMAPIConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
-				bundle.putString(MMAPIConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
-				bundle.putString(MMAPIConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude()+"");
-				bundle.putString(MMAPIConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude()+"");
+				bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
+				bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+				bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+				bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+				bundle.putString(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude()+"");
+				bundle.putString(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude()+"");
 				
 				Intent intent = new Intent(getActivity(), AddLocationScreen.class);
 				intent.putExtras(bundle);
@@ -277,11 +277,11 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 			for(int i = 0; i < searchResults.length(); i++) {
 				JSONObject jObj = searchResults.getJSONObject(i);
 				resultLocations[i] = new MMResultsLocation();
-				resultLocations[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
-				resultLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + MMAPIConstants.DEFAULT_STRING_SPACE + 
+				resultLocations[i].setLocName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
+				resultLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + 
 						getString(R.string.miles));
-				resultLocations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + 
-										jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE));
+				resultLocations[i].setLocAddr(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + 
+										jObj.getString(MMSDKConstants.JSON_KEY_REGION) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_POSTCODE));
 			}
 	}
 	
@@ -290,7 +290,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 * @throws JSONException
 	 */
 	private void displayMap() throws JSONException {
-		if(getArguments().getBoolean(MMAPIConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, true)) {
+		if(getArguments().getBoolean(MMSDKConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, true)) {
 			googleMap = smfResultLocations.getMap();
 			markerHashMap = new HashMap<Marker, JSONObject>();
 			addToGoogleMap();
@@ -312,8 +312,8 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 * @throws JSONException
 	 */
 	private boolean getLocationHistory() throws JSONException {
-		String history = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, MMAPIConstants.DEFAULT_STRING_EMPTY);
-		if(!history.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
+		String history = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY);
+		if(!history.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 			locationHistory = new JSONArray(history);
 			return true;
 		} else {
@@ -333,12 +333,12 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		for(int i = 0; i < searchResults.length(); i++) {
 			JSONObject jObj = searchResults.getJSONObject(i);
 			
-			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE));
+			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
 			
 			Marker locationResultMarker = googleMap.addMarker(new MarkerOptions().
 					position(resultLocLatLng).
-					title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
-					.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
+					title(jObj.getString(MMSDKConstants.JSON_KEY_NAME))
+					.snippet(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS)));
 			
 			if(currMarker != null && currMarker.getTitle().equals(locationResultMarker.getTitle())) {
 				Log.d(TAG, TAG + "marker equal");
@@ -383,7 +383,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 */
 	private void addToHistory(JSONObject loc) throws JSONException {
 		if(!locationExistsInHistory(loc)) {
-			if(locationHistory.length() < MMAPIConstants.HISTORY_SIZE) {
+			if(locationHistory.length() < MMSDKConstants.HISTORY_SIZE) {
 				ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
 				//Convert to ArrayList so that you can add last item view to front of array
 				for (int i=0; i<locationHistory.length(); i++)
@@ -396,11 +396,11 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 				for (int i=0; i<locationHistory.length(); i++)
 					temp.add(locationHistory.getJSONObject(i));
 				temp.add(0, loc);
-				temp.remove(MMAPIConstants.HISTORY_SIZE);
+				temp.remove(MMSDKConstants.HISTORY_SIZE);
 				locationHistory = new JSONArray(temp);
 			}
 		}
-		userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
+		userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
 		userPrefsEditor.commit();
 	}
 	
@@ -416,9 +416,9 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		}
 		
 		for(int i = 0; i < locationHistory.length(); i++) {
-			if(locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_NAME).equals(loc.getString(MMAPIConstants.JSON_KEY_NAME)) &&
-					locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LATITUDE).equals(loc.getString(MMAPIConstants.JSON_KEY_LATITUDE)) &&
-					locationHistory.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LONGITUDE).equals(loc.getString(MMAPIConstants.JSON_KEY_LONGITUDE))) {
+			if(locationHistory.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_NAME).equals(loc.getString(MMSDKConstants.JSON_KEY_NAME)) &&
+					locationHistory.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_LATITUDE).equals(loc.getString(MMSDKConstants.JSON_KEY_LATITUDE)) &&
+					locationHistory.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_LONGITUDE).equals(loc.getString(MMSDKConstants.JSON_KEY_LONGITUDE))) {
 				ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
 				//Convert to ArrayList so that you can add last item view to front of array
 				for (int j=0; j<locationHistory.length(); j++)
@@ -531,7 +531,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		lvSearchResults.setAdapter(arrayAdapter);
 		lvSearchResults.invalidate();
 		
-		userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_HISTORY);
+		userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_HISTORY);
 		userPrefsEditor.commit();
 	}
 	
@@ -576,7 +576,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
             if (title != null) {
                 titleUi.setText(title);
             } else {
-                titleUi.setText(MMAPIConstants.DEFAULT_STRING_EMPTY);
+                titleUi.setText(MMSDKConstants.DEFAULT_STRING_EMPTY);
             }
 
             String snippet = marker.getSnippet();
@@ -584,7 +584,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
             if (snippet != null) {
                 snippetUi.setText(snippet);
             } else {
-                snippetUi.setText(MMAPIConstants.DEFAULT_STRING_EMPTY);
+                snippetUi.setText(MMSDKConstants.DEFAULT_STRING_EMPTY);
             }
         }
     }

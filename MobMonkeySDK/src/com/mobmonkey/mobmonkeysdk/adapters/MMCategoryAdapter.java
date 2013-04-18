@@ -4,7 +4,7 @@ import org.apache.http.client.methods.HttpGet;
 
 import android.util.Log;
 
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMGetAsyncTask;
@@ -26,22 +26,22 @@ public class MMCategoryAdapter extends MMAdapter {
 	}
 	
 	public static void getCategories(MMCallback mmCallback, String categoryId, String user, String auth, String partnerId) {		
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_CATEGORY);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_CATEGORY);
 		
 		Log.d(TAG, TAG + "categoryURL: " + uriBuilder.toString());
 		
 		HttpGet httpGet = new HttpGet(uriBuilder.toString());
-		httpGet.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-		httpGet.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpGet.setHeader(MMAPIConstants.KEY_USER, user);
-		httpGet.setHeader(MMAPIConstants.KEY_AUTH, auth);
+		httpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		httpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+		httpGet.setHeader(MMSDKConstants.KEY_USER, user);
+		httpGet.setHeader(MMSDKConstants.KEY_AUTH, auth);
 		
 		mmGetAsyncTask = new MMGetAsyncTask(mmCallback);
 		mmGetAsyncTask.execute(httpGet);
 	}
 	
 	public static void getAllCategories(MMCallback mmCallback, String user, String auth, String partnerId) {
-		getCategories(mmCallback, MMAPIConstants.DEFAULT_STRING_EMPTY, user, auth, partnerId);
+		getCategories(mmCallback, MMSDKConstants.DEFAULT_STRING_EMPTY, user, auth, partnerId);
 	}
 	
 	public static void cancelGetAllCategories() {

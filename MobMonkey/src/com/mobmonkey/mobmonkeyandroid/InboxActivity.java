@@ -9,7 +9,7 @@ import com.mobmonkey.mobmonkeyandroid.fragments.InboxFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.OpenRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.InboxFragment.OnInboxItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
 import android.content.Intent;

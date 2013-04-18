@@ -24,7 +24,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMTrendingArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMTrendingItem;
 import com.mobmonkey.mobmonkeysdk.adapters.MMTrendingAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
@@ -51,7 +51,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		
 		View view = inflater.inflate(R.layout.fragment_trendingnow_screen, container, false);
 		lvTrending = (ListView) view.findViewById(R.id.lvtrending);
@@ -74,8 +74,8 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
-//		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + 
-//				MMAPIConstants.DEFAULT_STRING_SPACE + ((TextView) view.findViewById(R.id.tvtrending)).getText().toString() + 
+//		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + 
+//				MMSDKConstants.DEFAULT_STRING_SPACE + ((TextView) view.findViewById(R.id.tvtrending)).getText().toString() + 
 //				getString(R.string.pd_ellipses));
 		switch (position) {
 			// bookmarks
@@ -126,7 +126,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		for(int i = 0; i < data.length; i++) {
 			data[i] = new MMTrendingItem();
 			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
-			data[i].counter = MMAPIConstants.DEFAULT_INT_ZERO;
+			data[i].counter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
 		
 		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, data);
@@ -134,7 +134,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
 		
 		try {
-			JSONObject categories = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING_EMPTY));
+			JSONObject categories = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			findTopTenCategoryIds(categories.toJSONArray(categories.names()));
 		} catch (JSONException ex) {
 			ex.printStackTrace();
@@ -147,7 +147,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	 * @throws JSONException
 	 */
 	private void findTopTenCategoryIds(JSONArray categories) throws JSONException {
-		categoryIds = MMAPIConstants.DEFAULT_STRING_EMPTY;
+		categoryIds = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		
 		JSONArray topTenCategories = new JSONArray();
 		
@@ -155,7 +155,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		for(int i = 0; i < categories.length(); i++) {
 			JSONArray jArr = categories.getJSONArray(i);
 			for(int j = 0; j < jArr.length(); j++) {
-				if(jArr.getJSONObject(j).getString(MMAPIConstants.JSON_KEY_PARENTS).compareTo("432") == 0) {
+				if(jArr.getJSONObject(j).getString(MMSDKConstants.JSON_KEY_PARENTS).compareTo("432") == 0) {
 					topTenCategories.put(categories.getJSONArray(i));
 				}
 				if(topTenCategories.length() == 10) {
@@ -166,7 +166,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		
 		for(int i = 0; i < topTenCategories.length(); i++) {
 			for(int j = 0; j < topTenCategories.getJSONArray(i).length(); j++) {
-				categoryIds += topTenCategories.getJSONArray(i).getJSONObject(j).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID) + ",";
+				categoryIds += topTenCategories.getJSONArray(i).getJSONObject(j).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID) + ",";
 			}
 		}
 	}
@@ -177,9 +177,9 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	private void getTrendingCount() {
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMTrendingAdapter.getTrendingCounts(new TrendingCountsCallback(),
-											   MMAPIConstants.SEARCH_TIME_DAY,
-											   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY),
-											   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY),
+											   MMSDKConstants.SEARCH_TIME_DAY,
+											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+											   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
 											   MMConstants.PARTNER_ID);
 		} else {
 			MMProgressDialog.dismissDialog();
@@ -215,13 +215,13 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 						item.title = getResources().getStringArray(R.array.trending_category)[i];
 						
 						if(i == 0) {
-							item.counter = jObj.getInt(MMAPIConstants.JSON_KEY_BOOKMARK_COUNT);
+							item.counter = jObj.getInt(MMSDKConstants.JSON_KEY_BOOKMARK_COUNT);
 						} else if(i == 1) {
-							item.counter = jObj.getInt(MMAPIConstants.JSON_KEY_INTEREST_COUNT);
+							item.counter = jObj.getInt(MMSDKConstants.JSON_KEY_INTEREST_COUNT);
 						} else if(i == 2) {
-							item.counter = jObj.getInt(MMAPIConstants.JSON_KEY_TOP_VIEWED_COUNT);
+							item.counter = jObj.getInt(MMSDKConstants.JSON_KEY_TOP_VIEWED_COUNT);
 						} else if(i == 3) {
-							item.counter = jObj.getInt(MMAPIConstants.JSON_KEY_NEARBY_COUNT);
+							item.counter = jObj.getInt(MMSDKConstants.JSON_KEY_NEARBY_COUNT);
 						}
 						
 						data[i] = item;

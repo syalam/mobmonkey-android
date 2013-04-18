@@ -2,7 +2,7 @@ package com.mobmonkey.mobmonkeyandroid;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -45,7 +45,7 @@ public class AddMessageScreen extends Activity implements OnItemClickListener {
 	@Override
 	public void onBackPressed() {
 		Intent messageIntent = new Intent();
-		messageIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_MESSAGE, etMessage.getText().toString().trim());
+		messageIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MESSAGE, etMessage.getText().toString().trim());
 		if(TextUtils.isEmpty(etMessage.getText()) || etMessage.getText().toString().trim().length() <= 0) {
 			setResult(RESULT_CANCELED, messageIntent);
 		} else {
@@ -73,7 +73,7 @@ public class AddMessageScreen extends Activity implements OnItemClickListener {
 		
 		defaultMessages = getResources().getStringArray(R.array.tv_default_message);
 		
-		etMessage.setText(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_MESSAGE));
+		etMessage.setText(getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_MESSAGE));
 		
 		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(AddMessageScreen.this, R.layout.mm_simple_listview_row, R.id.tvlabel, defaultMessages);
 		mmelvDefaultMessage.setAdapter(arrayAdapter);

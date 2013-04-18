@@ -11,7 +11,7 @@ import org.json.JSONException;
 
 import android.util.Log;
 
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMDeleteAsyncTask;
@@ -42,24 +42,24 @@ public class MMFavoritesAdapter extends MMAdapter {
 									  String partnerId,
 									  String emailAddress,
 									  String password) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_FAVORITES);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_FAVORITES);
 		createParamsInstance();
 
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
 		try {
-			params.put(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId);
-			params.put(MMAPIConstants.JSON_KEY_PROVIDER_ID, providerId);
+			params.put(MMSDKConstants.JSON_KEY_LOCATION_ID, locationId);
+			params.put(MMSDKConstants.JSON_KEY_PROVIDER_ID, providerId);
 			
 			Log.d(TAG, TAG + "params: " + params.toString());
 			
 			HttpPost httpPost = new HttpPost(uriBuilder.toString());
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPost.setEntity(stringEntity);
-			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
-			httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
+			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+			httpPost.setHeader(MMSDKConstants.KEY_USER, emailAddress);
+			httpPost.setHeader(MMSDKConstants.KEY_AUTH, password);
 			
 			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch(JSONException ex) {
@@ -74,14 +74,14 @@ public class MMFavoritesAdapter extends MMAdapter {
 									String partnerId,
 									String emailAddress,
 									String password) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_FAVORITES);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_FAVORITES);
 		
 		HttpGet HttpGet = new HttpGet(uriBuilder.toString());
 
-		HttpGet.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-		HttpGet.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		HttpGet.setHeader(MMAPIConstants.KEY_USER, emailAddress);
-		HttpGet.setHeader(MMAPIConstants.KEY_AUTH, password);
+		HttpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		HttpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+		HttpGet.setHeader(MMSDKConstants.KEY_USER, emailAddress);
+		HttpGet.setHeader(MMSDKConstants.KEY_AUTH, password);
 		
 		mmGetAsyncTask = new MMGetAsyncTask(mmCallback);
 		mmGetAsyncTask.execute(HttpGet);
@@ -93,16 +93,16 @@ public class MMFavoritesAdapter extends MMAdapter {
 									  String partnerId,
 									  String emailAddress,
 									  String password) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_FAVORITES);
-		uriBuilder.appendQueryParameter(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId)
-			.appendQueryParameter(MMAPIConstants.JSON_KEY_PROVIDER_ID, providerId);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_FAVORITES);
+		uriBuilder.appendQueryParameter(MMSDKConstants.JSON_KEY_LOCATION_ID, locationId)
+			.appendQueryParameter(MMSDKConstants.JSON_KEY_PROVIDER_ID, providerId);
 		
 		HttpDelete httpDelete = new HttpDelete(uriBuilder.toString());
 		
-		httpDelete.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-		httpDelete.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpDelete.setHeader(MMAPIConstants.KEY_USER, emailAddress);
-		httpDelete.setHeader(MMAPIConstants.KEY_AUTH, password);
+		httpDelete.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		httpDelete.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+		httpDelete.setHeader(MMSDKConstants.KEY_USER, emailAddress);
+		httpDelete.setHeader(MMSDKConstants.KEY_AUTH, password);
 		
 		new MMDeleteAsyncTask(mmCallback).execute(httpDelete);
 	}

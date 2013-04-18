@@ -14,7 +14,7 @@ import android.location.LocationManager;
 public final class MMLocationManager {
 	private static LocationManager locationManager;
 	private static Location location;
-	private static DecimalFormat decimalFormat = new DecimalFormat(MMAPIConstants.DECIMAL_FORMAT_SIX);
+	private static DecimalFormat decimalFormat = new DecimalFormat(MMSDKConstants.DECIMAL_FORMAT_SIX);
 	
 	public static void setContext(Context context) {
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);		

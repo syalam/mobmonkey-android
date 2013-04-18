@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -49,7 +49,7 @@ public class AddLocationCategoryList extends Activity{
 		setContentView(R.layout.add_location_select_category_screen);
 		categoriesList = (ListView) findViewById(R.id.categoryList);
 		navigationbarText = (TextView) findViewById(R.id.navtitle);
-		navigationbarText.setText(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
+		navigationbarText.setText(getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
 		init();
 	}
 
@@ -64,13 +64,13 @@ public class AddLocationCategoryList extends Activity{
 	
 	private void init()
 	{
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
 		try
 		{
 			topLevelCategories = MMCategories.getTopLevelCategories(AddLocationCategoryList.this.getApplicationContext());
-			categories = new JSONArray(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY));
+			categories = new JSONArray(getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY));
 			String[] cats = new String[categories.length()];
 			for(int i=0; i<categories.length(); i++)
 			{
@@ -106,7 +106,7 @@ public class AddLocationCategoryList extends Activity{
 					
 					try
 					{
-						String response = MMCategories.getSubCategoriesWithCategoriId(AddLocationCategoryList.this.getApplicationContext(), categories.getJSONObject(row).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID));
+						String response = MMCategories.getSubCategoriesWithCategoriId(AddLocationCategoryList.this.getApplicationContext(), categories.getJSONObject(row).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID));
 						JSONArray subCategoryData = new JSONArray(response);
 						//String[] subCategories = subCategoryData.toString().substring(1,subCategoryData.toString().length()-1).replaceAll("\"", "").split(",");
 						
@@ -120,10 +120,10 @@ public class AddLocationCategoryList extends Activity{
 							 * 		- do the following below ...
 							 */
 							
-							if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST))
+							if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST))
 							{
 								boolean remove = false;
-								JSONArray selectedCategoriesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMAPIConstants.DEFAULT_STRING_EMPTY));
+								JSONArray selectedCategoriesList = new JSONArray(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMSDKConstants.DEFAULT_STRING_EMPTY));
 								
 								ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
 								for(int i=0; i<selectedCategoriesList.length(); i++)
@@ -146,22 +146,22 @@ public class AddLocationCategoryList extends Activity{
 								}
 								
 								selectedCategoriesList = new JSONArray(temp);
-								userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST, selectedCategoriesList.toString());
+								userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST, selectedCategoriesList.toString());
 								userPrefsEditor.commit();
 							}
 							else
 							{
 								JSONArray newSelectedCategoriesList = new JSONArray();
 								newSelectedCategoriesList.put(categories.getJSONObject(row));
-								userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST, newSelectedCategoriesList.toString());
+								userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST, newSelectedCategoriesList.toString());
 								userPrefsEditor.commit();
 							}	
 						}
 						else 
 						{
 							Intent categoryScreenIntent = new Intent(AddLocationCategoryList.this, AddLocationCategoryList.class);
-							categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, response);
-							categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, "Categories");
+							categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, response);
+							categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, "Categories");
 							
 							startActivity(categoryScreenIntent);
 						}
@@ -212,7 +212,7 @@ public class AddLocationCategoryList extends Activity{
 		categoryIndicatorIcons = new int[categories.length()];
 		for(int i=0; i<categories.length(); i++)
 		{
-			JSONArray newArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(this.getApplicationContext(), categories.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)));
+			JSONArray newArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(this.getApplicationContext(), categories.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID)));
 			if(!newArray.isNull(0))
 			{
 				categoryIndicatorIcons[i]=R.drawable.listview_accessory_indicator;

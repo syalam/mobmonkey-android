@@ -23,7 +23,7 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 
@@ -96,12 +96,12 @@ public class AddLocationMapScreen extends FragmentActivity {
 						
 						// pass information to category screen
 						Bundle bundle = new Bundle();
-						bundle.putString(MMAPIConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
-						bundle.putString(MMAPIConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
-						bundle.putString(MMAPIConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
-						bundle.putString(MMAPIConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
-						bundle.putString(MMAPIConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude()+"");
-						bundle.putString(MMAPIConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude()+"");
+						bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
+						bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+						bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+						bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+						bundle.putString(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude()+"");
+						bundle.putString(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude()+"");
 						
 						Intent intent = new Intent(AddLocationMapScreen.this, AddLocationScreen.class);
 						intent.putExtras(bundle);

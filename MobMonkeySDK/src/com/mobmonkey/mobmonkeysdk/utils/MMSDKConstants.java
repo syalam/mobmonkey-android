@@ -5,12 +5,12 @@ package com.mobmonkey.mobmonkeysdk.utils;
  * @author Dezapp, LLC
  *
  */
-public final class MMAPIConstants {
+public final class MMSDKConstants {
 	
 	/**
 	 * Private class to prevent the instantiation of this class outfside the scope of this class
 	 */
-	private MMAPIConstants() {
+	private MMSDKConstants() {
 		throw new AssertionError();
 	}
 	

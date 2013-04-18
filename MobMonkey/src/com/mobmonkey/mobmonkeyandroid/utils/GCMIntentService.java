@@ -15,14 +15,14 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.R.drawable;
 import com.mobmonkey.mobmonkeyandroid.R.string;
 import com.mobmonkey.mobmonkeyandroid.MainScreen;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 public class GCMIntentService extends GCMBaseIntentService{
 
 
 	// TODO: senderid hardcoded
 	public static final String SENDER_ID = "406893575625";
-	public static final String SERVER_URL = MMAPIConstants.TEST_MOBMONKEY_GCM_URL;
+	public static final String SERVER_URL = MMSDKConstants.TEST_MOBMONKEY_GCM_URL;
 	
 	public GCMIntentService() {
         super(SENDER_ID);

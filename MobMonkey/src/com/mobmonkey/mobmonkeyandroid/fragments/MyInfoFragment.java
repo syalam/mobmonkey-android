@@ -10,7 +10,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMUserAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 
@@ -60,13 +60,13 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Activity.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Activity.MODE_PRIVATE);
         
-		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading_user_info));
+		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading_user_info));
 		
 		MMUserAdapter.getUserInfo(new UserInfoCallback(), MMConstants.PARTNER_ID,
-				 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-				 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+				 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+				 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		
 		View view = inflater.inflate(R.layout.fragment_myinfo_screen, container, false);
     	
@@ -87,12 +87,12 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	etGender = (EditText) view.findViewById(R.id.etgender);
     	birthdate = Calendar.getInstance();
     	
-    	Log.d(TAG, "User has login with " + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY) + " account.");
+    	Log.d(TAG, "User has login with " + userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY) + " account.");
     	
-    	oAuthProvider = userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY);
+    	oAuthProvider = userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY);
     	
     	// if user signed in with Facebook account, they can edit nothing in this screen.
-    	if(oAuthProvider.equals(MMAPIConstants.OAUTH_PROVIDER_FACEBOOK)) {
+    	if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)) {
     		etFirstName.setFocusable(false);
     		etFirstName.setClickable(false);
     		
@@ -116,7 +116,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     		etConfirmPassword.setVisibility(View.GONE);
     	}
     	// if user signed in with twitter account, they can edit every fields except email and password
-    	else if(oAuthProvider.equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER)) {
+    	else if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_TWITTER)) {
     		
     		// disable email
     		etEmailAddress.setFocusable(false);
@@ -167,19 +167,19 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 		if(checkFields()) {
 			try {
 				MMUserAdapter.updateUserInfo(new UserInfoUpdateCallback(), 
-										   	 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-										   	 userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+										   	 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+										   	 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 										   	 MMConstants.PARTNER_ID, 
 										   	 newPassword, 
 										   	 etFirstName.getText().toString(),
 										   	 etLastName.getText().toString(),
-										   	 response.getLong(MMAPIConstants.KEY_BIRTHDATE), 
+										   	 response.getLong(MMSDKConstants.KEY_BIRTHDATE), 
 										   	 convertGender(), 
-										   	 response.getString(MMAPIConstants.KEY_CITY), 
-										   	 response.getString(MMAPIConstants.KEY_STATE), 
-										   	 response.getString(MMAPIConstants.KEY_ZIP), 
-										   	 response.getBoolean(MMAPIConstants.KEY_ACCEPTEDTOS));
-				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_updating_user_info));
+										   	 response.getString(MMSDKConstants.KEY_CITY), 
+										   	 response.getString(MMSDKConstants.KEY_STATE), 
+										   	 response.getString(MMSDKConstants.KEY_ZIP), 
+										   	 response.getBoolean(MMSDKConstants.KEY_ACCEPTEDTOS));
+				MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_updating_user_info));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -231,7 +231,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	@Override
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
 		if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-			if(oAuthProvider.equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER)) {
+			if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_TWITTER)) {
 				inputMethodManager.hideSoftInputFromWindow(etLastName.getWindowToken(), 0);
 				return true;
 			} else {
@@ -247,11 +247,11 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
      * @return
      */
     private int convertGender() {
-    	int gender = MMAPIConstants.DEFAULT_INT;
-    	if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_MALE)) {
-    		gender = MMAPIConstants.NUM_MALE;
-    	} else if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_FEMALE)) {
-    		gender = MMAPIConstants.NUM_FEMALE;
+    	int gender = MMSDKConstants.DEFAULT_INT;
+    	if(etGender.getText().toString().equalsIgnoreCase(MMSDKConstants.TEXT_MALE)) {
+    		gender = MMSDKConstants.NUM_MALE;
+    	} else if(etGender.getText().toString().equalsIgnoreCase(MMSDKConstants.TEXT_FEMALE)) {
+    		gender = MMSDKConstants.NUM_FEMALE;
     	} else {
     		gender = (Integer) null;
     	}
@@ -286,7 +286,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
 					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
 					try {
-						response.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
+						response.put(MMSDKConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
@@ -315,14 +315,14 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     
     public void setUserInfo() {
     	try{
-        	etFirstName.setText(response.getString(MMAPIConstants.KEY_FIRST_NAME));
-        	etLastName.setText(response.getString(MMAPIConstants.KEY_LAST_NAME));
-        	etEmailAddress.setText(response.getString(MMAPIConstants.KEY_EMAIL_ADDRESS));
-        	if(response.getInt(MMAPIConstants.KEY_GENDER) == MMAPIConstants.NUM_MALE)
-        		etGender.setText(MMAPIConstants.TEXT_MALE);
-        	else if(response.getInt(MMAPIConstants.KEY_GENDER) == MMAPIConstants.NUM_FEMALE)
-        		etGender.setText(MMAPIConstants.TEXT_FEMALE);
-        	birthdate.setTimeInMillis(response.getLong(MMAPIConstants.KEY_BIRTHDATE));
+        	etFirstName.setText(response.getString(MMSDKConstants.KEY_FIRST_NAME));
+        	etLastName.setText(response.getString(MMSDKConstants.KEY_LAST_NAME));
+        	etEmailAddress.setText(response.getString(MMSDKConstants.KEY_EMAIL_ADDRESS));
+        	if(response.getInt(MMSDKConstants.KEY_GENDER) == MMSDKConstants.NUM_MALE)
+        		etGender.setText(MMSDKConstants.TEXT_MALE);
+        	else if(response.getInt(MMSDKConstants.KEY_GENDER) == MMSDKConstants.NUM_FEMALE)
+        		etGender.setText(MMSDKConstants.TEXT_FEMALE);
+        	birthdate.setTimeInMillis(response.getLong(MMSDKConstants.KEY_BIRTHDATE));
         	etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
     	} catch(Exception e)
     	{
@@ -356,7 +356,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	if(TextUtils.isEmpty(newPassword)) {
     		if(TextUtils.isEmpty(confirmPassword)) {
     			// if both new password and confirn password are empty, set it to the old password.
-        		newPassword = userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY);
+        		newPassword = userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY);
         		return true;
         	// else, if confirm password is not empty, and new password is empty, alert user.
     		} else {
@@ -404,7 +404,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 			if(obj != null) {
 				try {
 					JSONObject jObj = new JSONObject((String) obj);
-					if(jObj.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+					if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 						onFragmentFinishListener.onFragmentFinish();
 					}
 				} catch (JSONException e) {

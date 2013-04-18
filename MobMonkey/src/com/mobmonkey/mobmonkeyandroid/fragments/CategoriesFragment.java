@@ -34,7 +34,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSearchResultsCallback;
 import com.mobmonkey.mobmonkeysdk.adapters.MMSearchLocationAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
@@ -73,7 +73,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreateView");
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_categories_screen, container, false);
@@ -109,7 +109,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
 		try {
 			JSONObject subCategory = categoriesArray.getJSONObject(position);
-			JSONArray subCategoriesArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(getActivity(), subCategory.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID)));
+			JSONArray subCategoriesArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(getActivity(), subCategory.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID)));
 			String selectedSubCategory = subCategory.getString(Locale.getDefault().getLanguage());
 			
 			if(!subCategoriesArray.isNull(0)) {
@@ -135,12 +135,12 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	 * 
 	 */
 	private void init() {
-		tvNavigationBarText.setText(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
+		tvNavigationBarText.setText(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
 		setSearchByText();
 		getCurrentLocation();
 		
 		try {
-			categoriesArray = new JSONArray(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY));
+			categoriesArray = new JSONArray(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY));
 			subCategories = new ArrayList<String>();
 			
 			for(int i = 0; i < categoriesArray.length(); i++) {
@@ -226,12 +226,12 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 				new SearchCallback(), 
 				Double.toString(longitudeValue), 
 				Double.toString(latitudeValue), 
-				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
+				userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE), 
 				searchText,
-				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+				userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+				userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 				MMConstants.PARTNER_ID);
-		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_search_for) + MMAPIConstants.DEFAULT_STRING_SPACE + searchText + getString(R.string.pd_ellipses));
+		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_search_for) + MMSDKConstants.DEFAULT_STRING_SPACE + searchText + getString(R.string.pd_ellipses));
     	InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 	}
@@ -243,15 +243,15 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	 * @throws JSONException
 	 */
 	private void searchSubCategory(String selectedSubCategory, JSONObject subCategory) throws JSONException {
-		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_locating) + MMAPIConstants.DEFAULT_STRING_SPACE + selectedSubCategory + getString(R.string.pd_ellipses));
+		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_locating) + MMSDKConstants.DEFAULT_STRING_SPACE + selectedSubCategory + getString(R.string.pd_ellipses));
 		MMSearchLocationAdapter.searchLocationWithCategoryId(
 				new MMSearchResultsCallback(getActivity(), selectedSubCategory, new SearchSubCategoryCallback()), 
 				Double.toString(longitudeValue), 
 				Double.toString(latitudeValue), 
-				userPrefs.getInt(MMAPIConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMAPIConstants.SEARCH_RADIUS_HALF_MILE), 
-				subCategory.getString(MMAPIConstants.JSON_KEY_CATEGORY_ID),
-				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+				userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE), 
+				subCategory.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID),
+				userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+				userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 				MMConstants.PARTNER_ID);
 	}
 	

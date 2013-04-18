@@ -15,7 +15,7 @@ import com.facebook.model.GraphUser;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeysdk.adapters.MMUserAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMDeviceUUID;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
@@ -82,30 +82,30 @@ public class SignInScreen extends Activity {
 		Log.d(TAG, TAG + "onActivityResult");
 		
 		switch(requestCode) {
-			case MMAPIConstants.REQUEST_CODE_TOS_FACEBOOK:
-				if(userPrefs.getBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, false)) {
+			case MMSDKConstants.REQUEST_CODE_TOS_FACEBOOK:
+				if(userPrefs.getBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, false)) {
 					Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 				}
 				break;
-			case MMAPIConstants.REQUEST_CODE_TOS_TWITTER:
-				if(userPrefs.getBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_TWITTER, false)) {
+			case MMSDKConstants.REQUEST_CODE_TOS_TWITTER:
+				if(userPrefs.getBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_TWITTER, false)) {
 					launchTwitterAuthScreen();
 				}
 				break;
-			case MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH:
+			case MMSDKConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH:
 				MMProgressDialog.dismissDialog();
 				
-				if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
+				if(resultCode == MMSDKConstants.RESULT_CODE_SUCCESS) {
 					Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
 					startActivity(new Intent(SignInScreen.this, MainScreen.class));
-				} else if(resultCode == MMAPIConstants.RESULT_CODE_NOT_FOUND) {
+				} else if(resultCode == MMSDKConstants.RESULT_CODE_NOT_FOUND) {
 					Toast.makeText(SignInScreen.this, R.string.toast_new_twitter_user, Toast.LENGTH_SHORT).show();
 					Intent signUpTwitterIntent = (Intent) data.clone();
 					signUpTwitterIntent.setClass(SignInScreen.this, SignUpTwitterScreen.class);
-					startActivityForResult(signUpTwitterIntent, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER);
+					startActivityForResult(signUpTwitterIntent, MMSDKConstants.REQUEST_CODE_SIGN_UP_TWITTER);
 				}
 				break;
-			case MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER:
+			case MMSDKConstants.REQUEST_CODE_SIGN_UP_TWITTER:
 				if(resultCode == RESULT_OK) {
 					startActivity(new Intent(SignInScreen.this, MainScreen.class));
 				}
@@ -113,18 +113,18 @@ public class SignInScreen extends Activity {
 			default:
 				Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 				if(!requestEmail) {
-					userPrefsEditor.putString(MMAPIConstants.KEY_USER, (String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
-					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, 	Session.getActiveSession().getAccessToken());
-					userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
-					String emailAddress = (String)facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL);
+					userPrefsEditor.putString(MMSDKConstants.KEY_USER, (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
+					userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, 	Session.getActiveSession().getAccessToken());
+					userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK);
+					String emailAddress = (String)facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL);
 					Log.d(TAG, TAG + "Email address: " + emailAddress);
 					if(emailAddress == null) {
 						requestEmail = true;
 						Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 					} else {
 						MMUserAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
-								(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
-						MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_in_facebook));
+								(String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
+						MMProgressDialog.displayDialog(SignInScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_in_facebook));
 					}
 				}
 		}
@@ -167,7 +167,7 @@ public class SignInScreen extends Activity {
 	 * Initialize all the variables to be used in {@link SignInScreen}
 	 */
 	private void init() {
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
 		etEmailAddress = (EditText) findViewById(R.id.etemailaddress);
@@ -182,16 +182,16 @@ public class SignInScreen extends Activity {
 	
 	private void launchToS(int requestCode) {
 		Intent openToSIntent = new Intent(SignInScreen.this, TermsofuseScreen.class);
-		openToSIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON, true);
-		openToSIntent.putExtra(MMAPIConstants.REQUEST_CODE, requestCode);
+		openToSIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON, true);
+		openToSIntent.putExtra(MMSDKConstants.REQUEST_CODE, requestCode);
 		startActivityForResult(openToSIntent, requestCode);
 	}
 	
 	private void launchTwitterAuthScreen() {
-		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_launch_twitter_auth_screen));
+		MMProgressDialog.displayDialog(SignInScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_launch_twitter_auth_screen));
 		Intent twitterAuthIntent = new Intent(SignInScreen.this, TwitterAuthScreen.class);
-		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
-		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
+		twitterAuthIntent.putExtra(MMSDKConstants.REQUEST_CODE, MMSDKConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
+		startActivityForResult(twitterAuthIntent, MMSDKConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
 	}
 	
 	/**
@@ -199,11 +199,11 @@ public class SignInScreen extends Activity {
 	 */
 	private void signInNormal() {
 		if(checkEmailAddress()) {
-			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
-			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
-			userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY);
+			userPrefsEditor.putString(MMSDKConstants.KEY_USER, etEmailAddress.getText().toString());
+			userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, etPassword.getText().toString());
+			userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY);
 			MMUserAdapter.signInUser(new SignInCallback(), etEmailAddress.getText().toString(), etPassword.getText().toString(), MMConstants.PARTNER_ID);
-    		MMProgressDialog.displayDialog(SignInScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_in));
+    		MMProgressDialog.displayDialog(SignInScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_in));
 		}
 	}
 	
@@ -211,8 +211,8 @@ public class SignInScreen extends Activity {
      * Function that handles the user sign in with Facebook API
      */
 	private void signInFacebook() {
-		if(!userPrefs.getBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, false)) {
-			launchToS(MMAPIConstants.REQUEST_CODE_TOS_FACEBOOK);
+		if(!userPrefs.getBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, false)) {
+			launchToS(MMSDKConstants.REQUEST_CODE_TOS_FACEBOOK);
 		} else {
 			Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 		}
@@ -226,8 +226,8 @@ public class SignInScreen extends Activity {
      * 		launchMode singleTask is that this {@link Activity} can only be created once, if it was destroyed and recreated, it will cause an {@link IllegalStateException} error.
      */
 	private void signInTwitter() {
-		if(!userPrefs.getBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_TWITTER, false)) {
-			launchToS(MMAPIConstants.REQUEST_CODE_TOS_TWITTER);
+		if(!userPrefs.getBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_TWITTER, false)) {
+			launchToS(MMSDKConstants.REQUEST_CODE_TOS_TWITTER);
 		} else {
 			launchTwitterAuthScreen();
 		}
@@ -290,7 +290,7 @@ public class SignInScreen extends Activity {
 			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
 			Log.d(TAG, TAG + "session opened: " + session.isOpened());
 			if(session.isOpened() && requestEmail) {
-	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignInScreen.this, Arrays.asList(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
+	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignInScreen.this, Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
 				session.requestNewReadPermissions(request);
 				Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
 			}
@@ -328,7 +328,7 @@ public class SignInScreen extends Activity {
 			if(obj != null) {
 				try {
 					JSONObject response = new JSONObject((String) obj);
-					if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_SUCCESS)) {
+					if(response.getString(MMSDKConstants.KEY_RESPONSE_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
 						Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
 						if(requestEmail == false) {
 							requestEmail = true;
@@ -336,7 +336,7 @@ public class SignInScreen extends Activity {
 						userPrefsEditor.commit();
 						startActivity(new Intent(SignInScreen.this, MainScreen.class));
 					} else {
-						Toast.makeText(SignInScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
+						Toast.makeText(SignInScreen.this, response.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

@@ -34,7 +34,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.ServerUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCheckinAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
@@ -84,7 +84,7 @@ public class MainScreen extends TabActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d(TAG, TAG + ":onActivityResult");
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION) {
+		if(requestCode == MMSDKConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION) {
 			if(MMLocationManager.isGPSEnabled()) {
 				checkForGPSAccess();
 			} else {
@@ -127,7 +127,7 @@ public class MainScreen extends TabActivity {
 	    	.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int which) {
 		            // Launch settings, allowing user to make a change
-		            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), MMAPIConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION);
+		            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), MMSDKConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION);
 		        }
 	    	})
 	    	.setNegativeButton(R.string.ad_btn_no, new DialogInterface.OnClickListener() {
@@ -176,10 +176,10 @@ public class MainScreen extends TabActivity {
 	 */
 	private void init() {
 		Log.d(TAG, "init");
-		registerReceiver(mHandleMessageReceiver, new IntentFilter(MMAPIConstants.INTENT_FILTER_DISPLAY_MESSAGE));
+		registerReceiver(mHandleMessageReceiver, new IntentFilter(MMSDKConstants.INTENT_FILTER_DISPLAY_MESSAGE));
 		registerGCM();
 		
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		tabWidget = getTabWidget();
 		tabHost = getTabHost();
@@ -198,7 +198,7 @@ public class MainScreen extends TabActivity {
 		
 		final String regId = GCMRegistrar.getRegistrationId(MainScreen.this);
 		Log.d(TAG, TAG + "regId: " + regId);
-		if (regId.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
+		if (regId.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
 			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
 			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
@@ -211,12 +211,12 @@ public class MainScreen extends TabActivity {
 	 * Function that set the tabs and the corresponding {@link Activity} for the {@link TabHost}
 	 */
 	private void setTabs() {
-		addTab(MMAPIConstants.TAB_TITLE_TRENDING_NOW, R.drawable.tab_trendingnow, TrendingNowActivity.class);
-		addTab(MMAPIConstants.TAB_TITLE_INBOX, R.drawable.tab_inbox, InboxActivity.class);
-		addTab(MMAPIConstants.TAB_TITLE_SEARCH, R.drawable.tab_search, SearchActivity.class);
-		addTab(MMAPIConstants.TAB_TITLE_FAVORITES, R.drawable.tab_favorites, FavoritesActivity.class);
-		addTab(MMAPIConstants.TAB_TITLE_SETTINGS, R.drawable.tab_settings, SettingsActivity.class);
-		tabHost.setCurrentTab(userPrefs.getInt(MMAPIConstants.TAB_TITLE_CURRENT_TAG, 0));
+		addTab(MMSDKConstants.TAB_TITLE_TRENDING_NOW, R.drawable.tab_trendingnow, TrendingNowActivity.class);
+		addTab(MMSDKConstants.TAB_TITLE_INBOX, R.drawable.tab_inbox, InboxActivity.class);
+		addTab(MMSDKConstants.TAB_TITLE_SEARCH, R.drawable.tab_search, SearchActivity.class);
+		addTab(MMSDKConstants.TAB_TITLE_FAVORITES, R.drawable.tab_favorites, FavoritesActivity.class);
+		addTab(MMSDKConstants.TAB_TITLE_SETTINGS, R.drawable.tab_settings, SettingsActivity.class);
+		tabHost.setCurrentTab(userPrefs.getInt(MMSDKConstants.TAB_TITLE_CURRENT_TAG, 0));
 	}
 	
 	/**
@@ -243,16 +243,16 @@ public class MainScreen extends TabActivity {
 	 * Function to get all the categories from the server
 	 */
 	private void getAllCategories() {
-		if(!userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(!userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
-				MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+				MMProgressDialog.displayDialog(MainScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 			}
 			
 			MMCategoryAdapter.cancelGetAllCategories();
 			MMCategoryAdapter.getAllCategories(
 					new CategoriesCallback(), 
-					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+					userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 					MMConstants.PARTNER_ID);
 		}
 	}
@@ -262,15 +262,15 @@ public class MainScreen extends TabActivity {
 	 */
 	private void getAllFavorites() {
 		if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
-			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+			MMProgressDialog.displayDialog(MainScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 		}
 		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMFavoritesAdapter.cancelGetFavorites();
 			MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 											MMConstants.PARTNER_ID, 
-											userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-											userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+											userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+											userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		} else {
 			setTabs();
 			MMProgressDialog.dismissDialog();
@@ -279,15 +279,15 @@ public class MainScreen extends TabActivity {
 	
 	private void checkUserIn() {
 		if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
-			MMProgressDialog.displayDialog(MainScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+			MMProgressDialog.displayDialog(MainScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 		}
 		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMCheckinAdapter.checkInUser(new CheckUserInCallback(),
 					MMLocationManager.getLocationLatitude(), 
 					MMLocationManager.getLocationLongitude(),
-					userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY),
+					userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
 					MMConstants.PARTNER_ID);
 		} else {
 			setTabs();
@@ -341,8 +341,8 @@ public class MainScreen extends TabActivity {
 				try {
 					JSONObject jObj = new JSONObject((String) obj);
 					
-					if(!jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
-						userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
+					if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+						userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
 					}
 					userPrefsEditor.commit();
 				} catch (JSONException e) {
@@ -364,14 +364,14 @@ public class MainScreen extends TabActivity {
 			if(obj != null) {
 				Log.d(TAG, TAG + "FavoritesCallback: " + ((String) obj));
 				try {
-					userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
+					userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
 					userPrefsEditor.commit();
 					
 					JSONObject jObj = new JSONObject((String) obj);
-					if(jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
-						Toast.makeText(MainScreen.this, jObj.getString(MMAPIConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
-						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
-						userPrefsEditor.remove(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES);
+					if(jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+						Toast.makeText(MainScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+						userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
+						userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES);
 						userPrefsEditor.commit();
 					}
 				} catch (JSONException e) {

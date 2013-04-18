@@ -11,7 +11,7 @@ import com.mobmonkey.mobmonkeyandroid.fragments.FavoritesFragment.OnMMLocationSe
 import com.mobmonkey.mobmonkeyandroid.fragments.FavoritesFragment.OnMapIconClickListener;
 import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment.OnLocationDetailsItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -57,12 +57,12 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 	 */
 	@Override
 	public void onMapIconClicked(int which) {
-		if(which == MMAPIConstants.FAVORITES_FRAGMENT_MAP) {
+		if(which == MMSDKConstants.FAVORITES_FRAGMENT_MAP) {
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 			fragmentTransaction.replace(R.id.llfragmentcontainer,fragmentStack.push(new FavoritesMapFragment()));
 			fragmentTransaction.commit();
-		} else if(which == MMAPIConstants.FAVORITES_FRAGMENT_LIST) {		
+		} else if(which == MMSDKConstants.FAVORITES_FRAGMENT_LIST) {		
 			fragmentManager.beginTransaction().remove(fragmentStack.pop());
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
@@ -77,7 +77,7 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 	@Override
 	public void onLocationSelect(Object obj) {
 		Bundle data = new Bundle();
-		data.putString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((JSONObject) obj).toString());
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((JSONObject) obj).toString());
 		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
 		locationDetailsFragment.setArguments(data);
 		performTransaction(locationDetailsFragment);
@@ -94,7 +94,7 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 			case 1:
 				LocationDetailsMapFragment locationDetailsMapFragment = new LocationDetailsMapFragment();
 				Bundle data = new Bundle();
-				data.putString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((String) obj));
+				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((String) obj));
 				locationDetailsMapFragment.setArguments(data);
 				performTransaction(locationDetailsMapFragment);
 				break;

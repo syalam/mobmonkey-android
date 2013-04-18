@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.WheelView;
@@ -66,16 +66,16 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		
 		requestCal = Calendar.getInstance();
 		currCal = Calendar.getInstance();
-		repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_DAILY;
+		repeatRate = MMSDKConstants.REQUEST_REPEAT_RATE_DAILY;
 		
-		if(getIntent().getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME) != null) {
-			requestCal = (Calendar) getIntent().getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
+		if(getIntent().getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME) != null) {
+			requestCal = (Calendar) getIntent().getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
 		}
 		
 		setRepeating();
 		
 		wvDay.setViewAdapter(new DayArrayAdapter(ScheduleRequestScreen.this, currCal));
-		wvDay.setCurrentItem(MMAPIConstants.DAYS_PREVIOUS + requestCal.get(Calendar.DAY_OF_YEAR) - currCal.get(Calendar.DAY_OF_YEAR));
+		wvDay.setCurrentItem(MMSDKConstants.DAYS_PREVIOUS + requestCal.get(Calendar.DAY_OF_YEAR) - currCal.get(Calendar.DAY_OF_YEAR));
 		
 		numericWheelAdapter = new NumericWheelAdapter(ScheduleRequestScreen.this, 1, 12, "%02d");
 		numericWheelAdapter.setItemResource(R.layout.wheel_text_item);
@@ -147,13 +147,13 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		switch(checkedId) {
 			case R.id.rbdaily:
-				repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_DAILY;
+				repeatRate = MMSDKConstants.REQUEST_REPEAT_RATE_DAILY;
 				break;
 			case R.id.rbweekly:
-				repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_WEEKLY;
+				repeatRate = MMSDKConstants.REQUEST_REPEAT_RATE_WEEKLY;
 				break;
 			case R.id.rbmonthly:
-				repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_MONTHLY;
+				repeatRate = MMSDKConstants.REQUEST_REPEAT_RATE_MONTHLY;
 				break;
 		}
 	}
@@ -178,18 +178,18 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 	}
 	
 	private void setRepeating() {
-		tbRepeating.setChecked(getIntent().getBooleanExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, true));
+		tbRepeating.setChecked(getIntent().getBooleanExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, true));
 		rgRepeating.check(getCheckedRadioButton());
 	}
 	
 	private int getCheckedRadioButton() {
-		repeatRate = getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
+		repeatRate = getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
 		
-		if(repeatRate.equals(MMAPIConstants.REQUEST_REPEAT_RATE_DAILY)) {
+		if(repeatRate.equals(MMSDKConstants.REQUEST_REPEAT_RATE_DAILY)) {
 			return R.id.rbdaily;
-		} else if(repeatRate.equals(MMAPIConstants.REQUEST_REPEAT_RATE_WEEKLY)) {
+		} else if(repeatRate.equals(MMSDKConstants.REQUEST_REPEAT_RATE_WEEKLY)) {
 			return R.id.rbweekly;
-		} else if(repeatRate.equals(MMAPIConstants.REQUEST_REPEAT_RATE_MONTHLY)) {
+		} else if(repeatRate.equals(MMSDKConstants.REQUEST_REPEAT_RATE_MONTHLY)) {
 			return R.id.rbmonthly;
 		} else {
 			return R.id.rbdaily;
@@ -200,17 +200,17 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		if(tbRepeating.isChecked()) {
 			return repeatRate;
 		} else {
-			return MMAPIConstants.REQUEST_REPEAT_RATE_NONE;
+			return MMSDKConstants.REQUEST_REPEAT_RATE_NONE;
 		}
 	}
 
 	private void getDateAndTime() {
-		Log.d(TAG, TAG + "day: " + (wvDay.getCurrentItem() - MMAPIConstants.DAYS_PREVIOUS));
+		Log.d(TAG, TAG + "day: " + (wvDay.getCurrentItem() - MMSDKConstants.DAYS_PREVIOUS));
 		Log.d(TAG, TAG + "hour: " + (wvHours.getCurrentItem() + 1));
 		Log.d(TAG, TAG + "mins: " + wvMins.getCurrentItem());
 		Log.d(TAG, TAG + "am/pm: " + wvAMPM.getCurrentItem());
 		
-		int day = wvDay.getCurrentItem() - MMAPIConstants.DAYS_PREVIOUS - (requestCal.get(Calendar.DAY_OF_YEAR) - currCal.get(Calendar.DAY_OF_YEAR));
+		int day = wvDay.getCurrentItem() - MMSDKConstants.DAYS_PREVIOUS - (requestCal.get(Calendar.DAY_OF_YEAR) - currCal.get(Calendar.DAY_OF_YEAR));
 		int hour = wvHours.getCurrentItem() + 1;
 		int min = wvMins.getCurrentItem();
 		int ampm = wvAMPM.getCurrentItem();
@@ -239,9 +239,9 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		if(requestCal.getTimeInMillis() <= System.currentTimeMillis()) {
 			Toast.makeText(ScheduleRequestScreen.this, R.string.toast_current_or_past_current_time, Toast.LENGTH_LONG).show();
 		} else {
-			scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME, requestCal);
-			scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, tbRepeating.isChecked());
-			scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, getRepeating());
+			scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME, requestCal);
+			scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, tbRepeating.isChecked());
+			scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, getRepeating());
 			
 			setResult(RESULT_OK, scheduleRequestIntent);
 			finish();
@@ -263,7 +263,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 
 		@Override
 		public View getItem(int index, View convertView, ViewGroup parent) {
-			int day = -MMAPIConstants.DAYS_PREVIOUS + index;
+			int day = -MMSDKConstants.DAYS_PREVIOUS + index;
 			Calendar newCalendar = (Calendar) calendar.clone();
 			newCalendar.roll(Calendar.DAY_OF_YEAR, day);
 			
@@ -272,7 +272,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
             TextView monthday = (TextView) view.findViewById(R.id.time2_monthday);
             
             if (day == 0) {
-                weekday.setText(MMAPIConstants.DEFAULT_STRING_EMPTY);
+                weekday.setText(MMSDKConstants.DEFAULT_STRING_EMPTY);
                 monthday.setText(R.string.tv_today);
                 monthday.setTextColor(0xFF0000F0);
             } else {
@@ -293,7 +293,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 
 		@Override
 		protected CharSequence getItemText(int index) {
-			return MMAPIConstants.DEFAULT_STRING_EMPTY;
+			return MMSDKConstants.DEFAULT_STRING_EMPTY;
 		}
 	}
 }

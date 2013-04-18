@@ -22,7 +22,7 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeysdk.adapters.MMAddLocationAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 
 /**
@@ -52,20 +52,18 @@ public class AddLocationScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_hold);
 		setContentView(R.layout.add_location_screen);
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 		editPrefs = userPrefs.edit();
-		editPrefs.remove(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
+		editPrefs.remove(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
 		editPrefs.commit();
 		location = new Location(LocationManager.NETWORK_PROVIDER);
 		init();
 	}
 	
-	protected void onResume()
-	{
+	protected void onResume() {
 		super.onResume();
-		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST))
-		{
-			String displayCategoriesSelected = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMAPIConstants.DEFAULT_STRING_EMPTY);
+		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST)) {
+			String displayCategoriesSelected = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMSDKConstants.DEFAULT_STRING_EMPTY);
 			try {
 				JSONArray selectedCategoriesList = new JSONArray(displayCategoriesSelected);
 				displayCategoriesSelected = null;
@@ -77,9 +75,9 @@ public class AddLocationScreen extends Activity {
 						displayCategoriesSelected = displayCategoriesSelected + ", " + selectedCategoriesList.getJSONObject(i).getString("en");
 					
 					if(categories == null)
-						categories = selectedCategoriesList.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
+						categories = selectedCategoriesList.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID);
 					else
-						categories = categories + "," + selectedCategoriesList.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_CATEGORY_ID);
+						categories = categories + "," + selectedCategoriesList.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID);
 				}
 				etCats.setText(displayCategoriesSelected);
 				
@@ -92,9 +90,8 @@ public class AddLocationScreen extends Activity {
 	
 	@Override
 	public void onBackPressed() {
-	    if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST))
-	    {
-	    	editPrefs.remove(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
+	    if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST)) {
+	    	editPrefs.remove(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
 	    }
 	    super.onBackPressed();
 		overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
@@ -111,7 +108,7 @@ public class AddLocationScreen extends Activity {
 		etZip = (EditText)findViewById(R.id.etzip);
 		etPhone = (EditText)findViewById(R.id.etphone);
 		
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 		
 		etCats.setInputType(InputType.TYPE_NULL);
 		// check for bundle (location)
@@ -134,8 +131,8 @@ public class AddLocationScreen extends Activity {
 					{
 						e.printStackTrace();
 					}					
-					categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_CATEGORY, topLevelCats.toString());
-					categoryScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, "Categories");
+					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, topLevelCats.toString());
+					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, "Categories");
 					startActivity(categoryScreenIntent);
 				}
 				return false;
@@ -146,9 +143,9 @@ public class AddLocationScreen extends Activity {
 	public void viewOnClick(View view) throws JSONException {
     	switch(view.getId()) {
 	    	case R.id.btnaddlocation:
-	    		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST))
+	    		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST))
 	    	    {
-	    	     	editPrefs.remove(MMAPIConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
+	    	     	editPrefs.remove(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
 	    	    }
 	    		addLocation();
 	    		break;
@@ -158,8 +155,8 @@ public class AddLocationScreen extends Activity {
 	private void addLocation() throws JSONException {
 		if(checkValues())
 		{
-			MMAddLocationAdapter.addLocation(new AddLocationCallback(), userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-					userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), MMConstants.PARTNER_ID, street, "", "", 
+			MMAddLocationAdapter.addLocation(new AddLocationCallback(), userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), MMConstants.PARTNER_ID, street, "", "", 
 					categories, "United States", latitude, city, longitude, name, "", 
 					phone, postalCode, "", state, "");
 		}
@@ -219,15 +216,15 @@ public class AddLocationScreen extends Activity {
 	private void checkLocationInfo() {
 		if(this.getIntent().getExtras() != null) {
 			Bundle bundle = getIntent().getExtras();
-			etStreet.setText(bundle.getString(MMAPIConstants.JSON_KEY_ADDRESS));
-			etCity.setText(bundle.getString(MMAPIConstants.JSON_KEY_LOCALITY));
-			etState.setText(bundle.getString(MMAPIConstants.JSON_KEY_REGION));
-			etZip.setText(bundle.getString(MMAPIConstants.JSON_KEY_POSTCODE));
-			latitude = bundle.getString(MMAPIConstants.JSON_KEY_LATITUDE);
-			longitude = bundle.getString(MMAPIConstants.JSON_KEY_LONGITUDE);
+			etStreet.setText(bundle.getString(MMSDKConstants.JSON_KEY_ADDRESS));
+			etCity.setText(bundle.getString(MMSDKConstants.JSON_KEY_LOCALITY));
+			etState.setText(bundle.getString(MMSDKConstants.JSON_KEY_REGION));
+			etZip.setText(bundle.getString(MMSDKConstants.JSON_KEY_POSTCODE));
+			latitude = bundle.getString(MMSDKConstants.JSON_KEY_LATITUDE);
+			longitude = bundle.getString(MMSDKConstants.JSON_KEY_LONGITUDE);
 			
-			location.setLatitude(Double.parseDouble(bundle.getString(MMAPIConstants.JSON_KEY_LATITUDE)));
-			location.setLongitude(Double.parseDouble(bundle.getString(MMAPIConstants.JSON_KEY_LONGITUDE)));
+			location.setLatitude(Double.parseDouble(bundle.getString(MMSDKConstants.JSON_KEY_LATITUDE)));
+			location.setLongitude(Double.parseDouble(bundle.getString(MMSDKConstants.JSON_KEY_LONGITUDE)));
 		}
 	}
 	

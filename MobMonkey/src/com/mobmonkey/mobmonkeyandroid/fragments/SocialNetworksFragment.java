@@ -4,7 +4,7 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSocialNetworkArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSocialNetworkItem;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -29,7 +29,7 @@ public class SocialNetworksFragment extends MMFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_socialnetworks_screen, container, false);
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Activity.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Activity.MODE_PRIVATE);
 		lvSocialNetworks = (ListView) view.findViewById(R.id.lvsocialnetwork);
 		MMSocialNetworkArrayAdapter arrayAdapter = new MMSocialNetworkArrayAdapter(getActivity(), R.layout.social_networks_listview_row, getNetworkItems());
 		lvSocialNetworks.setAdapter(arrayAdapter);
@@ -42,16 +42,16 @@ public class SocialNetworksFragment extends MMFragment {
 		
 		data[0] = new MMSocialNetworkItem();
 		data[0].title = getActivity().getResources().getStringArray(R.array.social_networks_name)[0];
-		data[0].isOn = userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY)
-							.equals(MMAPIConstants.OAUTH_PROVIDER_FACEBOOK) ? true:false;
+		data[0].isOn = userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY)
+							.equals(MMSDKConstants.OAUTH_PROVIDER_FACEBOOK) ? true:false;
 		
 		data[1] = new MMSocialNetworkItem();
 		data[1].title = getActivity().getResources().getStringArray(R.array.social_networks_name)[1];
-		data[1].isOn = userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY)
-							.equals(MMAPIConstants.OAUTH_PROVIDER_TWITTER) ? true:false;
+		data[1].isOn = userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY)
+							.equals(MMSDKConstants.OAUTH_PROVIDER_TWITTER) ? true:false;
 		
 		
-		Log.d(TAG, "Provider: " + userPrefs.getString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY));
+		Log.d(TAG, "Provider: " + userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		return data;
 	}
 

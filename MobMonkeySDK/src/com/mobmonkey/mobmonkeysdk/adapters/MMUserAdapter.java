@@ -13,7 +13,7 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 import android.util.Log;
 
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMDeviceUUID;
@@ -44,19 +44,19 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signInUser(MMCallback mmCallback, String emailAddress, String password, String partnerId) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_SIGNIN);
-		uriBuilder.appendQueryParameter(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE)
-			.appendQueryParameter(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
-			.appendQueryParameter(MMAPIConstants.KEY_USE_OAUTH, Boolean.toString(false));
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_SIGNIN);
+		uriBuilder.appendQueryParameter(MMSDKConstants.KEY_DEVICE_TYPE, MMSDKConstants.DEVICE_TYPE)
+			.appendQueryParameter(MMSDKConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
+			.appendQueryParameter(MMSDKConstants.KEY_USE_OAUTH, Boolean.toString(false));
 		
 		Log.d(TAG, TAG + "signin uri: " + uriBuilder.toString());
 		
 		HttpPost httpPost = new HttpPost(uriBuilder.toString());
-		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
+		httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader(MMSDKConstants.KEY_USER, emailAddress);
 		// TODO: encrypt password??
-		httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
+		httpPost.setHeader(MMSDKConstants.KEY_AUTH, password);
 		
 		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
@@ -69,22 +69,22 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signInUserFacebook(MMCallback mmCallback, String oauthToken, String providerUserName, String partnerId) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_SIGNIN);
-		uriBuilder.appendQueryParameter(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE)
-			.appendQueryParameter(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
-			.appendQueryParameter(MMAPIConstants.KEY_USE_OAUTH, Boolean.toString(true))
-			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK)
-			.appendQueryParameter(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken)
-			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER_USERNAME, providerUserName);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_SIGNIN);
+		uriBuilder.appendQueryParameter(MMSDKConstants.KEY_DEVICE_TYPE, MMSDKConstants.DEVICE_TYPE)
+			.appendQueryParameter(MMSDKConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
+			.appendQueryParameter(MMSDKConstants.KEY_USE_OAUTH, Boolean.toString(true))
+			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)
+			.appendQueryParameter(MMSDKConstants.KEY_OAUTH_TOKEN, oauthToken)
+			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER_USERNAME, providerUserName);
 		
 		Log.d(TAG, TAG + "signin uri: " + uriBuilder.toString());
 		
 		HttpPost httpPost = new HttpPost(uriBuilder.toString());
-		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
+		httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
+		httpPost.setHeader(MMSDKConstants.KEY_OAUTH_TOKEN, oauthToken);
+		httpPost.setHeader(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK);
 		
 		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
@@ -97,21 +97,21 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signInUserTwitter(MMCallback mmCallback, String oauthToken, String providerUserName, String partnerId) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_SIGNIN);
-		uriBuilder.appendQueryParameter(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
-			.appendQueryParameter(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE)
-			.appendQueryParameter(MMAPIConstants.KEY_USE_OAUTH, Boolean.toString(true))
-			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER)
-			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER_USERNAME, providerUserName);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_SIGNIN);
+		uriBuilder.appendQueryParameter(MMSDKConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
+			.appendQueryParameter(MMSDKConstants.KEY_DEVICE_TYPE, MMSDKConstants.DEVICE_TYPE)
+			.appendQueryParameter(MMSDKConstants.KEY_USE_OAUTH, Boolean.toString(true))
+			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_TWITTER)
+			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER_USERNAME, providerUserName);
 		
 		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder.toString());
 		
 		HttpPost httpPost = new HttpPost(uriBuilder.toString());
-		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER);
+		httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
+		httpPost.setHeader(MMSDKConstants.KEY_OAUTH_TOKEN, oauthToken);
+		httpPost.setHeader(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_TWITTER);
 		
 		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
@@ -129,25 +129,25 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signUpNewUser(MMCallback mmCallback, String firstName, String lastName, String emailAddress, String password, String birthdate, int gender, boolean checkedToS, String partnerId) {		
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_USER);
-		uriBuilder.appendQueryParameter(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
-			.appendQueryParameter(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_USER);
+		uriBuilder.appendQueryParameter(MMSDKConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
+			.appendQueryParameter(MMSDKConstants.KEY_DEVICE_TYPE, MMSDKConstants.DEVICE_TYPE);
 		createParamsInstance();
 		
 		try {
-			params.put(MMAPIConstants.KEY_FIRST_NAME, firstName);
-			params.put(MMAPIConstants.KEY_LAST_NAME, lastName);
-			params.put(MMAPIConstants.KEY_EMAIL_ADDRESS, emailAddress);
-			params.put(MMAPIConstants.KEY_PASSWORD, password);
-			params.put(MMAPIConstants.KEY_BIRTHDATE, birthdate);
-			params.put(MMAPIConstants.KEY_GENDER, gender);
-			params.put(MMAPIConstants.KEY_ACCEPTEDTOS, checkedToS);
+			params.put(MMSDKConstants.KEY_FIRST_NAME, firstName);
+			params.put(MMSDKConstants.KEY_LAST_NAME, lastName);
+			params.put(MMSDKConstants.KEY_EMAIL_ADDRESS, emailAddress);
+			params.put(MMSDKConstants.KEY_PASSWORD, password);
+			params.put(MMSDKConstants.KEY_BIRTHDATE, birthdate);
+			params.put(MMSDKConstants.KEY_GENDER, gender);
+			params.put(MMSDKConstants.KEY_ACCEPTEDTOS, checkedToS);
 			
 			// TODO: remove hardcoded values
-			params.put(MMAPIConstants.KEY_CITY, "Tempe");
-			params.put(MMAPIConstants.KEY_STATE, "Arizona");
-			params.put(MMAPIConstants.KEY_ZIP, "85283");
-			params.put(MMAPIConstants.KEY_PHONE_NUMBER, "480-555-5555");
+			params.put(MMSDKConstants.KEY_CITY, "Tempe");
+			params.put(MMSDKConstants.KEY_STATE, "Arizona");
+			params.put(MMSDKConstants.KEY_ZIP, "85283");
+			params.put(MMSDKConstants.KEY_PHONE_NUMBER, "480-555-5555");
 			// end TODO:
 			
 			Log.d(TAG, TAG + "userInfo: " + params.toString());
@@ -156,8 +156,8 @@ public class MMUserAdapter extends MMAdapter {
 			HttpPut httpPut = new HttpPut(uriBuilder.toString());
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPut.setEntity(stringEntity);
-			httpPut.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httpPut.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+			httpPut.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+			httpPut.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
 			
 			new MMPutAsyncTask(mmCallback).execute(httpPut);
 		} catch (JSONException e) {
@@ -175,23 +175,23 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signUpNewUserFacebook(MMCallback mmCallback, String oauthToken, String providerUserName, String partnerId) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_SIGNIN);
-		uriBuilder.appendQueryParameter(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE)
-			.appendQueryParameter(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
-			.appendQueryParameter(MMAPIConstants.KEY_USE_OAUTH, Boolean.toString(true))
-			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK)
-			.appendQueryParameter(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken)
-			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER_USERNAME, providerUserName);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_SIGNIN);
+		uriBuilder.appendQueryParameter(MMSDKConstants.KEY_DEVICE_TYPE, MMSDKConstants.DEVICE_TYPE)
+			.appendQueryParameter(MMSDKConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
+			.appendQueryParameter(MMSDKConstants.KEY_USE_OAUTH, Boolean.toString(true))
+			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)
+			.appendQueryParameter(MMSDKConstants.KEY_OAUTH_TOKEN, oauthToken)
+			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER_USERNAME, providerUserName);
 		
 //		Log.d(TAG, TAG + "signUpURL: " + signUpURL);
 		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder.toString());
 		
 		HttpPost httpPost = new HttpPost(uriBuilder.toString());
-		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
+		httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
+		httpPost.setHeader(MMSDKConstants.KEY_OAUTH_TOKEN, oauthToken);
+		httpPost.setHeader(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK);
 		
 		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
@@ -209,24 +209,24 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signUpNewUserTwitter(MMCallback mmCallback, String firstName, String lastName, String oauthToken, String providerUserName, String emailAddress, String birthdate, int gender, String partnerId) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_SIGNIN, MMAPIConstants.URI_PATH_REGISTEREMAIL);
-		uriBuilder.appendQueryParameter(MMAPIConstants.KEY_DEVICE_TYPE, MMAPIConstants.DEVICE_TYPE)
-			.appendQueryParameter(MMAPIConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
-			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_TWITTER)
-			.appendQueryParameter(MMAPIConstants.KEY_OAUTH_TOKEN, oauthToken)
-			.appendQueryParameter(MMAPIConstants.KEY_PROVIDER_USERNAME, providerUserName)
-			.appendQueryParameter(MMAPIConstants.KEY_EMAIL_ADDRESS, emailAddress)
-			.appendQueryParameter(MMAPIConstants.KEY_FIRST_NAME, firstName)
-			.appendQueryParameter(MMAPIConstants.KEY_LAST_NAME, lastName)
-			.appendQueryParameter(MMAPIConstants.KEY_GENDER, Integer.toString(gender))
-			.appendQueryParameter(MMAPIConstants.KEY_BIRTHDATE, birthdate);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_SIGNIN, MMSDKConstants.URI_PATH_REGISTEREMAIL);
+		uriBuilder.appendQueryParameter(MMSDKConstants.KEY_DEVICE_TYPE, MMSDKConstants.DEVICE_TYPE)
+			.appendQueryParameter(MMSDKConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
+			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_TWITTER)
+			.appendQueryParameter(MMSDKConstants.KEY_OAUTH_TOKEN, oauthToken)
+			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER_USERNAME, providerUserName)
+			.appendQueryParameter(MMSDKConstants.KEY_EMAIL_ADDRESS, emailAddress)
+			.appendQueryParameter(MMSDKConstants.KEY_FIRST_NAME, firstName)
+			.appendQueryParameter(MMSDKConstants.KEY_LAST_NAME, lastName)
+			.appendQueryParameter(MMSDKConstants.KEY_GENDER, Integer.toString(gender))
+			.appendQueryParameter(MMSDKConstants.KEY_BIRTHDATE, birthdate);
 		
 //		Log.d(TAG, TAG + "signUpURL: " + signUpURL);
 		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder.toString());
 		
 		HttpPost httpPost = new HttpPost(uriBuilder.toString());
-		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
 		
 		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
@@ -239,19 +239,19 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signOut(MMCallback mmCallback, String user, String auth, String partnerId) {
-		Builder uriBuilder = Uri.parse(MMAPIConstants.MOBMONKEY_URL).buildUpon();
-		uriBuilder.appendPath(MMAPIConstants.URI_PATH_SIGNOUT)
-			.appendPath(MMAPIConstants.DEVICE_TYPE)
+		Builder uriBuilder = Uri.parse(MMSDKConstants.MOBMONKEY_URL).buildUpon();
+		uriBuilder.appendPath(MMSDKConstants.URI_PATH_SIGNOUT)
+			.appendPath(MMSDKConstants.DEVICE_TYPE)
 			.appendPath(MMDeviceUUID.getDeviceUUID().toString());
 
 		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder.toString());
 		
 		HttpPost httpPost = new HttpPost(uriBuilder.toString());
-		httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-		httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader(MMAPIConstants.KEY_USER, user);
-		httpPost.setHeader(MMAPIConstants.KEY_AUTH, auth);
-		httpPost.setHeader(MMAPIConstants.KEY_OAUTH_TOKEN, auth);
+		httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader(MMSDKConstants.KEY_USER, user);
+		httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		httpPost.setHeader(MMSDKConstants.KEY_OAUTH_TOKEN, auth);
 		
 		for(Header header : httpPost.getAllHeaders()) {
 			Log.d(TAG, TAG + "header name: " + header.getName());
@@ -269,13 +269,13 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param password
 	 */
 	public static void getUserInfo(MMCallback mmCallback, String partnerId, String emailAddress, String password) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_USER);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_USER);
 		
 		HttpGet httpGet = new HttpGet(uriBuilder.toString());
-		httpGet.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-		httpGet.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-		httpGet.setHeader(MMAPIConstants.KEY_USER, emailAddress);
-		httpGet.setHeader(MMAPIConstants.KEY_AUTH, password);
+		httpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		httpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+		httpGet.setHeader(MMSDKConstants.KEY_USER, emailAddress);
+		httpGet.setHeader(MMSDKConstants.KEY_AUTH, password);
 		
 		new MMGetAsyncTask(mmCallback).execute(httpGet);
 	}
@@ -309,29 +309,29 @@ public class MMUserAdapter extends MMAdapter {
 									  String state,
 									  String zip,
 									  boolean acceptedtos) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_USER);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_USER);
 		createParamsInstance();
 		
 		try {
-			params.put(MMAPIConstants.KEY_PASSWORD, newPassword);
-			params.put(MMAPIConstants.KEY_FIRST_NAME, firstName);
-			params.put(MMAPIConstants.KEY_LAST_NAME, lastName);
-			params.put(MMAPIConstants.KEY_BIRTHDATE, birthday);
-			params.put(MMAPIConstants.KEY_GENDER, gender);
-			params.put(MMAPIConstants.KEY_CITY, city);
-			params.put(MMAPIConstants.KEY_STATE, state);
-			params.put(MMAPIConstants.KEY_ZIP, zip);
-			params.put(MMAPIConstants.KEY_ACCEPTEDTOS, acceptedtos);
+			params.put(MMSDKConstants.KEY_PASSWORD, newPassword);
+			params.put(MMSDKConstants.KEY_FIRST_NAME, firstName);
+			params.put(MMSDKConstants.KEY_LAST_NAME, lastName);
+			params.put(MMSDKConstants.KEY_BIRTHDATE, birthday);
+			params.put(MMSDKConstants.KEY_GENDER, gender);
+			params.put(MMSDKConstants.KEY_CITY, city);
+			params.put(MMSDKConstants.KEY_STATE, state);
+			params.put(MMSDKConstants.KEY_ZIP, zip);
+			params.put(MMSDKConstants.KEY_ACCEPTEDTOS, acceptedtos);
 			
 			Log.d(TAG, params.toString());
 			
 			HttpPost httpPost = new HttpPost(uriBuilder.toString());
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPost.setEntity(stringEntity);
-			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
-			httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
+			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+			httpPost.setHeader(MMSDKConstants.KEY_USER, emailAddress);
+			httpPost.setHeader(MMSDKConstants.KEY_AUTH, password);
 			
 			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch (JSONException ex) {

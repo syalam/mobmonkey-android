@@ -23,7 +23,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewedArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewedItem;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMTrendingAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
@@ -43,7 +43,7 @@ public class TopViewedFragment extends MMFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		View view = inflater.inflate(R.layout.fragment_topviewed_screen, container, false);
 		lvtopviewed = (ListView) view.findViewById(R.id.lvtopviewed);
 		topViewedItems = new LinkedList<MMTopViewedItem>();
@@ -65,11 +65,11 @@ public class TopViewedFragment extends MMFragment {
 	 */
 	private void getTrending() {
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-			MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, "Loading all top viewed...");
+			MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, "Loading all top viewed...");
 			MMTrendingAdapter.getTopViewed(new TopViewedCallback(),
-												   MMAPIConstants.SEARCH_TIME_WEEK,
-												   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY),
-												   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY),
+												   MMSDKConstants.SEARCH_TIME_WEEK,
+												   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+												   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
 												   MMConstants.PARTNER_ID);
 		}
 	}
@@ -78,15 +78,15 @@ public class TopViewedFragment extends MMFragment {
 		try {
 			for(int i = 0; i < topViewed.length(); i++) {
 				JSONObject jObj = topViewed.getJSONObject(i);
-				JSONObject jObjMedia = jObj.getJSONObject(MMAPIConstants.JSON_KEY_MEDIA);
-				if(jObjMedia.getString(MMAPIConstants.JSON_KEY_TYPE).equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
-					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObjMedia.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
-				} else if(jObjMedia.getString(MMAPIConstants.JSON_KEY_TYPE).equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
+				JSONObject jObjMedia = jObj.getJSONObject(MMSDKConstants.JSON_KEY_MEDIA);
+				if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_TYPE_IMAGE)) {
+					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+				} else if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_TYPE_VIDEO)) {
 					// TODO: create thumbnail from video
 				}
 				
 				topViewedItems.add(new MMTopViewedItem());
-				topViewedItems.get(i).setTitle(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
+				topViewedItems.get(i).setTitle(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
 			}
 		} catch (JSONException ex) {
 			ex.printStackTrace();

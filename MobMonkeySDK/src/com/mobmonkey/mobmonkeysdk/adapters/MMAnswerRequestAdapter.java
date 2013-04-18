@@ -14,7 +14,7 @@ import org.json.JSONException;
 import android.os.Environment;
 import android.util.Log;
 
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMPostAsyncTask;
@@ -59,23 +59,23 @@ public class MMAnswerRequestAdapter extends MMAdapter {
 							   String mediaData,
 							   String mediaType) {
 		
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_MEDIA, mediaType);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_MEDIA, mediaType);
 		createParamsInstance();
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
 		try {
 			//AnswerRequestURL = MMAPIConstants.TEST_MOBMONKEY_URL + "media/" + mediaType;
-			params.put(MMAPIConstants.JSON_KEY_REQUEST_ID, requestID);
-			params.put(MMAPIConstants.JSON_KEY_REQUEST_TYPE, requestType);
-			params.put(MMAPIConstants.JSON_KEY_CONTENT_TYPE, contentType);
-			params.put(MMAPIConstants.JSON_KEY_MEDIA_DATA, mediaData);
+			params.put(MMSDKConstants.JSON_KEY_REQUEST_ID, requestID);
+			params.put(MMSDKConstants.JSON_KEY_REQUEST_TYPE, requestType);
+			params.put(MMSDKConstants.JSON_KEY_CONTENT_TYPE, contentType);
+			params.put(MMSDKConstants.JSON_KEY_MEDIA_DATA, mediaData);
 			
 			HttpPost httppost = new HttpPost(uriBuilder.toString());
 			// add header
-			httppost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httppost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-			httppost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
-			httppost.setHeader(MMAPIConstants.KEY_AUTH, password);
+			httppost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+			httppost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+			httppost.setHeader(MMSDKConstants.KEY_USER, emailAddress);
+			httppost.setHeader(MMSDKConstants.KEY_AUTH, password);
 			
 			// might cause outofmemory
 			try {
@@ -98,11 +98,11 @@ public class MMAnswerRequestAdapter extends MMAdapter {
 					
 					// try to write small piece of data into bufferedwriter
 					bw.write("{");
-					bw.write("\"" + MMAPIConstants.JSON_KEY_REQUEST_ID + "\":\"" + requestID + "\",");
-					bw.write("\"" + MMAPIConstants.JSON_KEY_REQUEST_TYPE + "\":" + requestType + ",");
-					bw.write("\"" + MMAPIConstants.JSON_KEY_CONTENT_TYPE + "\":\"" + contentType + "\",");
+					bw.write("\"" + MMSDKConstants.JSON_KEY_REQUEST_ID + "\":\"" + requestID + "\",");
+					bw.write("\"" + MMSDKConstants.JSON_KEY_REQUEST_TYPE + "\":" + requestType + ",");
+					bw.write("\"" + MMSDKConstants.JSON_KEY_CONTENT_TYPE + "\":\"" + contentType + "\",");
 					// divide mediaData into smaller pieces
-					bw.write("\"" + MMAPIConstants.JSON_KEY_MEDIA_DATA + "\":\"");
+					bw.write("\"" + MMSDKConstants.JSON_KEY_MEDIA_DATA + "\":\"");
 					
 					for(int i = 0; i < mediaData.length(); i++) {
 						
@@ -118,7 +118,7 @@ public class MMAnswerRequestAdapter extends MMAdapter {
 					bw.close();
 			        
 					// put tempfile into FileEntity
-					FileEntity reqEntity = new FileEntity(tempfile, MMAPIConstants.CONTENT_TYPE_APP_JSON);
+					FileEntity reqEntity = new FileEntity(tempfile, MMSDKConstants.CONTENT_TYPE_APP_JSON);
 			        httppost.setEntity(reqEntity);
 //			        
 //			        // delete tempfile

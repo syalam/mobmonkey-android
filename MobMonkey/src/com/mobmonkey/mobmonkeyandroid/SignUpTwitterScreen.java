@@ -10,7 +10,7 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMUserAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 
@@ -153,11 +153,11 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
      * Initialize all the variables to be used in {@link SignUpTwitterScreen}.
      */
 	private void init() {
-    	userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+    	userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
     	userPrefsEditor = userPrefs.edit();
 		inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		
-		providerUserName = getIntent().getStringExtra(MMAPIConstants.KEY_OAUTH_PROVIDER_USER_NAME);
+		providerUserName = getIntent().getStringExtra(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME);
     	
     	tvProviderUserName = (TextView) findViewById(R.id.tvproviderusername);
     	etFirstName = (EditText) findViewById(R.id.etfirstname);
@@ -233,13 +233,13 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
     		MMUserAdapter.signUpNewUserTwitter(new SignUpTwitterCallback(), 
     				etFirstName.getText().toString(), 
     				etLastName.getText().toString(), 
-    				getIntent().getStringExtra(MMAPIConstants.KEY_OAUTH_TOKEN), 
+    				getIntent().getStringExtra(MMSDKConstants.KEY_OAUTH_TOKEN), 
     				providerUserName, 
     				etEmailAddress.getText().toString(), 
     				Long.toString(birthdate.getTimeInMillis()), 
     				convertGender(), 
     				MMConstants.PARTNER_ID);
-    		MMProgressDialog.displayDialog(SignUpTwitterScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up));
+    		MMProgressDialog.displayDialog(SignUpTwitterScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up));
     	}
     }
     
@@ -249,7 +249,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
      */
     private boolean checkFirstName() {
     	if(!TextUtils.isEmpty(etFirstName.getText())) {
-//    		userInfo.put(MMAPIConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
+//    		userInfo.put(MMSDKConstants.KEY_FIRST_NAME, etFirstName.getText().toString());
     		return checkLastName();
     	} else {
     		displayAlert(R.string.ad_message_invalid_first_name);
@@ -263,7 +263,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
      */
     private boolean checkLastName() {
     	if(!TextUtils.isEmpty(etLastName.getText().toString())) {
-//    		userInfo.put(MMAPIConstants.KEY_LAST_NAME, etLastName.getText().toString());
+//    		userInfo.put(MMSDKConstants.KEY_LAST_NAME, etLastName.getText().toString());
     		return checkEmailAddress();
     	} else {
     		displayAlert(R.string.ad_message_invalid_last_name);
@@ -277,8 +277,8 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
      */
     private boolean checkEmailAddress() {
     	if(!TextUtils.isEmpty(etEmailAddress.getText())) {
-//    		userInfo.put(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
-//    		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+//    		userInfo.put(MMSDKConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+//    		userPrefsEditor.putString(MMSDKConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
 //    		userPrefsEditor.commit();
     		return checkBirthdate();
     	} else {
@@ -293,7 +293,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
      */
     private boolean checkBirthdate() {
     	if(!TextUtils.isEmpty(etBirthdate.getText())) {
-//    		userInfo.put(MMAPIConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
+//    		userInfo.put(MMSDKConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
     		return checkGender();
     	} else {
     		displayAlert(R.string.ad_message_invalid_birthdate);
@@ -307,7 +307,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
      */
     private boolean checkGender() {
     	if(!TextUtils.isEmpty(etGender.getText())) {
-//    		userInfo.put(MMAPIConstants.KEY_GENDER, convertGender());
+//    		userInfo.put(MMSDKConstants.KEY_GENDER, convertGender());
     		return true;
     	} else {
     		displayAlert(R.string.ad_message_invalid_gender);
@@ -320,11 +320,11 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
      * @return
      */
     private int convertGender() {
-    	int gender = MMAPIConstants.DEFAULT_INT;
-    	if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_MALE)) {
-    		gender = MMAPIConstants.NUM_MALE;
-    	} else if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_FEMALE)) {
-    		gender = MMAPIConstants.NUM_FEMALE;
+    	int gender = MMSDKConstants.DEFAULT_INT;
+    	if(etGender.getText().toString().equalsIgnoreCase(MMSDKConstants.TEXT_MALE)) {
+    		gender = MMSDKConstants.NUM_MALE;
+    	} else if(etGender.getText().toString().equalsIgnoreCase(MMSDKConstants.TEXT_FEMALE)) {
+    		gender = MMSDKConstants.NUM_FEMALE;
     	}
     	return gender;
     }
@@ -352,16 +352,16 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 			
 			try {
 				JSONObject response = new JSONObject((String) obj);
-				if(response.getString(MMAPIConstants.KEY_RESPONSE_ID).equals(MMAPIConstants.RESPONSE_ID_SUCCESS)) {
+				if(response.getString(MMSDKConstants.KEY_RESPONSE_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
 					Toast.makeText(SignUpTwitterScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
 					setResult(Activity.RESULT_OK);
-					userPrefsEditor.putString(MMAPIConstants.KEY_USER, providerUserName);
-					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, getIntent().getStringExtra(MMAPIConstants.KEY_OAUTH_TOKEN));
+					userPrefsEditor.putString(MMSDKConstants.KEY_USER, providerUserName);
+					userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, getIntent().getStringExtra(MMSDKConstants.KEY_OAUTH_TOKEN));
 					userPrefsEditor.commit();
 					finish();
 					overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 				} else {
-					Toast.makeText(SignUpTwitterScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_SHORT).show();
+					Toast.makeText(SignUpTwitterScreen.this, response.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_SHORT).show();
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();

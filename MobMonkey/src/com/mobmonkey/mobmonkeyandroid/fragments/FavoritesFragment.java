@@ -33,7 +33,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 
@@ -61,7 +61,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreateView");
 		
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_favorites_screen, container, false);
@@ -92,7 +92,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			switch(view.getId()) {
 				case R.id.ibmap:
-					mapIconClickListener.onMapIconClicked(MMAPIConstants.FAVORITES_FRAGMENT_MAP);
+					mapIconClickListener.onMapIconClicked(MMSDKConstants.FAVORITES_FRAGMENT_MAP);
 					break;
 				case R.id.btnaddloc:
 					startActivity(new Intent(getActivity(), AddLocationScreen.class));
@@ -135,8 +135,8 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	 * @throws JSONException 
 	 */
 	private void refreshFavorites() throws JSONException {
-		String favorites = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING_EMPTY);
-		if(!favorites.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
+		String favorites = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, MMSDKConstants.DEFAULT_STRING_EMPTY);
+		if(!favorites.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 			favoritesList = new JSONArray(favorites);
 		} else {
 			favoritesList = new JSONArray();
@@ -155,10 +155,10 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		for(int i = 0; i < favoritesList.length(); i++) {
 			JSONObject jObj = favoritesList.getJSONObject(i);
 			favoriteLocations[i] = new MMResultsLocation();
-			favoriteLocations[i].setLocName(jObj.getString(MMAPIConstants.JSON_KEY_NAME));
-			favoriteLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles));
-			favoriteLocations[i].setLocAddr(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMAPIConstants.JSON_KEY_LOCALITY) + 
-											MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMAPIConstants.JSON_KEY_POSTCODE));
+			favoriteLocations[i].setLocName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
+			favoriteLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles));
+			favoriteLocations[i].setLocAddr(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY) + 
+											MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_REGION) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_POSTCODE));
 		}
 		
 		// reverse array

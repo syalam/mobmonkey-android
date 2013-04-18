@@ -26,7 +26,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMAnsweredRequestItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
@@ -52,12 +52,12 @@ public class AnsweredRequestsFragment extends MMFragment {
 		View view = inflater.inflate(R.layout.fragment_answeredrequests_screen, container, false);
 		lvAnsweredRequests = (ListView) view.findViewById(R.id.lvAnsweredrequests);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		// get all the assigned request, and then update the badge counter
 		MMInboxAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
 										   MMConstants.PARTNER_ID, 
-										   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-										   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+										   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+										   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		
 		return view;
 	}
@@ -84,32 +84,32 @@ public class AnsweredRequestsFragment extends MMFragment {
 			MMAnsweredRequestItem item = new MMAnsweredRequestItem();
 			
 			// media file can be null
-			if(jObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA).length() > 0) {
-				JSONObject media = jObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA).getJSONObject(0);
+			if(jObj.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).length() > 0) {
+				JSONObject media = jObj.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).getJSONObject(0);
 				
 				// title
-				item.title = jObj.getString(MMAPIConstants.JSON_KEY_NAME_OF_LOCATION);
+				item.title = jObj.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION);
 				
 				// media uri
-				item.mediaUri = Uri.parse(media.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
+				item.mediaUri = Uri.parse(media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 				
 				// media type
-				item.mediaType = jObj.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
+				item.mediaType = jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
 				
 				// is fulfilled
-				item.isFulfilled = jObj.getBoolean(MMAPIConstants.JSON_KEY_MARKASREAD);
+				item.isFulfilled = jObj.getBoolean(MMSDKConstants.JSON_KEY_MARKASREAD);
 			}
 			// if no data for media, ignore it and prints out rest of the data
 			else {
 				
 				// title
-				item.title = jObj.getString(MMAPIConstants.JSON_KEY_NAME_OF_LOCATION);
+				item.title = jObj.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION);
 				
 				// media type
-				item.mediaType = jObj.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
+				item.mediaType = jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
 				
 				// is fulfilled
-				item.isFulfilled = jObj.getBoolean(MMAPIConstants.JSON_KEY_MARKASREAD);
+				item.isFulfilled = jObj.getBoolean(MMSDKConstants.JSON_KEY_MARKASREAD);
 			}
 			
 			answeredRequestItems[i] = item;

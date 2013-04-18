@@ -26,7 +26,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSegmentedRadioGroup;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMSendRequestAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 
@@ -86,15 +86,15 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			switch(checkedId) {
 				case R.id.rbvideorequest:
 					btnSendRequest.setText(R.string.btn_send_video_request);
-					mediaType = MMAPIConstants.MEDIA_TYPE_VIDEO;
+					mediaType = MMSDKConstants.MEDIA_TYPE_VIDEO;
 					break;
 				case R.id.rbphotorequest:
 					btnSendRequest.setText(R.string.btn_send_photo_request);
-					mediaType = MMAPIConstants.MEDIA_TYPE_IMAGE;
+					mediaType = MMSDKConstants.MEDIA_TYPE_IMAGE;
 					break;
 				case R.id.rbtextrequest:
 					btnSendRequest.setText(R.string.btn_send_text_request);
-					mediaType = MMAPIConstants.MEDIA_TYPE_TEXT;
+					mediaType = MMSDKConstants.MEDIA_TYPE_TEXT;
 					break;
 			}
 		} else if(group == rgStayActive) {
@@ -124,19 +124,19 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		if(adapterView == mmelvAddMessage) {
 			if(position == 0) {
 				Intent addMessageIntent = new Intent(MakeARequestScreen.this, AddMessageScreen.class);
-				addMessageIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_MESSAGE, message);
-				startActivityForResult(addMessageIntent, MMAPIConstants.REQUEST_CODE_ADD_MESSAGE);
+				addMessageIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MESSAGE, message);
+				startActivityForResult(addMessageIntent, MMSDKConstants.REQUEST_CODE_ADD_MESSAGE);
 			}
 		} else if (adapterView == mmelvScheduleRequest) {
 			if(position == 0) {
 				Intent scheduleRequestIntent = new Intent(MakeARequestScreen.this, ScheduleRequestScreen.class);
-				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_MESSAGE, scheduleRequest);
+				scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MESSAGE, scheduleRequest);
 				if(requestCal != null) {
-					scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME, requestCal);
+					scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME, requestCal);
 				}
-				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, repeat);
-				scheduleRequestIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, repeatRate);
-				startActivityForResult(scheduleRequestIntent, MMAPIConstants.REQUEST_CODE_SCHEDULE_REQUEST);
+				scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, repeat);
+				scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, repeatRate);
+				startActivityForResult(scheduleRequestIntent, MMSDKConstants.REQUEST_CODE_SCHEDULE_REQUEST);
 			}
 		}
 	}
@@ -151,7 +151,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		if(view.getId() == R.id.btnsentrequest) {
 			Log.d(TAG, "sent request");
 			
-			if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_TEXT) && message.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
+			if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_TEXT) && message.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 				Toast.makeText(MakeARequestScreen.this, R.string.toast_no_message_detected, Toast.LENGTH_SHORT).show();
 			} else {
 				sendRequest();
@@ -166,9 +166,9 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == MMAPIConstants.REQUEST_CODE_ADD_MESSAGE) {
+		if(requestCode == MMSDKConstants.REQUEST_CODE_ADD_MESSAGE) {
 			processAddMessageResult(resultCode, data);
-		} else if(requestCode == MMAPIConstants.REQUEST_CODE_SCHEDULE_REQUEST) {
+		} else if(requestCode == MMSDKConstants.REQUEST_CODE_SCHEDULE_REQUEST) {
 			processScheduleRequestResult(resultCode, data);
 		}
 	}
@@ -192,9 +192,9 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		mmelvScheduleRequest = (MMExpandedListView) findViewById(R.id.mmelvschedulerequest);
 		btnSendRequest = (Button) findViewById(R.id.btnsentrequest);
 		
-		message = MMAPIConstants.DEFAULT_STRING_EMPTY;
-		scheduleRequest = MMAPIConstants.DEFAULT_STRING_EMPTY;
-		mediaType = MMAPIConstants.MEDIA_TYPE_VIDEO;
+		message = MMSDKConstants.DEFAULT_STRING_EMPTY;
+		scheduleRequest = MMSDKConstants.DEFAULT_STRING_EMPTY;
+		mediaType = MMSDKConstants.MEDIA_TYPE_VIDEO;
 		
 		rgRequests.setOnCheckedChangeListener(MakeARequestScreen.this);
 		rgStayActive.setOnCheckedChangeListener(MakeARequestScreen.this);
@@ -220,14 +220,14 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 				break;
 		}
 		try {
-			jObj = new JSONObject(getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
-			locationId = jObj.getString(MMAPIConstants.JSON_KEY_LOCATION_ID);
-			providerId = jObj.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID);
+			jObj = new JSONObject(getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			locationId = jObj.getString(MMSDKConstants.JSON_KEY_LOCATION_ID);
+			providerId = jObj.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 	}
 
 	/**
@@ -248,7 +248,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	 * @param data
 	 */
 	private void processAddMessageResult(int resultCode, Intent data) {
-		message = data.getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_MESSAGE);
+		message = data.getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_MESSAGE);
 		
 		if(resultCode == RESULT_CANCELED) {
 			setSingleItemAddMessage();
@@ -259,7 +259,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					message = MMAPIConstants.DEFAULT_STRING_EMPTY;
+					message = MMSDKConstants.DEFAULT_STRING_EMPTY;
 					setSingleItemAddMessage();
 				}
 			});
@@ -270,8 +270,8 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	
 	private void setSingleScheduleRequest() {
 		requestCal = null;
-		repeatRate = MMAPIConstants.REQUEST_REPEAT_RATE_NONE;
-		scheduleRequest = MMAPIConstants.DEFAULT_STRING_EMPTY;
+		repeatRate = MMSDKConstants.REQUEST_REPEAT_RATE_NONE;
+		scheduleRequest = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		icons = new int[] {android.R.drawable.ic_menu_today};
 		labels = new String[] {getString(R.string.tv_schedule_request)};
 		indicatorIcons = new int[] {R.drawable.listview_accessory_indicator};
@@ -287,11 +287,11 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	 */
 	private void processScheduleRequestResult(int resultCode, Intent data) {
 		if(resultCode == RESULT_OK) {
-			repeat = data.getBooleanExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, true);
-			repeatRate = data.getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
+			repeat = data.getBooleanExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, true);
+			repeatRate = data.getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE);
 			Log.d(TAG, TAG + "repeatRate: " + repeatRate);
 			
-			requestCal = (Calendar) data.getSerializableExtra(MMAPIConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
+			requestCal = (Calendar) data.getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME);
 			scheduleDate = Long.toString(requestCal.getTimeInMillis());
 			
 			String scheduleMessage = MMUtility.getDate(requestCal.getTimeInMillis(), "KK:mm a") + 
@@ -312,7 +312,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	}
 	
 	private void sendRequest() {
-		MMProgressDialog.displayDialog(MakeARequestScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_sending_request));
+		MMProgressDialog.displayDialog(MakeARequestScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_sending_request));
 		MMSendRequestAdapter.sendRequest(new SendRequestCallback(), 
 										 message,
 										 scheduleDate, 
@@ -323,8 +323,8 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 										 repeatRate,
 										 mediaType, 
 										 MMConstants.PARTNER_ID,
-										 userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-										 userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING_EMPTY));
+										 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+										 userPrefs.getString(MMSDKConstants.KEY_AUTH,MMSDKConstants.DEFAULT_STRING_EMPTY));
 	}
 	
 	/**
@@ -340,12 +340,12 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			if(obj != null) {
 				try {
 					JSONObject response = new JSONObject((String)obj);
-					if(response.getString(MMAPIConstants.KEY_RESPONSE_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+					if(response.getString(MMSDKConstants.KEY_RESPONSE_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 						Toast.makeText(MakeARequestScreen.this, R.string.toast_request_successful, Toast.LENGTH_SHORT).show();
 						finish();
 						overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
 					} else {
-						Toast.makeText(MakeARequestScreen.this, response.getString(MMAPIConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
+						Toast.makeText(MakeARequestScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

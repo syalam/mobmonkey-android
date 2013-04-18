@@ -17,7 +17,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMLocationDetailsAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
@@ -103,7 +103,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
 		View view = inflater.inflate(R.layout.fragment_locationdetails_screen, container, false);
@@ -134,27 +134,27 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		imageMediaUrl = new JSONArray();
 		
 		try {
-			if(!userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING_EMPTY).equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
-				favoritesList = new JSONArray(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING_EMPTY));
+			if(!userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, MMSDKConstants.DEFAULT_STRING_EMPTY).equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
+				favoritesList = new JSONArray(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			} else {
 				favoritesList = new JSONArray();
 			}
-			location = new JSONObject(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			location = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 			
 			if(!retrieveLocationDetails) {
-				MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading_location_information));
+				MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading_location_information));
 				MMLocationDetailsAdapter.getLocationDetails(new LocationCallback(), 
-						location.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
-						location.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
-						userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+						location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID), 
+						location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID), 
+						userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+						userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 						MMConstants.PARTNER_ID);
 				MMLocationDetailsAdapter.retrieveAllMediaForLocation(new MediaCallback(), 
-						userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-						userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
+						userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+						userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 						MMConstants.PARTNER_ID, 
-						location.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
-						location.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID));
+						location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID), 
+						location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
 //				MMLocationDetailsAdapter.shareMediaForLocation(new ShareMediaCallback());
 			} else {
 				setLocationDetails();
@@ -189,7 +189,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		switch(view.getId()) {
 			case R.id.llmakerequest:
 				intent = new Intent(getActivity(), MakeARequestScreen.class);
-				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, locationDetails.toString());
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, locationDetails.toString());
 				startActivity(intent);
 				break;
 			case R.id.llfavorite:
@@ -197,12 +197,12 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				break;
 			case R.id.ivtnmedia:
 				intent = new Intent(getActivity(), ExpandedThumbnailScreen.class);
-				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA, imageMedia);
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA, imageMedia);
 				startActivity(intent);
 				break;
 			case R.id.ibplay:
 				intent = new Intent(getActivity(), MMVideoPlayerScreen.class);
-				intent.putExtra(MMAPIConstants.JSON_KEY_MEDIA_URL, mediaStreamVideoUrl);
+				intent.putExtra(MMSDKConstants.JSON_KEY_MEDIA_URL, mediaStreamVideoUrl);
 				startActivity(intent);
 				break;
 			case R.id.ibstream:
@@ -211,12 +211,12 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				break;
 			case R.id.ibimage:
 				intent = new Intent(getActivity(), LocationDetailsMediaScreen.class);
-				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_TYPE, MMAPIConstants.MEDIA_TYPE_IMAGE);
-				intent.putExtra(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING, streamMediaUrl.toString());
-				intent.putExtra(MMAPIConstants.MEDIA_TYPE_VIDEO, videoMediaUrl.toString());
-				intent.putExtra(MMAPIConstants.MEDIA_TYPE_IMAGE, imageMediaUrl.toString());
-				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
-				intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE, MMSDKConstants.MEDIA_TYPE_IMAGE);
+				intent.putExtra(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING, streamMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_TYPE_VIDEO, videoMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_TYPE_IMAGE, imageMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
 				startActivity(intent);
 				break;
 			case R.id.ibsharemedia:
@@ -240,7 +240,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		} else if(position == 1) {
 			listener.onLocationDetailsItem(position, locationDetails.toString());
 		} else if(position == 2) {
-			listener.onLocationDetailsItem(position, MMAPIConstants.DEFAULT_STRING_EMPTY);
+			listener.onLocationDetailsItem(position, MMSDKConstants.DEFAULT_STRING_EMPTY);
 		}
 	}
 
@@ -258,21 +258,21 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * @throws JSONException
 	 */
 	private void setLocationDetails() throws JSONException {
-		tvLocNameTitle.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_NAME));
-		tvLocName.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_NAME));
-		tvMembersFound.setText(locationDetails.getString(MMAPIConstants.JSON_KEY_MONKEYS) + MMAPIConstants.DEFAULT_STRING_SPACE + getString(R.string.tv_members_found));
+		tvLocNameTitle.setText(locationDetails.getString(MMSDKConstants.JSON_KEY_NAME));
+		tvLocName.setText(locationDetails.getString(MMSDKConstants.JSON_KEY_NAME));
+		tvMembersFound.setText(locationDetails.getString(MMSDKConstants.JSON_KEY_MONKEYS) + MMSDKConstants.DEFAULT_STRING_SPACE + getString(R.string.tv_members_found));
 		
 		int[] icons = new int[]{R.drawable.cat_icon_telephone, R.drawable.cat_icon_map_pin, R.drawable.cat_icon_alarm_clock};
 		int[] indicatorIcons = new int[]{R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator};
 		String[] details = new String[3];
-		String phoneNumber = locationDetails.getString(MMAPIConstants.JSON_KEY_PHONE_NUMBER);
-		if(phoneNumber.equals(MMAPIConstants.DEFAULT_STRING_NULL) || phoneNumber.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
+		String phoneNumber = locationDetails.getString(MMSDKConstants.JSON_KEY_PHONE_NUMBER);
+		if(phoneNumber.equals(MMSDKConstants.DEFAULT_STRING_NULL) || phoneNumber.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 			details[0] = getString(R.string.tv_no_phone_number_available);
 		} else {
 			details[0] = phoneNumber;
 		}
-		details[1] = locationDetails.getString(MMAPIConstants.JSON_KEY_ADDRESS) + MMAPIConstants.DEFAULT_STRING_NEWLINE + locationDetails.getString(MMAPIConstants.JSON_KEY_LOCALITY) + MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + 
-				locationDetails.getString(MMAPIConstants.JSON_KEY_REGION) + MMAPIConstants.DEFAULT_STRING_COMMA_SPACE + locationDetails.getString(MMAPIConstants.JSON_KEY_POSTCODE);
+		details[1] = locationDetails.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + locationDetails.getString(MMSDKConstants.JSON_KEY_LOCALITY) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + 
+				locationDetails.getString(MMSDKConstants.JSON_KEY_REGION) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + locationDetails.getString(MMSDKConstants.JSON_KEY_POSTCODE);
 		details[2] = getString(R.string.tv_add_notifications);
 		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(getActivity(), R.layout.mm_listview_row, icons, details, indicatorIcons, android.R.style.TextAppearance_Small, Typeface.DEFAULT, null);
 		elvLocDetails.setAdapter(arrayAdapter);
@@ -282,7 +282,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		llFavorite.setOnClickListener(LocationDetailsFragment.this);
 		
 		for(int i = 0; i < favoritesList.length(); i++) {
-			if(favoritesList.getJSONObject(i).getString(MMAPIConstants.JSON_KEY_LOCATION_ID).equals(locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID))) {
+			if(favoritesList.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_LOCATION_ID).equals(locationDetails.getString(MMSDKConstants.JSON_KEY_LOCATION_ID))) {
 				tvFavorite.setText(getString(R.string.tv_remove_favorite));
 				break;
 			}
@@ -295,7 +295,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 */
 	private void hasMedia() throws JSONException {		
 		JSONObject mediaJObj = new JSONObject(mediaResults); 
-		JSONArray mediaJArr = mediaJObj.getJSONArray(MMAPIConstants.JSON_KEY_MEDIA);
+		JSONArray mediaJArr = mediaJObj.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA);
 		
 		int streamMediaCount = 0;
 		int videoMediaCount = 0;
@@ -309,42 +309,42 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			for(int i = 0; i < mediaJArr.length(); i++) {
 				JSONObject jObj = mediaJArr.getJSONObject(i);
 				
-				String mediaType = jObj.getString(MMAPIConstants.JSON_KEY_TYPE);
+				String mediaType = jObj.getString(MMSDKConstants.JSON_KEY_TYPE);
 				
-				if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING)) {
+				if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING)) {
 					if(isFirstMedia) {
-						mediaStreamVideoUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
+						mediaStreamVideoUrl = jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
 //						vvMedia.setVideoURI(Uri.parse(mediaStreamVideoUrl));
 //						vvMedia.seekTo(1);
 						MediaMetadataRetriever mmr = new MediaMetadataRetriever();
 						mmr.setDataSource(getActivity(), Uri.parse(mediaStreamVideoUrl));
 						ivtnMedia.setImageBitmap(mmr.getFrameAtTime(1000));
-						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 						ibPlay.setVisibility(View.VISIBLE);
 						ibPlay.setOnClickListener(LocationDetailsFragment.this);
 						isFirstMedia = false;
 					}
 					streamMediaUrl.put(jObj);
 					streamMediaCount++;
-				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
+				} else if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_VIDEO)) {
 					if(isFirstMedia) {
-						mediaStreamVideoUrl = jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL);
+						mediaStreamVideoUrl = jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
 						Log.d(TAG, TAG + "mediaStreamVideoUrl: " + mediaStreamVideoUrl);
 //						MediaMetadataRetriever mmr = new MediaMetadataRetriever();
 //						mmr.setDataSource(getActivity(), Uri.parse(mediaStreamVideoUrl));
 //						
 //						ivMedia.setImageBitmap(ThumbnailUtils.createVideoThumbnail(mediaStreamVideoUrl, Thumbnails.MICRO_KIND));
-						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 						ibPlay.setVisibility(View.VISIBLE);
 						ibPlay.setOnClickListener(LocationDetailsFragment.this);
 						isFirstMedia = false;
 					}
 					videoMediaUrl.put(jObj);
 					videoMediaCount++;
-				} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
+				} else if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_IMAGE)) {
 					if(isFirstMedia) {
-						MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
-						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMAPIConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 						ivtnMedia.setClickable(true);
 						ivtnMedia.setOnClickListener(LocationDetailsFragment.this);
 						isFirstMedia = false;
@@ -357,17 +357,17 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			if(streamMediaCount > 0) {
 				ibStream.setOnClickListener(LocationDetailsFragment.this);
 				ibStream.setBackgroundResource(R.drawable.tn_hasmedia_stream);
-				tvStreamMediaCount.setText(streamMediaCount + MMAPIConstants.DEFAULT_STRING_EMPTY);
+				tvStreamMediaCount.setText(streamMediaCount + MMSDKConstants.DEFAULT_STRING_EMPTY);
 			}
 			if(videoMediaCount > 0) {
 				ibVideo.setOnClickListener(LocationDetailsFragment.this);
 				ibVideo.setBackgroundResource(R.drawable.tn_hasmedia_video);
-				tvVideoMediaCount.setText(videoMediaCount + MMAPIConstants.DEFAULT_STRING_EMPTY);
+				tvVideoMediaCount.setText(videoMediaCount + MMSDKConstants.DEFAULT_STRING_EMPTY);
 			}
 			if(imageMediaCount > 0) {
 				ibImage.setOnClickListener(LocationDetailsFragment.this);
 				ibImage.setBackgroundResource(R.drawable.tn_hasmedia_image);
-				tvImageMediaCount.setText(imageMediaCount + MMAPIConstants.DEFAULT_STRING_EMPTY);
+				tvImageMediaCount.setText(imageMediaCount + MMSDKConstants.DEFAULT_STRING_EMPTY);
 			}
 			
 			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
@@ -404,24 +404,24 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * Function to handle the event of when the user clicks on favorite/remove favorite
 	 */
 	private void favoriteClicked() {
-		MMProgressDialog.displayDialog(getActivity(), MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_updating_favorites));
+		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_updating_favorites));
 		try {
 			if(tvFavorite.getText().toString().equals(getString(R.string.tv_favorite))) {
 				// Make a server call and add to favorites
 				MMFavoritesAdapter.addFavorite(new AddFavoriteCallback(),  
-												locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
-												locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
+												locationDetails.getString(MMSDKConstants.JSON_KEY_LOCATION_ID), 
+												locationDetails.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID), 
 												MMConstants.PARTNER_ID, 
-												userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-												userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+												userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+												userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			} else if(tvFavorite.getText().toString().equals(getString(R.string.tv_remove_favorite))) {
 				// Make a server call remove from favorites
 				MMFavoritesAdapter.removeFavorite(new RemoveFavoriteCallback(),  
-												  locationDetails.getString(MMAPIConstants.JSON_KEY_LOCATION_ID), 
-												  locationDetails.getString(MMAPIConstants.JSON_KEY_PROVIDER_ID), 
+												  locationDetails.getString(MMSDKConstants.JSON_KEY_LOCATION_ID), 
+												  locationDetails.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID), 
 												  MMConstants.PARTNER_ID, 
-												  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-												  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+												  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+												  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			}
 		} catch(JSONException e) {
 			
@@ -434,8 +434,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private void updateFavoritesList() {
 		MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 				MMConstants.PARTNER_ID, 
-				userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-				userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+				userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+				userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 	}
 	
 	/**
@@ -460,7 +460,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				try {
 					locationDetails = new JSONObject((String) obj);
 					
-					if(locationDetails.has(MMAPIConstants.JSON_KEY_STATUS)) {
+					if(locationDetails.has(MMSDKConstants.JSON_KEY_STATUS)) {
 						MMLocationDetailsAdapter.cancelRetrieveAllMediaForLocation();
 						MMProgressDialog.dismissDialog();
 						
@@ -505,7 +505,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				Log.d(TAG, TAG + "mediaResults: " + (String) obj);
 				try {
 					JSONObject jObj = new JSONObject((String) obj);
-					if(!jObj.has(MMAPIConstants.JSON_KEY_STATUS)) {
+					if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
 						mediaResults = (String) obj;
 						hasMedia();
 					}
@@ -554,7 +554,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			if(obj != null) {
 				try {
 					JSONObject response = new JSONObject(((String) obj));
-					if(response.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+					if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 						Toast.makeText(getActivity(), R.string.toast_add_favorite, Toast.LENGTH_SHORT).show();
 						tvFavorite.setText(R.string.tv_remove_favorite);
 						updateFavoritesList();
@@ -577,7 +577,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			if(obj != null) {
 				try {
 					JSONObject response = new JSONObject(((String) obj));
-					if(response.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+					if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 						Toast.makeText(getActivity(), R.string.toast_remove_favorite, Toast.LENGTH_SHORT).show();
 						tvFavorite.setText(R.string.tv_favorite);
 						updateFavoritesList();
@@ -601,7 +601,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "response: " + ((String) obj));
-				userPrefsEditor.putString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
+				userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
 				userPrefsEditor.commit();
 			}
 		}

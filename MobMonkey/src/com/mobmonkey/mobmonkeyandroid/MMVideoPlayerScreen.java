@@ -1,7 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid;
 
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
 import android.net.Uri;
@@ -21,7 +21,7 @@ public class MMVideoPlayerScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mm_video_player_screen);
 		vvVideoPlayer = (VideoView) findViewById(R.id.vvvideoplayer);
-		vvVideoPlayer.setVideoURI(Uri.parse(getIntent().getStringExtra(MMAPIConstants.JSON_KEY_MEDIA_URL)));
+		vvVideoPlayer.setVideoURI(Uri.parse(getIntent().getStringExtra(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 		vvVideoPlayer.setMediaController(new MediaController(MMVideoPlayerScreen.this));
 	}
 }

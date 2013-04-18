@@ -43,7 +43,7 @@ import com.mobmonkey.mobmonkeyandroid.AddLocationScreen;
 import com.mobmonkey.mobmonkeyandroid.fragments.FavoritesFragment.OnMMLocationSelectListener;
 import com.mobmonkey.mobmonkeyandroid.fragments.FavoritesFragment.OnMapIconClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 
@@ -76,7 +76,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStates) {
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_favorites_map, container, false);
@@ -112,7 +112,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		switch(view.getId()) {
 			case R.id.ibmap:
 				if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-					mapIconClickListener.onMapIconClicked(MMAPIConstants.FAVORITES_FRAGMENT_LIST);
+					mapIconClickListener.onMapIconClicked(MMSDKConstants.FAVORITES_FRAGMENT_LIST);
 				}
 				break;
 			case R.id.btnaddloc:
@@ -153,12 +153,12 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 				
 				// pass information to category screen
 				Bundle bundle = new Bundle();
-				bundle.putString(MMAPIConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
-				bundle.putString(MMAPIConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
-				bundle.putString(MMAPIConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
-				bundle.putString(MMAPIConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
-				bundle.putString(MMAPIConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude()+"");
-				bundle.putString(MMAPIConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude()+"");
+				bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
+				bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+				bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+				bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+				bundle.putString(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude()+"");
+				bundle.putString(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude()+"");
 				
 				Intent intent = new Intent(getActivity(), AddLocationScreen.class);
 				intent.putExtras(bundle);
@@ -205,8 +205,8 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	 * @throws JSONException 
 	 */
 	private void refreshFavorites() throws JSONException {
-		String favorites = userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_FAVORITES, MMAPIConstants.DEFAULT_STRING_EMPTY);
-		if(!favorites.equals(MMAPIConstants.DEFAULT_STRING_EMPTY)) {
+		String favorites = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, MMSDKConstants.DEFAULT_STRING_EMPTY);
+		if(!favorites.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 			favoritesList = new JSONArray(favorites);
 		} else {
 			favoritesList = new JSONArray();
@@ -228,12 +228,12 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		for(int i = 0; i < favoritesList.length(); i++) {
 			JSONObject jObj = favoritesList.getJSONObject(i);
 			
-			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE));
+			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
 			
 			Marker locationResultMarker = googleMap.addMarker(new MarkerOptions().
 					position(resultLocLatLng).
-					title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
-					.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
+					title(jObj.getString(MMSDKConstants.JSON_KEY_NAME))
+					.snippet(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS)));
 			
 			if(currMarker != null && currMarker.getTitle().equals(locationResultMarker.getTitle()) && currMarker.getTitle().equals(locationResultMarker.getTitle())) {
 				Log.d(TAG, TAG + "marker equal");
@@ -295,7 +295,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
            if (title != null) {
                titleUi.setText(title);
            } else {
-               titleUi.setText(MMAPIConstants.DEFAULT_STRING_EMPTY);
+               titleUi.setText(MMSDKConstants.DEFAULT_STRING_EMPTY);
            }
 
            String snippet = marker.getSnippet();
@@ -303,7 +303,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
            if (snippet != null) {
                snippetUi.setText(snippet);
            } else {
-               snippetUi.setText(MMAPIConstants.DEFAULT_STRING_EMPTY);
+               snippetUi.setText(MMSDKConstants.DEFAULT_STRING_EMPTY);
            }
        }
    }

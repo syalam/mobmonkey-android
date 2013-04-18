@@ -7,7 +7,7 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import android.util.Log;
 
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMPostAsyncTask;
@@ -38,37 +38,37 @@ public class MMSendRequestAdapter extends MMAdapter {
 								   String partnerId,
 								   String emailAddress,
 								   String password) {
-		createUriBuilderInstance(MMAPIConstants.URI_PATH_REQUESTMEDIA, mediaType);
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_REQUESTMEDIA, mediaType);
 		createParamsInstance();
 		
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
 		try {
-			params.put(MMAPIConstants.JSON_KEY_MESSAGE, message);
-			params.put(MMAPIConstants.JSON_KEY_SCHEDULE_DATE, scheduleDate);
-			params.put(MMAPIConstants.JSON_KEY_PROVIDER_ID, providerId);
-			params.put(MMAPIConstants.JSON_KEY_LOCATION_ID, locationId);
-			params.put(MMAPIConstants.JSON_KEY_DURATION, duration);
-			params.put(MMAPIConstants.JSON_KEY_RADIUS_IN_YARDS, radiusInYards);
-			if(repeating.equals(MMAPIConstants.REQUEST_REPEAT_RATE_NONE)) {
-				params.put(MMAPIConstants.JSON_KEY_RECURRING, 0);
+			params.put(MMSDKConstants.JSON_KEY_MESSAGE, message);
+			params.put(MMSDKConstants.JSON_KEY_SCHEDULE_DATE, scheduleDate);
+			params.put(MMSDKConstants.JSON_KEY_PROVIDER_ID, providerId);
+			params.put(MMSDKConstants.JSON_KEY_LOCATION_ID, locationId);
+			params.put(MMSDKConstants.JSON_KEY_DURATION, duration);
+			params.put(MMSDKConstants.JSON_KEY_RADIUS_IN_YARDS, radiusInYards);
+			if(repeating.equals(MMSDKConstants.REQUEST_REPEAT_RATE_NONE)) {
+				params.put(MMSDKConstants.JSON_KEY_RECURRING, 0);
 			} else {
-				params.put(MMAPIConstants.JSON_KEY_RECURRING, true);
+				params.put(MMSDKConstants.JSON_KEY_RECURRING, true);
 				long freq = 86400000; //TODO: Change these to calculated values. This is miliseconds in a day for Daily repeat.
 				if(repeating.equals("Weekly"))
 					freq = 604800000;
 				if(repeating.equals("Monthly"))
 					freq = 2629740000L;
-				params.put(MMAPIConstants.JSON_KEY_FREQUENCY_IN_MS, freq);
+				params.put(MMSDKConstants.JSON_KEY_FREQUENCY_IN_MS, freq);
 			}
 			
 			HttpPost httpPost = new HttpPost(uriBuilder.toString());
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPost.setEntity(stringEntity);
-			httpPost.setHeader(MMAPIConstants.KEY_CONTENT_TYPE, MMAPIConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMAPIConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMAPIConstants.KEY_USER, emailAddress);
-			httpPost.setHeader(MMAPIConstants.KEY_AUTH, password);
+			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+			httpPost.setHeader(MMSDKConstants.KEY_USER, emailAddress);
+			httpPost.setHeader(MMSDKConstants.KEY_AUTH, password);
 
 			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch(JSONException ex) {

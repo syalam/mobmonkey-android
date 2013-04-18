@@ -1,7 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid;
 
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -29,7 +29,7 @@ public class TermsofuseScreen extends Activity {
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
 		super.onCreate(savedInstanceState);
@@ -42,8 +42,8 @@ public class TermsofuseScreen extends Activity {
 		
 		tvToS.setMovementMethod(new ScrollingMovementMethod());
 		
-		if(getIntent().getBooleanExtra(MMAPIConstants.KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON, false)){
-			requestCode = getIntent().getIntExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.DEFAULT_INT);
+		if(getIntent().getBooleanExtra(MMSDKConstants.KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON, false)){
+			requestCode = getIntent().getIntExtra(MMSDKConstants.REQUEST_CODE, MMSDKConstants.DEFAULT_INT);
 			btnReject.setVisibility(View.VISIBLE);
 			btnAccept.setVisibility(View.VISIBLE);
 		}
@@ -72,11 +72,11 @@ public class TermsofuseScreen extends Activity {
 	
 	private void onAcceptClick() {
 		switch(requestCode) {
-			case MMAPIConstants.REQUEST_CODE_TOS_FACEBOOK:
-				userPrefsEditor.putBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, true);
+			case MMSDKConstants.REQUEST_CODE_TOS_FACEBOOK:
+				userPrefsEditor.putBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, true);
 				break;
-			case MMAPIConstants.REQUEST_CODE_TOS_TWITTER:
-				userPrefsEditor.putBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_TWITTER, true);
+			case MMSDKConstants.REQUEST_CODE_TOS_TWITTER:
+				userPrefsEditor.putBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_TWITTER, true);
 				break;
 		}
 		

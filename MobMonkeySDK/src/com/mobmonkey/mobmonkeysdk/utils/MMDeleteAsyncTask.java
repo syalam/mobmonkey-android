@@ -36,10 +36,10 @@ public class MMDeleteAsyncTask extends AsyncTask<HttpDelete, Void, String>{
 			InputStream inStream = httpEntity.getContent();
 			
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inStream, "iso-8859-1"), 8);
-			String line = MMAPIConstants.DEFAULT_STRING_EMPTY;
+			String line = MMSDKConstants.DEFAULT_STRING_EMPTY;
 			stringBuilder = new StringBuilder();
 			while((line = bufferedReader.readLine()) != null) {
-				stringBuilder.append(line + MMAPIConstants.DEFAULT_STRING_NEWLINE);
+				stringBuilder.append(line + MMSDKConstants.DEFAULT_STRING_NEWLINE);
 			}
 			inStream.close();
 			

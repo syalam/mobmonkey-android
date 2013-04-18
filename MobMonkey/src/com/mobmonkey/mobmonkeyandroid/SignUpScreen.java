@@ -16,7 +16,7 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMUserAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 
@@ -157,21 +157,21 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 		Log.d(TAG, TAG + "onActivityResult");
 		
 		switch(requestCode) {
-			case MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH:
+			case MMSDKConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH:
 				MMProgressDialog.dismissDialog();
 				
-				if(resultCode == MMAPIConstants.RESULT_CODE_SUCCESS) {
+				if(resultCode == MMSDKConstants.RESULT_CODE_SUCCESS) {
 					Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_in_successful, Toast.LENGTH_LONG).show();
 					startActivity(new Intent(SignUpScreen.this, MainScreen.class));
 					finish();
-				} else if(resultCode == MMAPIConstants.RESULT_CODE_NOT_FOUND) {
+				} else if(resultCode == MMSDKConstants.RESULT_CODE_NOT_FOUND) {
 					Toast.makeText(SignUpScreen.this, R.string.toast_new_twitter_user, Toast.LENGTH_SHORT).show();
 					Intent signUpTwitterIntent = (Intent) data.clone();
 					signUpTwitterIntent.setClass(SignUpScreen.this, SignUpTwitterScreen.class);
-					startActivityForResult(signUpTwitterIntent, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER);
+					startActivityForResult(signUpTwitterIntent, MMSDKConstants.REQUEST_CODE_SIGN_UP_TWITTER);
 				}
 				break;
-			case MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER:
+			case MMSDKConstants.REQUEST_CODE_SIGN_UP_TWITTER:
 				Log.d(TAG, TAG + "coming back from twitter sign up");
 				if(resultCode == RESULT_OK) {
 					startActivity(new Intent(SignUpScreen.this, MainScreen.class));
@@ -182,12 +182,12 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 				// TODO: Find the Facebook requestCode
 				Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 				if(!requestEmail) {
-					userPrefsEditor.putString(MMAPIConstants.KEY_USER, Session.getActiveSession().getAccessToken());
-					userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, (String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
-					userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.OAUTH_PROVIDER_FACEBOOK);
+					userPrefsEditor.putString(MMSDKConstants.KEY_USER, Session.getActiveSession().getAccessToken());
+					userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
+					userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK);
 					MMUserAdapter.signUpNewUserFacebook(new SignUpCallback(), Session.getActiveSession().getAccessToken(), 
-							(String) facebookUser.getProperty(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
-		    		MMProgressDialog.displayDialog(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up_facebook));
+							(String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
+		    		MMProgressDialog.displayDialog(SignUpScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up_facebook));
 				}
 				break;
 		}
@@ -227,7 +227,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      * Initialize all the variables to be used in {@link SignUpScreen}.
      */
     private void init() {
-        userPrefs = getSharedPreferences(MMAPIConstants.USER_PREFS, MODE_PRIVATE);
+        userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
         userPrefsEditor = userPrefs.edit();
     	
     	inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -267,9 +267,9 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      */
     private void signUpNormal() {
     	if(checkFirstName()) {
-			userPrefsEditor.putString(MMAPIConstants.KEY_USER, etEmailAddress.getText().toString());
-			userPrefsEditor.putString(MMAPIConstants.KEY_AUTH, etPassword.getText().toString());
-			userPrefsEditor.putString(MMAPIConstants.KEY_OAUTH_PROVIDER, MMAPIConstants.DEFAULT_STRING_EMPTY);
+			userPrefsEditor.putString(MMSDKConstants.KEY_USER, etEmailAddress.getText().toString());
+			userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, etPassword.getText().toString());
+			userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY);
     		MMUserAdapter.signUpNewUser(new SignUpCallback(), 
     				etFirstName.getText().toString(), 
     				etLastName.getText().toString(), 
@@ -279,7 +279,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     				convertGender(),
     				cbAcceptedToS.isChecked(), 
     				MMConstants.PARTNER_ID);
-    		MMProgressDialog.displayDialog(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up));
+    		MMProgressDialog.displayDialog(SignUpScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up));
     	}
     }
     
@@ -289,7 +289,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     private void signUpFacebook() {
     	if(checkAcceptedToS()) {
     		Session.openActiveSession(SignUpScreen.this, true, new SessionStatusCallback());
-    		userPrefsEditor.putBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, true);
+    		userPrefsEditor.putBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, true);
     		userPrefsEditor.commit();
     	}
     }
@@ -304,12 +304,12 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      */
     private void signUpTwitter() {    	
     	if(checkAcceptedToS()) {
-    		userPrefsEditor.putBoolean(MMAPIConstants.SHARED_PREFS_KEY_TOS_TWITTER, true);
+    		userPrefsEditor.putBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_TWITTER, true);
     		userPrefsEditor.commit();
-    		MMProgressDialog.displayDialog(SignUpScreen.this, MMAPIConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_launch_twitter_auth_screen));
+    		MMProgressDialog.displayDialog(SignUpScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_launch_twitter_auth_screen));
     		Intent twitterAuthIntent = new Intent(SignUpScreen.this, TwitterAuthScreen.class);
-    		twitterAuthIntent.putExtra(MMAPIConstants.REQUEST_CODE, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
-    		startActivityForResult(twitterAuthIntent, MMAPIConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
+    		twitterAuthIntent.putExtra(MMSDKConstants.REQUEST_CODE, MMSDKConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
+    		startActivityForResult(twitterAuthIntent, MMSDKConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
     	}
     }
 
@@ -345,7 +345,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      */
     private boolean checkEmailAddress() {
     	if(!TextUtils.isEmpty(etEmailAddress.getText())) {
-    		userPrefsEditor.putString(MMAPIConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
+    		userPrefsEditor.putString(MMSDKConstants.KEY_EMAIL_ADDRESS, etEmailAddress.getText().toString());
     		userPrefsEditor.commit();
     		return checkPassword();
     	} else {
@@ -361,7 +361,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     private boolean checkPassword() {
     	if(!TextUtils.isEmpty(etPassword.getText()) && !TextUtils.isEmpty(etPasswordConfirm.getText())) {
     		if(etPassword.getText().toString().equals(etPasswordConfirm.getText().toString())) {
-    			userPrefsEditor.putString(MMAPIConstants.KEY_PASSWORD, etPassword.getText().toString());
+    			userPrefsEditor.putString(MMSDKConstants.KEY_PASSWORD, etPassword.getText().toString());
     			userPrefsEditor.commit();
     			return checkBirthdate();
     		} else {
@@ -418,11 +418,11 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      * @return
      */
     private int convertGender() {
-    	int gender = MMAPIConstants.DEFAULT_INT;
-    	if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_MALE)) {
-    		gender = MMAPIConstants.NUM_MALE;
-    	} else if(etGender.getText().toString().equalsIgnoreCase(MMAPIConstants.TEXT_FEMALE)) {
-    		gender = MMAPIConstants.NUM_FEMALE;
+    	int gender = MMSDKConstants.DEFAULT_INT;
+    	if(etGender.getText().toString().equalsIgnoreCase(MMSDKConstants.TEXT_MALE)) {
+    		gender = MMSDKConstants.NUM_MALE;
+    	} else if(etGender.getText().toString().equalsIgnoreCase(MMSDKConstants.TEXT_FEMALE)) {
+    		gender = MMSDKConstants.NUM_FEMALE;
     	}
     	return gender;
     }
@@ -501,7 +501,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
 			Log.d(TAG, TAG + "session opened: " + session.isOpened());
 			if(session.isOpened() && requestEmail) {
-	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList(MMAPIConstants.FACEBOOK_REQ_PERM_EMAIL));
+	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
 				session.requestNewReadPermissions(request);
 				Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
 			}
@@ -537,14 +537,14 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 			if(obj != null) {
 				try {
 					JSONObject response = new JSONObject((String) obj);
-					if(response.getString(MMAPIConstants.KEY_RESPONSE_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+					if(response.getString(MMSDKConstants.KEY_RESPONSE_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 						Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
 						userPrefsEditor.commit();
 						startActivity(new Intent(SignUpScreen.this, MainScreen.class));
 						finish();
 						overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 					} else {
-						Toast.makeText(SignUpScreen.this, response.getString(MMAPIConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
+						Toast.makeText(SignUpScreen.this, response.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

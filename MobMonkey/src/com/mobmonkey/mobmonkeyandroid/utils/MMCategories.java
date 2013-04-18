@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,12 +20,12 @@ public class MMCategories extends Activity {
 	private Context context;
 	
 	public static String[] getTopLevelCategories(Context context) throws JSONException {
-		userPrefs = context.getSharedPreferences(MMAPIConstants.USER_PREFS, 0);
+		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, 0);
 		
 		String[] topLevelCategoriesList;
 		
-		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
-			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING_EMPTY));
+		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
+			JSONObject cats = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			topLevelCategoriesList = getKeys(cats);
 //			JSONArray allCategories = cats.toJSONArray(cats.names());
 //			JSONObject category = null;
@@ -59,12 +59,12 @@ public class MMCategories extends Activity {
 	}
 
 	public static String getSubCategoriesWithCategoriId(Context context, String categoryId) throws JSONException {
-		userPrefs = context.getSharedPreferences(MMAPIConstants.USER_PREFS, 0);
+		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, 0);
 		JSONArray subCategoriesList = null;
 		
-		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
+		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
 			subCategoriesList = new JSONArray();
-			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING_EMPTY));
+			JSONObject cats = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			JSONArray allCategories = cats.toJSONArray(cats.names());
 			JSONObject subCat = null;
 			for(int i=0; i < allCategories.length(); i++) {
@@ -82,13 +82,13 @@ public class MMCategories extends Activity {
 	}
 	
 	public static String getSubCategoriesWithCategoryName(Context context, String categoryName) throws JSONException {
-		userPrefs = context.getSharedPreferences(MMAPIConstants.USER_PREFS, 0);
+		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, 0);
 		JSONArray subCategoriesList = null;
 		
-		if(userPrefs.contains(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
+		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
 		{
 			subCategoriesList = new JSONArray();
-			JSONObject cats = new JSONObject(userPrefs.getString(MMAPIConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMAPIConstants.DEFAULT_STRING_EMPTY));
+			JSONObject cats = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			JSONArray topCategory = cats.getJSONArray(categoryName);
 			for(int i=0; i < topCategory.length(); i++)
 			{

@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import com.mobmonkey.mobmonkeyandroid.utils.MMMediaArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMMediaItem;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 
 import android.app.Activity;
@@ -74,9 +74,9 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		lvVideoMedia = (ListView) findViewById(R.id.lvvideomedia);
 		lvImageMedia = (ListView) findViewById(R.id.lvimagemedia);
 		
-		mediaType = getIntent().getStringExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_TYPE);
-		mediaWidth = getIntent().getIntExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, MMAPIConstants.DEFAULT_INT);
-		mediaHeight = getIntent().getIntExtra(MMAPIConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, MMAPIConstants.DEFAULT_INT);
+		mediaType = getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE);
+		mediaWidth = getIntent().getIntExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, MMSDKConstants.DEFAULT_INT);
+		mediaHeight = getIntent().getIntExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, MMSDKConstants.DEFAULT_INT);
 		
 		mmStreamMediaItems = new LinkedList<MMMediaItem>();
 		mmVideoMediaItems = new LinkedList<MMMediaItem>();
@@ -120,14 +120,14 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 	}
 
 	private void getMediaUrls() throws JSONException {
-		streamMediaUrls = new JSONArray(getIntent().getStringExtra(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING));
-		videoMediaUrls = new JSONArray(getIntent().getStringExtra(MMAPIConstants.MEDIA_TYPE_VIDEO));
-		imageMediaUrls = new JSONArray(getIntent().getStringExtra(MMAPIConstants.MEDIA_TYPE_IMAGE));
-		if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_LIVESTREAMING)) {
+		streamMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING));
+		videoMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_TYPE_VIDEO));
+		imageMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_TYPE_IMAGE));
+		if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING)) {
 			rbStream.setChecked(true);
-		} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_VIDEO)) {
+		} else if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_VIDEO)) {
 			rbVideo.setChecked(true);
-		} else if(mediaType.equals(MMAPIConstants.MEDIA_TYPE_IMAGE)) {
+		} else if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_IMAGE)) {
 			rbImage.setChecked(true);
 		}
 	}
@@ -172,7 +172,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				MMMediaItem mmMediaItem = new MMMediaItem();
 				// TODO: load thumbnails for videos
 				mmMediaItem.setIsVideo(true);
-				mmMediaItem.setPlayOnClickListener(new PlayOnClickListener(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
+				mmMediaItem.setPlayOnClickListener(new PlayOnClickListener(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 				mmMediaItem.setShareMediaOnClickListener(new ShareMediaOnClickListener());
 				mmStreamMediaItems.add(mmMediaItem);
 			}
@@ -186,7 +186,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				MMMediaItem mmMediaItem = new MMMediaItem();
 				// TODO: load thumbnails for videos
 				mmMediaItem.setIsVideo(true);
-				mmMediaItem.setPlayOnClickListener(new PlayOnClickListener(jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL)));
+				mmMediaItem.setPlayOnClickListener(new PlayOnClickListener(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 				mmMediaItem.setShareMediaOnClickListener(new ShareMediaOnClickListener());
 				mmVideoMediaItems.add(mmMediaItem);
 			}
@@ -201,7 +201,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				if(i == imageMediaUrls.length() - 1) {
 					lastImageMedia = true;
 				}
-				MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObj.getString(MMAPIConstants.JSON_KEY_MEDIA_URL));
+				MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 				mmMediaItem.setIsImage(true);
 				mmMediaItem.setShareMediaOnClickListener(new ShareMediaOnClickListener());
 				mmImageMediaItems.add(mmMediaItem);
@@ -245,7 +245,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		@Override
 		public void onClick(View v) {
 			Intent intent = new Intent(LocationDetailsMediaScreen.this, MMVideoPlayerScreen.class);
-			intent.putExtra(MMAPIConstants.JSON_KEY_MEDIA_URL, videoUrl);
+			intent.putExtra(MMSDKConstants.JSON_KEY_MEDIA_URL, videoUrl);
 			startActivity(intent);
 		}
 	}
@@ -261,7 +261,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		public void onClick(View v) {
 			// TODO: start a dialog activity to display the full image
 			Intent intent = new Intent(LocationDetailsMediaScreen.this, ExpandedThumbnailScreen.class);
-			intent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA, imageMedia);
+			intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA, imageMedia);
 			startActivity(intent);
 		}		
 	}

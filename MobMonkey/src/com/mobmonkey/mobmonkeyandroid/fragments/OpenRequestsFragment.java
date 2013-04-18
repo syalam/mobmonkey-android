@@ -33,7 +33,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMRequestMediaAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
@@ -59,7 +59,7 @@ public class OpenRequestsFragment extends MMFragment {
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		View view = inflater.inflate(R.layout.fragment_openrequests_screen, container, false);
 		lvOpenedRequests = (ListView) view.findViewById(R.id.lvopenrequests);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
@@ -68,8 +68,8 @@ public class OpenRequestsFragment extends MMFragment {
 			// get all the open request, and then update the badge counter
 			MMInboxAdapter.getOpenRequests(new OpenRequestCallback(), 
 										   MMConstants.PARTNER_ID, 
-					  					   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-					  					   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+					  					   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+					  					   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
@@ -99,22 +99,22 @@ public class OpenRequestsFragment extends MMFragment {
 		for(int i = 0; i < openRequests.length(); i++) {
 			JSONObject jObj = openRequests.getJSONObject(i);
 			MMOpenRequestsItem item = new MMOpenRequestsItem();
-			item.title = jObj.getString(MMAPIConstants.JSON_KEY_NAME_OF_LOCATION);
-			if(jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE).equals(MMAPIConstants.DEFAULT_STRING_NULL)) {
-				item.message = MMAPIConstants.DEFAULT_STRING_EMPTY;
+			item.title = jObj.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION);
+			if(jObj.getString(MMSDKConstants.JSON_KEY_MESSAGE).equals(MMSDKConstants.DEFAULT_STRING_NULL)) {
+				item.message = MMSDKConstants.DEFAULT_STRING_EMPTY;
 			} else {
-				item.message = jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE);
+				item.message = jObj.getString(MMSDKConstants.JSON_KEY_MESSAGE);
 			}
 			//date can be null. leave time as a blank string if its null
-			if(jObj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE).compareTo(MMAPIConstants.DEFAULT_STRING_NULL) == 0) {
-				item.time = MMAPIConstants.DEFAULT_STRING_EMPTY;
+			if(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE).compareTo(MMSDKConstants.DEFAULT_STRING_NULL) == 0) {
+				item.time = MMSDKConstants.DEFAULT_STRING_EMPTY;
 			}
 			else {
-				item.time = MMUtility.getDate(Long.parseLong(jObj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE)), "MMMM dd hh:mma");
+				item.time = MMUtility.getDate(Long.parseLong(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE)), "MMMM dd hh:mma");
 			}
 			
-			item.dis = MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles);
-			item.mediaType = jObj.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
+			item.dis = MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles);
+			item.mediaType = jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
 			
 			openedRequestItems[i] = item;
 		}
@@ -126,10 +126,10 @@ public class OpenRequestsFragment extends MMFragment {
 		try {
 			MMRequestMediaAdapter.deleteMedia(new DeleteRequestCallback(), 
 											  MMConstants.PARTNER_ID, 
-											  userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-											  userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY),
-											  openRequests.getJSONObject(clickedPosition).getString(MMAPIConstants.JSON_KEY_REQUEST_ID), 
-											  openRequests.getJSONObject(clickedPosition).getString(MMAPIConstants.JSON_KEY_RECURRING));
+											  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+											  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
+											  openRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
+											  openRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_RECURRING));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -164,7 +164,7 @@ public class OpenRequestsFragment extends MMFragment {
 			Log.d(TAG, (String)obj);
 			try {
 				JSONObject jObj = new JSONObject((String)obj);
-				if(jObj.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+				if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 					MMOpenRequestsItem[] items, data;
 					data = getOpenedRequestItems();
 					items = new MMOpenRequestsItem[data.length - 1];

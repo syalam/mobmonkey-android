@@ -1,6 +1,6 @@
 package com.mobmonkey.mobmonkeyandroid;
 
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -31,7 +31,7 @@ public class ExpandedThumbnailScreen extends Activity {
 		getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		ImageView ivExpandedThumbnail = (ImageView) findViewById(R.id.ivexpandedthumbnail);
 		
-		ivExpandedThumbnail.setImageBitmap((Bitmap) getIntent().getParcelableExtra(MMAPIConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA));
+		ivExpandedThumbnail.setImageBitmap((Bitmap) getIntent().getParcelableExtra(MMSDKConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA));
 	}
 
 }

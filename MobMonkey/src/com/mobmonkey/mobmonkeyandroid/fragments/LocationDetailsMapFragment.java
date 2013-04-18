@@ -18,7 +18,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 
@@ -40,17 +40,17 @@ public class LocationDetailsMapFragment extends MMFragment {
 		
 		JSONObject jObj;
 		try {
-			jObj = new JSONObject(getArguments().getString(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));			
+			jObj = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));			
 			
 			Location location = MMLocationManager.getGPSLocation(new MMLocationListener());
 			
 			LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
-			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE));
+			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
 			
 			googleMap.addMarker(new MarkerOptions().
 				position(resultLocLatLng).
-				title(jObj.getString(MMAPIConstants.JSON_KEY_NAME))
-				.snippet(jObj.getString(MMAPIConstants.JSON_KEY_ADDRESS)));
+				title(jObj.getString(MMSDKConstants.JSON_KEY_NAME))
+				.snippet(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS)));
 			
 //			googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 //				@Override

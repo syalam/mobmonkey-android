@@ -51,7 +51,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMAnswerRequestAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMAPIConstants;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
@@ -79,7 +79,7 @@ public class AssignedRequestsFragment extends MMFragment {
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		userPrefs = getActivity().getSharedPreferences(MMAPIConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		
 		View view = inflater.inflate(R.layout.fragment_assignedrequests_screen, container, false);
@@ -90,8 +90,8 @@ public class AssignedRequestsFragment extends MMFragment {
 			// get all the answered request, and then update the badge counter
 			MMInboxAdapter.getAssignedRequests(new AssignedRequestCallback(), 
 										   	   MMConstants.PARTNER_ID, 
-										   	   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-										   	   userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY));
+										   	   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+										   	   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -121,23 +121,23 @@ public class AssignedRequestsFragment extends MMFragment {
 		for(int i = 0; i < assignedRequests.length(); i++) {
 			JSONObject jObj = assignedRequests.getJSONObject(i);
 			MMAssignedRequestsItem item = new MMAssignedRequestsItem();
-			item.title = jObj.getString(MMAPIConstants.JSON_KEY_NAME_OF_LOCATION);
-			if(jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE).equals(MMAPIConstants.DEFAULT_STRING_NULL)) {
-				item.message = MMAPIConstants.DEFAULT_STRING_EMPTY;
+			item.title = jObj.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION);
+			if(jObj.getString(MMSDKConstants.JSON_KEY_MESSAGE).equals(MMSDKConstants.DEFAULT_STRING_NULL)) {
+				item.message = MMSDKConstants.DEFAULT_STRING_EMPTY;
 			} else {
-				item.message = jObj.getString(MMAPIConstants.JSON_KEY_MESSAGE);
+				item.message = jObj.getString(MMSDKConstants.JSON_KEY_MESSAGE);
 			}
 			
 			//date can be null. leave time as a blank string if its null
-			if(jObj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE).compareTo(MMAPIConstants.DEFAULT_STRING_NULL) == 0) {
-				item.time = MMAPIConstants.DEFAULT_STRING_EMPTY;
+			if(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE).compareTo(MMSDKConstants.DEFAULT_STRING_NULL) == 0) {
+				item.time = MMSDKConstants.DEFAULT_STRING_EMPTY;
 			}
 			else {
-				item.time = MMUtility.getDate(Long.parseLong(jObj.getString(MMAPIConstants.JSON_KEY_REQUEST_DATE)), "MMMM dd hh:mma");
+				item.time = MMUtility.getDate(Long.parseLong(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE)), "MMMM dd hh:mma");
 			}
 			
-			item.dis = MMUtility.calcDist(location, jObj.getDouble(MMAPIConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMAPIConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles);
-			item.mediaType = jObj.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE);
+			item.dis = MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles);
+			item.mediaType = jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
 			
 			assginedRequestItems[i] = item;
 		}
@@ -158,20 +158,20 @@ public class AssignedRequestsFragment extends MMFragment {
 			try {
 				JSONObject data = assignedRequests.getJSONObject(position);
 				
-				switch(data.getInt(MMAPIConstants.JSON_KEY_MEDIA_TYPE)) {
+				switch(data.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE)) {
 					// Image request
 					case 1:
-						userPrefsEditor.putInt(MMAPIConstants.TAB_TITLE_CURRENT_TAG, 1);
+						userPrefsEditor.putInt(MMSDKConstants.TAB_TITLE_CURRENT_TAG, 1);
 						userPrefsEditor.commit();
-						Log.d(TAG, "current tab tag: " + userPrefs.getInt(MMAPIConstants.TAB_TITLE_CURRENT_TAG, 0));
+						Log.d(TAG, "current tab tag: " + userPrefs.getInt(MMSDKConstants.TAB_TITLE_CURRENT_TAG, 0));
 						Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-						startActivityForResult(takePictureIntent, MMAPIConstants.REQUEST_CODE_IMAGE);
+						startActivityForResult(takePictureIntent, MMSDKConstants.REQUEST_CODE_IMAGE);
 						break;
 					// Video request
 					case 2:
 						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
-						startActivityForResult(takeVideoIntent, MMAPIConstants.REQUEST_CODE_VIDEO);
+						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
 						break;
 					default:
 						break;
@@ -197,7 +197,7 @@ public class AssignedRequestsFragment extends MMFragment {
 			return;
 		
 		// picture data
-		if(requestCode == MMAPIConstants.REQUEST_CODE_IMAGE) {
+		if(requestCode == MMSDKConstants.REQUEST_CODE_IMAGE) {
 			Log.d(TAG, "return from taking picture with camera");
 			Bundle extras = data.getExtras();
 			Bitmap mImageBitmap = (Bitmap) extras.get("data");
@@ -211,20 +211,20 @@ public class AssignedRequestsFragment extends MMFragment {
 			try {
 				MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
 											   MMConstants.PARTNER_ID, 
-											   userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-											   userPrefs.getString(MMAPIConstants.KEY_AUTH,MMAPIConstants.DEFAULT_STRING_EMPTY), 
-											   assignedRequests.getJSONObject(positionClicked).getString(MMAPIConstants.JSON_KEY_REQUEST_ID),
-											   assignedRequests.getJSONObject(positionClicked).getInt(MMAPIConstants.JSON_KEY_REQUEST_TYPE),
-											   MMAPIConstants.MEDIA_CONTENT_JPEG,
+											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+											   userPrefs.getString(MMSDKConstants.KEY_AUTH,MMSDKConstants.DEFAULT_STRING_EMPTY), 
+											   assignedRequests.getJSONObject(positionClicked).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
+											   assignedRequests.getJSONObject(positionClicked).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
+											   MMSDKConstants.MEDIA_CONTENT_JPEG,
 											   imageEncoded,
-											   MMAPIConstants.MEDIA_TYPE_IMAGE);
+											   MMSDKConstants.MEDIA_TYPE_IMAGE);
 				
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}					   
 		} 
 		// video 
-		else if(requestCode == MMAPIConstants.REQUEST_CODE_VIDEO) {
+		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {
 			
 			Uri vid = data.getData();
 		    String videoPath = getRealPathFromURI(vid);
@@ -269,13 +269,13 @@ public class AssignedRequestsFragment extends MMFragment {
 		    	// send base64 file to server
 		        MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
 												     MMConstants.PARTNER_ID, 
-												     userPrefs.getString(MMAPIConstants.KEY_USER, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-												     userPrefs.getString(MMAPIConstants.KEY_AUTH, MMAPIConstants.DEFAULT_STRING_EMPTY), 
-												     assignedRequests.getJSONObject(positionClicked).getString(MMAPIConstants.JSON_KEY_REQUEST_ID),
-												     assignedRequests.getJSONObject(positionClicked).getInt(MMAPIConstants.JSON_KEY_REQUEST_TYPE),
-												     MMAPIConstants.MEDIA_CONTENT_MP4,
+												     userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+												     userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+												     assignedRequests.getJSONObject(positionClicked).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
+												     assignedRequests.getJSONObject(positionClicked).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
+												     MMSDKConstants.MEDIA_CONTENT_MP4,
 												     videoEncoded,
-												     MMAPIConstants.MEDIA_TYPE_VIDEO);
+												     MMSDKConstants.MEDIA_TYPE_VIDEO);
 		        
 		    } catch (IOException e) {
 		    	e.printStackTrace();
@@ -299,7 +299,7 @@ public class AssignedRequestsFragment extends MMFragment {
 			Log.d(TAG, (String) obj);
 			try {
 				JSONObject jObj = new JSONObject((String)obj);
-				if(jObj.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
+				if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 					MMAssignedRequestsItem[] items, data;
 					data = getAssignedRequestItems();
 					items = new MMAssignedRequestsItem[data.length - 1];
