@@ -1,5 +1,6 @@
 package com.mobmonkey.mobmonkeyandroid.utils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -9,11 +10,15 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Video;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,32 +80,50 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMAnsweredReques
 		
 		// set time
 		Date date = new Date();
+		
 		long expiretime = Long.parseLong(item.time) - date.getTime();
 		expiretime = TimeUnit.MILLISECONDS.toMinutes(expiretime);
 		vholder.tvExp.setText(MMSDKConstants.DEFAULT_STRING_SPACE + expiretime + "m");
 		
-		// image type
-		if(item.mediaType == 1) {
-			vholder.btnPlay.setVisibility(View.GONE);
-			vholder.tvExp.setVisibility(View.VISIBLE);
-			vholder.btnOverlay.setVisibility(View.VISIBLE);
-			Log.d(TAG, "imgURI: " + item.mediaUri.toString());
-			
-			Bitmap bm = loadBitmap(item.mediaUri.toString());
-			vholder.ivImage.setImageBitmap(bm);
-		} 
-		// videow type
-		else if(item.mediaType == 2) {
-			vholder.tvExp.setVisibility(View.VISIBLE);
-			vholder.btnOverlay.setVisibility(View.VISIBLE);
-			vholder.btnPlay.setVisibility(View.VISIBLE);
-			
-			// create thumbnail for video
-			
-			// set ivImage to thumbnail
-			
-			// add playbutton on it
-			
+		if(item.mediaUri != null) {
+			// image type
+			if(item.mediaType == 1) {
+				vholder.btnPlay.setVisibility(View.GONE);
+				vholder.tvExp.setVisibility(View.VISIBLE);
+				vholder.btnOverlay.setVisibility(View.VISIBLE);
+				Log.d(TAG, "imgURI: " + item.mediaUri.toString());
+				
+				Bitmap bm = loadBitmap(item.mediaUri.toString());
+				WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+				
+				vholder.ivImage.setImageBitmap(ThumbnailUtils.extractThumbnail(bm, wm.getDefaultDisplay().getWidth(), 400));
+			} 
+			// videow type
+			else if(item.mediaType == 2) {
+				vholder.tvExp.setVisibility(View.VISIBLE);
+				vholder.btnOverlay.setVisibility(View.VISIBLE);
+				vholder.btnPlay.setVisibility(View.VISIBLE);
+				
+				// create thumbnail for video
+//				Bitmap bm = ThumbnailUtils.createVideoThumbnail(item.mediaUri.toString(), Video.Thumbnails.FULL_SCREEN_KIND);
+				InputStream is;
+				try {
+					is = context.getContentResolver().openInputStream(item.mediaUri);
+					Bitmap bm = BitmapFactory.decodeStream(is);
+					// set ivImage to thumbnail
+					WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+					vholder.ivImage.setImageBitmap(ThumbnailUtils.extractThumbnail(bm, wm.getDefaultDisplay().getWidth(), 400));
+					is.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		// if media is null
+		else {
+			// handle null media
 		}
 		
 		// if fulfilled, hide buttons

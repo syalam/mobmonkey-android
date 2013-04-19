@@ -1,6 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
 import java.text.ParseException;
+import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,10 +27,10 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMAnsweredRequestItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 /**
  * Android {@link Fragment} to display Answered Requests.
@@ -42,8 +43,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 	private ListView lvAnsweredRequests;
 	private JSONArray answeredRequests;
 	private SharedPreferences userPrefs;
-	private int positionClicked;
-	private Location location;
+	Location location;
 	private MMAnsweredRequestArrayAdapter arrayAdapter;
 
 	
@@ -117,7 +117,8 @@ public class AnsweredRequestsFragment extends MMFragment {
 				item.isAccepted = false;
 				
 				// expiry date
-				item.time = MMSDKConstants.DEFAULT_STRING_EMPTY;
+				Date date = new Date();
+				item.time = String.valueOf(date.getTime());
 				
 				item.context = getActivity();
 			}
