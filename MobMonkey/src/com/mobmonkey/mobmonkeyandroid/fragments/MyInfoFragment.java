@@ -1,11 +1,18 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.SignInScreen;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
@@ -44,6 +51,7 @@ import android.widget.ScrollView;
 public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateChangedListener, OnTouchListener {
 	private static final String TAG = "MyInfoFragment: ";
 
+	private GraphUser facebookUser;
 	private SharedPreferences userPrefs;
 	
 	private InputMethodManager inputMethodManager;
@@ -315,15 +323,23 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     
     public void setUserInfo() {
     	try{
-        	etFirstName.setText(response.getString(MMSDKConstants.KEY_FIRST_NAME));
-        	etLastName.setText(response.getString(MMSDKConstants.KEY_LAST_NAME));
-        	etEmailAddress.setText(response.getString(MMSDKConstants.KEY_EMAIL_ADDRESS));
-        	if(response.getInt(MMSDKConstants.KEY_GENDER) == MMSDKConstants.NUM_MALE)
-        		etGender.setText(MMSDKConstants.TEXT_MALE);
-        	else if(response.getInt(MMSDKConstants.KEY_GENDER) == MMSDKConstants.NUM_FEMALE)
-        		etGender.setText(MMSDKConstants.TEXT_FEMALE);
-        	birthdate.setTimeInMillis(response.getLong(MMSDKConstants.KEY_BIRTHDATE));
-        	etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
+	    	//if user logged in with facebook
+        	if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)) {
+    			Session session = Session.getActiveSession();  
+    			Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(getActivity(), Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL, MMSDKConstants.FACEBOOK_REQ_PERM_BIRTHDAY));
+    			session.requestNewReadPermissions(request);
+    			Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
+    		} else {
+	        	etFirstName.setText(response.getString(MMSDKConstants.KEY_FIRST_NAME));
+	        	etLastName.setText(response.getString(MMSDKConstants.KEY_LAST_NAME));
+	        	etEmailAddress.setText(response.getString(MMSDKConstants.KEY_EMAIL_ADDRESS));
+	        	if(response.getInt(MMSDKConstants.KEY_GENDER) == MMSDKConstants.NUM_MALE)
+	        		etGender.setText(MMSDKConstants.TEXT_MALE);
+	        	else if(response.getInt(MMSDKConstants.KEY_GENDER) == MMSDKConstants.NUM_FEMALE)
+	        		etGender.setText(MMSDKConstants.TEXT_FEMALE);
+	        	birthdate.setTimeInMillis(response.getLong(MMSDKConstants.KEY_BIRTHDATE));
+	        	etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
+    		}
     	} catch(Exception e)
     	{
     		e.printStackTrace();
@@ -413,4 +429,24 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 			}
 		}
     }
+	
+	/**
+	 * Custom {@link Request.GraphUserCallback} specifically for {@link MyInfoFragment} to the completion of the {@link Request}.executeMeRequestAsync({@link Session}, {@link Request.GraphUserCallback}).
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class RequestGraphUserCallback implements Request.GraphUserCallback {
+		@Override
+		public void onCompleted(GraphUser user, Response response) {
+			Log.d(TAG, TAG + "onCompleted");
+			if(user != null) {
+				facebookUser = user;			
+				etFirstName.setText(facebookUser.getFirstName());
+	        	etLastName.setText(facebookUser.getLastName());
+	        	etEmailAddress.setText((String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
+	        	etGender.setText((String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_GENDER));
+	        	etBirthdate.setText(facebookUser.getBirthday());
+			}
+		}
+	}    
 }
