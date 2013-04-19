@@ -6,20 +6,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mobmonkey.mobmonkeyandroid.listeners.MMImageOnClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMShareMediaOnClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMVideoPlayOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMMediaArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMMediaItem;
+import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -172,8 +174,8 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				MMMediaItem mmMediaItem = new MMMediaItem();
 				// TODO: load thumbnails for videos
 				mmMediaItem.setIsVideo(true);
-				mmMediaItem.setPlayOnClickListener(new PlayOnClickListener(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
-				mmMediaItem.setShareMediaOnClickListener(new ShareMediaOnClickListener());
+				mmMediaItem.setPlayOnClickListener(new MMVideoPlayOnClickListener(LocationDetailsMediaScreen. this, jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
+				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmStreamMediaItems.add(mmMediaItem);
 			}
 		}
@@ -186,8 +188,8 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				MMMediaItem mmMediaItem = new MMMediaItem();
 				// TODO: load thumbnails for videos
 				mmMediaItem.setIsVideo(true);
-				mmMediaItem.setPlayOnClickListener(new PlayOnClickListener(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
-				mmMediaItem.setShareMediaOnClickListener(new ShareMediaOnClickListener());
+				mmMediaItem.setPlayOnClickListener(new MMVideoPlayOnClickListener(LocationDetailsMediaScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
+				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmVideoMediaItems.add(mmMediaItem);
 			}
 		}
@@ -197,13 +199,14 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		if(retrieveImageMedia) {
 			for(int i = 0; i < imageMediaUrls.length(); i++) {
 				JSONObject jObj = imageMediaUrls.getJSONObject(i);
+				MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 				MMMediaItem mmMediaItem = new MMMediaItem();
 				if(i == imageMediaUrls.length() - 1) {
 					lastImageMedia = true;
 				}
-				MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+				mmMediaItem.setExpiryDate(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 				mmMediaItem.setIsImage(true);
-				mmMediaItem.setShareMediaOnClickListener(new ShareMediaOnClickListener());
+				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmImageMediaItems.add(mmMediaItem);
 			}
 		}
@@ -225,55 +228,13 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		public void processCallback(Object obj) {
 			if(obj != null) {
 				mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
-				mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new ImageOnClickListener((Bitmap) obj));
+				mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
 				if(lastImageMedia) {
 					MMMediaArrayAdapter adapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmImageMediaItems);
 					lvImageMedia.setAdapter(adapter);
 					retrieveImageMedia = false;
 				}
 			}
-		}
-	}
-	
-	private class PlayOnClickListener implements OnClickListener {
-		private String videoUrl;
-		
-		public PlayOnClickListener(String videoUrl) {
-			this.videoUrl = videoUrl;
-		}
-		
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent(LocationDetailsMediaScreen.this, MMVideoPlayerScreen.class);
-			intent.putExtra(MMSDKConstants.JSON_KEY_MEDIA_URL, videoUrl);
-			startActivity(intent);
-		}
-	}
-	
-	private class ImageOnClickListener implements OnClickListener {
-		Bitmap imageMedia;
-		
-		public ImageOnClickListener(Bitmap imageMedia) {
-			this.imageMedia = imageMedia;
-		}
-		
-		@Override
-		public void onClick(View v) {
-			// TODO: start a dialog activity to display the full image
-			Intent intent = new Intent(LocationDetailsMediaScreen.this, ExpandedThumbnailScreen.class);
-			intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA, imageMedia);
-			startActivity(intent);
-		}		
-	}
-	
-	private class ShareMediaOnClickListener implements OnClickListener {
-		public ShareMediaOnClickListener() {
-			
-		}
-		
-		@Override
-		public void onClick(View v) {
-			
 		}
 	}
 }

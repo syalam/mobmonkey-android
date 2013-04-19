@@ -8,12 +8,22 @@ import android.view.View.OnClickListener;
  *
  */
 public class MMMediaItem {
+	private String locationName;
 	private Bitmap imageMedia;
+	private String expiryDate;
 	private boolean isVideo = false;
 	private boolean isImage = false;
 	private OnClickListener playOnClickListener;
 	private OnClickListener imageOnClickListener;
 	private OnClickListener shareMediaOnClickListener;
+	
+	public String getLocationName() {
+		return locationName;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
 
 	/**
 	 * @return the imageMedia
@@ -27,6 +37,14 @@ public class MMMediaItem {
 	 */
 	public void setImageMedia(Bitmap imageMedia) {
 		this.imageMedia = imageMedia;
+	}
+
+	public String getExpiryDate() {
+		return expiryDate;
+	}
+
+	public void setExpiryDate(String expiryDate) {
+		this.expiryDate = expiryDate;
 	}
 
 	/**

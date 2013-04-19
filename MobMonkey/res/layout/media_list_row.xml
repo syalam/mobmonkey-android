@@ -7,13 +7,11 @@
 	android:paddingBottom="10dp">
 	
 	<FrameLayout android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:paddingLeft="3dp"
-		android:paddingRight="3dp">
+		android:layout_height="wrap_content">
 	
 		<ImageView android:id="@+id/ivtnmedia"
 			android:layout_width="match_parent"
-			android:layout_height="200dp"/>
+			android:layout_height="260dp"/>
 		
 		<ImageButton android:id="@+id/ibplay"
 			android:layout_width="wrap_content"
@@ -27,7 +25,7 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="right"
 			android:layout_marginTop="10dp"
-			android:layout_marginRight="10dp"
+			android:layout_marginRight="15dp"
 			android:gravity="center"
 			android:drawableLeft="@drawable/ic_dialog_time"
 			android:drawablePadding="5dp"
@@ -38,9 +36,9 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="right|bottom"
-			android:layout_marginBottom="3dp"
-			android:layout_marginRight="3dp"
-			android:background="@drawable/app_icon"/>
+			android:layout_marginBottom="5dp"
+			android:layout_marginRight="15dp"
+			android:background="@drawable/btn_more_overlay"/>
 
 	</FrameLayout>
 

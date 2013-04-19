@@ -67,7 +67,7 @@
 		                android:layout_gravity="right|bottom"
 		                android:layout_marginBottom="3dp"
 		                android:layout_marginRight="3dp"
-		                android:background="@drawable/btnmoreoverlay"
+		                android:background="@drawable/btn_more_overlay"
 		                android:visibility="invisible"/>
 
 		        </FrameLayout>
@@ -86,7 +86,7 @@
             android:id="@+id/ibtnansweredrequests_accept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
-            android:background="@drawable/btnaccept"
+            android:background="@drawable/btn_accept"
             android:layout_weight="1"
             android:layout_marginRight="2dp"/>
 
@@ -94,7 +94,7 @@
             android:id="@+id/ibtnansweredrequests_reject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btnreject"
+            android:background="@drawable/btn_reject"
             android:layout_weight="1"
             android:layout_marginLeft="2dp" />
         

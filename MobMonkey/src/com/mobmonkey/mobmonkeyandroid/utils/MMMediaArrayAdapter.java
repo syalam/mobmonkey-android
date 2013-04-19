@@ -49,7 +49,8 @@ public class MMMediaArrayAdapter extends ArrayAdapter<MMMediaItem> {
 			media = inflater.inflate(mediaLayoutId, parent, false);
 			
 			vholder = new ViewHolder();
-			vholder.ivMedia = (ImageView) media.findViewById(R.id.ivtnmedia);
+			vholder.ivtnMedia = (ImageView) media.findViewById(R.id.ivtnmedia);
+			vholder.tvExpiryDate = (TextView) media.findViewById(R.id.tvexpirydate);
 			vholder.ibPlay = (ImageButton) media.findViewById(R.id.ibplay);
 			vholder.ibShareMedia = (ImageButton) media.findViewById(R.id.ibsharemedia);
 			
@@ -59,21 +60,24 @@ public class MMMediaArrayAdapter extends ArrayAdapter<MMMediaItem> {
 		}
 		
 		MMMediaItem mmMediaItem = mmMediaItems.get(position);
-		vholder.ivMedia.setImageBitmap(mmMediaItem.getImageMedia());
+		vholder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
+		vholder.tvExpiryDate.setVisibility(View.VISIBLE);
+		vholder.tvExpiryDate.setText(mmMediaItem.getExpiryDate());
 		vholder.ibShareMedia.setOnClickListener(mmMediaItem.getShareMediaOnClickListener());
 		
 		if(mmMediaItem.isVideo()) {
 			vholder.ibPlay.setVisibility(View.VISIBLE);
 			vholder.ibPlay.setOnClickListener(mmMediaItem.getPlayOnClickListener());
 		} else if(mmMediaItem.isImage()) {
-			vholder.ivMedia.setOnClickListener(mmMediaItem.getImageOnClickListener());
+			vholder.ivtnMedia.setOnClickListener(mmMediaItem.getImageOnClickListener());
 		}
 		
 		return media;
 	}
 	
 	private class ViewHolder {
-        ImageView ivMedia;
+        ImageView ivtnMedia;
+        TextView tvExpiryDate;
         ImageButton ibPlay;
         ImageButton ibShareMedia;
     }

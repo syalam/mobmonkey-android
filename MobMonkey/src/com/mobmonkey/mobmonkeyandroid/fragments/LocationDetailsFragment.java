@@ -344,6 +344,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				} else if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_IMAGE)) {
 					if(isFirstMedia) {
 						MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+						tvExpiryDate.setVisibility(View.VISIBLE);
 						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 						ivtnMedia.setClickable(true);
 						ivtnMedia.setOnClickListener(LocationDetailsFragment.this);

@@ -56,7 +56,7 @@
 		            
 		            <ImageView android:id="@+id/ivtnmedia"
 		                android:layout_width="match_parent"
-		                android:layout_height="200dp"
+		                android:layout_height="260dp"
 		                android:clickable="false"/>
 		            
 		            <ImageButton android:id="@+id/ibplay"
@@ -83,8 +83,8 @@
 		                android:layout_height="wrap_content"
 		                android:layout_gravity="right|bottom"
 		                android:layout_marginBottom="3dp"
-		                android:layout_marginRight="3dp"
-		                android:background="@drawable/app_icon"/>
+		                android:layout_marginRight="5dp"
+		                android:background="@drawable/btn_more_overlay"/>
 
 		        </FrameLayout>
 		        

@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,10 +18,14 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMImageOnClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMShareMediaOnClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMVideoPlayOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
+import com.mobmonkey.mobmonkeyandroid.utils.MMMediaItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewedArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewedItem;
+import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMTrendingAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
@@ -38,7 +43,7 @@ public class TopViewedFragment extends MMFragment {
 	
 	private ListView lvtopviewed;
 	private JSONArray topViewed;
-	private LinkedList<MMTopViewedItem> topViewedItems;
+	private MMMediaItem[] topViewedItems;
 	private SharedPreferences userPrefs;
 	
 	@Override
@@ -46,7 +51,6 @@ public class TopViewedFragment extends MMFragment {
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		View view = inflater.inflate(R.layout.fragment_topviewed_screen, container, false);
 		lvtopviewed = (ListView) view.findViewById(R.id.lvtopviewed);
-		topViewedItems = new LinkedList<MMTopViewedItem>();
 		getTrending();
 		return view;
 	}
@@ -78,15 +82,19 @@ public class TopViewedFragment extends MMFragment {
 		try {
 			for(int i = 0; i < topViewed.length(); i++) {
 				JSONObject jObj = topViewed.getJSONObject(i);
+				topViewedItems[i] = new MMMediaItem();
+				
 				JSONObject jObjMedia = jObj.getJSONObject(MMSDKConstants.JSON_KEY_MEDIA);
 				if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_TYPE_IMAGE)) {
 					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+					topViewedItems[i].setIsImage(true);
 				} else if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_TYPE_VIDEO)) {
 					// TODO: create thumbnail from video
+					topViewedItems[i].setPlayOnClickListener(new MMVideoPlayOnClickListener(getActivity(), jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 				}
 				
-				topViewedItems.add(new MMTopViewedItem());
-				topViewedItems.get(i).setTitle(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
+				topViewedItems[i].setLocationName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
+				topViewedItems[i].setShareMediaOnClickListener(new MMShareMediaOnClickListener(getActivity()));
 			}
 		} catch (JSONException ex) {
 			ex.printStackTrace();
@@ -103,10 +111,12 @@ public class TopViewedFragment extends MMFragment {
 		public void processCallback(Object obj) {
 			MMProgressDialog.dismissDialog();
 			
+			Log.d(TAG, TAG + "topViewed: " + ((String) obj));
+			
 			if(obj != null) {
-				Log.d(TAG, TAG + "topViewed: " + ((String) obj));
 				try {
 					topViewed = new JSONArray((String) obj);
+					topViewedItems = new MMMediaItem[topViewed.length()];
 					Log.d(TAG, TAG + topViewed.toString());
 					getMediaForAllLocation();
 				} catch (JSONException e) {
@@ -138,7 +148,8 @@ public class TopViewedFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				topViewedItems.get(topViewedLocation).setImageMedia((Bitmap) obj);
+				topViewedItems[topViewedLocation].setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, 300, 200));
+				topViewedItems[topViewedLocation].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
 				MMTopViewedArrayAdapter adapter = new MMTopViewedArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, topViewedItems);
 				lvtopviewed.setAdapter(adapter);
 				adapter.notifyDataSetChanged();

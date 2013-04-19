@@ -10,15 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MMTopViewedArrayAdapter extends ArrayAdapter<MMTopViewedItem> {
+public class MMTopViewedArrayAdapter extends ArrayAdapter<MMMediaItem> {
 	private Context context; 
-	private  int layoutResourceId;    
-	private LinkedList<MMTopViewedItem> data = null;
+	private int layoutResourceId;    
+	private MMMediaItem[] data;
     
-    public MMTopViewedArrayAdapter(Context context, int layoutResourceId, LinkedList<MMTopViewedItem> data) {
+    public MMTopViewedArrayAdapter(Context context, int layoutResourceId, MMMediaItem[] data) {
     	super(context, layoutResourceId, data);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
@@ -28,35 +29,44 @@ public class MMTopViewedArrayAdapter extends ArrayAdapter<MMTopViewedItem> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
-		View row = convertView;
+		View topViewedRow = convertView;
 		ViewHolder vholder;
 		
-		if(row == null) {
+		if(topViewedRow == null) {
 			LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-			row = inflater.inflate(layoutResourceId, parent, false);
+			topViewedRow = inflater.inflate(layoutResourceId, parent, false);
 			
 			vholder = new ViewHolder();
-			try {
-				vholder.tvLabel = (TextView) row.findViewById(R.id.topviewedimagetitle);
-				vholder.ivIcon = (ImageView) row.findViewById(R.id.topviewedimage);
-			} catch (NullPointerException ex) {
-				
-			}
+			vholder.tvLocationName = (TextView) topViewedRow.findViewById(R.id.tvtopviewedlocationname);
+			vholder.ivtnMedia = (ImageView) topViewedRow.findViewById(R.id.ivtnmedia);
+			vholder.ibPlay = (ImageButton) topViewedRow.findViewById(R.id.ibplay);
+			vholder.ibShareMedia = (ImageButton) topViewedRow.findViewById(R.id.ibsharemedia);
 			
-			row.setTag(vholder);
+			topViewedRow.setTag(vholder);
 		} else {
-			vholder = (ViewHolder) row.getTag();
+			vholder = (ViewHolder) topViewedRow.getTag();
 		}
 		
-		MMTopViewedItem item = data.get(position);
-		vholder.tvLabel.setText(item.getTitle());
-		vholder.ivIcon.setImageBitmap(item.getImageMedia());
+		MMMediaItem mmMediaItem = data[position];
+		vholder.tvLocationName.setText(mmMediaItem.getLocationName());
+		vholder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
+		vholder.ibShareMedia.setOnClickListener(mmMediaItem.getShareMediaOnClickListener());
 		
-		return row;
+		if(mmMediaItem.isVideo()) {
+			vholder.ibPlay.setVisibility(View.VISIBLE);
+			vholder.ibPlay.setOnClickListener(mmMediaItem.getPlayOnClickListener());
+		} else if(mmMediaItem.isImage()) {
+			vholder.ivtnMedia.setOnClickListener(mmMediaItem.getImageOnClickListener());
+		}
+		
+		return topViewedRow;
 	}
     
 	private class ViewHolder {
-        ImageView ivIcon;
-        TextView tvLabel;
+        TextView tvLocationName;
+        ImageView ivtnMedia;
+        ImageButton ibPlay;
+        ImageButton ibShareMedia;
+        
     }
 }
