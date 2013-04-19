@@ -236,7 +236,7 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		Log.d(TAG, TAG + "requestCal time: " + requestCal.getTimeInMillis());
 		Log.d(TAG, TAG + "current time: " + System.currentTimeMillis());
 		
-		if(requestCal.getTimeInMillis() <= System.currentTimeMillis()) {
+		if(requestCal.getTimeInMillis() < System.currentTimeMillis()) {
 			Toast.makeText(ScheduleRequestScreen.this, R.string.toast_current_or_past_current_time, Toast.LENGTH_LONG).show();
 		} else {
 			scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME, requestCal);
