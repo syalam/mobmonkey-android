@@ -140,7 +140,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				favoritesList = new JSONArray();
 			}
 			location = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
-			
 			if(!retrieveLocationDetails) {
 				MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading_location_information));
 				MMLocationDetailsAdapter.getLocationDetails(new LocationCallback(), 
@@ -258,6 +257,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * @throws JSONException
 	 */
 	private void setLocationDetails() throws JSONException {
+		Log.d(TAG, locationDetails.toString());
 		tvLocNameTitle.setText(locationDetails.getString(MMSDKConstants.JSON_KEY_NAME));
 		tvLocName.setText(locationDetails.getString(MMSDKConstants.JSON_KEY_NAME));
 		tvMembersFound.setText(locationDetails.getString(MMSDKConstants.JSON_KEY_MONKEYS) + MMSDKConstants.DEFAULT_STRING_SPACE + getString(R.string.tv_members_found));

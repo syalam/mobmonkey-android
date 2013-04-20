@@ -177,5 +177,5 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		}
 		
 	}
-
+	
 }

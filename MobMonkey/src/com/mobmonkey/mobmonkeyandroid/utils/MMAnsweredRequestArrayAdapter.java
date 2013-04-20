@@ -29,17 +29,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMAcceptMediaOnClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMRejectMediaOnClickListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
-public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMAnsweredRequestItem>{
+public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 	
 	private static final String TAG = "MMAnsweredRequestArrayAdapter";
 	
 	private Context context; 
 	private int layoutResourceId;    
-	private MMAnsweredRequestItem data[] = null;
+	private MMMediaItem data[] = null;
     
-    public MMAnsweredRequestArrayAdapter(Context context, int layoutResourceId, MMAnsweredRequestItem[] data) {
+    public MMAnsweredRequestArrayAdapter(Context context, int layoutResourceId, MMMediaItem[] data) {
     	super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -75,50 +77,59 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMAnsweredReques
 			vholder = (ViewHolder) row.getTag();
 		}
 		
-		MMAnsweredRequestItem item = data[position];
-		vholder.tvTitle.setText(item.title);
+		MMMediaItem item = data[position];
+		vholder.tvTitle.setText(item.getLocationName());
 		
 		// set time
-		Date date = new Date();
 		
-		long expiretime = Long.parseLong(item.time) - date.getTime();
+		long expiretime = Long.parseLong(item.getExpiryDate()) - System.currentTimeMillis();
 		expiretime = TimeUnit.MILLISECONDS.toMinutes(expiretime);
 		vholder.tvExp.setText(MMSDKConstants.DEFAULT_STRING_SPACE + expiretime + "m");
 		
-		if(item.mediaUri != null) {
+		if(item.getImageMedia() != null) {
 			// image type
-			if(item.mediaType == 1) {
+			if(item.isImage()) {
 				vholder.btnPlay.setVisibility(View.GONE);
 				vholder.tvExp.setVisibility(View.VISIBLE);
 				vholder.btnOverlay.setVisibility(View.VISIBLE);
-				Log.d(TAG, "imgURI: " + item.mediaUri.toString());
+				//Log.d(TAG, "imgURI: " + item.mediaUri.toString());
 				
-				Bitmap bm = loadBitmap(item.mediaUri.toString());
+				Bitmap bm = item.getImageMedia();
 				WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 				
 				vholder.ivImage.setImageBitmap(ThumbnailUtils.extractThumbnail(bm, wm.getDefaultDisplay().getWidth(), 400));
+				
+				// set onclick listener
+				vholder.btnAccept.setOnClickListener(item.getAcceptMediaOnClickListener());
+				vholder.btnReject.setOnClickListener(item.getRejectMediaOnClickListener());
+				vholder.tvTitle.setOnClickListener(item.getLocationNameOnClickListener());
 			} 
 			// videow type
-			else if(item.mediaType == 2) {
+			else if(item.isVideo()) {
 				vholder.tvExp.setVisibility(View.VISIBLE);
 				vholder.btnOverlay.setVisibility(View.VISIBLE);
 				vholder.btnPlay.setVisibility(View.VISIBLE);
 				
-				// create thumbnail for video
-//				Bitmap bm = ThumbnailUtils.createVideoThumbnail(item.mediaUri.toString(), Video.Thumbnails.FULL_SCREEN_KIND);
-				InputStream is;
-				try {
-					is = context.getContentResolver().openInputStream(item.mediaUri);
-					Bitmap bm = BitmapFactory.decodeStream(is);
-					// set ivImage to thumbnail
-					WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-					vholder.ivImage.setImageBitmap(ThumbnailUtils.extractThumbnail(bm, wm.getDefaultDisplay().getWidth(), 400));
-					is.close();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				// set onclick listener
+				vholder.btnAccept.setOnClickListener(item.getAcceptMediaOnClickListener());
+				vholder.btnReject.setOnClickListener(item.getRejectMediaOnClickListener());
+				vholder.tvTitle.setOnClickListener(item.getLocationNameOnClickListener());
+//				
+//				// create thumbnail for video
+////				Bitmap bm = ThumbnailUtils.createVideoThumbnail(item.mediaUri.toString(), Video.Thumbnails.FULL_SCREEN_KIND);
+//				InputStream is;
+//				try {
+//					is = context.getContentResolver().openInputStream(item.mediaUri);
+//					Bitmap bm = BitmapFactory.decodeStream(is);
+//					// set ivImage to thumbnail
+//					WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+//					vholder.ivImage.setImageBitmap(ThumbnailUtils.extractThumbnail(bm, wm.getDefaultDisplay().getWidth(), 400));
+//					is.close();
+//				} catch (FileNotFoundException e) {
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
 			}
 		}
 		// if media is null
@@ -127,7 +138,7 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMAnsweredReques
 		}
 		
 		// if fulfilled, hide buttons
-		if(item.isAccepted) {
+		if(item.isAccepted()) {
 			vholder.btnAccept.setVisibility(View.GONE);
 			vholder.btnReject.setVisibility(View.GONE);
 		}
@@ -140,27 +151,4 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMAnsweredReques
         ImageButton btnAccept, btnReject, btnPlay, btnOverlay;
         TextView tvTitle, tvExp;
     }
-	
-	public static Bitmap loadBitmap(String url) {
-		Bitmap image = null;
-		try {
-			URL imageUrl = new URL(url);
-			HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
-			conn.setDoInput(true);
-			conn.connect();
-			
-			if(conn.getContentLength() > 0) {
-				InputStream is = conn.getInputStream();
-				image = BitmapFactory.decodeStream(is);
-				is.close();
-			}
-			conn.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return image;
-	}
 }

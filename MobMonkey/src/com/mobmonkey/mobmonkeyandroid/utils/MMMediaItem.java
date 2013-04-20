@@ -13,9 +13,13 @@ public class MMMediaItem {
 	private String expiryDate;
 	private boolean isVideo = false;
 	private boolean isImage = false;
+	private boolean isAccepted = false;
+	private OnClickListener locationNameOnClickListener;
 	private OnClickListener playOnClickListener;
 	private OnClickListener imageOnClickListener;
 	private OnClickListener shareMediaOnClickListener;
+	private OnClickListener acceptMediaOnClickListener;
+	private OnClickListener rejectMediaOnClickListener;
 	
 	public String getLocationName() {
 		return locationName;
@@ -75,6 +79,15 @@ public class MMMediaItem {
 		this.isImage = isImage;
 	}
 
+	public OnClickListener getAcceptMediaOnClickListener() {
+		return acceptMediaOnClickListener;
+	}
+
+	public void setAcceptMediaOnClickListener(
+			OnClickListener acceptMediaOnClickListener) {
+		this.acceptMediaOnClickListener = acceptMediaOnClickListener;
+	}
+
 	/**
 	 * @return the playOnClickListener
 	 */
@@ -117,4 +130,32 @@ public class MMMediaItem {
 			OnClickListener shareMediaOnClickListener) {
 		this.shareMediaOnClickListener = shareMediaOnClickListener;
 	}
+
+	public OnClickListener getLocationNameOnClickListener() {
+		return locationNameOnClickListener;
+	}
+
+	public void setLocationNameOnClickListener(
+			OnClickListener locationNameOnClickListener) {
+		this.locationNameOnClickListener = locationNameOnClickListener;
+	}
+
+	public OnClickListener getRejectMediaOnClickListener() {
+		return rejectMediaOnClickListener;
+	}
+
+	public void setRejectMediaOnClickListener(
+			OnClickListener rejectMediaOnClickListener) {
+		this.rejectMediaOnClickListener = rejectMediaOnClickListener;
+	}
+
+	public boolean isAccepted() {
+		return isAccepted;
+	}
+
+	public void setAccepted(boolean isAccepted) {
+		this.isAccepted = isAccepted;
+	}
+	
+	
 }

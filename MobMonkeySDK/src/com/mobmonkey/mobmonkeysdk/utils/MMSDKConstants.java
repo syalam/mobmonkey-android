@@ -42,6 +42,7 @@ public final class MMSDKConstants {
 	public static final String URI_PATH_MEDIA = "media";
 	public static final String URI_PATH_OPENREQUESTS = "openrequests";
 	public static final String URI_PATH_REGISTEREMAIL = "registeremail";
+	public static final String URI_PATH_REQUEST = "request";
 	public static final String URI_PATH_REQUESTMEDIA = "requestmedia";
 	public static final String URI_PATH_SEARCH = "search";
 	public static final String URI_PATH_SIGNIN = "signin";
@@ -224,6 +225,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_MARKASREAD = "markAsRead";
 	public static final String JSON_KEY_MEDIA = "media";
 	public static final String JSON_KEY_MEDIA_DATA = "mediaData";
+	public static final String JSON_KEY_MEDIA_ID = "mediaId";
 	public static final String JSON_KEY_MEDIA_TYPE = "mediaType";
 	public static final String JSON_KEY_MEDIA_URL = "mediaURL";
 	public static final String JSON_KEY_MESSAGE = "message";
