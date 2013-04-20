@@ -1,7 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid.utils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,13 +11,14 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 public class MMSearchResultsCallback implements MMCallback {
 	private static final String TAG = "MMSearchResultsCallback: ";
 	private Activity activity;
 	private String searchCategory;
 	
-	private MMOnNoCategoryFragmentItemClickListener noCategoryItemClickListener;
+	private MMOnNoCategoryFragmentItemClickListener noCategoryFragmentItemClickListener;
 	private MMCallback mmCallback;
 	
 	public MMSearchResultsCallback(Activity activity, String searchCategory, MMCallback mmCallback) {
@@ -25,7 +26,7 @@ public class MMSearchResultsCallback implements MMCallback {
 		this.searchCategory = searchCategory;
 		
 		if(activity instanceof MMOnNoCategoryFragmentItemClickListener) {
-			noCategoryItemClickListener = (MMOnNoCategoryFragmentItemClickListener) activity;
+			noCategoryFragmentItemClickListener = (MMOnNoCategoryFragmentItemClickListener) activity;
 		}
 		
 		this.mmCallback = mmCallback;
@@ -38,14 +39,14 @@ public class MMSearchResultsCallback implements MMCallback {
 		if(obj != null) {
 			Log.d(TAG, TAG + "response: " + ((String) obj));
 			try {
-				JSONArray searchResults = new JSONArray((String) obj);
-				if(searchResults.isNull(0)) {
+				JSONObject searchResults = new JSONObject((String) obj);
+				if(searchResults.getInt(MMSDKConstants.JSON_KEY_TOTAL_ITEMS) == 0) {
 					displayAlertDialog();
 				} else {
 					if(mmCallback != null) {
 						mmCallback.processCallback(obj);
 					}
-					noCategoryItemClickListener.onNoCategoryFragmentItemClick(true, searchCategory, ((String) obj));
+					noCategoryFragmentItemClickListener.onNoCategoryFragmentItemClick(0, searchCategory, searchResults.getJSONArray(MMSDKConstants.JSON_KEY_DEFAULT_TEXTS).toString());
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -55,8 +56,8 @@ public class MMSearchResultsCallback implements MMCallback {
 	
 	private void displayAlertDialog() {
 		new AlertDialog.Builder(activity)
-			.setTitle("MobMonkey")
-			.setMessage("No locations found")
+			.setTitle(searchCategory)
+			.setMessage(R.string.ad_message_no_locations_found)
 			.setCancelable(false)
 			.setPositiveButton(R.string.ad_btn_ok, null)
 			.show();
