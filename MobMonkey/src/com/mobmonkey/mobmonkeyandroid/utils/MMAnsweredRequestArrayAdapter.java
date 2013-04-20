@@ -80,11 +80,7 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 		MMMediaItem item = data[position];
 		vholder.tvTitle.setText(item.getLocationName());
 		
-		// set time
-		
-		long expiretime = Long.parseLong(item.getExpiryDate()) - System.currentTimeMillis();
-		expiretime = TimeUnit.MILLISECONDS.toMinutes(expiretime);
-		vholder.tvExp.setText(MMSDKConstants.DEFAULT_STRING_SPACE + expiretime + "m");
+		vholder.tvExp.setText(item.getExpiryDate() + "m");
 		
 		if(item.getImageMedia() != null) {
 			// image type

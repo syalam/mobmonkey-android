@@ -44,14 +44,14 @@ import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
  * @author Dezapp, LLC
  *
  */
-public class OpenRequestsFragment extends MMFragment {
+public class OpenRequestsFragment extends MMFragment implements OnItemClickListener {
 	private static final String TAG = "OpenRequestsScreen: ";
 	
 	private ListView lvOpenedRequests;
 	private Location location;
 	private JSONArray openRequests;
 	private MMOpenRequestsArrayAdapter arrayAdapter;
-	private int clickedPosition;
+//	private int clickedPosition;
 	private SharedPreferences userPrefs;
 	
 	/*
@@ -61,20 +61,17 @@ public class OpenRequestsFragment extends MMFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
+		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_retrieving_all_open_requests));
+		// get all the open request, and then update the badge counter
+		MMInboxAdapter.getOpenRequests(new OpenRequestCallback(), 
+									   MMConstants.PARTNER_ID, 
+				  					   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+				  					   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+
 		View view = inflater.inflate(R.layout.fragment_openrequests_screen, container, false);
 		lvOpenedRequests = (ListView) view.findViewById(R.id.lvopenrequests);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
-		
-		try {
-			// get all the open request, and then update the badge counter
-			MMInboxAdapter.getOpenRequests(new OpenRequestCallback(), 
-										   MMConstants.PARTNER_ID, 
-					  					   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-					  					   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
-		
+				
 		return view;
 	}
 
@@ -123,106 +120,98 @@ public class OpenRequestsFragment extends MMFragment {
 		return openedRequestItems;
 	}
 	
-	private void deleteRequest() {
+	private void deleteRequest(int position) {
 		try {
-			MMProgressDialog.displayDialog(getActivity(), "Open Request", "Deleting request...");
-			MMRequestMediaAdapter.deleteMedia(new DeleteRequestCallback(), 
+			MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, "Deleting request...");
+			MMRequestMediaAdapter.deleteMedia(new DeleteRequestCallback(position), 
 											  MMConstants.PARTNER_ID, 
 											  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 											  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											  openRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
-											  openRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_RECURRING));
+											  openRequests.getJSONObject(position).getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
+											  openRequests.getJSONObject(position).getString(MMSDKConstants.JSON_KEY_RECURRING));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public class DeleteRequestListener implements OnItemClickListener {
-
-		@Override
-		public void onItemClick(AdapterView<?> adapter, View view, int position,
-				long id) {
-			clickedPosition = position;
-			new AlertDialog.Builder(getActivity())
-				.setTitle("Open Requests")
-				.setMessage("Delete Request?")
-				.setCancelable(false)
-				.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						deleteRequest();
-					}
-					
-				})
-				.setNegativeButton("Cancel", null)
-				.show();
-		}
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		final int pos = position;
+		
+		new AlertDialog.Builder(getActivity())
+			.setTitle(R.string.ad_title_delete_request)
+			.setMessage(R.string.ad_message_delete_request)
+			.setCancelable(false)
+			.setPositiveButton(R.string.ad_btn_delete, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					deleteRequest(pos);
+				}
+				
+			})
+			.setNegativeButton(R.string.ad_btn_cancel, null)
+			.show();
 	}
 	
 	private class DeleteRequestCallback implements MMCallback {
-
+		private int position;
+		
+		public DeleteRequestCallback(int position) {
+			this.position = position;
+		}
+		
 		@Override
 		public void processCallback(Object obj) {
-			Log.d(TAG, (String)obj);
-			try {
-				JSONObject jObj = new JSONObject((String)obj);
-				if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-//					MMOpenRequestsItem[] items, data;
-//					data = getOpenedRequestItems();
-//					items = new MMOpenRequestsItem[data.length - 1];
-//					
-//					for(int i = 0; i < data.length; i++) {
-//						if(i < clickedPosition) {
-//							items[i] = data[i];
-//						} else if (i > clickedPosition) {
-//							items[i-1] = data[i];
-//						}
-//					}
-					MMProgressDialog.dismissDialog();
-					
-					JSONArray newArray = new JSONArray();
-					for(int i = 0; i < newArray.length(); i++) {
-						if(i != clickedPosition) {
-							newArray.put(openRequests.getJSONObject(i));
+			MMProgressDialog.dismissDialog();
+			
+			if(obj != null) {
+				Log.d(TAG, (String)obj);
+				try {
+					JSONObject jObj = new JSONObject((String)obj);
+					if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+						
+						ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
+						
+						for(int i = 0; i < openRequests.length(); i++) {
+							temp.add(openRequests.getJSONObject(i));
 						}
+						temp.remove(position);
+						openRequests = new JSONArray(temp);
+						
+						arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
+						lvOpenedRequests.setAdapter(arrayAdapter);
+						lvOpenedRequests.invalidate();
+						
+						Toast.makeText(getActivity().getApplicationContext(), 
+								getString(R.string.toast_request) + MMSDKConstants.DEFAULT_STRING_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), 
+								Toast.LENGTH_LONG).show();
 					}
-					openRequests = newArray;
+					else {
+						Toast.makeText(getActivity().getApplicationContext(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+					}
 					
-					arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
-					lvOpenedRequests.setAdapter(arrayAdapter);
-					lvOpenedRequests.invalidate();
-					
-					Toast.makeText(getActivity().getApplicationContext(), 
-							   "You have successfully deleted a request.", 
-							   Toast.LENGTH_LONG)
-							   .show();
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (ParseException e) {
+					e.printStackTrace();
 				}
-				else {
-					Toast.makeText(getActivity().getApplicationContext(), 
-								   "An error has occured while deleting a request.", 
-								   Toast.LENGTH_LONG)
-								   .show();
-				}
-				
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			} catch (JSONException e) {
-				e.printStackTrace();
-			} catch (ParseException e) {
-				e.printStackTrace();
 			}
 		}
 	}
+	
 	private class OpenRequestCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
 			if(obj != null) {			
 				try {
 					Log.d(TAG, "OpenRequestCallback: " + (String) obj);
 					openRequests = new JSONArray((String) obj);
 					arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
 					lvOpenedRequests.setAdapter(arrayAdapter);
-					lvOpenedRequests.setOnItemClickListener(new DeleteRequestListener());				
+					lvOpenedRequests.setOnItemClickListener(OpenRequestsFragment.this);				
 				} catch (JSONException ex) {
 					ex.printStackTrace();
 				} catch (NumberFormatException e) {

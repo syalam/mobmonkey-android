@@ -38,7 +38,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	
 	private SharedPreferences userPrefs;
 	
-	private String categoryIds;
+//	private String categoryIds;
 	private MMTrendingItem[] mmTrendingItem;
 	
 	private ListView lvTrending;
@@ -136,41 +136,41 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		
 		try {
 			JSONObject categories = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
-			findTopTenCategoryIds(categories.toJSONArray(categories.names()));
+//			findTopTenCategoryIds(categories.toJSONArray(categories.names()));
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}
 	}
 	
-	/**
-	 * 
-	 * @return
-	 * @throws JSONException
-	 */
-	private void findTopTenCategoryIds(JSONArray categories) throws JSONException {
-		categoryIds = MMSDKConstants.DEFAULT_STRING_EMPTY;
-		
-		JSONArray topTenCategories = new JSONArray();
-		
-		FindTopTen:
-		for(int i = 0; i < categories.length(); i++) {
-			JSONArray jArr = categories.getJSONArray(i);
-			for(int j = 0; j < jArr.length(); j++) {
-				if(jArr.getJSONObject(j).getString(MMSDKConstants.JSON_KEY_PARENTS).compareTo("432") == 0) {
-					topTenCategories.put(categories.getJSONArray(i));
-				}
-				if(topTenCategories.length() == 10) {
-					break FindTopTen;
-				}
-			}
-		}
-		
-		for(int i = 0; i < topTenCategories.length(); i++) {
-			for(int j = 0; j < topTenCategories.getJSONArray(i).length(); j++) {
-				categoryIds += topTenCategories.getJSONArray(i).getJSONObject(j).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID) + ",";
-			}
-		}
-	}
+//	/**
+//	 * 
+//	 * @return
+//	 * @throws JSONException
+//	 */
+//	private void findTopTenCategoryIds(JSONArray categories) throws JSONException {
+//		categoryIds = MMSDKConstants.DEFAULT_STRING_EMPTY;
+//		
+//		JSONArray topTenCategories = new JSONArray();
+//		
+//		FindTopTen:
+//		for(int i = 0; i < categories.length(); i++) {
+//			JSONArray jArr = categories.getJSONArray(i);
+//			for(int j = 0; j < jArr.length(); j++) {
+//				if(jArr.getJSONObject(j).getString(MMSDKConstants.JSON_KEY_PARENTS).compareTo("432") == 0) {
+//					topTenCategories.put(categories.getJSONArray(i));
+//				}
+//				if(topTenCategories.length() == 10) {
+//					break FindTopTen;
+//				}
+//			}
+//		}
+//		
+//		for(int i = 0; i < topTenCategories.length(); i++) {
+//			for(int j = 0; j < topTenCategories.getJSONArray(i).length(); j++) {
+//				categoryIds += topTenCategories.getJSONArray(i).getJSONObject(j).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID) + ",";
+//			}
+//		}
+//	}
 	
 	/**
 	 * 

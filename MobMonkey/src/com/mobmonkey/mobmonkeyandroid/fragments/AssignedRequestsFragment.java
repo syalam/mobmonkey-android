@@ -142,7 +142,6 @@ public class AssignedRequestsFragment extends MMFragment {
 	 *
 	 */
 	private class onAssignedRequestsClick implements OnItemClickListener {
-
 		@Override
 		public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 			//Log.d(TAG, "itemClicked: " + position);
@@ -188,8 +187,6 @@ public class AssignedRequestsFragment extends MMFragment {
 		if(resultCode != FragmentActivity.RESULT_OK)
 			return;
 		
-		MMProgressDialog.displayDialog(getActivity(), "Assigned Request", "Uploading...");
-		
 		// picture data
 		if(requestCode == MMSDKConstants.REQUEST_CODE_IMAGE) {
 			Log.d(TAG, "return from taking picture with camera");
@@ -203,6 +200,7 @@ public class AssignedRequestsFragment extends MMFragment {
 			String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
 			
 			try {
+				MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_uploading_image));
 				MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
 											   MMConstants.PARTNER_ID, 
 											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
@@ -226,6 +224,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		    try {
 		    	FileInputStream fis = new FileInputStream(new File(videoPath));
 
+		    	// TODO: changed the file format to .mp4
 		    	File tmpFile = new File(Environment.getExternalStorageDirectory(),"mobmonkeyVideo.3gp"); 
 
 		    	//save the video to the File path
@@ -261,6 +260,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		        }
 		        
 		    	// send base64 file to server
+				MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_uploading_video));
 		        MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
 												     MMConstants.PARTNER_ID, 
 												     userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
@@ -287,59 +287,59 @@ public class AssignedRequestsFragment extends MMFragment {
 	 */
 	
 	private class mmAnswerRequest implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
 			Log.d(TAG, "Response: " + (String) obj);
+			MMProgressDialog.dismissDialog();
 			
-			// if successfully uploaded a media, refresh list
-			try {
-				JSONObject jObj = new JSONObject((String)obj);
-				if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-//					MMAssignedRequestsItem[] items, data;
-//					data = getAssignedRequestItems();
-//					items = new MMAssignedRequestsItem[data.length - 1];
-//					
-//					for(int i = 0; i < data.length; i++) {
-//						if(i < positionClicked) {
-//							items[i] = data[i];
-//						} else if (i > positionClicked) {
-//							items[i-1] = data[i];
-//						}
-//					}
-					JSONArray newArray = new JSONArray();
-					for(int i = 0; i < assignedRequests.length(); i++) {
-						if(i != clickedPosition) {
-							newArray.put(assignedRequests.getJSONObject(i));
+			if(obj != null) {
+				// if successfully uploaded a media, refresh list
+				try {
+					JSONObject jObj = new JSONObject((String)obj);
+					if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+	//					MMAssignedRequestsItem[] items, data;
+	//					data = getAssignedRequestItems();
+	//					items = new MMAssignedRequestsItem[data.length - 1];
+	//					
+	//					for(int i = 0; i < data.length; i++) {
+	//						if(i < positionClicked) {
+	//							items[i] = data[i];
+	//						} else if (i > positionClicked) {
+	//							items[i-1] = data[i];
+	//						}
+	//					}
+						JSONArray newArray = new JSONArray();
+						for(int i = 0; i < assignedRequests.length(); i++) {
+							if(i != clickedPosition) {
+								newArray.put(assignedRequests.getJSONObject(i));
+							}
 						}
+						assignedRequests = newArray;
+						
+						arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, getAssignedRequestItems());
+						lvAssignedRequests.setAdapter(arrayAdapter);
+						lvAssignedRequests.invalidate();
+						
+						Toast.makeText(getActivity().getApplicationContext(),
+									   "You have successfully fulfilled a request.",
+									   Toast.LENGTH_LONG).
+									   show();
+					} 
+					// if fail
+					else {
+						Toast.makeText(getActivity().getApplicationContext(), 
+								   	   "An error has occured while uploading media.", 
+								   	   Toast.LENGTH_LONG)
+								   	   .show();
 					}
-					assignedRequests = newArray;
-					
-					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, getAssignedRequestItems());
-					lvAssignedRequests.setAdapter(arrayAdapter);
-					lvAssignedRequests.invalidate();
-					
-					Toast.makeText(getActivity().getApplicationContext(),
-								   "You have successfully fulfilled a request.",
-								   Toast.LENGTH_LONG).
-								   show();
-				} 
-				// if fail
-				else {
-					Toast.makeText(getActivity().getApplicationContext(), 
-							   	   "An error has occured while uploading media.", 
-							   	   Toast.LENGTH_LONG)
-							   	   .show();
+				} catch(JSONException e) {
+					e.printStackTrace();
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (ParseException e) {
+					e.printStackTrace();
 				}
-				MMProgressDialog.dismissDialog();
-			} catch(JSONException e) {
-				e.printStackTrace();
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			} catch (ParseException e) {
-				e.printStackTrace();
 			}
-			
 			
 //			try {
 //				JSONObject jObj = new JSONObject((String)obj);

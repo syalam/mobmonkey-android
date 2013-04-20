@@ -92,15 +92,6 @@ public class MainScreen extends TabActivity {
 			}
 		}
 	}
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		Log.d(TAG, "onConfigurationChanged");
-		super.onConfigurationChanged(newConfig);
-//		MMProgressDialog.dismissDialog();
-//		MMCategoryAdapter.cancelGetAllCategories();
-//		MMFavoritesAdapter.cancelGetFavorites();
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -360,7 +351,6 @@ public class MainScreen extends TabActivity {
 	private class FavoritesCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-			MMProgressDialog.dismissDialog();
 			if(obj != null) {
 				Log.d(TAG, TAG + "FavoritesCallback: " + ((String) obj));
 				try {
@@ -385,9 +375,7 @@ public class MainScreen extends TabActivity {
 	
 	private class CheckUserInCallback implements MMCallback {
 		@Override
-		public void processCallback(Object obj) {
-			MMProgressDialog.dismissDialog();
-			
+		public void processCallback(Object obj) {			
 			if(obj != null) {
 				Log.d(TAG, TAG + "checkinuser response: " + (String) obj);
 			}
