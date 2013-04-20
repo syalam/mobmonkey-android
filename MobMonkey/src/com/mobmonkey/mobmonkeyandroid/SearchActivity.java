@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyandroid.fragments.CategoriesFragment;
+import com.mobmonkey.mobmonkeyandroid.fragments.HistoryFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsMapFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.SearchFragment;

@@ -103,11 +103,22 @@
 	<!-- Open Requests Fragment -->
 	<string name="tv_title_openrequests">Open Requests</string>
 	
+	<string name="pd_retrieving_all_open_requests">Retrieving all open requests&#8230;</string>
+	
+	<string name="ad_btn_delete">Delete</string>
+	<string name="ad_title_delete_request">Open Request</string>
+	<string name="ad_message_delete_request">Delete request?</string>
+	
+	<string name="toast_request">Request</string>
+	
 	<!-- Answered Requests Fragment -->
 	<string name="tv_title_answeredrequests">Answered Requests</string>
 	
 	<!-- Assigned Requests Fragment -->
 	<string name="tv_title_assignedrequests">Assigned Requests</string>
+	
+	<string name="pd_uploading_image">Uploading image&#8230;</string>
+	<string name="pd_uploading_video">Uploading video&#8230;</string>
 	
 	<!-- Send Request Screen -->
 	<string name="toast_request_successful">Successfully sent request</string>

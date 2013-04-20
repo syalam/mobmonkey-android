@@ -71,6 +71,18 @@ public class AnsweredRequestsFragment extends MMFragment {
 		return view;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onAttach(android.app.Activity)
+	 */
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if(activity instanceof OnLocationNameClickFragmentListener) {
+			locationNameClickListener = (OnLocationNameClickFragmentListener) activity;
+		}
+	}
+	
 	@Override
 	public void onFragmentBackPressed() {
 
@@ -100,13 +112,12 @@ public class AnsweredRequestsFragment extends MMFragment {
 				item.setImageMedia(bms[i]);
 				if(jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 1) {
 					item.setIsImage(true);
-				}
-				else {
+				} else {
 					item.setIsVideo(true);
 				}
+				
 				item.setAccepted(media.getBoolean(MMSDKConstants.JSON_KEY_ACCEPTED));
 				item.setExpiryDate(media.getString(MMSDKConstants.JSON_KEY_EXPIRY_DATE));
-				
 				
 				item.setAcceptMediaOnClickListener(new MMAcceptMediaOnClickListener(new MMAcceptedRequestCallback(), 
 																					jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
@@ -121,11 +132,8 @@ public class AnsweredRequestsFragment extends MMFragment {
 																					MMConstants.PARTNER_ID, 
 																					userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 																					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY)));
-				JSONObject locationDetails = new JSONObject();
-				locationDetails.put(MMSDKConstants.JSON_KEY_LOCATION_ID, jObj.getString(MMSDKConstants.JSON_KEY_LOCATION_ID));
-				locationDetails.put(MMSDKConstants.JSON_KEY_PROVIDER_ID, jObj.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
-				item.setLocationNameOnClickListener(new MMLocationNameOnClickListener(locationNameClickListener, locationDetails));
-				item.setImageOnClickListener(new MMImageOnClickListener(getActivity(), item.getImageMedia()));
+				
+				item.setLocationNameOnClickListener(new MMLocationNameOnClickListener(locationNameClickListener, jObj));
 			}
 			// if no data for media, ignore it and prints out rest of the data
 			else {
@@ -137,12 +145,9 @@ public class AnsweredRequestsFragment extends MMFragment {
 				else {
 					item.setIsVideo(true);
 				}
-				
 			}
-			
 			answeredRequestItems[i] = item;
 		}
-		
 		
 		return answeredRequestItems;
 	}
@@ -160,8 +165,12 @@ public class AnsweredRequestsFragment extends MMFragment {
 		
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class AnsweredRequestCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
 			Log.d(TAG, (String) obj);
@@ -174,7 +183,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 					for(int i = 0; i < bms.length; i++) {
 						JSONObject media = answeredRequests.getJSONObject(i).getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).getJSONObject(0);
 						String imageUrl = media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
-						MMImageLoaderAdapter.loadImage(new imageCallback(i), imageUrl);
+						MMImageLoaderAdapter.loadImage(new ImageCallback(i), imageUrl);
 					}
 					
 				} catch (JSONException e) {
@@ -185,21 +194,16 @@ public class AnsweredRequestsFragment extends MMFragment {
 			}
 		}
 	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		if(activity instanceof OnLocationNameClickFragmentListener) {
-			locationNameClickListener = (OnLocationNameClickFragmentListener) activity;
-		}
-	}
 	
-	// callbakck class
-	private class imageCallback implements MMCallback {
-
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class ImageCallback implements MMCallback {
 		private int position;
 		
-		public imageCallback(int position) {
+		public ImageCallback(int position) {
 			this.position = position;
 		}
 		
@@ -209,6 +213,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 			bms[position] = bm;
 			
 			try {
+//				item.setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
 				arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
 				lvAnsweredRequests.setAdapter(arrayAdapter);
 				lvAnsweredRequests.setOnItemClickListener(new onAnsweredRequestsClick());
@@ -226,8 +231,12 @@ public class AnsweredRequestsFragment extends MMFragment {
 //		}
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class MMAcceptedRequestCallback implements MMCallback {
-		
 		@Override
 		public void processCallback(Object obj) {
 			Log.d(TAG, (String)obj);
@@ -238,8 +247,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 						   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 						   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 				
-				Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG)
-							.show();
+				Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -247,8 +255,12 @@ public class AnsweredRequestsFragment extends MMFragment {
 		
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class MMRejectRequestCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
 			Log.d(TAG, (String)obj);
@@ -259,12 +271,10 @@ public class AnsweredRequestsFragment extends MMFragment {
 						   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 						   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 				
-				Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG)
-							.show();
+				Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
-		
 	}
 }
