@@ -291,12 +291,13 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 			if(obj != null) {
 				Log.d(TAG, TAG + "Response: " + ((String) obj));
 				
-				try {
-					JSONObject jObj = new JSONObject((String) obj);
-					mmNoCategoryItemClickFragmentListener.onNoCategoryFragmentItemClick(0, searchCategory, jObj.getJSONArray(MMSDKConstants.JSON_KEY_DEFAULT_TEXTS).toString());
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+//				try {
+//					JSONObject jObj = new JSONObject((String) obj);
+//					mmNoCategoryItemClickFragmentListener.onNoCategoryFragmentItemClick(0, searchCategory, jObj.getJSONArray(MMSDKConstants.JSON_KEY_DEFAULT_TEXTS).toString());
+					mmNoCategoryItemClickFragmentListener.onNoCategoryFragmentItemClick(0, searchCategory, (String) obj);
+//				} catch (JSONException e) {
+//					e.printStackTrace();
+//				}
 			}
 		}
 	}

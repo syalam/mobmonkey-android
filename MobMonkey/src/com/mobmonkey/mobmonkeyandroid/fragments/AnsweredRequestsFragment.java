@@ -34,6 +34,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMAnsweredRequestItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMMediaItem;
+import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -56,6 +57,8 @@ public class AnsweredRequestsFragment extends MMFragment {
 	private MMAnsweredRequestArrayAdapter arrayAdapter;
 	private OnLocationNameClickFragmentListener locationNameClickListener;
 	private Bitmap[] bms;
+	
+	// TODO: After user reject request, after app retrieve updated requests, screen is not getting refreshed, i.e. the answered requests aren't getting updated.
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -117,7 +120,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 				}
 				
 				item.setAccepted(media.getBoolean(MMSDKConstants.JSON_KEY_ACCEPTED));
-				item.setExpiryDate(media.getString(MMSDKConstants.JSON_KEY_EXPIRY_DATE));
+				item.setExpiryDate(MMUtility.getDate(System.currentTimeMillis() - media.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "m"));
 				
 				item.setAcceptMediaOnClickListener(new MMAcceptMediaOnClickListener(new MMAcceptedRequestCallback(), 
 																					jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
@@ -134,6 +137,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 																					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY)));
 				
 				item.setLocationNameOnClickListener(new MMLocationNameOnClickListener(locationNameClickListener, jObj));
+				item.setImageOnClickListener(new MMImageOnClickListener(getActivity(), item.getImageMedia()));
 			}
 			// if no data for media, ignore it and prints out rest of the data
 			else {

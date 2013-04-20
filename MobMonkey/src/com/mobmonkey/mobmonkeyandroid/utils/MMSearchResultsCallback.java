@@ -1,5 +1,6 @@
 package com.mobmonkey.mobmonkeyandroid.utils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,7 +20,7 @@ public class MMSearchResultsCallback implements MMCallback {
 	private String searchCategory;
 	
 	private MMOnNoCategoryFragmentItemClickListener noCategoryFragmentItemClickListener;
-	private MMCallback mmCallback;
+	private MMCallback mmCallback; // To be used in Categories fragment, save the user to making another call to the server if they click the same subcategory
 	
 	public MMSearchResultsCallback(Activity activity, String searchCategory, MMCallback mmCallback) {
 		this.activity = activity;
@@ -39,14 +40,17 @@ public class MMSearchResultsCallback implements MMCallback {
 		if(obj != null) {
 			Log.d(TAG, TAG + "response: " + ((String) obj));
 			try {
-				JSONObject searchResults = new JSONObject((String) obj);
-				if(searchResults.getInt(MMSDKConstants.JSON_KEY_TOTAL_ITEMS) == 0) {
+//				JSONObject searchResults = new JSONObject((String) obj);
+//				if(searchResults.getInt(MMSDKConstants.JSON_KEY_TOTAL_ITEMS) == 0) {
+				JSONArray searchResults = new JSONArray((String) obj);
+				if(searchResults.isNull(0)) {
 					displayAlertDialog();
 				} else {
 					if(mmCallback != null) {
 						mmCallback.processCallback(obj);
 					}
-					noCategoryFragmentItemClickListener.onNoCategoryFragmentItemClick(0, searchCategory, searchResults.getJSONArray(MMSDKConstants.JSON_KEY_DEFAULT_TEXTS).toString());
+					noCategoryFragmentItemClickListener.onNoCategoryFragmentItemClick(0, searchCategory, (String) obj);
+//					noCategoryFragmentItemClickListener.onNoCategoryFragmentItemClick(0, searchCategory, searchResults.getJSONArray(MMSDKConstants.JSON_KEY_DEFAULT_TEXTS).toString());
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
