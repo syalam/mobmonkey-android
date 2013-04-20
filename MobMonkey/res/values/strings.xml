@@ -124,6 +124,8 @@
 	    <item>History</item>
 	</string-array>
 	
+	<string name="ad_message_no_locations_found">No locations found</string>
+	
 	<string name="pd_search_all_nearby">Searching all nearby&#8230;</string>
 	<string name="pd_search_for">Searching for</string>
 	<string name="pd_ellipses">&#8230;</string>
@@ -139,11 +141,16 @@
 	<string name="tv_narrow_by_live_video">Narrow by Live Video</string>
 	
 	<!-- SearchResults Fragment -->
-	<string name="btn_clear">Clear</string>
 	<string name="miles">miles</string>
 	
+	<!-- History Fragment -->
+	<string name="btn_clear">Clear</string>
+	<string name="tv_title_history">History</string>
+	
 	<string name="ad_title_no_history">No history</string>
+	<string name="ad_title_clear_history">Clear history</string>
 	<string name="ad_message_no_history">No history available</string>
+	<string name="ad_message_clear_history">Are you sure to clear all your history?</string>
 	<string name="ad_btn_ok">OK</string>
 	
 	<!-- SearchResultLocationDetails Fragment -->

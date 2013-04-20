@@ -212,6 +212,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_CATEGORY_IDS = "categoryIds";
 	public static final String JSON_KEY_CONTENT_TYPE = "contentType";
 	public static final String JSON_KEY_COUNTRY_CODE = "countryCode";
+	public static final String JSON_KEY_DEFAULT_TEXTS = "defaultTexts";
 	public static final String JSON_KEY_DESCRIPTION = "description";	
 	public static final String JSON_KEY_DISTANCE = "distance";
 	public static final String JSON_KEY_DURATION = "duration";
@@ -250,6 +251,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_SCHEDULE_DATE = "scheduleDate";
 	public static final String JSON_KEY_STATUS = "status";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
+	public static final String JSON_KEY_TOTAL_ITEMS = "totalItems";
 	public static final String JSON_KEY_TYPE = "type";
 	public static final String JSON_KEY_UPLOADED_DATE = "uploadedDate";
 	public static final String JSON_KEY_VIDEOS = "videos";

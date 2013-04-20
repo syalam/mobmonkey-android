@@ -49,14 +49,22 @@ public class SearchActivity extends FragmentActivity implements MMOnNoCategoryFr
 	}
 
 	@Override
-	public void onNoCategoryFragmentItemClick(boolean showMap, String searchCategory, String results) {
-		SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
+	public void onNoCategoryFragmentItemClick(int position, String searchCategory, String results) {
+		MMFragment mmFragment = null;
 		Bundle data = new Bundle();
-		data.putBoolean(MMSDKConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, showMap);
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, results);
-		searchResultsFragment.setArguments(data);
-		performTransaction(searchResultsFragment);
+		switch(position) {
+			case 0:
+				mmFragment = new SearchResultsFragment();
+				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
+				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, results);
+				mmFragment.setArguments(data);
+				break;
+			case 1:
+				mmFragment = new HistoryFragment();
+				break;
+		}
+		
+		performTransaction(mmFragment);
 	}
 
 	@Override
