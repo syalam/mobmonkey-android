@@ -158,7 +158,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 				if(position == 0) {				
 					searchAllNearbyLocations();
 				} else if(position == 1) {
-					showHistory();
+					mmNoCategoryItemClickFragmentListener.onNoCategoryFragmentItemClick(position, null, null);
 				}
 			}
 		});
@@ -236,10 +236,6 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_search_all_nearby));
 	}
 	
-	private void showHistory() {
-		mmNoCategoryItemClickFragmentListener.onNoCategoryFragmentItemClick(false, searchCategory, userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY));
-	}
-	
 	private String[] getTopLevelCategories() throws JSONException {
 		return topLevelCategories;
 	}
@@ -258,12 +254,12 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 			R.drawable.cat_icon_conferences, 
 			R.drawable.cat_icon_restaurants, 
 			R.drawable.cat_icon_hotels, 
-			R.drawable.cat_icon_night_clubs, 
+			R.drawable.cat_icon_night_clubs,
+			R.drawable.cat_icon_dog_parks,
 			R.drawable.cat_icon_pubs, 
 			R.drawable.cat_icon_stadiums,
 			R.drawable.cat_icon_health_clubs,
-			R.drawable.cat_icon_cinemas,
-			R.drawable.cat_icon_dog_parks
+			R.drawable.cat_icon_cinemas
 		};
 		categoryIndicatorIcons = new int[] {
 			R.drawable.listview_accessory_indicator,
@@ -295,7 +291,12 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 			if(obj != null) {
 				Log.d(TAG, TAG + "Response: " + ((String) obj));
 				
-				mmNoCategoryItemClickFragmentListener.onNoCategoryFragmentItemClick(true, searchCategory, ((String) obj));
+				try {
+					JSONObject jObj = new JSONObject((String) obj);
+					mmNoCategoryItemClickFragmentListener.onNoCategoryFragmentItemClick(0, searchCategory, jObj.getJSONArray(MMSDKConstants.JSON_KEY_DEFAULT_TEXTS).toString());
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

@@ -46,7 +46,7 @@ public class MMCategories extends Activity {
 	private static String[] getKeys(JSONObject cats) {
 		int length = cats.length();
 	    if (length == 0) {
-	        return null;
+	        return new String[0];
 	    }
 	    Iterator iterator = cats.keys();
 	    String[] names = new String[length];

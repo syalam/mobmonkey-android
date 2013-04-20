@@ -11,9 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -219,9 +217,6 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 			case R.id.btncancel:
 				buttonCancelClick();
 				break;
-			case R.id.btnclear:
-				promptClearHistory();
-				break;
 		}
 	}
 	
@@ -283,6 +278,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 						getString(R.string.miles));
 				resultLocations[i].setLocAddr(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + 
 										jObj.getString(MMSDKConstants.JSON_KEY_REGION) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_POSTCODE));
+				Log.d(TAG, i + " stream: " + jObj.getInt(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING) + " video: " + jObj.getInt(MMSDKConstants.JSON_KEY_VIDEOS) + " images: " + jObj.getInt(MMSDKConstants.JSON_KEY_IMAGES));
 			}
 	}
 	
@@ -291,20 +287,10 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 * @throws JSONException
 	 */
 	private void displayMap() throws JSONException {
-		if(getArguments().getBoolean(MMSDKConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, true)) {
-			googleMap = smfResultLocations.getMap();
-			markerHashMap = new HashMap<Marker, JSONObject>();
-			addToGoogleMap();
-			getLocationHistory();
-		} else {
-			ibMap.setVisibility(View.GONE);
-			btnAddLoc.setVisibility(View.GONE);
-			btnClear.setVisibility(View.VISIBLE);
-			
-			if(!getLocationHistory()) {
-				displayNoHistoryAlert();
-			}
-		}
+		googleMap = smfResultLocations.getMap();
+		markerHashMap = new HashMap<Marker, JSONObject>();
+		addToGoogleMap();
+		getLocationHistory();
 	}
 	
 	/**
@@ -358,23 +344,6 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		googleMap.setOnInfoWindowClickListener(SearchResultsFragment.this);
 		googleMap.setOnMapClickListener(SearchResultsFragment.this);
 		googleMap.setMyLocationEnabled(true);
-	}
-	
-	/**
-	 * 
-	 */
-	private void displayNoHistoryAlert() {
-		new AlertDialog.Builder(getActivity())
-			.setTitle(R.string.ad_title_no_history)
-			.setMessage(R.string.ad_message_no_history)
-			.setCancelable(false)
-			.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					//TODO: return to search fragment
-				}
-			})
-			.show();
 	}
 	
 	/**
@@ -502,38 +471,6 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ibMap.getLayoutParams();
 		params.addRule(RelativeLayout.LEFT_OF, R.id.btnaddloc);
 		ibMap.setLayoutParams(params);
-	}
-	
-	/**
-	 * 
-	 */
-	private void promptClearHistory() {
-		new AlertDialog.Builder(getActivity())
-			.setTitle("clear history")
-			.setMessage("Are you sure to clear all your history?")
-			.setCancelable(false)
-			.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					clearHistory();
-				}
-			})
-			.setNegativeButton(R.string.ad_btn_no, null)
-			.show();
-		
-	}
-	
-	/**
-	 * 
-	 */
-	private void clearHistory() {
-		resultLocations = new MMResultsLocation[0];
-		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.search_result_list_row, resultLocations);
-		lvSearchResults.setAdapter(arrayAdapter);
-		lvSearchResults.invalidate();
-		
-		userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_HISTORY);
-		userPrefsEditor.commit();
 	}
 	
 	/**
