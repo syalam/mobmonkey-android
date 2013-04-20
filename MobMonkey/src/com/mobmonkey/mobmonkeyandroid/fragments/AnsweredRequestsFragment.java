@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMAcceptMediaOnClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMImageOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMLocationNameOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMRejectMediaOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.OnLocationNameClickFragmentListener;
@@ -46,7 +47,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  *
  */
 
-public class AnsweredRequestsFragment extends MMFragment implements OnLocationNameClickFragmentListener{
+public class AnsweredRequestsFragment extends MMFragment {
 	private static final String TAG = "AnsweredRequestsFragment";
 	private ListView lvAnsweredRequests;
 	private JSONArray answeredRequests;
@@ -55,7 +56,6 @@ public class AnsweredRequestsFragment extends MMFragment implements OnLocationNa
 	private MMAnsweredRequestArrayAdapter arrayAdapter;
 	private OnLocationNameClickFragmentListener locationNameClickListener;
 	private Bitmap[] bms;
-	private int callbackCounter = 0;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -125,7 +125,7 @@ public class AnsweredRequestsFragment extends MMFragment implements OnLocationNa
 				locationDetails.put(MMSDKConstants.JSON_KEY_LOCATION_ID, jObj.getString(MMSDKConstants.JSON_KEY_LOCATION_ID));
 				locationDetails.put(MMSDKConstants.JSON_KEY_PROVIDER_ID, jObj.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
 				item.setLocationNameOnClickListener(new MMLocationNameOnClickListener(locationNameClickListener, locationDetails));
-				
+				item.setImageOnClickListener(new MMImageOnClickListener(getActivity(), item.getImageMedia()));
 			}
 			// if no data for media, ignore it and prints out rest of the data
 			else {
@@ -193,12 +193,6 @@ public class AnsweredRequestsFragment extends MMFragment implements OnLocationNa
 			locationNameClickListener = (OnLocationNameClickFragmentListener) activity;
 		}
 	}
-
-	@Override
-	public void locationNameClick(JSONObject obj) {
-		Log.d(TAG, obj.toString());
-		
-	}
 	
 	// callbakck class
 	private class imageCallback implements MMCallback {
@@ -213,7 +207,6 @@ public class AnsweredRequestsFragment extends MMFragment implements OnLocationNa
 		public void processCallback(Object obj) {
 			Bitmap bm = (Bitmap) obj;
 			bms[position] = bm;
-			callbackCounter++;
 			
 			try {
 				arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());

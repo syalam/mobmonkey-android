@@ -5,18 +5,27 @@ import java.util.Stack;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.fragments.*;
-import com.mobmonkey.mobmonkeyandroid.listeners.*;
-import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
-
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+
+import com.mobmonkey.mobmonkeyandroid.fragments.CategoriesFragment;
+import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment;
+import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsMapFragment;
+import com.mobmonkey.mobmonkeyandroid.fragments.SearchFragment;
+import com.mobmonkey.mobmonkeyandroid.fragments.SearchResultsFragment;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnCategoryFragmentItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnLocationDetailsFragmentItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnNoCategoryFragmentItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnSearchResultsFragmentItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnSubCategoryFragmentItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 /**
  * @author Dezapp, LLC

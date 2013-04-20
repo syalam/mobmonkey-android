@@ -8,8 +8,8 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.AnsweredRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.AssignedRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.InboxFragment;
+import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.OpenRequestsFragment;
-import com.mobmonkey.mobmonkeyandroid.listeners.OnLocationNameClickFragmentListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
@@ -30,7 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
  * @author Dezapp, LLC
  * 
  */
-public class InboxActivity extends FragmentActivity implements MMOnInboxFragmentItemClickListener {
+public class InboxActivity extends FragmentActivity implements MMOnInboxFragmentItemClickListener, OnLocationNameClickFragmentListener {
 	private static final String TAG = "InboxActivity"; 
 	
 	private FragmentManager fragmentManager;
@@ -121,11 +121,20 @@ public class InboxActivity extends FragmentActivity implements MMOnInboxFragment
 		return;
 	}
 	
+	@Override
+	public void locationNameClick(JSONObject obj) {
+		Log.d(TAG, obj.toString());
+		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, obj.toString());
+		locationDetailsFragment.setArguments(data);
+		performTransaction(locationDetailsFragment);
+	}
+	
 	private void performTransaction(MMFragment mmFragment) {
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
 		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.push(mmFragment));
 		fragmentTransaction.commit();		
 	}
-	
 }

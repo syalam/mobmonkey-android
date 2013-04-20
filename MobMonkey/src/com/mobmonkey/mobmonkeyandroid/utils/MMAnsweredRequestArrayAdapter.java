@@ -103,6 +103,7 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 				vholder.btnAccept.setOnClickListener(item.getAcceptMediaOnClickListener());
 				vholder.btnReject.setOnClickListener(item.getRejectMediaOnClickListener());
 				vholder.tvTitle.setOnClickListener(item.getLocationNameOnClickListener());
+				vholder.ivImage.setOnClickListener(item.getImageOnClickListener());
 			} 
 			// videow type
 			else if(item.isVideo()) {
