@@ -131,6 +131,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 			else {
 				item.setLocationName(jObj.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION));
 				item.setImageMedia(bms[i]);
+				item.setExpiryDate(String.valueOf(System.currentTimeMillis()));
 				if(jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 1) {
 					item.setIsImage(true);
 				}
