@@ -33,6 +33,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMRequestMediaAdapter;
+import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
@@ -124,6 +125,7 @@ public class OpenRequestsFragment extends MMFragment {
 	
 	private void deleteRequest() {
 		try {
+			MMProgressDialog.displayDialog(getActivity(), "Open Request", "Deleting request...");
 			MMRequestMediaAdapter.deleteMedia(new DeleteRequestCallback(), 
 											  MMConstants.PARTNER_ID, 
 											  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
@@ -165,19 +167,28 @@ public class OpenRequestsFragment extends MMFragment {
 			try {
 				JSONObject jObj = new JSONObject((String)obj);
 				if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-					MMOpenRequestsItem[] items, data;
-					data = getOpenedRequestItems();
-					items = new MMOpenRequestsItem[data.length - 1];
+//					MMOpenRequestsItem[] items, data;
+//					data = getOpenedRequestItems();
+//					items = new MMOpenRequestsItem[data.length - 1];
+//					
+//					for(int i = 0; i < data.length; i++) {
+//						if(i < clickedPosition) {
+//							items[i] = data[i];
+//						} else if (i > clickedPosition) {
+//							items[i-1] = data[i];
+//						}
+//					}
+					MMProgressDialog.dismissDialog();
 					
-					for(int i = 0; i < data.length; i++) {
-						if(i < clickedPosition) {
-							items[i] = data[i];
-						} else if (i > clickedPosition) {
-							items[i-1] = data[i];
+					JSONArray newArray = new JSONArray();
+					for(int i = 0; i < newArray.length(); i++) {
+						if(i != clickedPosition) {
+							newArray.put(openRequests.getJSONObject(i));
 						}
 					}
+					openRequests = newArray;
 					
-					arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, items);
+					arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
 					lvOpenedRequests.setAdapter(arrayAdapter);
 					lvOpenedRequests.invalidate();
 					

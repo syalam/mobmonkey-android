@@ -6,9 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 
 import org.json.JSONArray;
@@ -21,7 +18,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,32 +25,28 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
-import android.util.Base64OutputStream;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.fragments.OpenRequestsFragment.DeleteRequestListener;
-import com.mobmonkey.mobmonkeyandroid.utils.MMAnsweredRequestItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMAnswerRequestAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
+import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 /**
  * Android {@link Fragment} to display Assigned Requests.
@@ -71,7 +63,7 @@ public class AssignedRequestsFragment extends MMFragment {
 	private ListView lvAssignedRequests;
 	private JSONArray assignedRequests;
 	private MMAssignedRequestsArrayAdapter arrayAdapter;
-	private int positionClicked;
+	private int clickedPosition;
 	
 	/*
 	 * (non-Javadoc)
@@ -154,7 +146,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		@Override
 		public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 			//Log.d(TAG, "itemClicked: " + position);
-			positionClicked = position;
+			clickedPosition = position;
 			try {
 				JSONObject data = assignedRequests.getJSONObject(position);
 				
@@ -196,6 +188,8 @@ public class AssignedRequestsFragment extends MMFragment {
 		if(resultCode != FragmentActivity.RESULT_OK)
 			return;
 		
+		MMProgressDialog.displayDialog(getActivity(), "Assigned Request", "Uploading...");
+		
 		// picture data
 		if(requestCode == MMSDKConstants.REQUEST_CODE_IMAGE) {
 			Log.d(TAG, "return from taking picture with camera");
@@ -213,8 +207,8 @@ public class AssignedRequestsFragment extends MMFragment {
 											   MMConstants.PARTNER_ID, 
 											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 											   userPrefs.getString(MMSDKConstants.KEY_AUTH,MMSDKConstants.DEFAULT_STRING_EMPTY), 
-											   assignedRequests.getJSONObject(positionClicked).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
-											   assignedRequests.getJSONObject(positionClicked).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
+											   assignedRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
+											   assignedRequests.getJSONObject(clickedPosition).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
 											   MMSDKConstants.MEDIA_CONTENT_JPEG,
 											   imageEncoded,
 											   MMSDKConstants.MEDIA_TYPE_IMAGE);
@@ -271,8 +265,8 @@ public class AssignedRequestsFragment extends MMFragment {
 												     MMConstants.PARTNER_ID, 
 												     userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 												     userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-												     assignedRequests.getJSONObject(positionClicked).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
-												     assignedRequests.getJSONObject(positionClicked).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
+												     assignedRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
+												     assignedRequests.getJSONObject(clickedPosition).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
 												     MMSDKConstants.MEDIA_CONTENT_MP4,
 												     videoEncoded,
 												     MMSDKConstants.MEDIA_TYPE_VIDEO);
@@ -296,24 +290,32 @@ public class AssignedRequestsFragment extends MMFragment {
 
 		@Override
 		public void processCallback(Object obj) {
-			Log.d(TAG, (String) obj);
+			Log.d(TAG, "Response: " + (String) obj);
+			
 			// if successfully uploaded a media, refresh list
 			try {
 				JSONObject jObj = new JSONObject((String)obj);
 				if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-					MMAssignedRequestsItem[] items, data;
-					data = getAssignedRequestItems();
-					items = new MMAssignedRequestsItem[data.length - 1];
-					
-					for(int i = 0; i < data.length; i++) {
-						if(i < positionClicked) {
-							items[i] = data[i];
-						} else if (i > positionClicked) {
-							items[i-1] = data[i];
+//					MMAssignedRequestsItem[] items, data;
+//					data = getAssignedRequestItems();
+//					items = new MMAssignedRequestsItem[data.length - 1];
+//					
+//					for(int i = 0; i < data.length; i++) {
+//						if(i < positionClicked) {
+//							items[i] = data[i];
+//						} else if (i > positionClicked) {
+//							items[i-1] = data[i];
+//						}
+//					}
+					JSONArray newArray = new JSONArray();
+					for(int i = 0; i < assignedRequests.length(); i++) {
+						if(i != clickedPosition) {
+							newArray.put(assignedRequests.getJSONObject(i));
 						}
 					}
+					assignedRequests = newArray;
 					
-					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, items);
+					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, getAssignedRequestItems());
 					lvAssignedRequests.setAdapter(arrayAdapter);
 					lvAssignedRequests.invalidate();
 					
@@ -329,6 +331,7 @@ public class AssignedRequestsFragment extends MMFragment {
 							   	   Toast.LENGTH_LONG)
 							   	   .show();
 				}
+				MMProgressDialog.dismissDialog();
 			} catch(JSONException e) {
 				e.printStackTrace();
 			} catch (NumberFormatException e) {
