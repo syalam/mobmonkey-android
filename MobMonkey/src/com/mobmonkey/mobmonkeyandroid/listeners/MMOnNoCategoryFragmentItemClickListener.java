@@ -5,5 +5,5 @@ package com.mobmonkey.mobmonkeyandroid.listeners;
  *
  */
 public interface MMOnNoCategoryFragmentItemClickListener {
-	public void onNoCategoryFragmentItemClick(boolean showMap, String searchCategory, String results);
+	public void onNoCategoryFragmentItemClick(int position, String searchCategory, String results);
 }

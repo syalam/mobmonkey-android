@@ -192,7 +192,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			searchSubCategory = selectedSubCategory;
 			searchSubCategory(selectedSubCategory, subCategory);
 		} else {
-			noCategoryItemClickListener.onNoCategoryFragmentItemClick(true, selectedSubCategory, results);
+			noCategoryItemClickListener.onNoCategoryFragmentItemClick(0, selectedSubCategory, results);
 		}
 	}
 	
@@ -268,7 +268,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			if(obj != null) {
 				Log.d(TAG, TAG + "Response: " + ((String) obj));
 				
-				noCategoryItemClickListener.onNoCategoryFragmentItemClick(true, searchText, ((String) obj));
+				noCategoryItemClickListener.onNoCategoryFragmentItemClick(0, searchText, ((String) obj));
 			}
 		}
 	}
