@@ -1,12 +1,10 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,8 +16,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.mobmonkey.mobmonkeyandroid.AssignedRequestsScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMInboxArrayAdapter;
@@ -44,8 +42,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	private MMInboxItem[] inboxItems;
 	private MMInboxArrayAdapter arrayAdapter;
 	
-	private OnInboxItemClickListener listener;
-	
+	private MMOnInboxFragmentItemClickListener listener;
 	
 	/*
 	 * (non-Javadoc)
@@ -58,9 +55,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		View view = inflater.inflate(R.layout.fragment_inbox_screen, container, false);
 		lvInbox = (ListView) view.findViewById(R.id.lvinbox);
 		
-		//inboxRequests = new JSONArray[4];
-		
-		lvInbox.setOnItemClickListener(InboxFragment.this);
+		createInbox();
 		return view;
 	}
 
@@ -71,21 +66,28 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnInboxItemClickListener) {
-			listener = (OnInboxItemClickListener) activity;
+		if(activity instanceof MMOnInboxFragmentItemClickListener) {
+			listener = (MMOnInboxFragmentItemClickListener) activity;
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onResume()
+	 */
+	@Override
+	public void onResume() {
+		getInboxCounts();
+		super.onResume();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
-//		Intent intent = new Intent(getActivity(), AssignedRequestsScreen.class);
-//		intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_INBOX_REQUESTS, inboxRequests[position].toString());
-//		startActivity(intent);
-		listener.onInboxItemClick(position);
+		listener.onInboxFragmentItemClick(position);
 	}
 	
 	/* (non-Javadoc)
@@ -96,29 +98,24 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		
 	}
 	
-	@Override
-	public void onResume() {
-		inboxUpdate();
-		super.onResume();
+	private void createInbox() {
+		inboxItems = new MMInboxItem[getResources().getStringArray(R.array.inbox_category).length];
+		for(int i = 0; i < inboxItems.length; i++) {
+			inboxItems[i] = new MMInboxItem();
+			inboxItems[i].title = getResources().getStringArray(R.array.inbox_category)[i];
+			inboxItems[i].counter = MMSDKConstants.DEFAULT_INT_ZERO;
+		}
+		
+		arrayAdapter = new MMInboxArrayAdapter(getActivity(), R.layout.inbox_list_row, inboxItems);
+		lvInbox.setAdapter(arrayAdapter);
+		lvInbox.setOnItemClickListener(InboxFragment.this);
 	}
 	
 	/**
 	 * Update Inbox {@link ListView} when first started or resume.
 	 */
-	private void inboxUpdate() {
-		inboxItems = new MMInboxItem[getResources().getStringArray(R.array.inbox_category).length];
-		for(int i = 0; i < inboxItems.length; i++) {
-			inboxItems[i] = new MMInboxItem();
-			inboxItems[i].title = getResources().getStringArray(R.array.inbox_category)[i];
-			inboxItems[i].counter = "0";
-		}
-		
-		arrayAdapter = new MMInboxArrayAdapter(getActivity(), R.layout.inbox_list_row, inboxItems);
-		lvInbox.setAdapter(arrayAdapter);
-		
+	private void getInboxCounts() {		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-			
-			// get counts of each inbox categories
 			MMInboxAdapter.getCounts(new InboxCountsCallback(), 
 									 MMConstants.PARTNER_ID, 
 									 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
@@ -126,56 +123,49 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		}
 	}
 	
-	/**
-	 * The {@link OnItemClickListener} for {@link ListView} in InboxFragment.
-	 *
-	 */
-	public interface OnInboxItemClickListener {
-		public void onInboxItemClick(int position);
+	private void setInboxCounts(JSONObject jObj) throws JSONException {
+		int openrequests = jObj.getInt(MMSDKConstants.JSON_KEY_OPEN_REQUESTS_COUNT);
+		int assignedReadCount = jObj.getInt(MMSDKConstants.JSON_KEY_ASSIGNED_READ_REQUESTS);
+		int assignedUnreadCount = jObj.getInt(MMSDKConstants.JSON_KEY_ASSIGNED_UNREAD_REQUESTS);
+		int fulfilledReadCount = jObj.getInt(MMSDKConstants.JSON_KEY_FULFILLED_READ_COUNT);
+		int fulfilledUnreadCount = jObj.getInt(MMSDKConstants.JSON_KEY_FULFILLED_UNREAD_COUNT);
+		
+		int openRequestCount = openrequests;
+		int answeredRequestsCount = fulfilledReadCount + fulfilledUnreadCount;
+		int assignedRequestsCount = assignedReadCount + assignedUnreadCount;
+		
+		if(openRequestCount > 0) {
+			inboxItems[0].counter = openRequestCount;
+			inboxItems[0].containCounter = openRequestCount;
+			arrayAdapter.isEnabled(0);
+		}
+		
+		if(answeredRequestsCount > 0) {
+			inboxItems[1].counter = fulfilledUnreadCount;
+			inboxItems[1].containCounter = answeredRequestsCount;
+			arrayAdapter.isEnabled(1);
+		}
+		
+		if(assignedRequestsCount > 0) {
+			inboxItems[2].counter = assignedUnreadCount;
+			inboxItems[2].containCounter = assignedRequestsCount;
+			arrayAdapter.isEnabled(2);
+		}
+		
+		arrayAdapter.notifyDataSetChanged();
 	}
 	
 	private class InboxCountsCallback implements MMCallback {
-
 		@Override
 		public void processCallback(Object obj) {
-			int assignedReadRequests, assignedUnreadRequests, fulfilledUnreadCount, openrequests, fulfilledReadCount;
-			Log.d(TAG, (String) obj);
-			try {
-				JSONObject jObj = new JSONObject((String) obj);
-				
-				assignedReadRequests = jObj.getInt(MMSDKConstants.JSON_KEY_ASSIGNED_READ_REQUESTS);
-				assignedUnreadRequests = jObj.getInt(MMSDKConstants.JSON_KEY_ASSIGNED_UNREAD_REQUESTS);
-				fulfilledUnreadCount = jObj.getInt(MMSDKConstants.JSON_KEY_FULFILLED_UNREAD_COUNT);
-				openrequests = jObj.getInt(MMSDKConstants.JSON_KEY_OPEN_REQUESTS_COUNT);
-				fulfilledReadCount = jObj.getInt(MMSDKConstants.JSON_KEY_FULFILLED_READ_COUNT);
-				
-				int openRequestCount = openrequests,
-					answeredRequestsCount = fulfilledUnreadCount + fulfilledReadCount,
-					assignedRequestsCount = assignedReadRequests + assignedUnreadRequests;
-				
-				if(openRequestCount > 0) {
-					inboxItems[0].counter = Integer.toString(openRequestCount);
-					inboxItems[0].containCounter = openRequestCount;
-					arrayAdapter.isEnabled(0);
+			if(obj != null) {
+				Log.d(TAG, "inbox: " + (String) obj);
+				try {
+					setInboxCounts(new JSONObject((String) obj));
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-				
-				if(answeredRequestsCount > 0) {
-					inboxItems[1].counter = Integer.toString(fulfilledUnreadCount);
-					inboxItems[1].containCounter = answeredRequestsCount;
-					arrayAdapter.isEnabled(1);
-				}
-				
-				if(assignedRequestsCount > 0) {
-					inboxItems[2].counter = Integer.toString(assignedUnreadRequests);
-					inboxItems[2].containCounter = assignedRequestsCount;
-					arrayAdapter.isEnabled(2);
-				}
-				arrayAdapter.notifyDataSetChanged();
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 		}
-		
 	}
-	
 }

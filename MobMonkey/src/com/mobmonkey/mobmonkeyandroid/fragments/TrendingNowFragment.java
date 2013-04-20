@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,10 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMTrendingArrayAdapter;
@@ -40,10 +39,12 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	private SharedPreferences userPrefs;
 	
 	private String categoryIds;
+	private MMTrendingItem[] mmTrendingItem;
 	
 	private ListView lvTrending;
+	private MMTrendingArrayAdapter arrayAdapter;
 	
-	private OnTrendingItemClickListener listener;
+	private MMOnTrendingFragmentItemClickListener listener;
 	
 	/*
 	 * 	(non-Javadoc)
@@ -63,11 +64,21 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnTrendingItemClickListener) {
-			listener = (OnTrendingItemClickListener) activity;
+		if(activity instanceof MMOnTrendingFragmentItemClickListener) {
+			listener = (MMOnTrendingFragmentItemClickListener) activity;
 		}
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onResume()
+	 */
+	@Override
+	public void onResume() {
+		getTrendingCounts();
+		super.onResume();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
@@ -90,7 +101,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 				break;
 			// top viewed
 			case 2:
-				listener.onTrendingItemClick(position);
+				listener.onTrendingFragmentItemClick(position);
 				break;
 			// near me
 			case 3:
@@ -107,29 +118,19 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	public void onFragmentBackPressed() {
 		
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onResume()
-	 */
-	@Override
-	public void onResume() {
-		getTrendingCount();
-		super.onResume();
-	}
 
 	/**
 	 * 
 	 */
 	public void createTrending() {
-		MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
-		for(int i = 0; i < data.length; i++) {
-			data[i] = new MMTrendingItem();
-			data[i].title = getResources().getStringArray(R.array.trending_category)[i];
-			data[i].counter = MMSDKConstants.DEFAULT_INT_ZERO;
+		mmTrendingItem = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
+		for(int i = 0; i < mmTrendingItem.length; i++) {
+			mmTrendingItem[i] = new MMTrendingItem();
+			mmTrendingItem[i].title = getResources().getStringArray(R.array.trending_category)[i];
+			mmTrendingItem[i].counter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
 		
-		MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, data);
+		arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, mmTrendingItem);
 		lvTrending.setAdapter(arrayAdapter);
 		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
 		
@@ -174,7 +175,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	/**
 	 * 
 	 */
-	private void getTrendingCount() {
+	private void getTrendingCounts() {
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMTrendingAdapter.getTrendingCounts(new TrendingCountsCallback(),
 											   MMSDKConstants.SEARCH_TIME_DAY,
@@ -186,13 +187,33 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		}
 	}
 	
-	/**
-	 * 
-	 * @author Dezapp, LLC
-	 *
-	 */
-	public interface OnTrendingItemClickListener {
-		public void onTrendingItemClick(int position);
+	private void setTrendingCounts(JSONObject jObj) throws JSONException {
+		int favoritesCount = jObj.getInt(MMSDKConstants.JSON_KEY_BOOKMARK_COUNT);
+		int myInterestsCount = jObj.getInt(MMSDKConstants.JSON_KEY_INTEREST_COUNT);
+		int topViewedCount = jObj.getInt(MMSDKConstants.JSON_KEY_TOP_VIEWED_COUNT);
+		int nearMeCount = jObj.getInt(MMSDKConstants.JSON_KEY_NEARBY_COUNT);
+		
+		if(favoritesCount > 0) {
+			mmTrendingItem[0].counter = favoritesCount;
+			arrayAdapter.isEnabled(0);
+		}
+		
+		if(myInterestsCount > 0) {
+			mmTrendingItem[1].counter = myInterestsCount;
+			arrayAdapter.isEnabled(1);
+		}
+		
+		if(topViewedCount > 0) {
+			mmTrendingItem[2].counter = topViewedCount;
+			arrayAdapter.isEnabled(2);
+		}
+		
+		if(nearMeCount > 0) {
+			mmTrendingItem[3].counter = nearMeCount;
+			arrayAdapter.isEnabled(3);
+		}
+		
+		arrayAdapter.notifyDataSetChanged();
 	}
 	
 	/**
@@ -203,33 +224,12 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	private class TrendingCountsCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-			Log.d(TAG, TAG + "Trending: " + ((String) obj));
+			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				MMProgressDialog.dismissDialog();
+				Log.d(TAG, TAG + "Trending: " + ((String) obj));
 				try {
-					JSONObject jObj = new JSONObject((String)obj);
-					MMTrendingItem[] data = new MMTrendingItem[getResources().getStringArray(R.array.trending_category).length];
-					for(int i = 0; i < data.length; i++) {
-						MMTrendingItem item = new MMTrendingItem();
-						item.title = getResources().getStringArray(R.array.trending_category)[i];
-						
-						if(i == 0) {
-							item.counter = jObj.getInt(MMSDKConstants.JSON_KEY_BOOKMARK_COUNT);
-						} else if(i == 1) {
-							item.counter = jObj.getInt(MMSDKConstants.JSON_KEY_INTEREST_COUNT);
-						} else if(i == 2) {
-							item.counter = jObj.getInt(MMSDKConstants.JSON_KEY_TOP_VIEWED_COUNT);
-						} else if(i == 3) {
-							item.counter = jObj.getInt(MMSDKConstants.JSON_KEY_NEARBY_COUNT);
-						}
-						
-						data[i] = item;
-					}
-					
-					MMTrendingArrayAdapter arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, data);
-					lvTrending.setAdapter(arrayAdapter);
-					lvTrending.setOnItemClickListener(TrendingNowFragment.this);
+					setTrendingCounts(new JSONObject((String) obj));
 				} catch (JSONException ex) {
 					ex.printStackTrace();
 				}

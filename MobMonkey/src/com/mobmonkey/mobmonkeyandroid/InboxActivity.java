@@ -9,8 +9,8 @@ import com.mobmonkey.mobmonkeyandroid.fragments.AnsweredRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.AssignedRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.InboxFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.OpenRequestsFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.InboxFragment.OnInboxItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.OnLocationNameClickFragmentListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -30,7 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
  * @author Dezapp, LLC
  * 
  */
-public class InboxActivity extends FragmentActivity implements OnInboxItemClickListener {
+public class InboxActivity extends FragmentActivity implements MMOnInboxFragmentItemClickListener {
 	private static final String TAG = "InboxActivity"; 
 	
 	private FragmentManager fragmentManager;
@@ -63,7 +63,7 @@ public class InboxActivity extends FragmentActivity implements OnInboxItemClickL
 	 * @see com.mobmonkey.mobmonkey.fragments.InboxFragment.OnInboxItemClickListener#onInboxItemClick(int, java.lang.String)
 	 */
 	@Override
-	public void onInboxItemClick(int position) {
+	public void onInboxFragmentItemClick(int position) {
 		MMFragment mmFragment = null;
 		switch(position) {
 			case 0:

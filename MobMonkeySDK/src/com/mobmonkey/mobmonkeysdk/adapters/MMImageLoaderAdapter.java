@@ -1,8 +1,11 @@
 package com.mobmonkey.mobmonkeysdk.adapters;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMGetVideoThumbnailTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMImageLoaderTask;
 
 /**
@@ -20,7 +23,10 @@ public final class MMImageLoaderAdapter {
 	}
 	
 	public static void loadImage(MMCallback mmCallback, String imageUrl) {
-		Log.d(TAG, TAG + "loadImage");
 		new MMImageLoaderTask(mmCallback).execute(imageUrl);
+	}
+	
+	public static void loadVideoThumbnail(Context context, MMCallback mmCallback, Uri videoUri) {
+		new MMGetVideoThumbnailTask(context, mmCallback).execute(videoUri);
 	}
 }

@@ -14,7 +14,7 @@
 	    android:textColor="@color/gray"
 	    android:textStyle="bold"/>
 	
-	<TextView android:id="@+id/trendingBadgeCounter"
+	<TextView android:id="@+id/trendingcounter"
 	    android:layout_width="wrap_content" 
 	    android:layout_height="wrap_content"
 	    android:layout_marginRight="5dp"
@@ -24,7 +24,8 @@
         android:textColor="@android:color/white"
         android:paddingLeft="10dp" 
         android:paddingRight="10dp"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:visibility="invisible"/>
 	
 	<ImageView android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"

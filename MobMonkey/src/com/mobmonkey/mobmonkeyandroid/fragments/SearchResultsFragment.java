@@ -47,6 +47,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.AddLocationScreen;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSearchResultsArrayAdapter;
@@ -87,7 +88,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	private float currZoomLevel = 16;
 	
 	private HashMap<Marker, JSONObject> markerHashMap;
-	private OnSearchResultsLocationSelectListener searchResultsLocationSelectListener;
+	private MMOnSearchResultsFragmentItemClickListener searchResultsLocationSelectListener;
 	
 	/*
 	 * (non-Javadoc)
@@ -152,8 +153,8 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnSearchResultsLocationSelectListener) {
-			searchResultsLocationSelectListener = (OnSearchResultsLocationSelectListener) activity;
+		if(activity instanceof MMOnSearchResultsFragmentItemClickListener) {
+			searchResultsLocationSelectListener = (MMOnSearchResultsFragmentItemClickListener) activity;
 		}
 	}
 	
@@ -167,7 +168,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 			addToHistory(markerHashMap.get((Marker) marker));
 			currMarker = marker;
 			currZoomLevel = googleMap.getCameraPosition().zoom;
-			searchResultsLocationSelectListener.onLocationSelect(markerHashMap.get((Marker) marker));
+			searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(markerHashMap.get((Marker) marker));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -235,7 +236,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 			addToHistory(searchResults.getJSONObject(position));
 			
 			try {
-				searchResultsLocationSelectListener.onLocationSelect(searchResults.getJSONObject(position));
+				searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(searchResults.getJSONObject(position));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -533,15 +534,6 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		
 		userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_HISTORY);
 		userPrefsEditor.commit();
-	}
-	
-	/**
-	 * 
-	 * @author Dezapp, LLC
-	 *
-	 */
-	public interface OnSearchResultsLocationSelectListener {
-		public void onLocationSelect(Object obj);
 	}
 	
 	/**

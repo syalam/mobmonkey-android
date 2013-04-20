@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
-
 	private Context context; 
 	private int layoutResourceId;    
 	private MMInboxItem data[] = null;
@@ -46,7 +45,7 @@ public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
 			vholder = new ViewHolder();
 			try {
 				vholder.tvLabel = (TextView) row.findViewById(R.id.tvinbox);
-				vholder.tvCounter = (TextView) row.findViewById(R.id.inboxBadgeCounter);
+				vholder.tvCounter = (TextView) row.findViewById(R.id.inboxcounter);
 			} catch (NullPointerException ex) {
 				
 			}
@@ -58,12 +57,15 @@ public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
 		
 		MMInboxItem item = data[position];
 		vholder.tvLabel.setText(item.title);
+		if(item.counter > 0) {
+			vholder.tvCounter.setVisibility(View.VISIBLE);
+			vholder.tvCounter.setText(Integer.toString(item.counter));
+		}
 		if(item.containCounter > 0) {
 			vholder.tvLabel.setTextColor(Color.BLACK);
 		} else {
 			vholder.tvLabel.setTextColor(Color.GRAY);
 		}
-		vholder.tvCounter.setText(item.counter);
 		
 		return row;
 	}

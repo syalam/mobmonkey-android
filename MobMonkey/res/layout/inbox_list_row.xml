@@ -13,7 +13,7 @@
 	    android:textAppearance="?android:attr/textAppearanceMedium"
 	    android:textStyle="bold"/>
 	
-	<TextView android:id="@+id/inboxBadgeCounter"
+	<TextView android:id="@+id/inboxcounter"
 	    android:layout_width="wrap_content" 
 	    android:layout_height="wrap_content"
 	    android:layout_marginRight="5dp"
@@ -24,7 +24,7 @@
         android:paddingLeft="10dp" 
         android:paddingRight="10dp"
         android:layout_gravity="center"
-        android:visibility="gone"/>
+        android:visibility="invisible"/>
 	
 	<ImageView android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"

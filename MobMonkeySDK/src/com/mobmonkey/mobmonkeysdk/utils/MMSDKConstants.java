@@ -27,7 +27,7 @@ public final class MMSDKConstants {
 
 	public static final String DECIMAL_FORMAT_SIX = "#.######";
 	
-	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
+	public static final String MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
 	
 	// Uri path values
@@ -78,6 +78,9 @@ public final class MMSDKConstants {
 	public static final int FAVORITES_FRAGMENT_MAP = 1;
 	
 	public static final String FACEBOOK_REQ_PERM_EMAIL = "email";
+	public static final String FACEBOOK_REQ_PERM_BIRTHDAY = "user_birthday";
+	public static final String FACEBOOK_REQ_PERM_GENDER = "gender";
+
 
 	public static final String MEDIA_TYPE_LIVESTREAMING = "livestreaming";
 	public static final String MEDIA_TYPE_VIDEO = "video";

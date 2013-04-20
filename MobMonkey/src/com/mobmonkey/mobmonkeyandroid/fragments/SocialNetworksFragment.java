@@ -1,6 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnFragmentFinishListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSocialNetworkArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSocialNetworkItem;
@@ -58,8 +59,8 @@ public class SocialNetworksFragment extends MMFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnFragmentFinishListener) {
-			onFragmentFinishListener = (OnFragmentFinishListener) activity;
+		if(activity instanceof MMOnFragmentFinishListener) {
+			onFragmentFinishListener = (MMOnFragmentFinishListener) activity;
 		}
 	}
 

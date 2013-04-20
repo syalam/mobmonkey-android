@@ -8,7 +8,7 @@ import android.app.AlertDialog;
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.fragments.SearchFragment.OnNoCategoryItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 
@@ -17,15 +17,15 @@ public class MMSearchResultsCallback implements MMCallback {
 	private Activity activity;
 	private String searchCategory;
 	
-	private OnNoCategoryItemClickListener noCategoryItemClickListener;
+	private MMOnNoCategoryFragmentItemClickListener noCategoryItemClickListener;
 	private MMCallback mmCallback;
 	
 	public MMSearchResultsCallback(Activity activity, String searchCategory, MMCallback mmCallback) {
 		this.activity = activity;
 		this.searchCategory = searchCategory;
 		
-		if(activity instanceof OnNoCategoryItemClickListener) {
-			noCategoryItemClickListener = (OnNoCategoryItemClickListener) activity;
+		if(activity instanceof MMOnNoCategoryFragmentItemClickListener) {
+			noCategoryItemClickListener = (MMOnNoCategoryFragmentItemClickListener) activity;
 		}
 		
 		this.mmCallback = mmCallback;
@@ -45,7 +45,7 @@ public class MMSearchResultsCallback implements MMCallback {
 					if(mmCallback != null) {
 						mmCallback.processCallback(obj);
 					}
-					noCategoryItemClickListener.onNoCategoryItemClick(true, searchCategory, ((String) obj));
+					noCategoryItemClickListener.onNoCategoryFragmentItemClick(true, searchCategory, ((String) obj));
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
