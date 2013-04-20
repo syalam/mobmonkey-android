@@ -4,12 +4,9 @@ import java.util.Stack;
 
 import org.json.JSONObject;
 
-import com.google.android.gms.maps.model.Marker;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.*;
-import com.mobmonkey.mobmonkeyandroid.fragments.FavoritesFragment.OnMMLocationSelectListener;
-import com.mobmonkey.mobmonkeyandroid.fragments.FavoritesFragment.OnMapIconClickListener;
-import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment.OnLocationDetailsItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -25,7 +22,9 @@ import android.util.Log;
  * @author Dezapp, LLC
  *
  */
-public class FavoritesActivity extends FragmentActivity implements OnMapIconClickListener, OnMMLocationSelectListener, OnLocationDetailsItemClickListener {
+public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFragmentClickListener,
+																   MMOnSearchResultsFragmentItemClickListener,
+																   MMOnLocationDetailsFragmentItemClickListener {
 	private static final String TAG = "FavoritesActivity: ";
 	
 	FragmentManager fragmentManager;
@@ -56,7 +55,7 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 	 * @see com.mobmonkey.mobmonkey.fragments.FavoritesFragment.OnMapIconClickListener#onMapIconClicked(java.lang.String)
 	 */
 	@Override
-	public void onMapIconClicked(int which) {
+	public void onMapIconFragmentClick(int which) {
 		if(which == MMSDKConstants.FAVORITES_FRAGMENT_MAP) {
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -75,16 +74,16 @@ public class FavoritesActivity extends FragmentActivity implements OnMapIconClic
 	 * @see com.mobmonkey.mobmonkey.fragments.FavoritesFragment.OnMMLocationSelectedListener#onLocationSelected(java.lang.Object)
 	 */
 	@Override
-	public void onLocationSelect(Object obj) {
-		Bundle data = new Bundle();
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((JSONObject) obj).toString());
+	public void onSearchResultsFragmentItemClick(JSONObject jObj) {
 		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((JSONObject) jObj).toString());
 		locationDetailsFragment.setArguments(data);
 		performTransaction(locationDetailsFragment);
 	}
 
 	@Override
-	public void onLocationDetailsItem(int position, Object obj) {
+	public void onLocationDetailsFragmentItemClick(int position, Object obj) {
 		switch(position) {
 			case 0:
 				Intent dialerIntent = new Intent(Intent.ACTION_DIAL);

@@ -4,8 +4,8 @@ import java.util.Stack;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.*;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMFragment.OnFragmentFinishListener;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +19,8 @@ import android.view.MotionEvent;
  * @author Dezapp, LLC
  *
  */
-public class SettingsActivity extends FragmentActivity implements SettingsFragment.OnItemClickListener, OnFragmentFinishListener {
+public class SettingsActivity extends FragmentActivity implements MMOnSettingsFragmentItemClickListener,
+																  MMOnFragmentFinishListener {
 	private static final String TAG = "SettingsActivtiy: ";
 	private FragmentManager fragmentManager;
 	private Stack<MMFragment> fragmentStack;
@@ -44,7 +45,7 @@ public class SettingsActivity extends FragmentActivity implements SettingsFragme
 	}
 
 	@Override
-	public void onSettingsItemClick(int position) {		
+	public void onSettingsFragmentItemClick(int position) {		
 		switch(position) {
 			case 0:
 				performTransaction(new MyInfoFragment());

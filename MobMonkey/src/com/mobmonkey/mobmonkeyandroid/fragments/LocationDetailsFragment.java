@@ -9,6 +9,7 @@ import com.mobmonkey.mobmonkeyandroid.LocationDetailsMediaScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.MMVideoPlayerScreen;
 import com.mobmonkey.mobmonkeyandroid.MakeARequestScreen;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
@@ -89,7 +90,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private JSONArray videoMediaUrl;
 	private JSONArray imageMediaUrl;
 	
-	private OnLocationDetailsItemClickListener listener;
+	private MMOnLocationDetailsFragmentItemClickListener listener;
 	
 	private String mediaResults;
 	private boolean retrieveLocationDetails = false;
@@ -174,8 +175,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnLocationDetailsItemClickListener) {
-			listener = (OnLocationDetailsItemClickListener) activity;
+		if(activity instanceof MMOnLocationDetailsFragmentItemClickListener) {
+			listener = (MMOnLocationDetailsFragmentItemClickListener) activity;
 		}
 	}
 
@@ -236,11 +237,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
 		if(position == 0) {
-			listener.onLocationDetailsItem(position, ((TextView)view.findViewById(R.id.tvlabel)).getText().toString());
+			listener.onLocationDetailsFragmentItemClick(position, ((TextView)view.findViewById(R.id.tvlabel)).getText().toString());
 		} else if(position == 1) {
-			listener.onLocationDetailsItem(position, locationDetails.toString());
+			listener.onLocationDetailsFragmentItemClick(position, locationDetails.toString());
 		} else if(position == 2) {
-			listener.onLocationDetailsItem(position, MMSDKConstants.DEFAULT_STRING_EMPTY);
+			listener.onLocationDetailsFragmentItemClick(position, MMSDKConstants.DEFAULT_STRING_EMPTY);
 		}
 	}
 
@@ -433,15 +434,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				MMConstants.PARTNER_ID, 
 				userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 				userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-	}
-	
-	/**
-	 * Listener for when user clicks on phone field, address field, or add notifications field of the location details
-	 * @author Dezapp, LLC
-	 *
-	 */
-	public interface OnLocationDetailsItemClickListener {
-		public void onLocationDetailsItem(int position, Object obj);
 	}
 
 	/**

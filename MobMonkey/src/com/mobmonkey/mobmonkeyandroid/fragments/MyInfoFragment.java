@@ -12,7 +12,7 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.SignInScreen;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
@@ -42,6 +42,7 @@ import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 /**
  * Android {@link Fragment} screen displays the user's information.
@@ -161,8 +162,8 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnFragmentFinishListener) {
-			onFragmentFinishListener = (OnFragmentFinishListener) activity;
+		if(activity instanceof MMOnFragmentFinishListener) {
+			onFragmentFinishListener = (MMOnFragmentFinishListener) activity;
 		}
 	}
 
@@ -421,6 +422,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 				try {
 					JSONObject jObj = new JSONObject((String) obj);
 					if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
 						onFragmentFinishListener.onFragmentFinish();
 					}
 				} catch (JSONException e) {

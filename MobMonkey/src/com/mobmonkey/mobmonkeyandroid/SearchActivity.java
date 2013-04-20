@@ -7,11 +7,7 @@ import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.*;
-import com.mobmonkey.mobmonkeyandroid.fragments.CategoriesFragment.OnSubCategoryItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment.OnLocationDetailsItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.fragments.SearchFragment.OnCategoryItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.fragments.SearchFragment.OnNoCategoryItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.fragments.SearchResultsFragment.OnSearchResultsLocationSelectListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -26,11 +22,11 @@ import android.support.v4.app.FragmentTransaction;
  * @author Dezapp, LLC
  *
  */
-public class SearchActivity extends FragmentActivity implements OnNoCategoryItemClickListener, 
-																OnCategoryItemClickListener, 
-																OnSubCategoryItemClickListener, 
-																OnSearchResultsLocationSelectListener, 
-																OnLocationDetailsItemClickListener {
+public class SearchActivity extends FragmentActivity implements MMOnNoCategoryFragmentItemClickListener, 
+																MMOnCategoryFragmentItemClickListener, 
+																MMOnSubCategoryFragmentItemClickListener, 
+																MMOnSearchResultsFragmentItemClickListener, 
+																MMOnLocationDetailsFragmentItemClickListener {
 	FragmentManager fragmentManager;
 	Stack<MMFragment> fragmentStack;
 	
@@ -53,7 +49,7 @@ public class SearchActivity extends FragmentActivity implements OnNoCategoryItem
 	}
 
 	@Override
-	public void onNoCategoryItemClick(boolean showMap, String searchCategory, String results) {
+	public void onNoCategoryFragmentItemClick(boolean showMap, String searchCategory, String results) {
 		SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
 		Bundle data = new Bundle();
 		data.putBoolean(MMSDKConstants.KEY_INTENT_EXTRA_DISPLAY_MAP, showMap);
@@ -64,7 +60,7 @@ public class SearchActivity extends FragmentActivity implements OnNoCategoryItem
 	}
 
 	@Override
-	public void onCategoryItemClick(JSONArray subCategories, String selectedCategory) {
+	public void onCategoryFragmentItemClick(JSONArray subCategories, String selectedCategory) {
 		CategoriesFragment categoriesFragment = new CategoriesFragment();
 		Bundle data = new Bundle();
 		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, subCategories.toString());
@@ -74,7 +70,7 @@ public class SearchActivity extends FragmentActivity implements OnNoCategoryItem
 	}
 	
 	@Override
-	public void onSubCategoryItemClick(JSONArray subCategories, String selectedCategory) {
+	public void onSubCategoryFragmentItemClick(JSONArray subCategories, String selectedCategory) {
 		CategoriesFragment categoriesFragment = new CategoriesFragment();
 		Bundle data = new Bundle();
 		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, subCategories.toString());
@@ -84,16 +80,16 @@ public class SearchActivity extends FragmentActivity implements OnNoCategoryItem
 	}
 	
 	@Override
-	public void onLocationSelect(Object obj) {
+	public void onSearchResultsFragmentItemClick(JSONObject jObj) {
 		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
 		Bundle data = new Bundle();
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((JSONObject) obj).toString());
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
 		locationDetailsFragment.setArguments(data);
 		performTransaction(locationDetailsFragment);
 	}
 	
 	@Override
-	public void onLocationDetailsItem(int position, Object obj) {
+	public void onLocationDetailsFragmentItemClick(int position, Object obj) {
 		switch(position) {
 		case 0:
 			Intent dialerIntent = new Intent(Intent.ACTION_DIAL);

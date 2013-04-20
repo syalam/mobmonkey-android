@@ -29,6 +29,7 @@ import android.widget.ListView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.AddLocationScreen;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMResultsLocation;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSearchResultsArrayAdapter;
@@ -54,8 +55,8 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	private MMResultsLocation[] favoriteLocations;
 	private JSONArray favoritesList;
 	
-	private OnMapIconClickListener mapIconClickListener;
-	private OnMMLocationSelectListener locationSelectListener;
+	private MMOnMapIconFragmentClickListener mapIconClickListener;
+	private MMOnSearchResultsFragmentItemClickListener locationSelectListener;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,10 +80,10 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnMapIconClickListener) {
-			mapIconClickListener = (OnMapIconClickListener) activity;
-			if(activity instanceof OnMMLocationSelectListener) {
-				locationSelectListener = (OnMMLocationSelectListener) activity;
+		if(activity instanceof MMOnMapIconFragmentClickListener) {
+			mapIconClickListener = (MMOnMapIconFragmentClickListener) activity;
+			if(activity instanceof MMOnSearchResultsFragmentItemClickListener) {
+				locationSelectListener = (MMOnSearchResultsFragmentItemClickListener) activity;
 			}
 		}
 	}
@@ -92,7 +93,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			switch(view.getId()) {
 				case R.id.ibmap:
-					mapIconClickListener.onMapIconClicked(MMSDKConstants.FAVORITES_FRAGMENT_MAP);
+					mapIconClickListener.onMapIconFragmentClick(MMSDKConstants.FAVORITES_FRAGMENT_MAP);
 					break;
 				case R.id.btnaddloc:
 					startActivity(new Intent(getActivity(), AddLocationScreen.class));
@@ -104,7 +105,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		try {
-			locationSelectListener.onLocationSelect(favoritesList.getJSONObject(position));
+			locationSelectListener.onSearchResultsFragmentItemClick(favoritesList.getJSONObject(position));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -172,13 +173,5 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		}
 		Collections.reverse(temp);
 		favoritesList = new JSONArray(temp);
-	}
-	
-	public interface OnMapIconClickListener {
-		public void onMapIconClicked(int which);
-	}
-	
-	public interface OnMMLocationSelectListener {
-		public void onLocationSelect(Object obj);
 	}
 }

@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import com.facebook.Session;
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMUserAdapter;
@@ -38,7 +39,7 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
 	
-	private OnItemClickListener listener;
+	private MMOnSettingsFragmentItemClickListener listener;
 	private ProgressDialog progressDialog;
 	private ListView lvSettingsCategory;
 	
@@ -75,23 +76,19 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnItemClickListener) {
-			listener = (OnItemClickListener) activity;
+		if(activity instanceof MMOnSettingsFragmentItemClickListener) {
+			listener = (MMOnSettingsFragmentItemClickListener) activity;
 		}
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		listener.onSettingsItemClick(position);
+		listener.onSettingsFragmentItemClick(position);
 	}
 
 	@Override
 	public void onFragmentBackPressed() {
 		
-	}
-	
-	public interface OnItemClickListener {
-		public void onSettingsItemClick(int position);
 	}
 	
     /**

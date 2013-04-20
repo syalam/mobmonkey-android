@@ -28,7 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.fragments.SearchFragment.OnNoCategoryItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
@@ -59,8 +59,8 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	private ArrayList<String> subCategories;
 	private JSONArray categoriesArray;
 	
-	private OnSubCategoryItemClickListener subCategoryItemClickListener;
-	private OnNoCategoryItemClickListener noCategoryItemClickListener;
+	private MMOnSubCategoryFragmentItemClickListener subCategoryItemClickListener;
+	private MMOnNoCategoryFragmentItemClickListener noCategoryItemClickListener;
 	private String searchText;
 	private String searchSubCategory;
 	private boolean hasResults = false;
@@ -93,10 +93,10 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnSubCategoryItemClickListener) {
-			subCategoryItemClickListener = (OnSubCategoryItemClickListener) activity;
-			if(activity instanceof OnNoCategoryItemClickListener) {
-				noCategoryItemClickListener = (OnNoCategoryItemClickListener) activity;
+		if(activity instanceof MMOnSubCategoryFragmentItemClickListener) {
+			subCategoryItemClickListener = (MMOnSubCategoryFragmentItemClickListener) activity;
+			if(activity instanceof MMOnNoCategoryFragmentItemClickListener) {
+				noCategoryItemClickListener = (MMOnNoCategoryFragmentItemClickListener) activity;
 			}
 		}
 	}
@@ -113,7 +113,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			String selectedSubCategory = subCategory.getString(Locale.getDefault().getLanguage());
 			
 			if(!subCategoriesArray.isNull(0)) {
-				subCategoryItemClickListener.onSubCategoryItemClick(subCategoriesArray, selectedSubCategory);
+				subCategoryItemClickListener.onSubCategoryFragmentItemClick(subCategoriesArray, selectedSubCategory);
 			} else {
 				checkCategorySelected(selectedSubCategory, subCategory);
 			}
@@ -192,7 +192,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			searchSubCategory = selectedSubCategory;
 			searchSubCategory(selectedSubCategory, subCategory);
 		} else {
-			noCategoryItemClickListener.onNoCategoryItemClick(true, selectedSubCategory, results);
+			noCategoryItemClickListener.onNoCategoryFragmentItemClick(true, selectedSubCategory, results);
 		}
 	}
 	
@@ -255,15 +255,6 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 				MMConstants.PARTNER_ID);
 	}
 	
-	/**
-	 * 
-	 * @author Dezapp, LLC
-	 *
-	 */
-	public interface OnSubCategoryItemClickListener {
-		public void onSubCategoryItemClick(JSONArray subCategories, String selectedCategory);
-	}
-	
     /**
      * Custom {@link MMCallback} specifically for {@link SearchScreen} to be processed after receiving response from MobMonkey server.
      * @author Dezapp, LLC
@@ -277,7 +268,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			if(obj != null) {
 				Log.d(TAG, TAG + "Response: " + ((String) obj));
 				
-				noCategoryItemClickListener.onNoCategoryItemClick(true, searchText, ((String) obj));
+				noCategoryItemClickListener.onNoCategoryFragmentItemClick(true, searchText, ((String) obj));
 			}
 		}
 	}

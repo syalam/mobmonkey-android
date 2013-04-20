@@ -5,7 +5,7 @@ import java.util.Stack;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.TopViewedFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.TrendingNowFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.TrendingNowFragment.OnTrendingItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 
 import android.os.Bundle;
@@ -17,7 +17,7 @@ import android.support.v4.app.FragmentTransaction;
  * @author Dezapp, LLC
  *
  */
-public class TrendingNowActivity extends FragmentActivity implements OnTrendingItemClickListener{
+public class TrendingNowActivity extends FragmentActivity implements MMOnTrendingFragmentItemClickListener {
 	FragmentManager fragmentManager;
 	Stack<MMFragment> fragmentStack;
 	
@@ -40,7 +40,7 @@ public class TrendingNowActivity extends FragmentActivity implements OnTrendingI
 	}
 	
 	@Override
-	public void onTrendingItemClick(int position) {
+	public void onTrendingFragmentItemClick(int position) {
 		MMFragment mmFragment = null;
 		
 		switch(position) {

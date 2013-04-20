@@ -1,12 +1,11 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.R.layout;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +26,8 @@ public class MyInterestsFragment extends MMFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnFragmentFinishListener) {
-			onFragmentFinishListener = (OnFragmentFinishListener) activity;
+		if(activity instanceof MMOnFragmentFinishListener) {
+			onFragmentFinishListener = (MMOnFragmentFinishListener) activity;
 		}
 	}
 

@@ -41,7 +41,7 @@ public class MMTrendingArrayAdapter extends ArrayAdapter<MMTrendingItem> {
 			vholder = new ViewHolder();
 			try {
 				vholder.tvLabel = (TextView) row.findViewById(R.id.tvtrending);
-				vholder.tvCounter = (TextView) row.findViewById(R.id.trendingBadgeCounter);
+				vholder.tvCounter = (TextView) row.findViewById(R.id.trendingcounter);
 			} catch (NullPointerException ex) {
 				
 			}
@@ -55,10 +55,11 @@ public class MMTrendingArrayAdapter extends ArrayAdapter<MMTrendingItem> {
 		vholder.tvLabel.setText(item.title);
 		if(item.counter > 0) {
 			vholder.tvLabel.setTextColor(Color.BLACK);
+			vholder.tvCounter.setVisibility(View.VISIBLE);
+			vholder.tvCounter.setText(Integer.toString(item.counter));
 		} else {
 			vholder.tvLabel.setTextColor(Color.GRAY);
 		}
-		vholder.tvCounter.setText(Integer.toString(item.counter));
 		
 		return row;
 	}

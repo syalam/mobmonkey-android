@@ -40,8 +40,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.AddLocationScreen;
-import com.mobmonkey.mobmonkeyandroid.fragments.FavoritesFragment.OnMMLocationSelectListener;
-import com.mobmonkey.mobmonkeyandroid.fragments.FavoritesFragment.OnMapIconClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
@@ -71,8 +70,8 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	private Marker currMarker;
 	private float currZoomLevel = 16;
 	
-	private OnMapIconClickListener mapIconClickListener;
-	private OnMMLocationSelectListener locationSelectListener;
+	private MMOnMapIconFragmentClickListener mapIconClickListener;
+	private MMOnSearchResultsFragmentItemClickListener locationSelectListener;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStates) {
@@ -99,10 +98,10 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof OnMapIconClickListener) {
-			mapIconClickListener = (OnMapIconClickListener) activity;
-			if(activity instanceof OnMMLocationSelectListener) {
-				locationSelectListener = (OnMMLocationSelectListener) activity;
+		if(activity instanceof MMOnMapIconFragmentClickListener) {
+			mapIconClickListener = (MMOnMapIconFragmentClickListener) activity;
+			if(activity instanceof MMOnSearchResultsFragmentItemClickListener) {
+				locationSelectListener = (MMOnSearchResultsFragmentItemClickListener) activity;
 			}
 		}
 	}
@@ -112,7 +111,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		switch(view.getId()) {
 			case R.id.ibmap:
 				if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-					mapIconClickListener.onMapIconClicked(MMSDKConstants.FAVORITES_FRAGMENT_LIST);
+					mapIconClickListener.onMapIconFragmentClick(MMSDKConstants.FAVORITES_FRAGMENT_LIST);
 				}
 				break;
 			case R.id.btnaddloc:
@@ -141,7 +140,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	public void onInfoWindowClick(Marker marker) {
 		currMarker = marker;
 		currZoomLevel = googleMap.getCameraPosition().zoom;
-		locationSelectListener.onLocationSelect(markerHashMap.get((Marker) marker));
+		locationSelectListener.onSearchResultsFragmentItemClick(markerHashMap.get((Marker) marker));
 	}
 
 	@Override
