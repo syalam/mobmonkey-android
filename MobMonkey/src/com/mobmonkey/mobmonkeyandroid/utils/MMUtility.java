@@ -4,13 +4,18 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
+
 import android.location.Location;
+import android.util.Log;
 
 /**
  * @author Dezapp, LLC
  *
  */
 public final class MMUtility {
+	private static final String TAG = "MMUtility";
+	
 	private MMUtility () {
 		throw new AssertionError();
 	}
@@ -51,5 +56,27 @@ public final class MMUtility {
 	     
 	    SimpleDateFormat sdf = new SimpleDateFormat(format);
 	    return sdf.format(calendar.getTime());
+	}
+	
+	public static String getExpiryDate(long timeToExpiryDateInMillisecond) {
+		Log.d(TAG, "expiryDate diff: " + timeToExpiryDateInMillisecond);
+		
+		Calendar calendar = Calendar.getInstance();
+	    calendar.setTimeInMillis(timeToExpiryDateInMillisecond);
+		SimpleDateFormat sdf;
+		String expiryDate = MMSDKConstants.DEFAULT_STRING_EMPTY;
+		
+		if(timeToExpiryDateInMillisecond < 60000) {
+			sdf = new SimpleDateFormat("s");
+			expiryDate = sdf.format(calendar.getTime()) + "s";
+		} else if(timeToExpiryDateInMillisecond < 3600000) {
+			sdf = new SimpleDateFormat("m");
+			expiryDate = sdf.format(calendar.getTime()) + "m";
+		} else {
+			sdf = new SimpleDateFormat("m");
+			expiryDate = sdf.format(calendar.getTime()) + "h";
+		}
+		
+		return expiryDate;
 	}
 }

@@ -50,6 +50,8 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 	private LinkedList<MMMediaItem> mmVideoMediaItems;
 	private LinkedList<MMMediaItem> mmImageMediaItems;
 	
+	MMMediaArrayAdapter adapter;
+	
 	private boolean retrieveStreamMedia;
 	private boolean retrieveVideoMedia;
 	private boolean retrieveImageMedia;
@@ -204,11 +206,13 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				if(i == imageMediaUrls.length() - 1) {
 					lastImageMedia = true;
 				}
-				mmMediaItem.setExpiryDate(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+				mmMediaItem.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong("uploadedDate")));
 				mmMediaItem.setIsImage(true);
 				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmImageMediaItems.add(mmMediaItem);
 			}
+			adapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmImageMediaItems);
+			lvImageMedia.setAdapter(adapter);
 		}
 	}
 	
@@ -230,10 +234,11 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
 				mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
 				if(lastImageMedia) {
-					MMMediaArrayAdapter adapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmImageMediaItems);
-					lvImageMedia.setAdapter(adapter);
+//					MMMediaArrayAdapter adapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmImageMediaItems);
+//					lvImageMedia.setAdapter(adapter);
 					retrieveImageMedia = false;
 				}
+				adapter.notifyDataSetChanged();
 			}
 		}
 	}
