@@ -19,13 +19,6 @@
 			android:layout_width="match_parent"
 			android:layout_height="260dp"/>
 		
-		<ImageButton android:id="@+id/ibplay"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:background="@drawable/btn_play_video"
-			android:visibility="invisible"/>
-		
 		<TextView android:id="@+id/tvexpirydate"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -35,7 +28,13 @@
 			android:gravity="center"
 			android:drawableLeft="@drawable/ic_dialog_time"
 			android:drawablePadding="5dp"
-			android:textColor="@android:color/white"
+			android:textColor="@android:color/white"/>
+		
+		<ImageButton android:id="@+id/ibplay"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:background="@drawable/btn_play_video"
 			android:visibility="invisible"/>
 		
 		<ImageButton android:id="@+id/ibsharemedia"

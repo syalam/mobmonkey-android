@@ -195,23 +195,31 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		
 		if(favoritesCount > 0) {
 			mmTrendingItem[0].counter = favoritesCount;
-			arrayAdapter.isEnabled(0);
+		} else {
+			mmTrendingItem[0].counter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
+		arrayAdapter.isEnabled(0);		
 		
 		if(myInterestsCount > 0) {
 			mmTrendingItem[1].counter = myInterestsCount;
-			arrayAdapter.isEnabled(1);
+		} else {
+			mmTrendingItem[1].counter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
+		arrayAdapter.isEnabled(1);
 		
 		if(topViewedCount > 0) {
 			mmTrendingItem[2].counter = topViewedCount;
-			arrayAdapter.isEnabled(2);
+		} else {
+			mmTrendingItem[2].counter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
+		arrayAdapter.isEnabled(2);
 		
 		if(nearMeCount > 0) {
 			mmTrendingItem[3].counter = nearMeCount;
-			arrayAdapter.isEnabled(3);
+		} else {
+			mmTrendingItem[3].counter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
+		arrayAdapter.isEnabled(3);
 		
 		arrayAdapter.notifyDataSetChanged();
 	}

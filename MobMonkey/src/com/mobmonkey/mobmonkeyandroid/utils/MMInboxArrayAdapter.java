@@ -60,6 +60,8 @@ public class MMInboxArrayAdapter extends ArrayAdapter<MMInboxItem>{
 		if(item.counter > 0) {
 			vholder.tvCounter.setVisibility(View.VISIBLE);
 			vholder.tvCounter.setText(Integer.toString(item.counter));
+		} else {
+			vholder.tvCounter.setVisibility(View.INVISIBLE);
 		}
 		if(item.containCounter > 0) {
 			vholder.tvLabel.setTextColor(Color.BLACK);

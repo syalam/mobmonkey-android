@@ -61,7 +61,6 @@ public class MMMediaArrayAdapter extends ArrayAdapter<MMMediaItem> {
 		
 		MMMediaItem mmMediaItem = mmMediaItems.get(position);
 		vholder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
-		vholder.tvExpiryDate.setVisibility(View.VISIBLE);
 		vholder.tvExpiryDate.setText(mmMediaItem.getExpiryDate());
 		vholder.ibShareMedia.setOnClickListener(mmMediaItem.getShareMediaOnClickListener());
 		

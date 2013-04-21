@@ -319,7 +319,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						MediaMetadataRetriever mmr = new MediaMetadataRetriever();
 						mmr.setDataSource(getActivity(), Uri.parse(mediaStreamVideoUrl));
 						ivtnMedia.setImageBitmap(mmr.getFrameAtTime(1000));
-						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 						ibPlay.setVisibility(View.VISIBLE);
 						ibPlay.setOnClickListener(LocationDetailsFragment.this);
 						isFirstMedia = false;
@@ -330,7 +330,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					if(isFirstMedia) {
 						mediaStreamVideoUrl = jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
 						MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(), Uri.parse(mediaStreamVideoUrl));
-						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 						ibPlay.setVisibility(View.VISIBLE);
 						ibPlay.setOnClickListener(LocationDetailsFragment.this);
 						isFirstMedia = false;
@@ -341,8 +341,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					if(isFirstMedia) {
 						MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 						tvExpiryDate.setVisibility(View.VISIBLE);
-						tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong("uploadedDate")));
-//						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 						ivtnMedia.setClickable(true);
 						ivtnMedia.setOnClickListener(LocationDetailsFragment.this);
 						isFirstMedia = false;

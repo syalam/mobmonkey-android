@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
@@ -34,4 +35,11 @@ public class ExpandedThumbnailScreen extends Activity {
 		ivExpandedThumbnail.setImageBitmap((Bitmap) getIntent().getParcelableExtra(MMSDKConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA));
 	}
 
+	public void viewOnClick(View view) {
+		switch(view.getId()) {
+			case R.id.ibcancel:
+				finish();
+				break;
+		}
+	}
 }

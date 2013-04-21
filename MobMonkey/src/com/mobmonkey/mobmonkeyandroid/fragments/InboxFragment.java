@@ -137,20 +137,29 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		if(openRequestCount > 0) {
 			inboxItems[0].counter = openRequestCount;
 			inboxItems[0].containCounter = openRequestCount;
-			arrayAdapter.isEnabled(0);
+		} else {
+			inboxItems[0].counter = MMSDKConstants.DEFAULT_INT_ZERO;
+			inboxItems[0].containCounter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
+		arrayAdapter.isEnabled(0);
 		
 		if(answeredRequestsCount > 0) {
 			inboxItems[1].counter = fulfilledUnreadCount;
 			inboxItems[1].containCounter = answeredRequestsCount;
-			arrayAdapter.isEnabled(1);
+		} else {
+			inboxItems[1].counter = MMSDKConstants.DEFAULT_INT_ZERO;
+			inboxItems[1].containCounter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
+		arrayAdapter.isEnabled(1);
 		
 		if(assignedRequestsCount > 0) {
 			inboxItems[2].counter = assignedUnreadCount;
 			inboxItems[2].containCounter = assignedRequestsCount;
-			arrayAdapter.isEnabled(2);
+		} else {
+			inboxItems[2].counter = MMSDKConstants.DEFAULT_INT_ZERO;
+			inboxItems[2].containCounter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
+		arrayAdapter.isEnabled(2);
 		
 		arrayAdapter.notifyDataSetChanged();
 	}
