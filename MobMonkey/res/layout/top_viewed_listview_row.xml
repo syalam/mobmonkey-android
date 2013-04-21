@@ -1,39 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingTop="5dp"
-	android:paddingBottom="5dp">
-    
-	<TextView android:id="@+id/tvtopviewedlocationname"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textStyle="bold"
-		android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-	<FrameLayout android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:background="@color/backgroundcolor"
+	android:paddingTop="3dp"
+	android:paddingBottom="20dp">
 	
-		<ImageView android:id="@+id/ivtnmedia"
+	<LinearLayout android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingLeft="5dp"
+		android:paddingRight="5dp"
+		android:paddingTop="10dp"
+		android:paddingBottom="30dp"
+		android:background="@android:color/white">
+        
+		<TextView android:id="@+id/tvlocname"
 			android:layout_width="match_parent"
-			android:layout_height="260dp"/>
-		
-		<ImageButton android:id="@+id/ibplay"
-			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:background="@drawable/btn_play_video"
-			android:visibility="invisible"/>
-		
-		<ImageButton android:id="@+id/ibsharemedia"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="right|bottom"
-			android:layout_marginBottom="5dp"
-			android:layout_marginRight="15dp"
-			android:background="@drawable/btn_more_overlay"/>
-
-	</FrameLayout>
+			android:layout_marginBottom="10dp"
+			android:textStyle="bold"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+    
+		<FrameLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+		    
+			<ImageView android:id="@+id/ivtnmedia"
+				android:layout_width="match_parent"
+				android:layout_height="260dp"/>
+			
+			<TextView android:id="@+id/tvexpirydate"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="right"
+				android:layout_marginTop="10dp"
+				android:layout_marginRight="10dp"
+				android:gravity="center"
+				android:drawableLeft="@drawable/ic_dialog_time"
+				android:drawablePadding="5dp"
+				android:textColor="@android:color/white"/>
+			
+			<ImageButton android:id="@+id/ibplay"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:background="@drawable/btn_play_video"
+				android:visibility="invisible"/>
+			
+			<ImageButton android:id="@+id/ibsharemedia"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="right|bottom"
+				android:layout_marginBottom="5dp"
+				android:layout_marginRight="15dp"
+				android:background="@drawable/btn_more_overlay"/>
+	
+		</FrameLayout>
+	
+    </LinearLayout>
 	
 </LinearLayout>

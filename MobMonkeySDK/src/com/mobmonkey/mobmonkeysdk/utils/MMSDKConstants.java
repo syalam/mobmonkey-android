@@ -27,7 +27,7 @@ public final class MMSDKConstants {
 
 	public static final String DECIMAL_FORMAT_SIX = "#.######";
 	
-	public static final String MOBMONKEY_URL = "http://staging.mobmonkey.com/rest/";
+	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
 	
 	// Uri path values

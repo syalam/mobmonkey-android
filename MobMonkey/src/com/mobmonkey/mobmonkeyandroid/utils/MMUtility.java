@@ -58,23 +58,15 @@ public final class MMUtility {
 	    return sdf.format(calendar.getTime());
 	}
 	
-	public static String getExpiryDate(long timeToExpiryDateInMillisecond) {
-		Log.d(TAG, "expiryDate diff: " + timeToExpiryDateInMillisecond);
-		
-		Calendar calendar = Calendar.getInstance();
-	    calendar.setTimeInMillis(timeToExpiryDateInMillisecond);
-		SimpleDateFormat sdf;
+	public static String getExpiryDate(long timeToExpiryDateInMillisecond) {		
 		String expiryDate = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		
 		if(timeToExpiryDateInMillisecond < 60000) {
-			sdf = new SimpleDateFormat("s");
-			expiryDate = sdf.format(calendar.getTime()) + "s";
+			expiryDate = Integer.toString((int) Math.floor(timeToExpiryDateInMillisecond / 1000)) + "s";
 		} else if(timeToExpiryDateInMillisecond < 3600000) {
-			sdf = new SimpleDateFormat("m");
-			expiryDate = sdf.format(calendar.getTime()) + "m";
+			expiryDate = Integer.toString((int) Math.floor(timeToExpiryDateInMillisecond / 60000)) + "m";
 		} else {
-			sdf = new SimpleDateFormat("m");
-			expiryDate = sdf.format(calendar.getTime()) + "h";
+			expiryDate = Integer.toString((int) Math.floor(timeToExpiryDateInMillisecond / 3600000)) + "h";
 		}
 		
 		return expiryDate;

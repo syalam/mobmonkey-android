@@ -206,7 +206,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				if(i == imageMediaUrls.length() - 1) {
 					lastImageMedia = true;
 				}
-				mmMediaItem.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong("uploadedDate")));
+				mmMediaItem.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 				mmMediaItem.setIsImage(true);
 				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmImageMediaItems.add(mmMediaItem);

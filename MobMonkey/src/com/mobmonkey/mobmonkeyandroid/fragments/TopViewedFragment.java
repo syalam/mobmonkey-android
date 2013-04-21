@@ -100,6 +100,7 @@ public class TopViewedFragment extends MMFragment {
 				}
 				
 				topViewedItems[i].setLocationName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
+				topViewedItems[i].setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - jObjMedia.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 				topViewedItems[i].setShareMediaOnClickListener(new MMShareMediaOnClickListener(getActivity()));
 			}
 			

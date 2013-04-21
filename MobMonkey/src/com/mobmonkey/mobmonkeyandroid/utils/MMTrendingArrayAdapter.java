@@ -4,7 +4,6 @@ import com.mobmonkey.mobmonkeyandroid.R;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +20,6 @@ public class MMTrendingArrayAdapter extends ArrayAdapter<MMTrendingItem> {
 	private MMTrendingItem data[] = null;
     
     public MMTrendingArrayAdapter(Context context, int layoutResourceId, MMTrendingItem[] data) {
-        
     	super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -59,6 +57,7 @@ public class MMTrendingArrayAdapter extends ArrayAdapter<MMTrendingItem> {
 			vholder.tvCounter.setText(Integer.toString(item.counter));
 		} else {
 			vholder.tvLabel.setTextColor(Color.GRAY);
+			vholder.tvCounter.setVisibility(View.INVISIBLE);
 		}
 		
 		return row;
