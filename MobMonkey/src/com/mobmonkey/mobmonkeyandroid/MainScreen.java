@@ -263,7 +263,6 @@ public class MainScreen extends TabActivity {
 											userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 											userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		} else {
-			setTabs();
 			MMProgressDialog.dismissDialog();
 		}
 	}

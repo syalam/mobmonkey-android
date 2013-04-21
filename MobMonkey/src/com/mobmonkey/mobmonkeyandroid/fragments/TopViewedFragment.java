@@ -10,8 +10,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,16 +43,18 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 public class TopViewedFragment extends MMFragment {
 	public static final String TAG = "TopViewedFragment: "; 
 	
-	private ListView lvtopviewed;
+	private ListView lvTopViewed;
 	private JSONArray topViewed;
 	private MMMediaItem[] topViewedItems;
+	private MMTopViewedArrayAdapter adapter;
+	
 	private SharedPreferences userPrefs;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		View view = inflater.inflate(R.layout.fragment_topviewed_screen, container, false);
-		lvtopviewed = (ListView) view.findViewById(R.id.lvtopviewed);
+		lvTopViewed = (ListView) view.findViewById(R.id.lvtopviewed);
 		getTrending();
 		return view;
 	}
@@ -90,12 +94,17 @@ public class TopViewedFragment extends MMFragment {
 					topViewedItems[i].setIsImage(true);
 				} else if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_TYPE_VIDEO)) {
 					// TODO: create thumbnail from video
+					MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(i), Uri.parse(jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
+					topViewedItems[i].setIsVideo(true);
 					topViewedItems[i].setPlayOnClickListener(new MMVideoPlayOnClickListener(getActivity(), jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 				}
 				
 				topViewedItems[i].setLocationName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
 				topViewedItems[i].setShareMediaOnClickListener(new MMShareMediaOnClickListener(getActivity()));
 			}
+			
+			adapter = new MMTopViewedArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, topViewedItems);
+			lvTopViewed.setAdapter(adapter);
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		}
@@ -148,10 +157,11 @@ public class TopViewedFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				topViewedItems[topViewedLocation].setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, 300, 200));
+				Display display = getActivity().getWindowManager().getDefaultDisplay();
+				topViewedItems[topViewedLocation].setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, 350, 270));
 				topViewedItems[topViewedLocation].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
-				MMTopViewedArrayAdapter adapter = new MMTopViewedArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, topViewedItems);
-				lvtopviewed.setAdapter(adapter);
+//				MMTopViewedArrayAdapter adapter = new MMTopViewedArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, topViewedItems);
+//				lvtopviewed.setAdapter(adapter);
 				adapter.notifyDataSetChanged();
 			}
 		}

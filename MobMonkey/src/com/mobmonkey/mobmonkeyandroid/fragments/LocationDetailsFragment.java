@@ -258,7 +258,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * @throws JSONException
 	 */
 	private void setLocationDetails() throws JSONException {
-		Log.d(TAG, locationDetails.toString());
 		tvLocNameTitle.setText(locationDetails.getString(MMSDKConstants.JSON_KEY_NAME));
 		tvLocName.setText(locationDetails.getString(MMSDKConstants.JSON_KEY_NAME));
 		tvMembersFound.setText(locationDetails.getString(MMSDKConstants.JSON_KEY_MONKEYS) + MMSDKConstants.DEFAULT_STRING_SPACE + getString(R.string.tv_members_found));
@@ -342,7 +341,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					if(isFirstMedia) {
 						MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 						tvExpiryDate.setVisibility(View.VISIBLE);
-						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
+						tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong("uploadedDate")));
+//						tvExpiryDate.setText(MMUtility.getDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE), "mm") + "m");
 						ivtnMedia.setClickable(true);
 						ivtnMedia.setOnClickListener(LocationDetailsFragment.this);
 						isFirstMedia = false;
@@ -445,7 +445,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				Log.d(TAG, TAG + "Response: " + ((String) obj));
+//				Log.d(TAG, TAG + "Response: " + ((String) obj));
 				try {
 					locationDetails = new JSONObject((String) obj);
 					
@@ -527,7 +527,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		@Override
 		public void processCallback(Object obj) {
 			imageMedia = (Bitmap) obj;
-			// TODO: create a thumbnail from image
 			ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
 		}
 	}
