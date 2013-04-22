@@ -85,6 +85,8 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 		if(item.getImageMedia() != null) {
 			// image type
 			if(item.isImage()) {
+				Log.d("MMAnsweredRequestArrayAdapter", "images");
+				
 				vholder.btnPlay.setVisibility(View.GONE);
 				vholder.tvExp.setVisibility(View.VISIBLE);
 				vholder.btnOverlay.setVisibility(View.VISIBLE);
@@ -103,6 +105,7 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 			} 
 			// videow type
 			else if(item.isVideo()) {
+				
 				vholder.tvExp.setVisibility(View.VISIBLE);
 				vholder.btnOverlay.setVisibility(View.VISIBLE);
 				vholder.btnPlay.setVisibility(View.VISIBLE);
