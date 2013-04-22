@@ -59,6 +59,9 @@ public class SettingsActivity extends FragmentActivity implements MMOnSettingsFr
 			case 3:
 				startActivity(new Intent(SettingsActivity.this, SubscribeScreen.class));
 				break;
+			case 4:
+				startActivity(new Intent(SettingsActivity.this, TermsofuseScreen.class));
+				break;
 		}
 	}
 	

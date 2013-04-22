@@ -39,7 +39,7 @@
 	<!-- Keeps the processor from sleeping when a message is received. -->
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	
-	<application android:icon="@drawable/app_icon"
+	<application android:icon="@drawable/app_icon_2"
 		android:label="@string/app_name"
 		android:theme="@android:style/Theme.Light.NoTitleBar">
 		<uses-library android:name="com.google.android.maps" />
@@ -56,7 +56,7 @@
 	<service android:name="com.mobmonkey.mobmonkeyandroid.utils.GCMIntentService" 
 	    	 android:enabled="true"/>
 	
-		<activity android:name=".SignInScreen"
+		<activity android:name=".SplashScreen"
 			android:screenOrientation="portrait">
 			
 			<intent-filter>
@@ -65,6 +65,11 @@
 			</intent-filter>
 			
         </activity>
+		
+		<activity android:name=".SignInScreen"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
 		
 		<activity android:name=".TwitterAuthScreen"
 		    android:screenOrientation="portrait">
@@ -132,7 +137,7 @@
 		    
 		</activity>
 		
-		<activity android:name=".MMVideoPlayerScreen"
+		<activity android:name=".VideoPlayerScreen"
 		    android:screenOrientation="landscape">
 		    
 		</activity>

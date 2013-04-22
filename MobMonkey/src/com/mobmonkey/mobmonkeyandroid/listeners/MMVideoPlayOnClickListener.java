@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.mobmonkey.mobmonkeyandroid.MMVideoPlayerScreen;
+import com.mobmonkey.mobmonkeyandroid.VideoPlayerScreen;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 /**
@@ -23,7 +23,7 @@ public class MMVideoPlayOnClickListener implements OnClickListener {
 	
 	@Override
 	public void onClick(View v) {
-		Intent intent = new Intent(context, MMVideoPlayerScreen.class);
+		Intent intent = new Intent(context, VideoPlayerScreen.class);
 		intent.putExtra(MMSDKConstants.JSON_KEY_MEDIA_URL, videoUrl);
 		context.startActivity(intent);
 	}

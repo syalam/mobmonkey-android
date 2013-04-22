@@ -6,7 +6,8 @@
 	<string name="app_google_api_key0">AIzaSyCLKPK_nHrx7d8wWl3cWCUtnQGVXnmHkYQ</string> <!-- Any referers allowed -->
 
 	<!-- SignIn Screen -->
-	<string name="toast_no_internet_access">You have no internet access at the moment, cannot start MobMonkey</string>
+	<string name="ad_title_no_internet_access">No internet access</string>
+	<string name="ad_message_no_internet_access">You have no internet access at the moment, cannot start MobMonkey</string>
 	
 	<string name="tv_title_sign_in">Sign In</string>
 	
@@ -221,7 +222,7 @@
 	
 	<string name="btn_set_schedule">Set Schedule</string>
 	
-	<string name="toast_current_or_past_current_time">The time you have selected is the current time or past the current time, please select a time in the future.</string>
+	<string name="toast_current_or_past_current_time">The date and time you have selected is not current, Please select another date and time.</string>
 	
 	<!-- Favorites Fragment -->
 	<string name="tv_title_favorites">Favorites</string>
@@ -234,6 +235,7 @@
 	    <item>Social Networks</item>
 	    <item>My Interests</item>
 	    <item>Subscribe</item>
+	    <item>Terms of Use</item>
 	</string-array>
 	
 	<string name="et_hint_new_password">New Password</string>
@@ -268,6 +270,7 @@
 	
 	<!-- Subscribe Screen -->
 	<string name="tv_title_subscribe">Subscribe</string>
+	<string name="btn_subscribe">Subscribe</string>
 	
 	<!-- Terms of use Screen -->
 	<string name="tv_title_terms_of_use">Terms of use</string>

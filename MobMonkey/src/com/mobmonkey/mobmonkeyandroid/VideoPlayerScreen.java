@@ -13,15 +13,15 @@ import android.widget.VideoView;
  * @author Dezapp, LLC
  *
  */
-public class MMVideoPlayerScreen extends Activity {
+public class VideoPlayerScreen extends Activity {
 	VideoView vvVideoPlayer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.mm_video_player_screen);
+		setContentView(R.layout.video_player_screen);
 		vvVideoPlayer = (VideoView) findViewById(R.id.vvvideoplayer);
 		vvVideoPlayer.setVideoURI(Uri.parse(getIntent().getStringExtra(MMSDKConstants.JSON_KEY_MEDIA_URL)));
-		vvVideoPlayer.setMediaController(new MediaController(MMVideoPlayerScreen.this));
+		vvVideoPlayer.setMediaController(new MediaController(VideoPlayerScreen.this));
 	}
 }

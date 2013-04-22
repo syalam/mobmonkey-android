@@ -231,14 +231,16 @@ public class ScheduleRequestScreen extends Activity implements OnWheelChangedLis
 		
 		requestCal.add(Calendar.DAY_OF_YEAR, day);
 		
-		Intent scheduleRequestIntent = new Intent();
+		long reqTime = requestCal.getTimeInMillis()/60000 * 60000;
+		long currTime = System.currentTimeMillis()/60000 * 60000;
 		
-		Log.d(TAG, TAG + "requestCal time: " + requestCal.getTimeInMillis());
-		Log.d(TAG, TAG + "current time: " + System.currentTimeMillis());
+		Log.d(TAG, TAG + "requestCal time: " + reqTime);
+		Log.d(TAG, TAG + "current time: " + currTime);
 		
-		if(requestCal.getTimeInMillis() < System.currentTimeMillis()) {
+		if(reqTime < currTime) {
 			Toast.makeText(ScheduleRequestScreen.this, R.string.toast_current_or_past_current_time, Toast.LENGTH_LONG).show();
 		} else {
+			Intent scheduleRequestIntent = new Intent();
 			scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME, requestCal);
 			scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING, tbRepeating.isChecked());
 			scheduleRequestIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE, getRepeating());

@@ -5,89 +5,89 @@
 	android:background="@color/backgroundcolor"
 	android:orientation="vertical">
 		
-    	<TextView android:layout_width="match_parent"
-			android:layout_height="50dp"
-			android:gravity="center"
-			android:text="@string/tv_title_sign_in"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:textColor="@android:color/white"
-			android:textStyle="bold"
-			android:background="@drawable/navigation_bar"/>
-	
-		<RelativeLayout android:layout_width="match_parent"
-			android:layout_height="match_parent">
-			
-			<LinearLayout android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_centerInParent="true"
-				android:orientation="vertical">
-				
-				<EditText android:id="@+id/etemailaddress"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginLeft="20dp"
-					android:layout_marginRight="20dp"
-					android:hint="@string/et_hint_emailaddress"
-					android:inputType="textEmailAddress"/>
-				
-				<EditText android:id="@+id/etpassword"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginLeft="20dp"
-					android:layout_marginRight="20dp"
-					android:hint="@string/et_hint_password"
-					android:inputType="textPassword"/>
-				
-				<Button android:id="@+id/btnsignin"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/tv_title_sign_in"
-					android:layout_marginTop="10dp"
-					android:layout_marginLeft="20dp"
-					android:layout_marginRight="20dp"
-					android:onClick="viewOnClick"
-					android:background="@drawable/orange_button_background"
-					android:textColor="@android:color/white"
-					android:textStyle="bold"/>
-				
-				<Button android:id="@+id/btnsigninfacebook"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/btn_sign_in_facebook"
-					android:layout_marginTop="10dp"
-					android:layout_marginLeft="20dp"
-					android:layout_marginRight="20dp"
-					android:onClick="viewOnClick"
-					android:background="@drawable/orange_button_background"
-					android:textColor="@android:color/white"
-					android:textStyle="bold"/>
-				
-				<Button android:id="@+id/btnsignintwitter"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="10dp"
-					android:layout_marginLeft="20dp"
-					android:layout_marginRight="20dp"
-					android:text="@string/btn_sign_in_twitter"
-					android:onClick="viewOnClick"
-					android:background="@drawable/orange_button_background"
-					android:textColor="@android:color/white"
-					android:textStyle="bold"/>
-				
-				<Button android:id="@+id/btnsignup"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="10dp"
-					android:layout_marginLeft="20dp"
-					android:layout_marginRight="20dp"
-					android:text="@string/btn_sign_up"
-					android:onClick="viewOnClick"
-					android:background="@drawable/orange_button_background"
-					android:textColor="@android:color/white"
-					android:textStyle="bold"/>
-				
-			</LinearLayout>
+   	<TextView android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:gravity="center"
+		android:text="@string/tv_title_sign_in"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textColor="@android:color/white"
+		android:textStyle="bold"
+		android:background="@drawable/navigation_bar"/>
+
+	<RelativeLayout android:layout_width="match_parent"
+		android:layout_height="match_parent">
 		
-		</RelativeLayout>
+		<LinearLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:orientation="vertical">
+			
+			<EditText android:id="@+id/etemailaddress"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp"
+				android:hint="@string/et_hint_emailaddress"
+				android:inputType="textEmailAddress"/>
+			
+			<EditText android:id="@+id/etpassword"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp"
+				android:hint="@string/et_hint_password"
+				android:inputType="textPassword"/>
+			
+			<Button android:id="@+id/btnsignin"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/tv_title_sign_in"
+				android:layout_marginTop="10dp"
+				android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp"
+				android:onClick="viewOnClick"
+				android:background="@drawable/orange_button_background"
+				android:textColor="@android:color/white"
+				android:textStyle="bold"/>
+			
+			<Button android:id="@+id/btnsigninfacebook"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/btn_sign_in_facebook"
+				android:layout_marginTop="10dp"
+				android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp"
+				android:onClick="viewOnClick"
+				android:background="@drawable/orange_button_background"
+				android:textColor="@android:color/white"
+				android:textStyle="bold"/>
+			
+			<Button android:id="@+id/btnsignintwitter"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp"
+				android:text="@string/btn_sign_in_twitter"
+				android:onClick="viewOnClick"
+				android:background="@drawable/orange_button_background"
+				android:textColor="@android:color/white"
+				android:textStyle="bold"/>
+			
+			<Button android:id="@+id/btnsignup"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:layout_marginLeft="20dp"
+				android:layout_marginRight="20dp"
+				android:text="@string/btn_sign_up"
+				android:onClick="viewOnClick"
+				android:background="@drawable/orange_button_background"
+				android:textColor="@android:color/white"
+				android:textStyle="bold"/>
+			
+		</LinearLayout>
+	
+	</RelativeLayout>
 
 </LinearLayout>

@@ -18,5 +18,26 @@
 			android:textStyle="bold"/>
 	    
 	</RelativeLayout>
+	
+	<LinearLayout android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:background="@drawable/subsciption_screen_background">
+	    
+	    <Button android:id="@+id/btnsubscribe" 
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="bottom"
+			android:layout_marginTop="10dp"
+			android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp"
+			android:layout_marginBottom="30dp"
+	        android:background="@drawable/orange_button_background"
+			android:text="@string/btn_subscribe"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+	        android:textColor="@android:color/white"
+	        android:textStyle="bold"
+	        android:onClick="viewOnClick"/>
+	    
+	</LinearLayout>
 
 </LinearLayout>

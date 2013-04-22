@@ -4,6 +4,7 @@ import com.mobmonkey.mobmonkeyandroid.R;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 
 public class SubscribeScreen extends Activity{
 
@@ -21,5 +22,12 @@ public class SubscribeScreen extends Activity{
 	public void onBackPressed() {
 		super.onBackPressed();
 		overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
+	}
+	
+	public void viewOnClick(View view) {
+		switch(view.getId()) {
+			case R.id.btnsubscribe:
+				break;
+		}
 	}
 }

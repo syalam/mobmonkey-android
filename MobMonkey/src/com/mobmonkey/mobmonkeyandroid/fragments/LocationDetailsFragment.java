@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import com.mobmonkey.mobmonkeyandroid.ExpandedThumbnailScreen;
 import com.mobmonkey.mobmonkeyandroid.LocationDetailsMediaScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.MMVideoPlayerScreen;
+import com.mobmonkey.mobmonkeyandroid.VideoPlayerScreen;
 import com.mobmonkey.mobmonkeyandroid.MakeARequestScreen;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMArrayAdapter;
@@ -201,7 +201,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				startActivity(intent);
 				break;
 			case R.id.ibplay:
-				intent = new Intent(getActivity(), MMVideoPlayerScreen.class);
+				intent = new Intent(getActivity(), VideoPlayerScreen.class);
 				intent.putExtra(MMSDKConstants.JSON_KEY_MEDIA_URL, mediaStreamVideoUrl);
 				startActivity(intent);
 				break;
@@ -250,7 +250,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 */
 	@Override
 	public void onFragmentBackPressed() {
-		
+		Log.d(TAG, "onFragmentBackPressed");
+		MMLocationDetailsAdapter.cancelRetrieveAllMediaForLocation();
 	}
 	
 	/**
@@ -395,6 +396,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 //			
 //			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
 //		}
+		MMProgressDialog.dismissDialog();
 	}
 	
 	/**
@@ -470,8 +472,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						retrieveLocationDetails = true;
 						setLocationDetails();
 					}
-					
-					setLocationDetails();
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -487,7 +487,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private class MediaCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "mediaResults: " + (String) obj);

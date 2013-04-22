@@ -28,7 +28,7 @@ public class ExpandedThumbnailScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		setContentView(R.layout.mm_expanded_thumbnail_screen);
+		setContentView(R.layout.expanded_thumbnail_screen);
 		getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		ImageView ivExpandedThumbnail = (ImageView) findViewById(R.id.ivexpandedthumbnail);
 		

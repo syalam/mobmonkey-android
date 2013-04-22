@@ -23,6 +23,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -31,8 +32,12 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 /**
@@ -46,7 +51,8 @@ public class SignInScreen extends Activity {
 	
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
-	
+	private InputMethodManager inputMethodManager;
+
 	private EditText etEmailAddress;
 	private EditText etPassword;
 	
@@ -58,8 +64,6 @@ public class SignInScreen extends Activity {
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		checkForInternetAccess();
-		
 		// TODO: check if this is still needed...
         if (android.os.Build.VERSION.SDK_INT > 9) {
         	StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -69,6 +73,8 @@ public class SignInScreen extends Activity {
 		super.onCreate(savedInstanceState);
         MMDeviceUUID.setContext(getApplicationContext());
 		
+        overridePendingTransition(R.anim.slide_hold, R.anim.slide_hold);
+        
 		setContentView(R.layout.signin_screen);
 		init();
 	}
@@ -150,18 +156,6 @@ public class SignInScreen extends Activity {
 				break;
 		}
 	}
-
-	/**
-	 * Function that check if user's device has Internet access. Display a {@link Toast} message informing the user if these is no Internet access.
-	 */
-	private void checkForInternetAccess() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		if(connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting()) {
-			Toast.makeText(SignInScreen.this, getString(R.string.toast_no_internet_access), Toast.LENGTH_LONG).show();
-			finish();
-		}
-	}
-
 	
 	/**
 	 * Initialize all the variables to be used in {@link SignInScreen}
@@ -169,10 +163,11 @@ public class SignInScreen extends Activity {
 	private void init() {
 		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
+    	inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		
 		etEmailAddress = (EditText) findViewById(R.id.etemailaddress);
 		etPassword = (EditText) findViewById(R.id.etpassword);
-		
+        
 		requestEmail = true;
 		
 		// TODO: hardcoded values, to be removed
@@ -329,6 +324,7 @@ public class SignInScreen extends Activity {
 				try {
 					JSONObject response = new JSONObject((String) obj);
 					if(response.getString(MMSDKConstants.KEY_RESPONSE_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
+						inputMethodManager.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
 						Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
 						if(requestEmail == false) {
 							requestEmail = true;

@@ -54,8 +54,8 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 	
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
-	
 	private InputMethodManager inputMethodManager;
+	
 	private EditText etFirstName;
 	private EditText etLastName;
 	private EditText etEmailAddress;
@@ -228,8 +228,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      */
     private void init() {
         userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
-        userPrefsEditor = userPrefs.edit();
-    	
+        userPrefsEditor = userPrefs.edit();    	
     	inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     	
     	etFirstName = (EditText) findViewById(R.id.etfirstname);
@@ -538,6 +537,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 				try {
 					JSONObject response = new JSONObject((String) obj);
 					if(response.getString(MMSDKConstants.KEY_RESPONSE_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+						inputMethodManager.hideSoftInputFromWindow(etPasswordConfirm.getWindowToken(), 0);
 						Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
 						userPrefsEditor.commit();
 						startActivity(new Intent(SignUpScreen.this, MainScreen.class));

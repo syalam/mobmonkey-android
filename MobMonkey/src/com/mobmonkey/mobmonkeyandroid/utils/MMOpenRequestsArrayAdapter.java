@@ -58,11 +58,11 @@ public class MMOpenRequestsArrayAdapter extends ArrayAdapter<MMOpenRequestsItem>
 		
 		// image type
 		if(item.mediaType == 1) {
-			vholder.ivIcon.setImageResource(R.drawable.image_media_icon);
+			vholder.ivIcon.setImageResource(R.drawable.media_icon_image);
 		} 
 		// videow type
 		else if(item.mediaType == 2) {
-			vholder.ivIcon.setImageResource(R.drawable.video_media_icon);
+			vholder.ivIcon.setImageResource(R.drawable.media_icon_video);
 		}
 		
 		return row;
