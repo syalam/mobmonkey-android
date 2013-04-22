@@ -60,6 +60,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 	private MMAnsweredRequestArrayAdapter arrayAdapter;
 	private OnLocationNameClickFragmentListener locationNameClickListener;
 	private Bitmap[] bms;
+	private MMMediaItem[] tempItem;
 	
 	// TODO: After user reject request, after app retrieve updated requests, screen is not getting refreshed, i.e. the answered requests aren't getting updated.
 	
@@ -106,43 +107,52 @@ public class AnsweredRequestsFragment extends MMFragment {
 		MMMediaItem[] answeredRequestItems = new MMMediaItem[answeredRequests.length()];
 		
 		for(int i = 0; i < answeredRequestItems.length; i++) {
+			
 			JSONObject info = answeredRequests.getJSONObject(i);
-			JSONObject media = info.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).getJSONObject(0);
 			MMMediaItem item = new MMMediaItem();
-			item.setLocationName(info.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION));
-			item.setImageMedia(bms[i]);
-			if(info.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 1) {
-				item.setIsImage(true);
-			} else if(info.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 2) {
-				item.setIsVideo(true);
+			if(info.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).length() > 0) {
+				JSONObject media = info.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).getJSONObject(0);
+				
+				item.setLocationName(info.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION));
+				item.setImageMedia(bms[i]);
+				if(info.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 1) {
+					item.setIsImage(true);
+					item.setIsVideo(false);
+					item.setImageOnClickListener(new MMImageOnClickListener(getActivity(), item.getImageMedia()));
+				} else if(info.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 2) {
+					item.setIsVideo(true);
+					item.setIsImage(false);
+				}
+				
+				item.setAccepted(media.getBoolean(MMSDKConstants.JSON_KEY_ACCEPTED));
+				
+				// locationDetails
+				JSONObject locationDetails = new JSONObject();
+				locationDetails.put(MMSDKConstants.JSON_KEY_LOCATION_ID, info.getString(MMSDKConstants.JSON_KEY_LOCATION_ID));
+				locationDetails.put(MMSDKConstants.JSON_KEY_PROVIDER_ID, info.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
+				item.setLocationNameOnClickListener(new MMLocationNameOnClickListener(locationNameClickListener, locationDetails));
+				item.setAcceptMediaOnClickListener(new MMAcceptMediaOnClickListener(new MMAcceptedRequestCallback(), 
+																					media.getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
+																					media.getString(MMSDKConstants.JSON_KEY_MEDIA_ID), 
+																					MMConstants.PARTNER_ID, 
+																					userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+																					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+																					getActivity()));
+				item.setRejectMediaOnClickListener(new MMRejectMediaOnClickListener(new MMRejectRequestCallback(i), 
+																					media.getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
+																					media.getString(MMSDKConstants.JSON_KEY_MEDIA_ID), 
+																					MMConstants.PARTNER_ID, 
+																					userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+																					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
+																					getActivity()));
+				
 			}
 			
-			item.setAccepted(media.getBoolean(MMSDKConstants.JSON_KEY_ACCEPTED));
 			
-			// locationDetails
-			JSONObject locationDetails = new JSONObject();
-			locationDetails.put(MMSDKConstants.JSON_KEY_LOCATION_ID, info.getString(MMSDKConstants.JSON_KEY_LOCATION_ID));
-			locationDetails.put(MMSDKConstants.JSON_KEY_PROVIDER_ID, info.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
-			item.setLocationNameOnClickListener(new MMLocationNameOnClickListener(locationNameClickListener, locationDetails));
-			item.setAcceptMediaOnClickListener(new MMAcceptMediaOnClickListener(new MMAcceptedRequestCallback(), 
-																				media.getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
-																				media.getString(MMSDKConstants.JSON_KEY_MEDIA_ID), 
-																				MMConstants.PARTNER_ID, 
-																				userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-																				userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-																				getActivity()));
-			item.setRejectMediaOnClickListener(new MMRejectMediaOnClickListener(new MMRejectRequestCallback(i), 
-																				media.getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
-																				media.getString(MMSDKConstants.JSON_KEY_MEDIA_ID), 
-																				MMConstants.PARTNER_ID, 
-																				userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-																				userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
-																				getActivity()));
-			item.setImageOnClickListener(new MMImageOnClickListener(getActivity(), item.getImageMedia()));
 			
 			answeredRequestItems[i] = item;
 		}
-		
+		tempItem = answeredRequestItems;
 		return answeredRequestItems;
 	}
 	
@@ -186,9 +196,8 @@ public class AnsweredRequestsFragment extends MMFragment {
 						else if(jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 2){
 							// temp image
 							bms[i] = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
-							arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
-							lvAnsweredRequests.setAdapter(arrayAdapter);
-							lvAnsweredRequests.setOnItemClickListener(new onAnsweredRequestsClick());
+//							arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
+//							lvAnsweredRequests.setAdapter(arrayAdapter);
 						}
 					}
 					
@@ -199,9 +208,10 @@ public class AnsweredRequestsFragment extends MMFragment {
 				ex.printStackTrace();
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+			} 
+//			catch (ParseException e) {
+//				e.printStackTrace();
+//			}
 		}
 	}
 	
@@ -222,17 +232,29 @@ public class AnsweredRequestsFragment extends MMFragment {
 			Bitmap bm = (Bitmap) obj;
 			bms[position] = bm;
 			
-			try {
-				arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
-				lvAnsweredRequests.setAdapter(arrayAdapter);
-				lvAnsweredRequests.setOnItemClickListener(new onAnsweredRequestsClick());
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			} catch (JSONException e) {
-				e.printStackTrace();
-			} catch (ParseException e) {
-				e.printStackTrace();
+			if(!bmsHasNull()) {
+				try {
+					arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
+					lvAnsweredRequests.setAdapter(arrayAdapter);
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
+			
+//			try {
+//				arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
+//				lvAnsweredRequests.setAdapter(arrayAdapter);
+//			} catch (NumberFormatException e) {
+//				e.printStackTrace();
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			} catch (ParseException e) {
+//				e.printStackTrace();
+//			}
 		}
 	}
 	
@@ -278,17 +300,32 @@ public class AnsweredRequestsFragment extends MMFragment {
 		public void processCallback(Object obj) {
 			Log.d(TAG, (String)obj);
 			try {
-				JSONObject jObj = new JSONObject((String) obj);
 				
+				JSONObject jObj = new JSONObject((String) obj);
 				MMInboxAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
 						   MMConstants.PARTNER_ID, 
 						   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 						   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+				
 				Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
 				MMProgressDialog.dismissDialog();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private boolean bmsHasNull() {
+		boolean flag = false;
+		
+		FindNull:
+		for(int i = 0; i < bms.length; i++) {
+			if(bms[i] == null) {
+				flag = true;
+				break FindNull;
+			}
+		}
+		
+		return flag;
 	}
 }

@@ -52,7 +52,7 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 	public View getView(int position, View convertView, ViewGroup parent) {
     	
 		View row = convertView;
-		ViewHolder vholder;
+		ViewHolder vholder = null;
 		
 		if(row == null) {
 			LayoutInflater inflater = ((Activity)context).getLayoutInflater();
@@ -85,7 +85,6 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 		if(item.getImageMedia() != null) {
 			// image type
 			if(item.isImage()) {
-				Log.d("MMAnsweredRequestArrayAdapter", "images");
 				
 				vholder.btnPlay.setVisibility(View.GONE);
 				vholder.tvExp.setVisibility(View.VISIBLE);
@@ -96,6 +95,13 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 				WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 				
 				vholder.ivImage.setImageBitmap(ThumbnailUtils.extractThumbnail(bm, wm.getDefaultDisplay().getWidth(), 400));
+				
+				Log.d(TAG, "Position: " + position + "\nisAccept: " + item.isAccepted());
+				// if fulfilled, hide buttons
+				if(item.isAccepted()) {
+					vholder.btnAccept.setVisibility(View.GONE);
+					vholder.btnReject.setVisibility(View.GONE);
+				}
 				
 				// set onclick listener
 				vholder.btnAccept.setOnClickListener(item.getAcceptMediaOnClickListener());
@@ -110,37 +116,25 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 				vholder.btnOverlay.setVisibility(View.VISIBLE);
 				vholder.btnPlay.setVisibility(View.VISIBLE);
 				
+				vholder.ivImage.setImageBitmap(item.getImageMedia());
+				
+				Log.d(TAG, "Position: " + position + "\nisAccept: " + item.isAccepted());
+				// if fulfilled, hide buttons
+				if(item.isAccepted()) {
+					vholder.btnAccept.setVisibility(View.GONE);
+					vholder.btnReject.setVisibility(View.GONE);
+				}
+				
 				// set onclick listener
 				vholder.btnAccept.setOnClickListener(item.getAcceptMediaOnClickListener());
 				vholder.btnReject.setOnClickListener(item.getRejectMediaOnClickListener());
 				vholder.tvTitle.setOnClickListener(item.getLocationNameOnClickListener());
-//				
-//				// create thumbnail for video
-////				Bitmap bm = ThumbnailUtils.createVideoThumbnail(item.mediaUri.toString(), Video.Thumbnails.FULL_SCREEN_KIND);
-//				InputStream is;
-//				try {
-//					is = context.getContentResolver().openInputStream(item.mediaUri);
-//					Bitmap bm = BitmapFactory.decodeStream(is);
-//					// set ivImage to thumbnail
-//					WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-//					vholder.ivImage.setImageBitmap(ThumbnailUtils.extractThumbnail(bm, wm.getDefaultDisplay().getWidth(), 400));
-//					is.close();
-//				} catch (FileNotFoundException e) {
-//					e.printStackTrace();
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
+				vholder.ivImage.setOnClickListener(null);
 			}
 		}
 		// if media is null
 		else {
 			// handle null media
-		}
-		
-		// if fulfilled, hide buttons
-		if(item.isAccepted()) {
-			vholder.btnAccept.setVisibility(View.GONE);
-			vholder.btnReject.setVisibility(View.GONE);
 		}
 		
 		return row;
