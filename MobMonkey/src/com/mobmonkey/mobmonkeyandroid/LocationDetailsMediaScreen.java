@@ -50,12 +50,13 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 	private LinkedList<MMMediaItem> mmVideoMediaItems;
 	private LinkedList<MMMediaItem> mmImageMediaItems;
 	
-	MMMediaArrayAdapter adapter;
+	MMMediaArrayAdapter streamAdapter;
+	MMMediaArrayAdapter videoAdapter;
+	MMMediaArrayAdapter imageAdapter;
 	
 	private boolean retrieveStreamMedia;
 	private boolean retrieveVideoMedia;
 	private boolean retrieveImageMedia;
-	private boolean lastImageMedia;
 	
 	private JSONArray streamMediaUrls;
 	private JSONArray videoMediaUrls;
@@ -174,12 +175,19 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 			for(int i = 0; i < streamMediaUrls.length(); i++) {
 				JSONObject jObj = streamMediaUrls.getJSONObject(i);
 				MMMediaItem mmMediaItem = new MMMediaItem();
+				// TODO: temporary, to be changed to lastStreamMedia = true
+				if(i == streamMediaUrls.length() - 1) {
+					retrieveStreamMedia = false;
+				}
 				// TODO: load thumbnails for videos
+				mmMediaItem.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 				mmMediaItem.setIsVideo(true);
 				mmMediaItem.setPlayOnClickListener(new MMVideoPlayOnClickListener(LocationDetailsMediaScreen. this, jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmStreamMediaItems.add(mmMediaItem);
 			}
+			streamAdapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmStreamMediaItems);
+			lvStreamMedia.setAdapter(streamAdapter);
 		}
 	}
 	
@@ -188,12 +196,19 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 			for(int i = 0; i < videoMediaUrls.length(); i++) {
 				JSONObject jObj = videoMediaUrls.getJSONObject(i);
 				MMMediaItem mmMediaItem = new MMMediaItem();
+				// TODO: temporary, to be changed to lastVideoMedia = true
+				if(i == videoMediaUrls.length() - 1) {
+					retrieveVideoMedia = false;
+				}
 				// TODO: load thumbnails for videos
+				mmMediaItem.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 				mmMediaItem.setIsVideo(true);
 				mmMediaItem.setPlayOnClickListener(new MMVideoPlayOnClickListener(LocationDetailsMediaScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmVideoMediaItems.add(mmMediaItem);
 			}
+			videoAdapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmVideoMediaItems);
+			lvVideoMedia.setAdapter(videoAdapter);
 		}
 	}
 	
@@ -204,15 +219,15 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 				MMMediaItem mmMediaItem = new MMMediaItem();
 				if(i == imageMediaUrls.length() - 1) {
-					lastImageMedia = true;
+					retrieveImageMedia = false;
 				}
 				mmMediaItem.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 				mmMediaItem.setIsImage(true);
 				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmImageMediaItems.add(mmMediaItem);
 			}
-			adapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmImageMediaItems);
-			lvImageMedia.setAdapter(adapter);
+			imageAdapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmImageMediaItems);
+			lvImageMedia.setAdapter(imageAdapter);
 		}
 	}
 	
@@ -233,12 +248,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 			if(obj != null) {
 				mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
 				mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
-				if(lastImageMedia) {
-//					MMMediaArrayAdapter adapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmImageMediaItems);
-//					lvImageMedia.setAdapter(adapter);
-					retrieveImageMedia = false;
-				}
-				adapter.notifyDataSetChanged();
+				imageAdapter.notifyDataSetChanged();
 			}
 		}
 	}
