@@ -79,9 +79,8 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 		
 		MMMediaItem item = data[position];
 		vholder.tvTitle.setText(item.getLocationName());
-		
 		vholder.tvExp.setText(item.getExpiryDate());
-		
+
 		if(item.getImageMedia() != null) {
 			// image type
 			if(item.isImage()) {
@@ -97,11 +96,6 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 				vholder.ivImage.setImageBitmap(ThumbnailUtils.extractThumbnail(bm, wm.getDefaultDisplay().getWidth(), 400));
 				
 				Log.d(TAG, "Position: " + position + "\nisAccept: " + item.isAccepted());
-				// if fulfilled, hide buttons
-				if(item.isAccepted()) {
-					vholder.btnAccept.setVisibility(View.GONE);
-					vholder.btnReject.setVisibility(View.GONE);
-				}
 				
 				// set onclick listener
 				vholder.btnAccept.setOnClickListener(item.getAcceptMediaOnClickListener());
@@ -119,11 +113,6 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 				vholder.ivImage.setImageBitmap(item.getImageMedia());
 				
 				Log.d(TAG, "Position: " + position + "\nisAccept: " + item.isAccepted());
-				// if fulfilled, hide buttons
-				if(item.isAccepted()) {
-					vholder.btnAccept.setVisibility(View.GONE);
-					vholder.btnReject.setVisibility(View.GONE);
-				}
 				
 				// set onclick listener
 				vholder.btnAccept.setOnClickListener(item.getAcceptMediaOnClickListener());
@@ -136,6 +125,14 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 		else {
 			// handle null media
 		}
+		// if fulfilled, hide buttons
+		if(item.isAccepted()) {
+			vholder.btnAccept.setVisibility(View.GONE);
+			vholder.btnReject.setVisibility(View.GONE);
+		} else {
+			vholder.btnAccept.setVisibility(View.VISIBLE);
+			vholder.btnReject.setVisibility(View.VISIBLE);
+		}
 		
 		return row;
 	}
@@ -145,4 +142,21 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
         ImageButton btnAccept, btnReject, btnPlay, btnOverlay;
         TextView tvTitle, tvExp;
     }
+	
+	private String millisecondFormate(long time) {
+		
+		long hour = TimeUnit.MILLISECONDS.toHours(time),
+			 minute = TimeUnit.MILLISECONDS.toMinutes(time) - 
+					    TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time));
+		
+		String withHour = String.format("%dh%dm", 
+				    	hour,
+				    	minute
+				),
+				withoutHour = String.format("%dm",
+						minute
+				);
+		
+		return hour == 0? withHour:withoutHour;
+	}
 }

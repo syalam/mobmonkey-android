@@ -225,7 +225,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		    	FileInputStream fis = new FileInputStream(new File(videoPath));
 
 		    	// TODO: changed the file format to .mp4
-		    	File tmpFile = new File(Environment.getExternalStorageDirectory(),"mobmonkeyVideo.3gp"); 
+		    	File tmpFile = new File(Environment.getExternalStorageDirectory(),"mobmonkeyVideo.mp4"); 
 
 		    	//save the video to the File path
 		    	FileOutputStream fos = new FileOutputStream(tmpFile);
