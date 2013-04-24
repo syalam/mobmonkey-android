@@ -114,6 +114,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 				JSONObject media = info.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).getJSONObject(0);
 				
 				item.setLocationName(info.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION));
+				item.setExpiryDate(String.valueOf(media.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE) - System.currentTimeMillis()));
 				item.setImageMedia(bms[i]);
 				if(info.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 1) {
 					item.setIsImage(true);
@@ -125,6 +126,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 				}
 				
 				item.setAccepted(media.getBoolean(MMSDKConstants.JSON_KEY_ACCEPTED));
+				
 				
 				// locationDetails
 				JSONObject locationDetails = new JSONObject();
