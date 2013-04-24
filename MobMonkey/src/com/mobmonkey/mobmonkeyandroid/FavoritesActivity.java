@@ -84,6 +84,8 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 
 	@Override
 	public void onLocationDetailsFragmentItemClick(int position, Object obj) {
+		MMFragment mmFragment;
+		Bundle data;
 		switch(position) {
 			case 0:
 				Intent dialerIntent = new Intent(Intent.ACTION_DIAL);
@@ -91,13 +93,18 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 				startActivity(dialerIntent);
 				break;
 			case 1:
-				LocationDetailsMapFragment locationDetailsMapFragment = new LocationDetailsMapFragment();
-				Bundle data = new Bundle();
+				mmFragment = new LocationDetailsMapFragment();
+				data = new Bundle();
 				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((String) obj));
-				locationDetailsMapFragment.setArguments(data);
-				performTransaction(locationDetailsMapFragment);
+				mmFragment.setArguments(data);
+				performTransaction(mmFragment);
 				break;
 			case 2:
+				mmFragment = new AddNotificationsFragment();
+				data = new Bundle();
+				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((String) obj));
+				mmFragment.setArguments(data);
+				performTransaction(mmFragment);
 				break;
 		}
 	}

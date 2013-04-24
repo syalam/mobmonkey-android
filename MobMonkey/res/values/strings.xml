@@ -224,6 +224,10 @@
 	
 	<string name="toast_current_or_past_current_time">The date and time you have selected is not current, Please select another date and time.</string>
 	
+	<!-- Add Notifications Fragment -->
+	<string name="tv_notify_me">Notify me of activity at</string>
+	<string name="tv_this_location">this location</string>
+	
 	<!-- Favorites Fragment -->
 	<string name="tv_title_favorites">Favorites</string>
 	

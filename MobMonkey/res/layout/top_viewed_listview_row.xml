@@ -37,7 +37,7 @@
 				android:layout_marginTop="10dp"
 				android:layout_marginRight="10dp"
 				android:gravity="center"
-				android:drawableLeft="@drawable/ic_dialog_time"
+				android:drawableLeft="@drawable/media_icon_time"
 				android:drawablePadding="5dp"
 				android:textColor="@android:color/white"/>
 			

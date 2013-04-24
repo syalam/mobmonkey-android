@@ -80,7 +80,7 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 		MMMediaItem item = data[position];
 		vholder.tvTitle.setText(item.getLocationName());
 		
-		vholder.tvExp.setText(item.getExpiryDate() + "m");
+		vholder.tvExp.setText(item.getExpiryDate());
 		
 		if(item.getImageMedia() != null) {
 			// image type

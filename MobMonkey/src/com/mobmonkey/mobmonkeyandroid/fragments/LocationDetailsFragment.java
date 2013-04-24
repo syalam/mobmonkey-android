@@ -271,7 +271,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		} else if(position == 1) {
 			listener.onLocationDetailsFragmentItemClick(position, locationDetails.toString());
 		} else if(position == 2) {
-			listener.onLocationDetailsFragmentItemClick(position, MMSDKConstants.DEFAULT_STRING_EMPTY);
+			listener.onLocationDetailsFragmentItemClick(position, locationDetails.toString());
 		}
 	}
 
@@ -308,6 +308,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		details[2] = getString(R.string.tv_add_notifications);
 		ArrayAdapter<Object> arrayAdapter = new MMArrayAdapter(getActivity(), R.layout.mm_listview_row, icons, details, indicatorIcons, android.R.style.TextAppearance_Small, Typeface.DEFAULT, null);
 		elvLocDetails.setAdapter(arrayAdapter);
+		
+		elvLocDetails.setVisibility(View.VISIBLE);
 		
 		llMakeRequest.setOnClickListener(LocationDetailsFragment.this);
 		elvLocDetails.setOnItemClickListener(LocationDetailsFragment.this);

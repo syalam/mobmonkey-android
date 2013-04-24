@@ -114,6 +114,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 				JSONObject media = info.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).getJSONObject(0);
 				
 				item.setLocationName(info.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION));
+				item.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - info.getLong("fulfilledDate")));
 				item.setImageMedia(bms[i]);
 				if(info.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 1) {
 					item.setIsImage(true);

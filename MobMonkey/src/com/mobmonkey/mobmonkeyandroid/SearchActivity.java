@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
+import com.mobmonkey.mobmonkeyandroid.fragments.AddNotificationsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.CategoriesFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.HistoryFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment;
@@ -108,22 +109,29 @@ public class SearchActivity extends FragmentActivity implements MMOnNoCategoryFr
 	
 	@Override
 	public void onLocationDetailsFragmentItemClick(int position, Object obj) {
+		MMFragment mmFragment;
+		Bundle data;
 		switch(position) {
-		case 0:
-			Intent dialerIntent = new Intent(Intent.ACTION_DIAL);
-			dialerIntent.setData(Uri.parse("tel:" + ((String) obj)));
-			startActivity(dialerIntent);
-			break;
-		case 1:
-			LocationDetailsMapFragment locationDetailsMapFragment = new LocationDetailsMapFragment();
-			Bundle data = new Bundle();
-			data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((String) obj));
-			locationDetailsMapFragment.setArguments(data);
-			performTransaction(locationDetailsMapFragment);
-			break;
-		case 2:
-			break;
-	}
+			case 0:
+				Intent dialerIntent = new Intent(Intent.ACTION_DIAL);
+				dialerIntent.setData(Uri.parse("tel:" + ((String) obj)));
+				startActivity(dialerIntent);
+				break;
+			case 1:
+				mmFragment = new LocationDetailsMapFragment();
+				data = new Bundle();
+				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((String) obj));
+				mmFragment.setArguments(data);
+				performTransaction(mmFragment);
+				break;
+			case 2:
+				mmFragment = new AddNotificationsFragment();
+				data = new Bundle();
+				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((String) obj));
+				mmFragment.setArguments(data);
+				performTransaction(mmFragment);
+				break;
+		}
 	}
 	
 	/**
