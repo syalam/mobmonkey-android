@@ -171,8 +171,8 @@ public class SignInScreen extends Activity {
 		requestEmail = true;
 		
 		// TODO: hardcoded values, to be removed
-		etEmailAddress.setText("hank.oranges@gmail.com");
-		etPassword.setText("helloworld123");
+		etEmailAddress.setText("hankyu1@yahoo.com");
+		etPassword.setText("a1a2a3");
 	}
 	
 	private void launchToS(int requestCode) {

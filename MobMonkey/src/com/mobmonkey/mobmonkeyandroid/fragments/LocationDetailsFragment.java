@@ -25,6 +25,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMToast;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,12 +39,17 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Video.Thumbnails;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -74,7 +80,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private TextView tvFavorite;
 	
 	private LinearLayout llMedia;
-//	private VideoView vvMedia;
 	private ImageView ivtnMedia;
 	private ImageButton ibPlay;
 	private TextView tvExpiryDate;
@@ -86,6 +91,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private TextView tvVideoMediaCount;
 	private TextView tvImageMediaCount;
 	
+	private Dialog shareMediaActionSheet;
+	private Button btnSaveToCameraRoll;
+	private Button btnFlagForReview;
+	private Button btnCancel;
+	
 	private JSONArray streamMediaUrl;
 	private JSONArray videoMediaUrl;
 	private JSONArray imageMediaUrl;
@@ -95,8 +105,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private String mediaResults;
 	private boolean retrieveLocationDetails = false;
 	private View mediaButtonSelected;
-	private String mediaStreamVideoUrl;
-	private Bitmap imageMedia;
+//	private String mediaStreamVideoUrl;
+//	private Bitmap imageMedia;
 	
 	/*
 	 * (non-Javadoc)
@@ -195,19 +205,35 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			case R.id.llfavorite:
 				favoriteClicked();
 				break;
-			case R.id.ivtnmedia:
-				intent = new Intent(getActivity(), ExpandedThumbnailScreen.class);
-				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA, imageMedia);
-				startActivity(intent);
-				break;
-			case R.id.ibplay:
-				intent = new Intent(getActivity(), VideoPlayerScreen.class);
-				intent.putExtra(MMSDKConstants.JSON_KEY_MEDIA_URL, mediaStreamVideoUrl);
-				startActivity(intent);
-				break;
+//			case R.id.ivtnmedia:
+//				intent = new Intent(getActivity(), ExpandedThumbnailScreen.class);
+//				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_IMAGE_MEDIA, imageMedia);
+//				startActivity(intent);
+//				break;
+//			case R.id.ibplay:
+//				intent = new Intent(getActivity(), VideoPlayerScreen.class);
+//				intent.putExtra(MMSDKConstants.JSON_KEY_MEDIA_URL, mediaStreamVideoUrl);
+//				startActivity(intent);
+//				break;
 			case R.id.ibstream:
+				intent = new Intent(getActivity(), LocationDetailsMediaScreen.class);
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE, MMSDKConstants.MEDIA_TYPE_LIVESTREAMING);
+				intent.putExtra(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING, streamMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_TYPE_VIDEO, videoMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_TYPE_IMAGE, imageMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
+				startActivity(intent);
 				break;
 			case R.id.ibvideo:
+				intent = new Intent(getActivity(), LocationDetailsMediaScreen.class);
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE, MMSDKConstants.MEDIA_TYPE_VIDEO);
+				intent.putExtra(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING, streamMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_TYPE_VIDEO, videoMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_TYPE_IMAGE, imageMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
+				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
+				startActivity(intent);
 				break;
 			case R.id.ibimage:
 				intent = new Intent(getActivity(), LocationDetailsMediaScreen.class);
@@ -220,11 +246,16 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				startActivity(intent);
 				break;
 			case R.id.ibsharemedia:
-				// TODO: fill in appropriate items for Share Media functionality
-				//intent = new Intent(getActivity(), class);
-				//intent.putExtra(name, value);
-				//startActivity(intent);
-				System.out.println("yay");
+				shareMediaClicked();
+				break;
+			case R.id.btnsavetocameraroll:
+				break;
+			case R.id.btnflagforreview:
+				break;
+			case R.id.btncancel:
+				if(shareMediaActionSheet != null) {
+					shareMediaActionSheet.dismiss();
+				}
 				break;
 		}
 	}
@@ -314,11 +345,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				
 				if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING)) {
 					if(isFirstMedia) {
-						mediaStreamVideoUrl = jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
+//						mediaStreamVideoUrl = jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
 //						vvMedia.setVideoURI(Uri.parse(mediaStreamVideoUrl));
 //						vvMedia.seekTo(1);
 						MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-						mmr.setDataSource(getActivity(), Uri.parse(mediaStreamVideoUrl));
+						mmr.setDataSource(getActivity(), Uri.parse(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 						ivtnMedia.setImageBitmap(mmr.getFrameAtTime(1000));
 						tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 						ibPlay.setVisibility(View.VISIBLE);
@@ -329,11 +360,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					streamMediaCount++;
 				} else if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_VIDEO)) {
 					if(isFirstMedia) {
-						mediaStreamVideoUrl = jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
-						MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(), Uri.parse(mediaStreamVideoUrl));
+						MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(), Uri.parse(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 						tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 						ibPlay.setVisibility(View.VISIBLE);
-						ibPlay.setOnClickListener(LocationDetailsFragment.this);
+						ibPlay.setOnClickListener(new MMVideoPlayOnClickListener(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 						isFirstMedia = false;
 					}
 					videoMediaUrl.put(jObj);
@@ -344,7 +374,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						tvExpiryDate.setVisibility(View.VISIBLE);
 						tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 						ivtnMedia.setClickable(true);
-						ivtnMedia.setOnClickListener(LocationDetailsFragment.this);
 						isFirstMedia = false;
 					}
 					imageMediaUrl.put(jObj);
@@ -368,6 +397,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				tvImageMediaCount.setText(imageMediaCount + MMSDKConstants.DEFAULT_STRING_EMPTY);
 			}
 			
+//			ibShareMedia.setOnClickListener(new MMShareMediaOnClickListener(getActivity()));
 			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
 		}
 		// TODO: to be removed, for testing only
@@ -437,6 +467,27 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 	}
 
+	private void shareMediaClicked() {
+		shareMediaActionSheet = new Dialog(getActivity());
+		shareMediaActionSheet.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		shareMediaActionSheet.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		shareMediaActionSheet.getWindow().getAttributes().windowAnimations = R.style.ActionSheetAnimation;
+		shareMediaActionSheet.getWindow().getAttributes().gravity = Gravity.BOTTOM;
+		shareMediaActionSheet.setCancelable(false);
+		shareMediaActionSheet.setCanceledOnTouchOutside(false);
+		shareMediaActionSheet.setContentView(R.layout.share_media_action_sheet);
+		
+		btnSaveToCameraRoll = (Button) shareMediaActionSheet.findViewById(R.id.btnsavetocameraroll);
+		btnFlagForReview = (Button) shareMediaActionSheet.findViewById(R.id.btnflagforreview);
+		btnCancel = (Button) shareMediaActionSheet.findViewById(R.id.btncancel);
+		
+		btnSaveToCameraRoll.setOnClickListener(LocationDetailsFragment.this);
+		btnFlagForReview.setOnClickListener(LocationDetailsFragment.this);
+		btnCancel.setOnClickListener(LocationDetailsFragment.this);
+		
+		shareMediaActionSheet.show();
+	}
+	
 	/**
 	 * Callback to handle the result after making retrieve location info call to the server
 	 * @author Dezapp, LLC
@@ -495,6 +546,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
 						mediaResults = (String) obj;
 						hasMedia();
+					} else {
+						MMProgressDialog.dismissDialog();
+						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -524,8 +578,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private class LoadImageCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-			imageMedia = (Bitmap) obj;
-			ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
+//			imageMedia = (Bitmap) obj;
+			ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail((Bitmap) obj, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
+			ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
 		}
 	}
 	

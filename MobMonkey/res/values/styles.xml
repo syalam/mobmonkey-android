@@ -1,5 +1,10 @@
-<resources>
-
-    <style name="AppTheme" parent="android:Theme.Light" />
-
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<style name="AppTheme" parent="android:Theme.Light" />
+	
+	<style name="ActionSheetAnimation" parent="@android:style/Animation.Activity">
+		<item name="android:windowEnterAnimation">@anim/slide_bottom_in</item>
+		<item name="android:windowExitAnimation">@anim/slide_bottom_out</item>
+	</style>
+	
 </resources>
