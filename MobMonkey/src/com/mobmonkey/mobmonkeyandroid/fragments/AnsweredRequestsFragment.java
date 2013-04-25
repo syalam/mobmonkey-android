@@ -67,7 +67,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_answeredrequests_screen, container, false);
-		lvAnsweredRequests = (ListView) view.findViewById(R.id.lvAnsweredrequests);
+		lvAnsweredRequests = (ListView) view.findViewById(R.id.lvansweredrequests);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		// get all the assigned request, and then update the badge counter

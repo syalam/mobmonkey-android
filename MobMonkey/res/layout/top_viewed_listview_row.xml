@@ -30,7 +30,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="260dp"/>
 			
-			<TextView android:id="@+id/tvexpirydate"
+			<TextView android:id="@+id/tvtime"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="right"
@@ -53,8 +53,8 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="right|bottom"
 				android:layout_marginBottom="5dp"
-				android:layout_marginRight="15dp"
-				android:background="@drawable/btn_more_overlay"/>
+				android:layout_marginRight="10dp"
+				android:background="@drawable/btn_share_media"/>
 	
 		</FrameLayout>
 	

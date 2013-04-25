@@ -43,7 +43,7 @@
 			android:layout_gravity="right|bottom"
 			android:layout_marginBottom="5dp"
 			android:layout_marginRight="5dp"
-			android:background="@drawable/btn_more_overlay"/>
+			android:background="@drawable/btn_share_media"/>
 
 	</FrameLayout>
 

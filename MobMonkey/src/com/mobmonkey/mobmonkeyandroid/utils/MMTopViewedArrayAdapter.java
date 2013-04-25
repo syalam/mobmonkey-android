@@ -39,7 +39,7 @@ public class MMTopViewedArrayAdapter extends ArrayAdapter<MMMediaItem> {
 			vholder = new ViewHolder();
 			vholder.tvLocName = (TextView) topViewedRow.findViewById(R.id.tvlocname);
 			vholder.ivtnMedia = (ImageView) topViewedRow.findViewById(R.id.ivtnmedia);
-			vholder.tvExpiryDate = (TextView) topViewedRow.findViewById(R.id.tvexpirydate);
+			vholder.tvTime = (TextView) topViewedRow.findViewById(R.id.tvtime);
 			vholder.ibPlay = (ImageButton) topViewedRow.findViewById(R.id.ibplay);
 			vholder.ibShareMedia = (ImageButton) topViewedRow.findViewById(R.id.ibsharemedia);
 			
@@ -51,7 +51,7 @@ public class MMTopViewedArrayAdapter extends ArrayAdapter<MMMediaItem> {
 		MMMediaItem mmMediaItem = data[position];
 		vholder.tvLocName.setText(mmMediaItem.getLocationName());
 		vholder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
-		vholder.tvExpiryDate.setText(mmMediaItem.getExpiryDate());
+		vholder.tvTime.setText(mmMediaItem.getExpiryDate());
 		vholder.ibShareMedia.setOnClickListener(mmMediaItem.getShareMediaOnClickListener());
 		
 		if(mmMediaItem.isVideo()) {
@@ -67,7 +67,7 @@ public class MMTopViewedArrayAdapter extends ArrayAdapter<MMMediaItem> {
 	private class ViewHolder {
         TextView tvLocName;
         ImageView ivtnMedia;
-        TextView tvExpiryDate;
+        TextView tvTime;
         ImageButton ibPlay;
         ImageButton ibShareMedia;
         
