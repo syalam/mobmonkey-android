@@ -34,6 +34,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.mobmonkey.mobmonkeyandroid.MediaRecorderActivity;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsItem;
@@ -160,10 +161,14 @@ public class AssignedRequestsFragment extends MMFragment {
 						break;
 					// Video request
 					case 2:
+						Intent takeVideoIntent = new Intent(getActivity(), MediaRecorderActivity.class);
+						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
+						break;
+						/*
 						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
 						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
-						break;
+						*/
 					default:
 						break;
 				}
@@ -218,14 +223,16 @@ public class AssignedRequestsFragment extends MMFragment {
 		// video 
 		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {
 			
-			Uri vid = data.getData();
-		    String videoPath = getRealPathFromURI(vid);
+			//Uri vid = data.getData();
+		    //String videoPath = getRealPathFromURI(vid);
+			String videoPath = data.getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_VIDEO_PATH);
 		    
 		    try {
 		    	FileInputStream fis = new FileInputStream(new File(videoPath));
 
 		    	// TODO: changed the file format to .mp4
-		    	File tmpFile = new File(Environment.getExternalStorageDirectory(),"mobmonkeyVideo.mp4"); 
+		    	File tmpFile = new File(Environment.getExternalStorageDirectory(), 
+		    							MMSDKConstants.MOBMONKEY_VIDEO_TEMP_FILENAME); 
 
 		    	//save the video to the File path
 		    	FileOutputStream fos = new FileOutputStream(tmpFile);
@@ -324,6 +331,13 @@ public class AssignedRequestsFragment extends MMFragment {
 									   "You have successfully fulfilled a request.",
 									   Toast.LENGTH_LONG).
 									   show();
+						
+						// remove temp video files
+						File mmTempFile = new File("sdcard/" + MMSDKConstants.MOBMONKEY_VIDEO_TEMP_FILENAME),
+							 mmVideoFile = new File("sdcard/" + MMSDKConstants.MOBMONKEY_VIDEO_FILENAME);
+						
+						boolean deletedTemp = mmTempFile.delete(),
+								deletedVideo = mmVideoFile.delete();
 					} 
 					// if fail
 					else {

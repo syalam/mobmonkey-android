@@ -205,6 +205,11 @@
 		    
 		</activity>
 		
+		<activity android:name=".MediaRecorderActivity"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
+		
 		<meta-data android:value="@string/app_id_facebook"
 		    android:name="com.facebook.sdk.ApplicationId"/>
 		
