@@ -86,15 +86,15 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			switch(checkedId) {
 				case R.id.rbvideorequest:
 					btnSendRequest.setText(R.string.btn_send_video_request);
-					mediaType = MMSDKConstants.MEDIA_TYPE_VIDEO;
+					mediaType = MMSDKConstants.MEDIA_VIDEO;
 					break;
 				case R.id.rbphotorequest:
 					btnSendRequest.setText(R.string.btn_send_photo_request);
-					mediaType = MMSDKConstants.MEDIA_TYPE_IMAGE;
+					mediaType = MMSDKConstants.MEDIA_IMAGE;
 					break;
 				case R.id.rbtextrequest:
 					btnSendRequest.setText(R.string.btn_send_text_request);
-					mediaType = MMSDKConstants.MEDIA_TYPE_TEXT;
+					mediaType = MMSDKConstants.MEDIA_TEXT;
 					break;
 			}
 		} else if(group == rgStayActive) {
@@ -151,7 +151,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		if(view.getId() == R.id.btnsentrequest) {
 			Log.d(TAG, "sent request");
 			
-			if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_TEXT) && message.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
+			if(mediaType.equals(MMSDKConstants.MEDIA_TEXT) && message.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 				Toast.makeText(MakeARequestScreen.this, R.string.toast_no_message_detected, Toast.LENGTH_SHORT).show();
 			} else {
 				sendRequest();
@@ -194,7 +194,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		
 		message = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		scheduleRequest = MMSDKConstants.DEFAULT_STRING_EMPTY;
-		mediaType = MMSDKConstants.MEDIA_TYPE_VIDEO;
+		mediaType = MMSDKConstants.MEDIA_VIDEO;
 		
 		rgRequests.setOnCheckedChangeListener(MakeARequestScreen.this);
 		rgStayActive.setOnCheckedChangeListener(MakeARequestScreen.this);
@@ -234,7 +234,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	 * 
 	 */
 	private void setSingleItemAddMessage() {
-		icons = new int[] {android.R.drawable.ic_menu_edit};
+		icons = new int[] {R.drawable.icon_clipboard};
 		labels = new String[] {getString(R.string.tv_add_message)};
 		indicatorIcons = new int[] {R.drawable.listview_accessory_indicator};
 		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
@@ -253,9 +253,9 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		if(resultCode == RESULT_CANCELED) {
 			setSingleItemAddMessage();
 		} else if(resultCode == RESULT_OK) {
-			icons = new int[] {android.R.drawable.ic_menu_edit, android.R.drawable.ic_menu_edit};
+			icons = new int[] {R.drawable.icon_clipboard, R.drawable.icon_clipboard};
 			labels = new String[] {getString(R.string.tv_add_message), message};
-			indicatorIcons = new int[] {R.drawable.listview_accessory_indicator, android.R.drawable.ic_menu_close_clear_cancel};
+			indicatorIcons = new int[] {R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator_close};
 			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -272,7 +272,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		requestCal = null;
 		repeatRate = MMSDKConstants.REQUEST_REPEAT_RATE_NONE;
 		scheduleRequest = MMSDKConstants.DEFAULT_STRING_EMPTY;
-		icons = new int[] {android.R.drawable.ic_menu_today};
+		icons = new int[] {R.drawable.icon_calendar};
 		labels = new String[] {getString(R.string.tv_schedule_request)};
 		indicatorIcons = new int[] {R.drawable.listview_accessory_indicator};
 		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
@@ -297,9 +297,9 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			String scheduleMessage = MMUtility.getDate(requestCal.getTimeInMillis(), "KK:mm a") + 
 					" on " + MMUtility.getDate(requestCal.getTimeInMillis(), "MM/dd/yyyy");
 			
-			icons = new int[] {android.R.drawable.ic_menu_today, android.R.drawable.ic_menu_today};
+			icons = new int[] {R.drawable.icon_calendar, R.drawable.icon_calendar};
 			labels = new String[] {getString(R.string.tv_schedule_request), scheduleMessage};
-			indicatorIcons = new int[] {R.drawable.listview_accessory_indicator, android.R.drawable.ic_menu_close_clear_cancel};
+			indicatorIcons = new int[] {R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator_close};
 			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {

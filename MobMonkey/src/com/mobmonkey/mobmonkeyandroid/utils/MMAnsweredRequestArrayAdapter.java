@@ -80,7 +80,7 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 		vholder.tvLocName.setText(mmMediaItem.getLocationName());
 		vholder.tvTime.setText(mmMediaItem.getExpiryDate());
 
-		if(mmMediaItem.getImageMedia() != null) {
+//		if(mmMediaItem.getImageMedia() != null) {
 			if(mmMediaItem.isImage()) {
 				WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 				
@@ -88,11 +88,12 @@ public class MMAnsweredRequestArrayAdapter extends ArrayAdapter<MMMediaItem>{
 				vholder.ivtnMedia.setOnClickListener(mmMediaItem.getImageOnClickListener());
 			} else if(mmMediaItem.isVideo()) {
 				vholder.ibPlay.setVisibility(View.VISIBLE);
-				vholder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
+				vholder.ibPlay.setOnClickListener(mmMediaItem.getPlayOnClickListener());
+//				vholder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
 			}
-		} else {
+//		} else {
 			// TODO: handle null media
-		}
+//		}
 
 		if(mmMediaItem.isAccepted()) {
 			vholder.ibAccept.setVisibility(View.GONE);

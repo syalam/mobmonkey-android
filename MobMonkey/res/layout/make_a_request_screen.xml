@@ -32,23 +32,23 @@
 					<com.mobmonkey.mobmonkeyandroid.utils.MMCenteredRadioImageButton
 						android:id="@id/rbvideorequest"
 						android:minWidth="40dip"
-						android:minHeight="60dip"
+						android:minHeight="80dip"
 						android:layout_weight="1"
-						android:button="@android:drawable/ic_menu_camera"/>
+						android:button="@drawable/media_request_icon_video"/>
 					
 					<com.mobmonkey.mobmonkeyandroid.utils.MMCenteredRadioImageButton
 						android:id="@+id/rbphotorequest"
 						android:minWidth="40dip"
-						android:minHeight="60dip"
+						android:minHeight="80dip"
 						android:layout_weight="1"
-						android:button="@android:drawable/ic_menu_gallery"/>
+						android:button="@drawable/media_request_icon_image"/>
 					
 					<com.mobmonkey.mobmonkeyandroid.utils.MMCenteredRadioImageButton
 						android:id="@+id/rbtextrequest"
 						android:minWidth="40dip"
-						android:minHeight="60dip"
+						android:minHeight="80dip"
 						android:layout_weight="1"
-						android:button="@android:drawable/ic_menu_send"/>
+						android:button="@drawable/media_request_icon_text"/>
 			
 				</com.mobmonkey.mobmonkeyandroid.utils.MMSegmentedRadioGroup>
 				
@@ -86,45 +86,49 @@
 				    
 			    	<RadioButton android:id="@+id/rbfifteenmin"
 			    	    android:minWidth="40dp"
-			    	    android:minHeight="40dp"
+			    	    android:minHeight="50dp"
 			   	    	android:layout_weight="1"
 			    	    android:button="@null"
 			    	    android:gravity="center"
 			    	    android:text="@string/rb_fifteenmin"
-			    	    android:textAppearance="?android:attr/textAppearanceSmall"
+			    	    android:textAppearance="?android:attr/textAppearanceMedium"
+			    	    android:textStyle="bold"
 			    	    android:textColor="@color/radio_colors"
 			    	    android:background="@drawable/segment_radio_left"/>
 				    
 			    	<RadioButton android:id="@+id/rbthirtymin"
 						android:minWidth="40dp"
-						android:minHeight="40dp"
+						android:minHeight="50dp"
 						android:layout_weight="1"
 						android:button="@null"
 						android:gravity="center"
 						android:text="@string/rb_thirtymin"
-						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:textStyle="bold"
 						android:textColor="@color/radio_colors"
 						android:background="@drawable/segment_radio_middle"/>
 			    	
 			    	<RadioButton android:id="@+id/rbonehour"
 						android:minWidth="40dp"
-						android:minHeight="40dp"
+						android:minHeight="50dp"
 						android:layout_weight="1"
 						android:button="@null"
 						android:gravity="center"
 						android:text="@string/rb_onehour"
-						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:textStyle="bold"
 						android:textColor="@color/radio_colors"
 						android:background="@drawable/segment_radio_middle"/>
 			    	
 					<RadioButton android:id="@+id/rbthreehour"
 						android:minWidth="40dp"
-						android:minHeight="40dp"
+						android:minHeight="50dp"
 						android:layout_weight="1"
 						android:button="@null"
 						android:gravity="center"
 						android:text="@string/rb_threehour"
-						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:textStyle="bold"
 						android:textColor="@color/radio_colors"
 						android:background="@drawable/segment_radio_right"/>
 			    	

@@ -18,9 +18,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,10 +26,11 @@ import com.mobmonkey.mobmonkeyandroid.listeners.MMAcceptMediaOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMImageOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMLocationNameOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMRejectMediaOnClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMShareMediaOnClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMVideoPlayOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.OnLocationNameClickFragmentListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAnsweredRequestArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMAnsweredRequestItem;
-import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMMediaItem;
@@ -54,13 +52,13 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 public class AnsweredRequestsFragment extends MMFragment {
 	private static final String TAG = "AnsweredRequestsFragment";
 	private ListView lvAnsweredRequests;
-	private JSONArray answeredRequests;
+//	private JSONArray answeredRequests;
+	MMMediaItem[] answeredRequestItems;
 	private SharedPreferences userPrefs;
 	Location location;
-	private MMAnsweredRequestArrayAdapter arrayAdapter;
+	private MMAnsweredRequestArrayAdapter adapter;
 	private OnLocationNameClickFragmentListener locationNameClickListener;
-	private Bitmap[] bms;
-	private MMMediaItem[] tempItem;
+//	private Bitmap[] bms;
 	
 	// TODO: After user reject request, after app retrieve updated requests, screen is not getting refreshed, i.e. the answered requests aren't getting updated.
 	
@@ -103,45 +101,49 @@ public class AnsweredRequestsFragment extends MMFragment {
 	 * @throws ParseException
 	 */
 	
-	private MMMediaItem[] getAnsweredRequestItems() throws JSONException, NumberFormatException, ParseException {
-		MMMediaItem[] answeredRequestItems = new MMMediaItem[answeredRequests.length()];
+	private void getAnsweredRequestItems(String result) throws JSONException, NumberFormatException, ParseException {
+		JSONArray answeredRequests = new JSONArray(result);
+		answeredRequestItems = new MMMediaItem[answeredRequests.length()];
 		
-		for(int i = 0; i < answeredRequestItems.length; i++) {
+		for(int i = 0; i < answeredRequests.length(); i++) {
+			JSONObject answeredRequest = answeredRequests.getJSONObject(i);
+			MMMediaItem answeredRequestItem = new MMMediaItem();
 			
-			JSONObject info = answeredRequests.getJSONObject(i);
-			MMMediaItem item = new MMMediaItem();
-			if(info.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).length() > 0) {
-				JSONObject media = info.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).getJSONObject(0);
+			if(answeredRequest.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).length() > 0) {
+				JSONObject media = answeredRequest.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).getJSONObject(MMSDKConstants.DEFAULT_INT_ZERO);
 				
-				item.setLocationName(info.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION));
-				item.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - info.getLong("fulfilledDate")));
-				item.setExpiryDate(String.valueOf(media.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE) - System.currentTimeMillis()));
-				item.setImageMedia(bms[i]);
-				if(info.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 1) {
-					item.setIsImage(true);
-					item.setIsVideo(false);
-					item.setImageOnClickListener(new MMImageOnClickListener(getActivity(), item.getImageMedia()));
-				} else if(info.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 2) {
-					item.setIsVideo(true);
-					item.setIsImage(false);
+				answeredRequestItem.setLocationName(answeredRequest.getString(MMSDKConstants.JSON_KEY_NAME_OF_LOCATION));
+				answeredRequestItem.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - answeredRequest.getLong("fulfilledDate")));
+//				item.setExpiryDate(String.valueOf(media.getLong(MMSDKConstants.JSON_KEY_EXPIRY_DATE) - System.currentTimeMillis()));
+//				item.setImageMedia(bms[i]);
+				int mediaType = answeredRequest.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
+				Log.d(TAG, TAG + "mediaType: " + mediaType);
+				if(mediaType == MMSDKConstants.MEDIA_TYPE_IMAGE) {
+					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+					answeredRequestItem.setIsImage(true);
+//					item.setImageOnClickListener(new MMImageOnClickListener(getActivity(), item.getImageMedia()));
+				} else if(mediaType == MMSDKConstants.MEDIA_TYPE_VIDEO) {
+					answeredRequestItem.setIsVideo(true);
+					answeredRequestItem.setPlayOnClickListener(new MMVideoPlayOnClickListener(getActivity(), media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 				}
 				
-				item.setAccepted(media.getBoolean(MMSDKConstants.JSON_KEY_ACCEPTED));
+				answeredRequestItem.setAccepted(media.getBoolean(MMSDKConstants.JSON_KEY_ACCEPTED));
 				
 				
 				// locationDetails
-				JSONObject locationDetails = new JSONObject();
-				locationDetails.put(MMSDKConstants.JSON_KEY_LOCATION_ID, info.getString(MMSDKConstants.JSON_KEY_LOCATION_ID));
-				locationDetails.put(MMSDKConstants.JSON_KEY_PROVIDER_ID, info.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
-				item.setLocationNameOnClickListener(new MMLocationNameOnClickListener(locationNameClickListener, locationDetails));
-				item.setAcceptMediaOnClickListener(new MMAcceptMediaOnClickListener(new MMAcceptedRequestCallback(), 
+//				JSONObject locationDetails = new JSONObject();
+//				locationDetails.put(MMSDKConstants.JSON_KEY_LOCATION_ID, answeredRequest.getString(MMSDKConstants.JSON_KEY_LOCATION_ID));
+//				locationDetails.put(MMSDKConstants.JSON_KEY_PROVIDER_ID, answeredRequest.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
+				answeredRequestItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(getActivity()));
+				answeredRequestItem.setLocationNameOnClickListener(new MMLocationNameOnClickListener(locationNameClickListener, answeredRequest));
+				answeredRequestItem.setAcceptMediaOnClickListener(new MMAcceptMediaOnClickListener(new MMAcceptedRequestCallback(), 
 																					media.getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
 																					media.getString(MMSDKConstants.JSON_KEY_MEDIA_ID), 
 																					MMConstants.PARTNER_ID, 
 																					userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 																					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 																					getActivity()));
-				item.setRejectMediaOnClickListener(new MMRejectMediaOnClickListener(new MMRejectRequestCallback(i), 
+				answeredRequestItem.setRejectMediaOnClickListener(new MMRejectMediaOnClickListener(new MMRejectRequestCallback(i), 
 																					media.getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
 																					media.getString(MMSDKConstants.JSON_KEY_MEDIA_ID), 
 																					MMConstants.PARTNER_ID, 
@@ -151,25 +153,13 @@ public class AnsweredRequestsFragment extends MMFragment {
 				
 			}
 			
-			
-			
-			answeredRequestItems[i] = item;
-		}
-		tempItem = answeredRequestItems;
-		return answeredRequestItems;
-	}
-	
-	/**
-	 * The {@link OnItemClickListener} for {@link ListView} in AnsweredRequestsFragment.
-	 *
-	 */
-	private class onAnsweredRequestsClick implements OnItemClickListener {
-
-		@Override
-		public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-			
+			answeredRequestItems[i] = answeredRequestItem;
 		}
 		
+//		tempItem = answeredRequestItems;
+		
+		adapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, answeredRequestItems);
+		lvAnsweredRequests.setAdapter(adapter);
 	}
 	
 	/**
@@ -182,39 +172,50 @@ public class AnsweredRequestsFragment extends MMFragment {
 		public void processCallback(Object obj) {
 			Log.d(TAG, "AnsweredRequestCallback: "+(String) obj);
 			try {
-				answeredRequests = new JSONArray((String) obj);
-				JSONArray jArr = answeredRequests;
-				bms = new Bitmap[jArr.length()];
-				for(int i = 0; i < jArr.length(); i++) {
-					JSONObject jObj = jArr.getJSONObject(i);
+				getAnsweredRequestItems((String) obj);
+//				answeredRequests = new JSONArray((String) obj);
+//				JSONArray jArr = answeredRequests;
+//				bms = new Bitmap[jArr.length()];
+//				for(int i = 0; i < jArr.length(); i++) {
+//					JSONObject jObj = jArr.getJSONObject(i);
 					// if media array contains some media
-					if(jObj.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).length() > 0) {
-						JSONObject media = jObj.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).getJSONObject(0);
-						// is image
-						if(jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 1) {
-							String imageUrl = media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
-							MMImageLoaderAdapter.loadImage(new ImageCallback(i), imageUrl);
-						} 
-						// is video
-						else if(jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 2){
-							// temp image
-							bms[i] = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
+//					if(jObj.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).length() > 0) {
+//						JSONObject media = jObj.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA).getJSONObject(0);
+//						int mediaType = jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
+//						switch(mediaType) {
+//						case 0:
+//							break;
+//						case 1:
+//							String imageUrl = media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
+//							MMImageLoaderAdapter.loadImage(new ImageCallback(i), imageUrl);
+//							break;
+//						case 2:
+//							break;
+//						}
+//						
+//						 is image
+//						if(jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 1) {
+//
+//						} 
+//						 is video
+//						else if(jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE) == 2){
+//							 temp image
+//							bms[i] = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
 //							arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
 //							lvAnsweredRequests.setAdapter(arrayAdapter);
-						}
-					}
-					
-				}
+//						}
+//					}
+//					
+//				}
 				
 			} catch (JSONException ex) {
 				Log.e(TAG, "JSONException occured!");
 				ex.printStackTrace();
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
-			} 
-//			catch (ParseException e) {
-//				e.printStackTrace();
-//			}
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -223,41 +224,20 @@ public class AnsweredRequestsFragment extends MMFragment {
 	 * @author Dezapp, LLC
 	 *
 	 */
-	private class ImageCallback implements MMCallback {
+	private class LoadImageCallback implements MMCallback {
 		private int position;
 		
-		public ImageCallback(int position) {
+		public LoadImageCallback(int position) {
 			this.position = position;
 		}
 		
 		@Override
 		public void processCallback(Object obj) {
-			Bitmap bm = (Bitmap) obj;
-			bms[position] = bm;
-			
-			if(!bmsHasNull()) {
-				try {
-					arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
-					lvAnsweredRequests.setAdapter(arrayAdapter);
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			}
-			
-//			try {
-//				arrayAdapter = new MMAnsweredRequestArrayAdapter(getActivity(), R.layout.answeredrequests_listview_row, getAnsweredRequestItems());
-//				lvAnsweredRequests.setAdapter(arrayAdapter);
-//			} catch (NumberFormatException e) {
-//				e.printStackTrace();
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			} catch (ParseException e) {
-//				e.printStackTrace();
-//			}
+//			Bitmap bm = (Bitmap) obj;
+			answeredRequestItems[position].setImageMedia((Bitmap) obj);
+			answeredRequestItems[position].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
+//			bms[position] = bm;
+			adapter.notifyDataSetChanged();
 		}
 	}
 	
@@ -318,17 +298,17 @@ public class AnsweredRequestsFragment extends MMFragment {
 		}
 	}
 	
-	private boolean bmsHasNull() {
-		boolean flag = false;
-		
-		FindNull:
-		for(int i = 0; i < bms.length; i++) {
-			if(bms[i] == null) {
-				flag = true;
-				break FindNull;
-			}
-		}
-		
-		return flag;
-	}
+//	private boolean bmsHasNull() {
+//		boolean flag = false;
+//		
+//		FindNull:
+//		for(int i = 0; i < bms.length; i++) {
+//			if(bms[i] == null) {
+//				flag = true;
+//				break FindNull;
+//			}
+//		}
+//		
+//		return flag;
+//	}
 }

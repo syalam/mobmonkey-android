@@ -192,7 +192,7 @@ public class AssignedRequestsScreen extends Activity {
 											   assignedRequests.getJSONObject(positionClicked).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
 											   MMSDKConstants.MEDIA_CONTENT_JPEG,
 											   imageEncoded,
-											   MMSDKConstants.MEDIA_TYPE_IMAGE);
+											   MMSDKConstants.MEDIA_IMAGE);
 				
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -250,7 +250,7 @@ public class AssignedRequestsScreen extends Activity {
 						   assignedRequests.getJSONObject(positionClicked).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
 						   MMSDKConstants.MEDIA_CONTENT_MP4,
 						   videoEncoded,
-						   MMSDKConstants.MEDIA_TYPE_VIDEO);
+						   MMSDKConstants.MEDIA_VIDEO);
 		        
 		    } catch (IOException e) {
 		    	e.printStackTrace();

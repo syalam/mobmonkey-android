@@ -81,12 +81,16 @@ public final class MMSDKConstants {
 	public static final String FACEBOOK_REQ_PERM_BIRTHDAY = "user_birthday";
 	public static final String FACEBOOK_REQ_PERM_GENDER = "gender";
 
-
-	public static final String MEDIA_TYPE_LIVESTREAMING = "livestreaming";
-	public static final String MEDIA_TYPE_VIDEO = "video";
-	public static final String MEDIA_TYPE_IMAGE = "image";
-	public static final String MEDIA_TYPE_TEXT = "text";
+	public static final String MEDIA_LIVESTREAMING = "livestreaming";
+	public static final String MEDIA_VIDEO = "video";
+	public static final String MEDIA_IMAGE = "image";
+	public static final String MEDIA_TEXT = "text";
 	
+	public static final int MEDIA_TYPE_LIVESTREAMING = 0;
+	public static final int MEDIA_TYPE_VIDEO = 2;
+	public static final int MEDIA_TYPE_IMAGE = 1;
+	
+	// Schedule Request date wheel
 	public static final int HISTORY_SIZE = 10;
 	public static final int DAYS_PREVIOUS = 6;
 

@@ -42,7 +42,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 	private ListView lvVideoMedia;
 	private ListView lvImageMedia;
 	
-	private String mediaType;
+	private int mediaType;
 	private int mediaWidth;
 	private int mediaHeight;
 	
@@ -79,7 +79,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		lvVideoMedia = (ListView) findViewById(R.id.lvvideomedia);
 		lvImageMedia = (ListView) findViewById(R.id.lvimagemedia);
 		
-		mediaType = getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE);
+		mediaType = getIntent().getIntExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE, MMSDKConstants.DEFAULT_INT);
 		mediaWidth = getIntent().getIntExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, MMSDKConstants.DEFAULT_INT);
 		mediaHeight = getIntent().getIntExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, MMSDKConstants.DEFAULT_INT);
 		
@@ -125,14 +125,14 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 	}
 
 	private void getMediaUrls() throws JSONException {
-		streamMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING));
-		videoMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_TYPE_VIDEO));
-		imageMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_TYPE_IMAGE));
-		if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING)) {
+		streamMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_LIVESTREAMING));
+		videoMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_VIDEO));
+		imageMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_IMAGE));
+		if(mediaType == MMSDKConstants.MEDIA_TYPE_LIVESTREAMING) {
 			rbStream.setChecked(true);
-		} else if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_VIDEO)) {
+		} else if(mediaType == MMSDKConstants.MEDIA_TYPE_VIDEO) {
 			rbVideo.setChecked(true);
-		} else if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_IMAGE)) {
+		} else if(mediaType == MMSDKConstants.MEDIA_TYPE_IMAGE) {
 			rbImage.setChecked(true);
 		}
 	}

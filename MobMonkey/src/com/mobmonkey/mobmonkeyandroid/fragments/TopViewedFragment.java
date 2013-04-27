@@ -89,10 +89,10 @@ public class TopViewedFragment extends MMFragment {
 				topViewedItems[i] = new MMMediaItem();
 				
 				JSONObject jObjMedia = jObj.getJSONObject(MMSDKConstants.JSON_KEY_MEDIA);
-				if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_TYPE_IMAGE)) {
+				if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_IMAGE)) {
 					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 					topViewedItems[i].setIsImage(true);
-				} else if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_TYPE_VIDEO)) {
+				} else if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_VIDEO)) {
 					// TODO: create thumbnail from video
 					MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(i), Uri.parse(jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 					topViewedItems[i].setIsVideo(true);

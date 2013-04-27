@@ -91,10 +91,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private TextView tvVideoMediaCount;
 	private TextView tvImageMediaCount;
 	
-	private Dialog shareMediaActionSheet;
-	private Button btnSaveToCameraRoll;
-	private Button btnFlagForReview;
-	private Button btnCancel;
+//	private Dialog shareMediaActionSheet;
+//	private Button btnSaveToCameraRoll;
+//	private Button btnFlagForReview;
+//	private Button btnCancel;
 	
 	private JSONArray streamMediaUrl;
 	private JSONArray videoMediaUrl;
@@ -103,7 +103,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private MMOnLocationDetailsFragmentItemClickListener listener;
 	
 	private String mediaResults;
-	private boolean retrieveLocationDetails = false;
+	private boolean retrieveLocationDetails = true;
+	private boolean retrieveImageMedia = true;
+	private Bitmap imageMedia;
 	private View mediaButtonSelected;
 //	private String mediaStreamVideoUrl;
 //	private Bitmap imageMedia;
@@ -151,7 +153,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				favoritesList = new JSONArray();
 			}
 			location = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
-			if(!retrieveLocationDetails) {
+			if(retrieveLocationDetails) {
 				MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading_location_information));
 				MMLocationDetailsAdapter.getLocationDetails(new LocationCallback(), 
 						location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID), 
@@ -218,9 +220,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			case R.id.ibstream:
 				intent = new Intent(getActivity(), LocationDetailsMediaScreen.class);
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE, MMSDKConstants.MEDIA_TYPE_LIVESTREAMING);
-				intent.putExtra(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING, streamMediaUrl.toString());
-				intent.putExtra(MMSDKConstants.MEDIA_TYPE_VIDEO, videoMediaUrl.toString());
-				intent.putExtra(MMSDKConstants.MEDIA_TYPE_IMAGE, imageMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_LIVESTREAMING, streamMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_VIDEO, videoMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_IMAGE, imageMediaUrl.toString());
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
 				startActivity(intent);
@@ -228,9 +230,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			case R.id.ibvideo:
 				intent = new Intent(getActivity(), LocationDetailsMediaScreen.class);
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE, MMSDKConstants.MEDIA_TYPE_VIDEO);
-				intent.putExtra(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING, streamMediaUrl.toString());
-				intent.putExtra(MMSDKConstants.MEDIA_TYPE_VIDEO, videoMediaUrl.toString());
-				intent.putExtra(MMSDKConstants.MEDIA_TYPE_IMAGE, imageMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_LIVESTREAMING, streamMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_VIDEO, videoMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_IMAGE, imageMediaUrl.toString());
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
 				startActivity(intent);
@@ -238,25 +240,25 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			case R.id.ibimage:
 				intent = new Intent(getActivity(), LocationDetailsMediaScreen.class);
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE, MMSDKConstants.MEDIA_TYPE_IMAGE);
-				intent.putExtra(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING, streamMediaUrl.toString());
-				intent.putExtra(MMSDKConstants.MEDIA_TYPE_VIDEO, videoMediaUrl.toString());
-				intent.putExtra(MMSDKConstants.MEDIA_TYPE_IMAGE, imageMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_LIVESTREAMING, streamMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_VIDEO, videoMediaUrl.toString());
+				intent.putExtra(MMSDKConstants.MEDIA_IMAGE, imageMediaUrl.toString());
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
 				startActivity(intent);
 				break;
-			case R.id.ibsharemedia:
-				shareMediaClicked();
-				break;
-			case R.id.btnsavetocameraroll:
-				break;
-			case R.id.btnflagforreview:
-				break;
-			case R.id.btncancel:
-				if(shareMediaActionSheet != null) {
-					shareMediaActionSheet.dismiss();
-				}
-				break;
+//			case R.id.ibsharemedia:
+//				shareMediaClicked();
+//				break;
+//			case R.id.btnsavetocameraroll:
+//				break;
+//			case R.id.btnflagforreview:
+//				break;
+//			case R.id.btncancel:
+//				if(shareMediaActionSheet != null) {
+//					shareMediaActionSheet.dismiss();
+//				}
+//				break;
 		}
 	}
 	
@@ -321,6 +323,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				break;
 			}
 		}
+		MMProgressDialog.dismissDialog();
 	}
 	
 	/**
@@ -330,7 +333,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private void hasMedia() throws JSONException {		
 		JSONObject mediaJObj = new JSONObject(mediaResults); 
 		JSONArray mediaJArr = mediaJObj.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA);
-		
+		Log.d(TAG, "mediaResults: " + mediaJObj.toString());
 		int streamMediaCount = 0;
 		int videoMediaCount = 0;
 		int imageMediaCount = 0;
@@ -343,9 +346,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			for(int i = 0; i < mediaJArr.length(); i++) {
 				JSONObject jObj = mediaJArr.getJSONObject(i);
 				
-				String mediaType = jObj.getString(MMSDKConstants.JSON_KEY_TYPE);
+//				int mediaType = jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
 				
-				if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_LIVESTREAMING)) {
+				String media = jObj.getString(MMSDKConstants.JSON_KEY_TYPE);
+				
+				if(media.equals(MMSDKConstants.MEDIA_LIVESTREAMING)) {
 					if(isFirstMedia) {
 //						mediaStreamVideoUrl = jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
 //						vvMedia.setVideoURI(Uri.parse(mediaStreamVideoUrl));
@@ -360,9 +365,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					}
 					streamMediaUrl.put(jObj);
 					streamMediaCount++;
-				} else if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_VIDEO)) {
+				} else if(media.equals(MMSDKConstants.MEDIA_VIDEO)) {
 					if(isFirstMedia) {
-						MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(), Uri.parse(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
+//						MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(), Uri.parse(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 						tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 						ibPlay.setVisibility(View.VISIBLE);
 						ibPlay.setOnClickListener(new MMVideoPlayOnClickListener(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
@@ -370,12 +375,19 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					}
 					videoMediaUrl.put(jObj);
 					videoMediaCount++;
-				} else if(mediaType.equals(MMSDKConstants.MEDIA_TYPE_IMAGE)) {
+				} else if(media.equals(MMSDKConstants.MEDIA_IMAGE)) {
 					if(isFirstMedia) {
-						MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+						ivtnMedia.setClickable(true);
+						if(retrieveImageMedia) {
+							MMImageLoaderAdapter.loadImage(new LoadImageCallback(), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+						} else {
+							Log.d(TAG, "width: " + ivtnMedia.getWidth() + " height: " + ivtnMedia.getHeight());
+							Log.d(TAG, "measuredWidth: " + ivtnMedia.getMeasuredWidth() + " measuredHeight: " + ivtnMedia.getMeasuredHeight());
+							ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
+							ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
+						}
 						tvExpiryDate.setVisibility(View.VISIBLE);
 						tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
-						ivtnMedia.setClickable(true);
 						isFirstMedia = false;
 					}
 					imageMediaUrl.put(jObj);
@@ -399,8 +411,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				tvImageMediaCount.setText(imageMediaCount + MMSDKConstants.DEFAULT_STRING_EMPTY);
 			}
 			
-//			ibShareMedia.setOnClickListener(new MMShareMediaOnClickListener(getActivity()));
-			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
+			ibShareMedia.setOnClickListener(new MMShareMediaOnClickListener(getActivity()));
+//			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
 		}
 		// TODO: to be removed, for testing only
 //		else {
@@ -428,7 +440,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 //			
 //			ibShareMedia.setOnClickListener(LocationDetailsFragment.this);
 //		}
-		MMProgressDialog.dismissDialog();
 	}
 	
 	/**
@@ -469,26 +480,26 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 	}
 
-	private void shareMediaClicked() {
-		shareMediaActionSheet = new Dialog(getActivity());
-		shareMediaActionSheet.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		shareMediaActionSheet.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		shareMediaActionSheet.getWindow().getAttributes().windowAnimations = R.style.ActionSheetAnimation;
-		shareMediaActionSheet.getWindow().getAttributes().gravity = Gravity.BOTTOM;
-		shareMediaActionSheet.setCancelable(false);
-		shareMediaActionSheet.setCanceledOnTouchOutside(false);
-		shareMediaActionSheet.setContentView(R.layout.share_media_action_sheet);
-		
-		btnSaveToCameraRoll = (Button) shareMediaActionSheet.findViewById(R.id.btnsavetocameraroll);
-		btnFlagForReview = (Button) shareMediaActionSheet.findViewById(R.id.btnflagforreview);
-		btnCancel = (Button) shareMediaActionSheet.findViewById(R.id.btncancel);
-		
-		btnSaveToCameraRoll.setOnClickListener(LocationDetailsFragment.this);
-		btnFlagForReview.setOnClickListener(LocationDetailsFragment.this);
-		btnCancel.setOnClickListener(LocationDetailsFragment.this);
-		
-		shareMediaActionSheet.show();
-	}
+//	private void shareMediaClicked() {
+//		shareMediaActionSheet = new Dialog(getActivity());
+//		shareMediaActionSheet.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//		shareMediaActionSheet.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+//		shareMediaActionSheet.getWindow().getAttributes().windowAnimations = R.style.ActionSheetAnimation;
+//		shareMediaActionSheet.getWindow().getAttributes().gravity = Gravity.BOTTOM;
+//		shareMediaActionSheet.setCancelable(false);
+//		shareMediaActionSheet.setCanceledOnTouchOutside(false);
+//		shareMediaActionSheet.setContentView(R.layout.share_media_action_sheet);
+//		
+//		btnSaveToCameraRoll = (Button) shareMediaActionSheet.findViewById(R.id.btnsavetocameraroll);
+//		btnFlagForReview = (Button) shareMediaActionSheet.findViewById(R.id.btnflagforreview);
+//		btnCancel = (Button) shareMediaActionSheet.findViewById(R.id.btncancel);
+//		
+//		btnSaveToCameraRoll.setOnClickListener(LocationDetailsFragment.this);
+//		btnFlagForReview.setOnClickListener(LocationDetailsFragment.this);
+//		btnCancel.setOnClickListener(LocationDetailsFragment.this);
+//		
+//		shareMediaActionSheet.show();
+//	}
 	
 	/**
 	 * Callback to handle the result after making retrieve location info call to the server
@@ -522,7 +533,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 
 						getActivity().onBackPressed();
 					} else {
-						retrieveLocationDetails = true;
+						retrieveLocationDetails = false;
 						setLocationDetails();
 					}
 				} catch (JSONException e) {
@@ -559,18 +570,18 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
-	/**
-	 * Callback to handle the result from a Share Media request
-	 * @author Dezapp, LLC
-	 *
-	 */
-	private class ShareMediaCallback implements MMCallback {
-		@Override
-		public void processCallback(Object obj) {			
-			// TODO: Implement callback to handle Share Media functionality
-
-		}
-	}	
+//	/**
+//	 * Callback to handle the result from a Share Media request
+//	 * @author Dezapp, LLC
+//	 *
+//	 */
+//	private class ShareMediaCallback implements MMCallback {
+//		@Override
+//		public void processCallback(Object obj) {			
+//			// TODO: Implement callback to handle Share Media functionality
+//
+//		}
+//	}	
 	
 	/**
 	 * Callback to display the image it retrieve from the mediaurl
@@ -581,8 +592,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		@Override
 		public void processCallback(Object obj) {
 //			imageMedia = (Bitmap) obj;
-			ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail((Bitmap) obj, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
-			ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
+			retrieveImageMedia = false;
+			imageMedia = (Bitmap) obj;
+			ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
+			ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
 		}
 	}
 	
