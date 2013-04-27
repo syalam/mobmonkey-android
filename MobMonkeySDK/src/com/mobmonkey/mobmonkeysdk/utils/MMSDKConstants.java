@@ -30,6 +30,9 @@ public final class MMSDKConstants {
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
 	
+	public static final String MOBMONKEY_VIDEO_FILENAME = "mmvideo.mp4";
+	public static final String MOBMONKEY_VIDEO_TEMP_FILENAME = "MobMonkeyTemp.mp4";
+	
 	// Uri path values
 	public static final String URI_PATH_ASSIGNEDREQUESTS = "assignedrequests";
 	public static final String URI_PATH_ANSWEREDREQUESTS = "fulfilledrequests";
@@ -124,6 +127,7 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
 	public static final String KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON = "ToS display button";
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
+	public static final String KEY_INTENT_EXTRA_VIDEO_PATH = "returnedVideo";
 	
 	// MobMonkey server call key values
 	public static final String KEY_ACCEPTEDTOS = "acceptedtos";
