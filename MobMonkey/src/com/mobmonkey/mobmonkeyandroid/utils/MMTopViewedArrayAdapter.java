@@ -58,6 +58,7 @@ public class MMTopViewedArrayAdapter extends ArrayAdapter<MMMediaItem> {
 			vholder.ibPlay.setVisibility(View.VISIBLE);
 			vholder.ibPlay.setOnClickListener(mmMediaItem.getPlayOnClickListener());
 		} else if(mmMediaItem.isImage()) {
+			vholder.ibPlay.setVisibility(View.INVISIBLE);
 			vholder.ivtnMedia.setOnClickListener(mmMediaItem.getImageOnClickListener());
 		}
 		

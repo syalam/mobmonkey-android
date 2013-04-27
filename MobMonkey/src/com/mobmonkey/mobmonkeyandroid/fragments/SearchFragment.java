@@ -154,7 +154,7 @@ public class SearchFragment extends MMFragment implements OnClickListener {
 		elvSearchNoCategory.setAdapter(arrayAdapter);
 		elvSearchNoCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				searchCategory = ((TextView) view.findViewById(R.id.tvlabel)).getText().toString();
+				searchCategory = getString(R.string.tv_title_all_nearby);
 				if(position == 0) {				
 					searchAllNearbyLocations();
 				} else if(position == 1) {

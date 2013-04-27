@@ -153,6 +153,7 @@
 	<string name="tv_narrow_by_live_video">Narrow by Live Video</string>
 	
 	<!-- SearchResults Fragment -->
+	<string name="tv_title_all_nearby">All Nearby</string>
 	<string name="miles">miles</string>
 	
 	<!-- History Fragment -->
