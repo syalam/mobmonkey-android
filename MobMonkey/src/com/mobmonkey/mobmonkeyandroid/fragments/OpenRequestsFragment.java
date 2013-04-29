@@ -25,14 +25,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsItem;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMOpenRequestsArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMAssignedRequestsItem;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
-import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
-import com.mobmonkey.mobmonkeysdk.adapters.MMRequestMediaAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMRequestAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -61,12 +60,13 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
-		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_retrieving_all_open_requests));
-		// get all the open request, and then update the badge counter
-		MMInboxAdapter.getOpenRequests(new OpenRequestCallback(), 
-									   MMConstants.PARTNER_ID, 
-				  					   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-				  					   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		MMRequestAdapter.getOpenRequests(new OpenRequestCallback(), 
+										 MMConstants.PARTNER_ID,
+										 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+										 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		MMProgressDialog.displayDialog(getActivity(),
+									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+									   getString(R.string.pd_retrieving_all_open_requests));
 
 		View view = inflater.inflate(R.layout.fragment_openrequests_screen, container, false);
 		lvOpenedRequests = (ListView) view.findViewById(R.id.lvopenrequests);
@@ -75,6 +75,29 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 		return view;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
+	 */
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		final int pos = position;
+		
+		new AlertDialog.Builder(getActivity())
+			.setTitle(R.string.ad_title_delete_request)
+			.setMessage(R.string.ad_message_delete_request)
+			.setCancelable(false)
+			.setPositiveButton(R.string.ad_btn_delete, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					deleteRequest(pos);
+				}
+				
+			})
+			.setNegativeButton(R.string.ad_btn_cancel, null)
+			.show();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see com.mobmonkey.mobmonkey.utils.MMFragment#onFragmentBackPressed()
@@ -104,14 +127,16 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 				item.message = jObj.getString(MMSDKConstants.JSON_KEY_MESSAGE);
 			}
 			//date can be null. leave time as a blank string if its null
-			if(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE).compareTo(MMSDKConstants.DEFAULT_STRING_NULL) == 0) {
+			if(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE).equals(MMSDKConstants.DEFAULT_STRING_NULL)) {
 				item.time = MMSDKConstants.DEFAULT_STRING_EMPTY;
-			}
-			else {
-				item.time = MMUtility.getDate(Long.parseLong(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE)), "MMMM dd hh:mma");
+			} else {
+				item.time = MMUtility.getDate(Long.parseLong(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE)),
+											  MMSDKConstants.DATE_FORMAT_MMMM_DD_HH_SEMICOLON_MMA);
 			}
 			
-			item.dis = MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles);
+			item.dis = MMUtility.calcDist(location,
+										  jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE),
+										  jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles);
 			item.mediaType = jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
 			
 			openedRequestItems[i] = item;
@@ -120,39 +145,31 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 		return openedRequestItems;
 	}
 	
+	/**
+	 * 
+	 * @param position
+	 */
 	private void deleteRequest(int position) {
 		try {
-			MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, "Deleting request...");
-			MMRequestMediaAdapter.deleteMedia(new DeleteRequestCallback(position), 
-											  MMConstants.PARTNER_ID, 
-											  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-											  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											  openRequests.getJSONObject(position).getString(MMSDKConstants.JSON_KEY_REQUEST_ID), 
-											  openRequests.getJSONObject(position).getString(MMSDKConstants.JSON_KEY_RECURRING));
+			MMRequestAdapter.deleteRequest(new DeleteRequestCallback(position),
+										   openRequests.getJSONObject(position).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
+										   openRequests.getJSONObject(position).getString(MMSDKConstants.JSON_KEY_RECURRING),
+										   MMConstants.PARTNER_ID,
+										   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+										   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMProgressDialog.displayDialog(getActivity(),
+										   MMSDKConstants.DEFAULT_STRING_EMPTY,
+										   getString(R.string.pd_deleting_request));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		final int pos = position;
-		
-		new AlertDialog.Builder(getActivity())
-			.setTitle(R.string.ad_title_delete_request)
-			.setMessage(R.string.ad_message_delete_request)
-			.setCancelable(false)
-			.setPositiveButton(R.string.ad_btn_delete, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					deleteRequest(pos);
-				}
-				
-			})
-			.setNegativeButton(R.string.ad_btn_cancel, null)
-			.show();
-	}
-	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class DeleteRequestCallback implements MMCallback {
 		private int position;
 		
@@ -178,7 +195,7 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 						temp.remove(position);
 						openRequests = new JSONArray(temp);
 						
-						arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
+						arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.listview_row_openrequests, getOpenedRequestItems());
 						lvOpenedRequests.setAdapter(arrayAdapter);
 						lvOpenedRequests.invalidate();
 						
@@ -201,6 +218,11 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class OpenRequestCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -209,7 +231,7 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 				try {
 					Log.d(TAG, "OpenRequestCallback: " + (String) obj);
 					openRequests = new JSONArray((String) obj);
-					arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.openrequests_list_row, getOpenedRequestItems());
+					arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.listview_row_openrequests, getOpenedRequestItems());
 					lvOpenedRequests.setAdapter(arrayAdapter);
 					lvOpenedRequests.setOnItemClickListener(OpenRequestsFragment.this);				
 				} catch (JSONException ex) {

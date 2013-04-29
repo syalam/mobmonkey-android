@@ -17,11 +17,11 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMTrendingArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMTrendingItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMTrendingArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMTrendingItem;
 import com.mobmonkey.mobmonkeysdk.adapters.MMTrendingAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -130,16 +130,16 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 			mmTrendingItem[i].counter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
 		
-		arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.trending_list_row, mmTrendingItem);
+		arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.listview_row_trending, mmTrendingItem);
 		lvTrending.setAdapter(arrayAdapter);
 		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
 		
-		try {
-			JSONObject categories = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
+//		try {
+//			JSONObject categories = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
 //			findTopTenCategoryIds(categories.toJSONArray(categories.names()));
-		} catch (JSONException ex) {
-			ex.printStackTrace();
-		}
+//		} catch (JSONException ex) {
+//			ex.printStackTrace();
+//		}
 	}
 	
 //	/**
@@ -178,10 +178,10 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	private void getTrendingCounts() {
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMTrendingAdapter.getTrendingCounts(new TrendingCountsCallback(),
-											   MMSDKConstants.SEARCH_TIME_DAY,
-											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											   MMConstants.PARTNER_ID);
+												MMSDKConstants.SEARCH_TIME_DAY,
+												MMConstants.PARTNER_ID,
+												userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+												userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		} else {
 			MMProgressDialog.dismissDialog();
 		}

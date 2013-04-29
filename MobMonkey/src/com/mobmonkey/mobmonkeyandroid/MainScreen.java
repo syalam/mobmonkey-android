@@ -234,54 +234,53 @@ public class MainScreen extends TabActivity {
 	 * Function to get all the categories from the server
 	 */
 	private void getAllCategories() {
-		if(!userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
-				MMProgressDialog.displayDialog(MainScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
-			}
-			
+		if(!userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {			
 			MMCategoryAdapter.cancelGetAllCategories();
-			MMCategoryAdapter.getAllCategories(
-					new CategoriesCallback(), 
-					userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-					MMConstants.PARTNER_ID);
+			MMCategoryAdapter.getAllCategories(new CategoriesCallback(),
+											   MMConstants.PARTNER_ID,
+											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+											   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
+				MMProgressDialog.displayDialog(MainScreen.this,
+											   MMSDKConstants.DEFAULT_STRING_EMPTY,
+											   getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+			}
 		}
 	}
 	
 	/**
 	 * Function to get all the user's favorites from the server
 	 */
-	private void getAllFavorites() {
-		if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
-			MMProgressDialog.displayDialog(MainScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
-		}
-		
+	private void getAllFavorites() {		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMFavoritesAdapter.cancelGetFavorites();
 			MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 											MMConstants.PARTNER_ID, 
 											userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 											userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-		} else {
-			MMProgressDialog.dismissDialog();
+			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
+				MMProgressDialog.displayDialog(MainScreen.this,
+											   MMSDKConstants.DEFAULT_STRING_EMPTY,
+											   getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+			}
 		}
 	}
 	
-	private void checkUserIn() {
-		if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
-			MMProgressDialog.displayDialog(MainScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
-		}
-		
+	private void checkUserIn() {		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMCheckinAdapter.checkInUser(new CheckUserInCallback(),
-					MMLocationManager.getLocationLatitude(), 
-					MMLocationManager.getLocationLongitude(),
-					userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
-					MMConstants.PARTNER_ID);
+							 MMLocationManager.getLocationLatitude(),
+							 MMLocationManager.getLocationLongitude(),
+							 MMConstants.PARTNER_ID,
+							 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+							 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
+				MMProgressDialog.displayDialog(MainScreen.this,
+											   MMSDKConstants.DEFAULT_STRING_EMPTY,
+											   getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
+			}
 		} else {
 			setTabs();
-			MMProgressDialog.dismissDialog();
 		}
 	}
 	

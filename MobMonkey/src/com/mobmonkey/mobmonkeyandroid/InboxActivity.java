@@ -40,7 +40,7 @@ public class InboxActivity extends FragmentActivity implements MMOnInboxFragment
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, TAG + ":onCreate");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_fragmentcontainer);
+		setContentView(R.layout.activity_fragment_container);
 		
 		fragmentManager = getSupportFragmentManager();
 		fragmentStack = new Stack<MMFragment>();

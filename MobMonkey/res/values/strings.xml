@@ -91,6 +91,7 @@
 	
 	<!-- Top Viewed Fragment -->
 	<string name="tv_title_top_viewed">Top Viewed</string>
+	<string name="pd_retrieving_all_top_viewed">Retrieving all top viewed&#8230;</string>
 	
 	<!--  Inbox Fragment -->
 	<string name="tv_title_inbox">Inbox</string>
@@ -105,6 +106,7 @@
 	<string name="tv_title_openrequests">Open Requests</string>
 	
 	<string name="pd_retrieving_all_open_requests">Retrieving all open requests&#8230;</string>
+	<string name="pd_deleting_request">Deleting request&#8230;</string>
 	
 	<string name="ad_btn_delete">Delete</string>
 	<string name="ad_title_delete_request">Open Request</string>
@@ -114,6 +116,8 @@
 	
 	<!-- Answered Requests Fragment -->
 	<string name="tv_title_answeredrequests">Answered Requests</string>
+	<string name="pd_accepting_answered_request">Accepting answered request&#8230;</string>
+	<string name="pd_rejecting_answered_request">Rejecting answered request&#8230;</string>
 	
 	<!-- Assigned Requests Fragment -->
 	<string name="tv_title_assignedrequests">Assigned Requests</string>
@@ -131,7 +135,7 @@
 	
 	<string name="et_hint_search">Location, Category, Address</string>
 	
-	<string-array name="lv_search_nocategory">
+	<string-array name="search_no_category">
 	    <item>Show All Nearby</item>
 	    <item>History</item>
 	</string-array>

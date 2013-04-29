@@ -48,11 +48,11 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	private static final String TAG = "CategoriesFragment: ";
 	
 	private SharedPreferences userPrefs;
-	private Location location;
-	private double longitudeValue;
-	private double latitudeValue;
+//	private Location location;
+//	private double longitudeValue;
+//	private double latitudeValue;
 	
-	private TextView tvNavigationBarText;
+	private TextView tvNavBarTitle;
 	private EditText etSearch;
 	private ListView lvSubCategories;
 	
@@ -74,10 +74,10 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreateView");
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
+//		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_categories_screen, container, false);
-		tvNavigationBarText = (TextView) view.findViewById(R.id.navtitle);
+		tvNavBarTitle = (TextView) view.findViewById(R.id.tvnavbartitle);
 		etSearch = (EditText) view.findViewById(R.id.etsearch);
 		lvSubCategories = (ListView) view.findViewById(R.id.lvsubcategory);
 		
@@ -135,9 +135,9 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	 * 
 	 */
 	private void init() {
-		tvNavigationBarText.setText(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
+		tvNavBarTitle.setText(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
 		setSearchByText();
-		getCurrentLocation();
+//		getCurrentLocation();
 		
 		try {
 			categoriesArray = new JSONArray(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY));
@@ -148,7 +148,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 				subCategories.add(category.getString(Locale.getDefault().getLanguage()));
 			}
 			
-	        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.mm_simple_listview_row, R.id.tvlabel, subCategories);
+	        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.listview_row_simple, R.id.tvlabel, subCategories);
 	        
 	        lvSubCategories.setAdapter(arrayAdapter);
 		} catch (JSONException e) {
@@ -162,18 +162,18 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	private void getCurrentLocation() {
-		if(location != null) {
-			longitudeValue = location.getLongitude();
-			latitudeValue = location.getLatitude();
-			DecimalFormat decimalFormat = new DecimalFormat("#.######");
-			latitudeValue = Double.valueOf(decimalFormat.format(latitudeValue));
-			longitudeValue = Double.valueOf(decimalFormat.format(longitudeValue));
-		}
-	}
+//	/**
+//	 * 
+//	 */
+//	private void getCurrentLocation() {
+//		if(location != null) {
+//			longitudeValue = location.getLongitude();
+//			latitudeValue = location.getLatitude();
+//			DecimalFormat decimalFormat = new DecimalFormat("#.######");
+//			latitudeValue = Double.valueOf(decimalFormat.format(latitudeValue));
+//			longitudeValue = Double.valueOf(decimalFormat.format(longitudeValue));
+//		}
+//	}
 	
 	/**
 	 * 
@@ -222,16 +222,17 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	 * 
 	 */
 	private void searchByText() {
-		MMSearchLocationAdapter.searchLocationWithText(
-				new SearchCallback(), 
-				Double.toString(longitudeValue), 
-				Double.toString(latitudeValue), 
-				userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE), 
-				searchText,
-				userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-				userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-				MMConstants.PARTNER_ID);
-		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_search_for) + MMSDKConstants.DEFAULT_STRING_SPACE + searchText + getString(R.string.pd_ellipses));
+		MMSearchLocationAdapter.searchLocationWithText(new SearchCallback(),
+													   MMLocationManager.getLocationLatitude(),
+													   MMLocationManager.getLocationLongitude(),
+													   userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE),
+													   searchText,
+													   MMConstants.PARTNER_ID,
+													   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+													   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		MMProgressDialog.displayDialog(getActivity(),
+									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+									   getString(R.string.pd_search_for) + MMSDKConstants.DEFAULT_STRING_SPACE + searchText + getString(R.string.pd_ellipses));
     	InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 	}
@@ -243,16 +244,17 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	 * @throws JSONException
 	 */
 	private void searchSubCategory(String selectedSubCategory, JSONObject subCategory) throws JSONException {
-		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_locating) + MMSDKConstants.DEFAULT_STRING_SPACE + selectedSubCategory + getString(R.string.pd_ellipses));
-		MMSearchLocationAdapter.searchLocationWithCategoryId(
-				new MMSearchResultsCallback(getActivity(), selectedSubCategory, new SearchSubCategoryCallback()), 
-				Double.toString(longitudeValue), 
-				Double.toString(latitudeValue), 
-				userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE), 
-				subCategory.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID),
-				userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-				userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-				MMConstants.PARTNER_ID);
+		MMSearchLocationAdapter.searchLocationWithCategoryId(new MMSearchResultsCallback(getActivity(), selectedSubCategory, new SearchSubCategoryCallback()),
+															 MMLocationManager.getLocationLatitude(),
+															 MMLocationManager.getLocationLongitude(),
+															 userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE),
+															 subCategory.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID),
+															 MMConstants.PARTNER_ID,
+															 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+															 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		MMProgressDialog.displayDialog(getActivity(),
+									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+									   getString(R.string.pd_locating) + MMSDKConstants.DEFAULT_STRING_SPACE + selectedSubCategory + getString(R.string.pd_ellipses));
 	}
 	
     /**

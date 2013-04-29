@@ -34,7 +34,7 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_fragmentcontainer);
+		setContentView(R.layout.activity_fragment_container);
 		
 		fragmentManager = getSupportFragmentManager();
 		fragmentStack = new Stack<MMFragment>();

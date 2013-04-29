@@ -128,9 +128,13 @@ public class SignInScreen extends Activity {
 						requestEmail = true;
 						Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 					} else {
-						MMUserAdapter.signUpNewUserFacebook(new SignInCallback(), Session.getActiveSession().getAccessToken(), 
-								(String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
-						MMProgressDialog.displayDialog(SignInScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_in_facebook));
+						MMUserAdapter.signInUserFacebook(new SignInCallback(),
+															MMConstants.PARTNER_ID,
+															(String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
+															Session.getActiveSession().getAccessToken());
+						MMProgressDialog.displayDialog(SignInScreen.this,
+													   MMSDKConstants.DEFAULT_STRING_EMPTY,
+													   getString(R.string.pd_signing_in_facebook));
 					}
 				}
 		}
@@ -183,7 +187,9 @@ public class SignInScreen extends Activity {
 	}
 	
 	private void launchTwitterAuthScreen() {
-		MMProgressDialog.displayDialog(SignInScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_launch_twitter_auth_screen));
+		MMProgressDialog.displayDialog(SignInScreen.this,
+									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+									   getString(R.string.pd_launch_twitter_auth_screen));
 		Intent twitterAuthIntent = new Intent(SignInScreen.this, TwitterAuthScreen.class);
 		twitterAuthIntent.putExtra(MMSDKConstants.REQUEST_CODE, MMSDKConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
 		startActivityForResult(twitterAuthIntent, MMSDKConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH);
@@ -197,8 +203,13 @@ public class SignInScreen extends Activity {
 			userPrefsEditor.putString(MMSDKConstants.KEY_USER, etEmailAddress.getText().toString());
 			userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, etPassword.getText().toString());
 			userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY);
-			MMUserAdapter.signInUser(new SignInCallback(), etEmailAddress.getText().toString(), etPassword.getText().toString(), MMConstants.PARTNER_ID);
-    		MMProgressDialog.displayDialog(SignInScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_in));
+			MMUserAdapter.signInUser(new SignInCallback(),
+									 MMConstants.PARTNER_ID,
+									 etEmailAddress.getText().toString(),
+									 etPassword.getText().toString());
+    		MMProgressDialog.displayDialog(SignInScreen.this,
+    									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+    									   getString(R.string.pd_signing_in));
 		}
 	}
 	
@@ -323,7 +334,7 @@ public class SignInScreen extends Activity {
 			if(obj != null) {
 				try {
 					JSONObject response = new JSONObject((String) obj);
-					if(response.getString(MMSDKConstants.KEY_RESPONSE_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
+					if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
 						inputMethodManager.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
 						Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
 						if(requestEmail == false) {
@@ -332,7 +343,7 @@ public class SignInScreen extends Activity {
 						userPrefsEditor.commit();
 						startActivity(new Intent(SignInScreen.this, MainScreen.class));
 					} else {
-						Toast.makeText(SignInScreen.this, response.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
+						Toast.makeText(SignInScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

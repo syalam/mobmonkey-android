@@ -29,10 +29,10 @@ import android.widget.ListView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.AddLocationScreen;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchResultsArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchResultsItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMResultsLocation;
-import com.mobmonkey.mobmonkeyandroid.utils.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
@@ -52,7 +52,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	private Button btnAddLoc;
 	private ListView lvFavorites;
 	
-	private MMResultsLocation[] favoriteLocations;
+	private MMSearchResultsItem[] favoriteLocations;
 	private JSONArray favoritesList;
 	
 	private MMOnMapIconFragmentClickListener mapIconClickListener;
@@ -143,7 +143,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 			favoritesList = new JSONArray();
 		}
 		getFavorites();
-		ArrayAdapter<MMResultsLocation> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.search_result_list_row, favoriteLocations);
+		ArrayAdapter<MMSearchResultsItem> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, favoriteLocations);
 		lvFavorites.setAdapter(arrayAdapter);
 	}
 	
@@ -152,10 +152,10 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	 * @throws JSONException
 	 */
 	private void getFavorites() throws JSONException {
-		favoriteLocations = new MMResultsLocation[favoritesList.length()];
+		favoriteLocations = new MMSearchResultsItem[favoritesList.length()];
 		for(int i = 0; i < favoritesList.length(); i++) {
 			JSONObject jObj = favoritesList.getJSONObject(i);
-			favoriteLocations[i] = new MMResultsLocation();
+			favoriteLocations[i] = new MMSearchResultsItem();
 			favoriteLocations[i].setLocName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
 			favoriteLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles));
 			favoriteLocations[i].setLocAddr(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY) + 
@@ -165,7 +165,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		// reverse array
 		List temp = Arrays.asList(favoriteLocations);
 		Collections.reverse(temp);
-		favoriteLocations = (MMResultsLocation[]) temp.toArray();
+		favoriteLocations = (MMSearchResultsItem[]) temp.toArray();
 		
 		temp = new ArrayList<JSONObject>();
 		for(int i = 0; i < favoritesList.length(); i++) {

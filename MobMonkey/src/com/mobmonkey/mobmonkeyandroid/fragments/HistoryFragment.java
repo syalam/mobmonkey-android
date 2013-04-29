@@ -23,6 +23,8 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMHistoryArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchResultsItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnSearchResultsFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.*;
 import com.mobmonkey.mobmonkeysdk.utils.*;
@@ -40,10 +42,10 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 	
 	private JSONArray history;
 	private Location location;
-	private MMResultsLocation[] historyLocations;
+	private MMSearchResultsItem[] historyLocations;
 	
 	private ListView lvHistory;
-	ArrayAdapter<MMResultsLocation> arrayAdapter;
+	ArrayAdapter<MMSearchResultsItem> arrayAdapter;
 	
 	private MMOnSearchResultsFragmentItemClickListener searchResultsLocationSelectListener;
 	
@@ -66,7 +68,7 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 			if(!userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY).equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 				history = new JSONArray(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY));
 				getHistoryLocations();
-				arrayAdapter = new MMHistoryArrayAdapter(getActivity(), R.layout.mm_history_listview_row, historyLocations);
+				arrayAdapter = new MMHistoryArrayAdapter(getActivity(), R.layout.listview_row_history, historyLocations);
 				lvHistory.setAdapter(arrayAdapter);
 				
 				btnClear.setOnClickListener(HistoryFragment.this);
@@ -132,10 +134,10 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 	 * @throws JSONException
 	 */
 	private void getHistoryLocations() throws JSONException {
-		historyLocations = new MMResultsLocation[history.length()];
+		historyLocations = new MMSearchResultsItem[history.length()];
 			for(int i = 0; i < history.length(); i++) {
 				JSONObject jObj = history.getJSONObject(i);
-				historyLocations[i] = new MMResultsLocation();
+				historyLocations[i] = new MMSearchResultsItem();
 				historyLocations[i].setLocName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
 				historyLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + 
 						getString(R.string.miles));
@@ -187,8 +189,8 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 	 * 
 	 */
 	private void clearHistory() {
-		historyLocations = new MMResultsLocation[0];
-		arrayAdapter = new MMHistoryArrayAdapter(getActivity(), R.layout.search_result_list_row, historyLocations);
+		historyLocations = new MMSearchResultsItem[0];
+		arrayAdapter = new MMHistoryArrayAdapter(getActivity(), R.layout.listview_row_history, historyLocations);
 		lvHistory.setAdapter(arrayAdapter);
 		lvHistory.invalidate();
 		

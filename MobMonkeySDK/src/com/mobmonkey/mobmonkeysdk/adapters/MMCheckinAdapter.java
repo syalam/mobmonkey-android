@@ -24,11 +24,11 @@ public class MMCheckinAdapter extends MMAdapter {
 	}
 	
 	public static void checkInUser(MMCallback mmCallback,
-							   double latitude, 
-							   double longitude, 
-							   String emailAddress, 
-							   String password,
-							   String partnerId) {
+								   double latitude,
+								   double longitude,
+								   String partnerId,
+								   String user,
+								   String auth) {
 		
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_CHECKIN);
 		createParamsInstance();
@@ -39,15 +39,13 @@ public class MMCheckinAdapter extends MMAdapter {
 			params.put(MMSDKConstants.KEY_LONGITUDE, longitude);
 			
 			HttpPost httpPost = new HttpPost(uriBuilder.toString());
-			// add header
 			httpPost.setEntity(new StringEntity(params.toString()));
 			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
 			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMSDKConstants.KEY_USER, emailAddress);
-			httpPost.setHeader(MMSDKConstants.KEY_AUTH, password);
+			httpPost.setHeader(MMSDKConstants.KEY_USER, user);
+			httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
 			
 			new MMPostAsyncTask(mmCallback).execute(httpPost);
-			
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		} catch (UnsupportedEncodingException e) {

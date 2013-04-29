@@ -6,11 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMMediaArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMMediaItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMImageOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMShareMediaOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMVideoPlayOnClickListener;
-import com.mobmonkey.mobmonkeyandroid.utils.MMMediaArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMMediaItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
@@ -186,7 +186,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmStreamMediaItems.add(mmMediaItem);
 			}
-			streamAdapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmStreamMediaItems);
+			streamAdapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.listview_row_media, mmStreamMediaItems);
 			lvStreamMedia.setAdapter(streamAdapter);
 		}
 	}
@@ -207,7 +207,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmVideoMediaItems.add(mmMediaItem);
 			}
-			videoAdapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmVideoMediaItems);
+			videoAdapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.listview_row_media, mmVideoMediaItems);
 			lvVideoMedia.setAdapter(videoAdapter);
 		}
 	}
@@ -226,7 +226,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				mmMediaItem.setShareMediaOnClickListener(new MMShareMediaOnClickListener(LocationDetailsMediaScreen.this));
 				mmImageMediaItems.add(mmMediaItem);
 			}
-			imageAdapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.media_list_row, mmImageMediaItems);
+			imageAdapter = new MMMediaArrayAdapter(LocationDetailsMediaScreen.this, R.layout.listview_row_media, mmImageMediaItems);
 			lvImageMedia.setAdapter(imageAdapter);
 		}
 	}

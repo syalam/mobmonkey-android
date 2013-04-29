@@ -23,8 +23,30 @@ public class MMAddLocationAdapter extends MMAdapter {
 		throw new AssertionError();
 	}
 	
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param emailAddress
+	 * @param password
+	 * @param partnerId
+	 * @param address
+	 * @param description
+	 * @param address_ext
+	 * @param categoryIds
+	 * @param countryCode
+	 * @param latitude
+	 * @param locality
+	 * @param longitude
+	 * @param name
+	 * @param neighborhood
+	 * @param phoneNumber
+	 * @param postCode
+	 * @param providerId
+	 * @param region
+	 * @param website
+	 */
 	public static void addLocation(MMCallback mmCallback, String emailAddress, String password, String partnerId, String address, String description, 
-			String address_ext, String categoryIds, String countryCode, String latitude, String locality, String longitude, String name, String neighborhood, String phoneNumber,
+			String address_ext, String categoryIds, String countryCode, double latitude, String locality, double longitude, String name, String neighborhood, String phoneNumber,
 			String postCode, String providerId, String region, String website) {
 		
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_LOCATION);

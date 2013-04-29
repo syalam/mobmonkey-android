@@ -26,6 +26,8 @@ public final class MMSDKConstants {
 	public static final double DEFAULT_DOUBLE = 1.0d;
 
 	public static final String DECIMAL_FORMAT_SIX = "#.######";
+	public static final String DATE_FORMAT_MMMM_DD_HH_SEMICOLON_MMA = "MMMM dd hh:mma";
+	public static final String DATE_FORMAT_MMM_DD_COMMA_YYYY = "MMM dd, yyyy";
 	
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
@@ -65,6 +67,7 @@ public final class MMSDKConstants {
 	public static final String URI_QUERY_PARAM_KEY_RADIUS = "radius";
 	public static final String URI_QUERY_PARAM_KEY_TIME_SPAN = "timeSpan";
 	
+	// Tab tags
 	public static final String TAB_TITLE_CURRENT_TAG = "Current tab tag";
 	public static final String TAB_TITLE_TRENDING_NOW = "Trending Now";
 	public static final String TAB_TITLE_INBOX = "Inbox";
@@ -72,8 +75,8 @@ public final class MMSDKConstants {
 	public static final String TAB_TITLE_FAVORITES = "Favorites";
 	public static final String TAB_TITLE_SETTINGS = "Settings";
 	
-	public static final String TEXT_MALE = "Male";
-	public static final String TEXT_FEMALE = "Female";
+	public static final String TEXT_MALE = "male";
+	public static final String TEXT_FEMALE = "female";
 	public static final int NUM_MALE = 1;
 	public static final int NUM_FEMALE = 0;
 	
@@ -84,6 +87,7 @@ public final class MMSDKConstants {
 	public static final String FACEBOOK_REQ_PERM_BIRTHDAY = "user_birthday";
 	public static final String FACEBOOK_REQ_PERM_GENDER = "gender";
 
+	// Media and media type
 	public static final String MEDIA_LIVESTREAMING = "livestreaming";
 	public static final String MEDIA_VIDEO = "video";
 	public static final String MEDIA_IMAGE = "image";
@@ -165,18 +169,14 @@ public final class MMSDKConstants {
 	public static final String KEY_USER = "MobMonkey-user";
 	public static final String KEY_ZIP = "zip";
 	
-	// MobMonkey server response key values
-	public static final String KEY_RESPONSE_STATUS = "status";
-	public static final String KEY_RESPONSE_DESC = "description";
-	public static final String KEY_RESPONSE_ID = "id";
-	
+	// MobMonkey server call header key values
 	public static final String CONTENT_TYPE_APP_JSON = "application/json";
 	public static final String DEVICE_TYPE = "Android";
 	public static final String OAUTH_PROVIDER_FACEBOOK = "facebook";
 	public static final String OAUTH_PROVIDER_TWITTER = "twitter";
 	
 	// Twitter authentication with twitter4j values
-	public static final String TWITTER_CALLBACK_URL = "mobmonkey://com.mobmonkey.mobmonkey?";
+	public static final String TWITTER_CALLBACK_URL = "mobmonkey://com.mobmonkey.mobmonkeyandroid?";
 	public static final String TWITTER_OAUTH_TOKEN = "oauth_token";
 	public static final String TWITTER_OAUTH_VERIFIER = "oauth_verifier";
 	
@@ -189,7 +189,6 @@ public final class MMSDKConstants {
 	
 	// Request code values
 	public static final String REQUEST_CODE = "Request code";
-	
 
 	public static final int REQUEST_CODE_TOS_FACEBOOK = 1000;
 	public static final int REQUEST_CODE_TOS_TWITTER = 2000;
@@ -213,9 +212,6 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_ASSIGNED_REQUESTS = "assignedrequests";
 	public static final String JSON_KEY_ASSIGNED_READ_REQUESTS = "assignedReadRequests";
 	public static final String JSON_KEY_ASSIGNED_UNREAD_REQUESTS = "assignedUnreadRequests";
-	public static final String JSON_KEY_FULFILLED_UNREAD_COUNT = "fulfilledUnreadCount";
-	public static final String JSON_KEY_OPEN_REQUESTS_COUNT = "openrequests";
-	public static final String JSON_KEY_FULFILLED_READ_COUNT = "fulfilledReadCount";
 	public static final String JSON_KEY_BOOKMARK_COUNT = "bookmarkCount";
 	public static final String JSON_KEY_CATEGORY_ID = "categoryId";
 	public static final String JSON_KEY_CATEGORY_IDS = "categoryIds";
@@ -227,14 +223,18 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_DURATION = "duration";
 	public static final String JSON_KEY_EXPIRY_DATE = "expiryDate";
 	public static final String JSON_KEY_FREQUENCY_IN_MS = "frequencyInMS";
+	public static final String JSON_KEY_FULFILLED_DATE = "fulfilledDate";
+	public static final String JSON_KEY_FULFILLED_READ_COUNT = "fulfilledReadCount";
+	public static final String JSON_KEY_FULFILLED_UNREAD_COUNT = "fulfilledUnreadCount";
+	public static final String JSON_KEY_ID = "id";
 	public static final String JSON_KEY_IMAGES = "images";
 	public static final String JSON_KEY_INTEREST_COUNT = "interestCount";
-	public static final String JSON_KEY_ISRECURRING = "isRecurring";
+	public static final String JSON_KEY_IS_RECURRING = "isRecurring";
 	public static final String JSON_KEY_LATITUDE = "latitude";
 	public static final String JSON_KEY_LOCALITY = "locality";
 	public static final String JSON_KEY_LOCATION_ID = "locationId";
 	public static final String JSON_KEY_LONGITUDE = "longitude";
-	public static final String JSON_KEY_MARKASREAD = "markAsRead";
+	public static final String JSON_KEY_MARK_AS_READ = "markAsRead";
 	public static final String JSON_KEY_MEDIA = "media";
 	public static final String JSON_KEY_MEDIA_DATA = "mediaData";
 	public static final String JSON_KEY_MEDIA_ID = "mediaId";
@@ -247,6 +247,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_NEARBY_COUNT = "nearbyCount";
 	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
 	public static final String JSON_KEY_OPEN_REQUESTS = "OpenRequests";
+	public static final String JSON_KEY_OPEN_REQUESTS_COUNT = "openrequests";
 	public static final String JSON_KEY_PARENTS = "parents";
 	public static final String JSON_KEY_PHONE_NUMBER = "phoneNumber";
 	public static final String JSON_KEY_POSTCODE = "postcode";
@@ -293,5 +294,5 @@ public final class MMSDKConstants {
 	public static final String REQUEST_REPEAT_RATE_WEEKLY = "weekly";
 	public static final String REQUEST_REPEAT_RATE_MONTHLY = "monthly";
 	
-	public static final String INTENT_FILTER_DISPLAY_MESSAGE = "com.mobmonkey.mobmonkey.DISPLAY_MESSAGE";
+	public static final String INTENT_FILTER_DISPLAY_MESSAGE = "com.mobmonkey.mobmonkeyandroid.DISPLAY_MESSAGE";
 }

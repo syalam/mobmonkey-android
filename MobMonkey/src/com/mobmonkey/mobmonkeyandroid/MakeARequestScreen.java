@@ -20,7 +20,7 @@ import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.utils.MMArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSegmentedRadioGroup;
@@ -237,7 +237,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		icons = new int[] {R.drawable.icon_clipboard};
 		labels = new String[] {getString(R.string.tv_add_message)};
 		indicatorIcons = new int[] {R.drawable.listview_accessory_indicator};
-		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
+		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
 		mmelvAddMessage.setAdapter(mmArrayAdapter);
 		mmelvAddMessage.invalidate();
 	}
@@ -256,7 +256,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			icons = new int[] {R.drawable.icon_clipboard, R.drawable.icon_clipboard};
 			labels = new String[] {getString(R.string.tv_add_message), message};
 			indicatorIcons = new int[] {R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator_close};
-			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
+			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					message = MMSDKConstants.DEFAULT_STRING_EMPTY;
@@ -268,6 +268,9 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void setSingleScheduleRequest() {
 		requestCal = null;
 		repeatRate = MMSDKConstants.REQUEST_REPEAT_RATE_NONE;
@@ -275,7 +278,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		icons = new int[] {R.drawable.icon_calendar};
 		labels = new String[] {getString(R.string.tv_schedule_request)};
 		indicatorIcons = new int[] {R.drawable.listview_accessory_indicator};
-		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
+		mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, null);
 		mmelvScheduleRequest.setAdapter(mmArrayAdapter);
 		mmelvScheduleRequest.invalidate();
 	}
@@ -300,7 +303,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			icons = new int[] {R.drawable.icon_calendar, R.drawable.icon_calendar};
 			labels = new String[] {getString(R.string.tv_schedule_request), scheduleMessage};
 			indicatorIcons = new int[] {R.drawable.listview_accessory_indicator, R.drawable.listview_accessory_indicator_close};
-			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.mm_listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
+			mmArrayAdapter = new MMArrayAdapter(MakeARequestScreen.this, R.layout.listview_row, icons, labels, indicatorIcons, android.R.style.TextAppearance_Medium, Typeface.DEFAULT_BOLD, new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					setSingleScheduleRequest();
@@ -311,8 +314,10 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void sendRequest() {
-		MMProgressDialog.displayDialog(MakeARequestScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_sending_request));
 		MMSendRequestAdapter.sendRequest(new SendRequestCallback(), 
 										 message,
 										 scheduleDate, 
@@ -325,6 +330,9 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 										 MMConstants.PARTNER_ID,
 										 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 										 userPrefs.getString(MMSDKConstants.KEY_AUTH,MMSDKConstants.DEFAULT_STRING_EMPTY));
+		MMProgressDialog.displayDialog(MakeARequestScreen.this,
+									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+									   getString(R.string.pd_sending_request));
 	}
 	
 	/**
@@ -340,7 +348,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			if(obj != null) {
 				try {
 					JSONObject response = new JSONObject((String)obj);
-					if(response.getString(MMSDKConstants.KEY_RESPONSE_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+					if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 						Toast.makeText(MakeARequestScreen.this, R.string.toast_request_successful, Toast.LENGTH_SHORT).show();
 						finish();
 						overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);

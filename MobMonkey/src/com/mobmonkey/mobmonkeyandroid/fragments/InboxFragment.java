@@ -17,11 +17,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMInboxArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMInboxItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMInboxArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMInboxItem;
 import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -106,7 +106,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 			inboxItems[i].counter = MMSDKConstants.DEFAULT_INT_ZERO;
 		}
 		
-		arrayAdapter = new MMInboxArrayAdapter(getActivity(), R.layout.inbox_list_row, inboxItems);
+		arrayAdapter = new MMInboxArrayAdapter(getActivity(), R.layout.listview_row_inbox, inboxItems);
 		lvInbox.setAdapter(arrayAdapter);
 		lvInbox.setOnItemClickListener(InboxFragment.this);
 	}

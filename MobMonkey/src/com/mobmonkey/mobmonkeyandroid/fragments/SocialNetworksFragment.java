@@ -1,10 +1,10 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSocialNetworksArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSocialNetworksItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnFragmentFinishListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMSocialNetworkArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMSocialNetworkItem;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
@@ -32,21 +32,21 @@ public class SocialNetworksFragment extends MMFragment {
 		View view = inflater.inflate(R.layout.fragment_socialnetworks_screen, container, false);
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Activity.MODE_PRIVATE);
 		lvSocialNetworks = (ListView) view.findViewById(R.id.lvsocialnetwork);
-		MMSocialNetworkArrayAdapter arrayAdapter = new MMSocialNetworkArrayAdapter(getActivity(), R.layout.social_networks_listview_row, getNetworkItems());
+		MMSocialNetworksArrayAdapter arrayAdapter = new MMSocialNetworksArrayAdapter(getActivity(), R.layout.listview_row_socialnetworks, getNetworkItems());
 		lvSocialNetworks.setAdapter(arrayAdapter);
 		
 		return view;
 	}
 	
-	private MMSocialNetworkItem[] getNetworkItems() {
-		MMSocialNetworkItem[] data = new MMSocialNetworkItem[2];
+	private MMSocialNetworksItem[] getNetworkItems() {
+		MMSocialNetworksItem[] data = new MMSocialNetworksItem[2];
 		
-		data[0] = new MMSocialNetworkItem();
+		data[0] = new MMSocialNetworksItem();
 		data[0].title = getActivity().getResources().getStringArray(R.array.social_networks_name)[0];
 		data[0].isOn = userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY)
 							.equals(MMSDKConstants.OAUTH_PROVIDER_FACEBOOK) ? true:false;
 		
-		data[1] = new MMSocialNetworkItem();
+		data[1] = new MMSocialNetworksItem();
 		data[1].title = getActivity().getResources().getStringArray(R.array.social_networks_name)[1];
 		data[1].isOn = userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY)
 							.equals(MMSDKConstants.OAUTH_PROVIDER_TWITTER) ? true:false;

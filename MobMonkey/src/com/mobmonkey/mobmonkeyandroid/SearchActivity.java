@@ -44,7 +44,7 @@ public class SearchActivity extends FragmentActivity implements MMOnNoCategoryFr
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_fragmentcontainer);
+		setContentView(R.layout.activity_fragment_container);
 		
 		fragmentManager = getSupportFragmentManager();
 		fragmentStack = new Stack<MMFragment>();

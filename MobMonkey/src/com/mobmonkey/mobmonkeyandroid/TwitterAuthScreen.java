@@ -111,15 +111,22 @@ public class TwitterAuthScreen extends Activity {
 		try {
 			if(uri.getQueryParameter(MMSDKConstants.TWITTER_OAUTH_VERIFIER) != null) {
 				twitterAccessToken = twitter.getOAuthAccessToken(requestToken, uri.getQueryParameter(MMSDKConstants.TWITTER_OAUTH_VERIFIER));
-				MMUserAdapter.signInUserTwitter(new TwitterAuthCallback(), twitterAccessToken.getToken(), twitterAccessToken.getScreenName(), MMConstants.PARTNER_ID);
+				MMUserAdapter.signInUserTwitter(new TwitterAuthCallback(),
+												twitterAccessToken.getToken(),
+												twitterAccessToken.getScreenName(),
+												MMConstants.PARTNER_ID);
 				
 				int requestCode = getIntent().getIntExtra(MMSDKConstants.REQUEST_CODE, MMSDKConstants.DEFAULT_INT);
 				
 				// Depend on which Activity it was called from, it will display the appropriate signin/signup message
 				if(requestCode == MMSDKConstants.REQUEST_CODE_SIGN_IN_TWITTER_AUTH) {
-					MMProgressDialog.displayDialog(TwitterAuthScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_in_twitter));
+					MMProgressDialog.displayDialog(TwitterAuthScreen.this,
+												   MMSDKConstants.DEFAULT_STRING_EMPTY,
+												   getString(R.string.pd_signing_in_twitter));
 				} else if(requestCode == MMSDKConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH) {
-					MMProgressDialog.displayDialog(TwitterAuthScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up_twitter));
+					MMProgressDialog.displayDialog(TwitterAuthScreen.this,
+												   MMSDKConstants.DEFAULT_STRING_EMPTY,
+												   getString(R.string.pd_signing_up_twitter));
 				}
 			} else {
 				finish();
@@ -159,19 +166,19 @@ public class TwitterAuthScreen extends Activity {
 			
 			try {
 				JSONObject response = new JSONObject((String) obj);
-				if(response.getString(MMSDKConstants.KEY_RESPONSE_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
+				if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
 					setResult(MMSDKConstants.RESULT_CODE_SUCCESS);
 					userPrefsEditor.putString(MMSDKConstants.KEY_USER, twitterAccessToken.getScreenName());
 					userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, twitterAccessToken.getToken());
 					userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_TWITTER);
 					userPrefsEditor.commit();
-				} else if(response.getString(MMSDKConstants.KEY_RESPONSE_ID).equals(MMSDKConstants.RESPONSE_ID_NOT_FOUND)) {
+				} else if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_NOT_FOUND)) {
 					Intent resultIntent = new Intent();
 					resultIntent.putExtra(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, twitterAccessToken.getScreenName());
 					resultIntent.putExtra(MMSDKConstants.KEY_OAUTH_TOKEN, twitterAccessToken.getToken());
 					setResult(MMSDKConstants.RESULT_CODE_NOT_FOUND, resultIntent);
 				} else {
-					Toast.makeText(TwitterAuthScreen.this, response.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
+					Toast.makeText(TwitterAuthScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 				}
 				finish();
 				overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);

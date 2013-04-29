@@ -36,13 +36,13 @@ import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.MediaRecorderActivity;
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.utils.MMAssignedRequestsItem;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMAssignedRequestsArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMAssignedRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
-import com.mobmonkey.mobmonkeysdk.adapters.MMAnswerRequestAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMRequestAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
@@ -80,11 +80,10 @@ public class AssignedRequestsFragment extends MMFragment {
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		try {
-			// get all the answered request, and then update the badge counter
-			MMInboxAdapter.getAssignedRequests(new AssignedRequestCallback(), 
-										   	   MMConstants.PARTNER_ID, 
-										   	   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-										   	   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMRequestAdapter.getAssignedRequests(new AssignedRequestCallback(), 
+												 MMConstants.PARTNER_ID,
+												 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+												 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -205,17 +204,18 @@ public class AssignedRequestsFragment extends MMFragment {
 			String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
 			
 			try {
-				MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_uploading_image));
-				MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
-											   MMConstants.PARTNER_ID, 
-											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-											   userPrefs.getString(MMSDKConstants.KEY_AUTH,MMSDKConstants.DEFAULT_STRING_EMPTY), 
+				MMRequestAdapter.answerRequest(new AnswerRequest(),
+											   MMSDKConstants.MEDIA_IMAGE,
 											   assignedRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
 											   assignedRequests.getJSONObject(clickedPosition).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
 											   MMSDKConstants.MEDIA_CONTENT_JPEG,
 											   imageEncoded,
-											   MMSDKConstants.MEDIA_IMAGE);
-				
+											   MMConstants.PARTNER_ID,
+											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+											   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+				MMProgressDialog.displayDialog(getActivity(),
+											   MMSDKConstants.DEFAULT_STRING_EMPTY,
+											   getString(R.string.pd_uploading_image));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}					   
@@ -267,17 +267,18 @@ public class AssignedRequestsFragment extends MMFragment {
 		        }
 		        
 		    	// send base64 file to server
-				MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_uploading_video));
-		        MMAnswerRequestAdapter.AnswerRequest(new mmAnswerRequest(), 
-												     MMConstants.PARTNER_ID, 
-												     userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-												     userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-												     assignedRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
-												     assignedRequests.getJSONObject(clickedPosition).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
-												     MMSDKConstants.MEDIA_CONTENT_MP4,
-												     videoEncoded,
-												     MMSDKConstants.MEDIA_VIDEO);
-		        
+		        MMRequestAdapter.answerRequest(new AnswerRequest(),
+					     					   MMSDKConstants.MEDIA_VIDEO,
+					     					   assignedRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
+					     					   assignedRequests.getJSONObject(clickedPosition).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
+					     					   MMSDKConstants.MEDIA_CONTENT_MP4,
+					     					   videoEncoded,
+					     					   MMConstants.PARTNER_ID,
+					     					   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+					     					   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+				MMProgressDialog.displayDialog(getActivity(),
+											   MMSDKConstants.DEFAULT_STRING_EMPTY,
+											   getString(R.string.pd_uploading_video));		        
 		    } catch (IOException e) {
 		    	e.printStackTrace();
 		    } catch (JSONException e) {
@@ -293,7 +294,7 @@ public class AssignedRequestsFragment extends MMFragment {
 	 *
 	 */
 	
-	private class mmAnswerRequest implements MMCallback {
+	private class AnswerRequest implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
 			Log.d(TAG, "Response: " + (String) obj);
@@ -302,7 +303,7 @@ public class AssignedRequestsFragment extends MMFragment {
 			if(obj != null) {
 				// if successfully uploaded a media, refresh list
 				try {
-					JSONObject jObj = new JSONObject((String)obj);
+					JSONObject jObj = new JSONObject((String) obj);
 					if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 	//					MMAssignedRequestsItem[] items, data;
 	//					data = getAssignedRequestItems();
@@ -323,7 +324,7 @@ public class AssignedRequestsFragment extends MMFragment {
 						}
 						assignedRequests = newArray;
 						
-						arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, getAssignedRequestItems());
+						arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
 						lvAssignedRequests.setAdapter(arrayAdapter);
 						lvAssignedRequests.invalidate();
 						
@@ -424,7 +425,7 @@ public class AssignedRequestsFragment extends MMFragment {
 				Log.d(TAG, "AssignedRequest: " + (String) obj);
 				try {
 					assignedRequests = new JSONArray((String) obj);
-					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, getAssignedRequestItems());
+					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
 					lvAssignedRequests.setAdapter(arrayAdapter);
 					lvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
 				} catch (JSONException e) {

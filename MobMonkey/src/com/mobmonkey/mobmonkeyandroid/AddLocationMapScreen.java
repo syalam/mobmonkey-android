@@ -1,19 +1,11 @@
 package com.mobmonkey.mobmonkeyandroid;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
-import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -23,6 +15,9 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeysdk.adapters.MMGeocoderAdapter;
+import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
@@ -31,7 +26,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
  * @author Dezapp, LLC
  *
  */
-public class AddLocationMapScreen extends FragmentActivity {
+public class AddLocationMapScreen extends FragmentActivity implements OnMapClickListener {
 	private Location location;
 	
 	private Button btnAddLoc;
@@ -48,6 +43,12 @@ public class AddLocationMapScreen extends FragmentActivity {
 		setContentView(R.layout.add_location_map_screen);
 		
 		init(); 
+	}
+	
+	@Override
+	public void onMapClick(LatLng pointClicked) {
+		MMGeocoderAdapter.getFromLocation(AddLocationMapScreen.this, new ReverseGeocodeCallback(), pointClicked.latitude, pointClicked.longitude);
+		MMProgressDialog.displayDialog(AddLocationMapScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, "");
 	}
 	
 	/* (non-Javadoc)
@@ -86,34 +87,7 @@ public class AddLocationMapScreen extends FragmentActivity {
 		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
 		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
 		googleMap.setMyLocationEnabled(true);
-		googleMap.setOnMapClickListener(new OnMapClickListener(){
-			@Override
-			public void onMapClick(LatLng pointClicked) {
-				if(!addLocClicked) {
-					try{
-						Address locationClicked = getAddressForLocation(AddLocationMapScreen.this, pointClicked.latitude, pointClicked.longitude);
-						Toast.makeText(AddLocationMapScreen.this, "Address: "+locationClicked.getAddressLine(0), Toast.LENGTH_SHORT).show();
-						
-						// pass information to category screen
-						Bundle bundle = new Bundle();
-						bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
-						bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
-						bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
-						bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
-						bundle.putString(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude()+"");
-						bundle.putString(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude()+"");
-						
-						Intent intent = new Intent(AddLocationMapScreen.this, AddLocationScreen.class);
-						intent.putExtras(bundle);
-						startActivity(intent);
-						finish();
-					}catch(IOException e)
-					{
-						e.printStackTrace();
-					}
-				}
-			}
-		});
+		googleMap.setOnMapClickListener(AddLocationMapScreen.this);
 	}
 	
 	private void getLocation() {
@@ -129,16 +103,31 @@ public class AddLocationMapScreen extends FragmentActivity {
 		}
 	}
 	
-	public Address getAddressForLocation(Context context, double latitude, double longitude) throws IOException {
-        int maxResults = 1;
-
-        Geocoder gc = new Geocoder(context, Locale.getDefault());
-        List<Address> addresses = gc.getFromLocation(latitude, longitude, maxResults);
-
-        if (addresses.size() == 1) {
-            return addresses.get(0);
-        } else {
-            return null;
-        }
-    }
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class ReverseGeocodeCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
+			if(obj != null) {
+				Address locationClicked = (Address) obj;
+				
+				Bundle bundle = new Bundle();
+				bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
+				bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+				bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+				bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+				bundle.putDouble(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
+				bundle.putDouble(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
+				
+				Intent intent = new Intent(AddLocationMapScreen.this, AddLocationScreen.class);
+				intent.putExtras(bundle);
+				startActivity(intent);
+			}
+		}
+	}
 }

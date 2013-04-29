@@ -14,9 +14,6 @@ import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
@@ -30,19 +27,19 @@ import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
  *
  */
 public class AddLocationScreen extends Activity {
-	
-	EditText etLocName;
-	EditText etCats;
-	EditText etStreet;
-	EditText etCity;
-	EditText etState;
-	EditText etZip;
-	EditText etPhone;
-	String name, categories, street, city, state, postalCode, phone, latitude, longitude;
+	private EditText etLocName;
+	private EditText etCats;
+	private EditText etStreet;
+	private EditText etCity;
+	private EditText etState;
+	private EditText etZip;
+	private EditText etPhone;
+	private String name, categories, street, city, state, postalCode, phone;
+	double latitude, longitude;
 	
 	String[] topLevelCats;
 	
-	Location location;
+//	Location location;
 	LocationManager locationManager;
 	
 	SharedPreferences userPrefs;
@@ -56,7 +53,7 @@ public class AddLocationScreen extends Activity {
 		editPrefs = userPrefs.edit();
 		editPrefs.remove(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST);
 		editPrefs.commit();
-		location = new Location(LocationManager.NETWORK_PROVIDER);
+//		location = new Location(LocationManager.NETWORK_PROVIDER);
 		init();
 	}
 	
@@ -220,11 +217,11 @@ public class AddLocationScreen extends Activity {
 			etCity.setText(bundle.getString(MMSDKConstants.JSON_KEY_LOCALITY));
 			etState.setText(bundle.getString(MMSDKConstants.JSON_KEY_REGION));
 			etZip.setText(bundle.getString(MMSDKConstants.JSON_KEY_POSTCODE));
-			latitude = bundle.getString(MMSDKConstants.JSON_KEY_LATITUDE);
-			longitude = bundle.getString(MMSDKConstants.JSON_KEY_LONGITUDE);
+			latitude = bundle.getDouble(MMSDKConstants.JSON_KEY_LATITUDE);
+			longitude = bundle.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE);
 			
-			location.setLatitude(Double.parseDouble(bundle.getString(MMSDKConstants.JSON_KEY_LATITUDE)));
-			location.setLongitude(Double.parseDouble(bundle.getString(MMSDKConstants.JSON_KEY_LONGITUDE)));
+//			location.setLatitude(Double.parseDouble(bundle.getString(MMSDKConstants.JSON_KEY_LATITUDE)));
+//			location.setLongitude(Double.parseDouble(bundle.getString(MMSDKConstants.JSON_KEY_LONGITUDE)));
 		}
 	}
 	

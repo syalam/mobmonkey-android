@@ -9,11 +9,11 @@ import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMUserAdapter;
+import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -40,7 +40,6 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 	private SharedPreferences.Editor userPrefsEditor;
 	
 	private MMOnSettingsFragmentItemClickListener listener;
-	private ProgressDialog progressDialog;
 	private ListView lvSettingsCategory;
 	
 	@Override
@@ -52,7 +51,7 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 		View view = inflater.inflate(R.layout.fragment_settings_screen, container, false);
 		
 		lvSettingsCategory = (ListView) view.findViewById(R.id.lvsettingscategory);
-		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.settings_category_list_row, R.id.tvsettingscategory, getResources().getStringArray(R.array.settings_category));
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.listview_row_settings, R.id.tvsettingscategory, getResources().getStringArray(R.array.settings_category));
 		lvSettingsCategory.setAdapter(arrayAdapter);
 		lvSettingsCategory.setOnItemClickListener(this);
 		
@@ -66,9 +65,13 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsignout:
-				MMUserAdapter.signOut(new SignOutCallback(), userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), MMConstants.PARTNER_ID);
-				progressDialog = ProgressDialog.show(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_out), true, false);
+				MMUserAdapter.signOut(new SignOutCallback(),
+									  MMConstants.PARTNER_ID,
+									  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+									  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+				MMProgressDialog.displayDialog(getActivity(),
+											   MMSDKConstants.DEFAULT_STRING_EMPTY,
+											   getString(R.string.pd_signing_out));
 			break;
 		}
 	}
@@ -98,13 +101,11 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
      */
 	private class SignOutCallback implements MMCallback {
 		public void processCallback(Object obj) {
-			if(progressDialog != null) {
-				progressDialog.dismiss();
-			}
+			MMProgressDialog.dismissDialog();
 
 			try {
 				JSONObject response = new JSONObject((String) obj);
-				if(response.getString(MMSDKConstants.KEY_RESPONSE_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+				if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 					// TODO: clear all the saved username/email/passwords/tokens
 					Session session = Session.getActiveSession();
 					if(session != null) {

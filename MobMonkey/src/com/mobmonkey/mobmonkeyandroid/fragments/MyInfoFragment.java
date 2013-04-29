@@ -2,6 +2,7 @@ package com.mobmonkey.mobmonkeyandroid.fragments;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,8 +53,9 @@ import android.widget.Toast;
 public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateChangedListener, OnTouchListener {
 	private static final String TAG = "MyInfoFragment: ";
 
-	private GraphUser facebookUser;
 	private SharedPreferences userPrefs;
+	private SharedPreferences.Editor userPrefsEditor;
+	private GraphUser facebookUser;
 	
 	private InputMethodManager inputMethodManager;
 	private EditText etFirstName, etLastName, etEmailAddress, etNewPassword, etConfirmPassword, etBirthdate, etGender;
@@ -64,23 +66,36 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	private JSONObject response;
 	
 	private String oAuthProvider;
-	private String newPassword, confirmPassword;
+	private String newPassword;
 	
+	// TODO: figure out how to update user info if user signed in with Facebook
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Activity.MODE_PRIVATE);
-        
-		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading_user_info));
+		userPrefsEditor = userPrefs.edit();
+    	oAuthProvider = userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY);
+    	if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)) {
+			Session session = Session.getActiveSession();
+			Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(getActivity(), Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL, MMSDKConstants.FACEBOOK_REQ_PERM_BIRTHDAY));
+			session.requestNewReadPermissions(request);
+			Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
+    	} else {
+			MMUserAdapter.getUserInfo(new UserInfoCallback(),
+									  MMConstants.PARTNER_ID,
+									  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+									  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMProgressDialog.displayDialog(getActivity(),
+										   MMSDKConstants.DEFAULT_STRING_EMPTY,
+										   getString(R.string.pd_loading_user_info));
+    	}
 		
-		MMUserAdapter.getUserInfo(new UserInfoCallback(), MMConstants.PARTNER_ID,
-				 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-				 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-		
-		View view = inflater.inflate(R.layout.fragment_myinfo_screen, container, false);
-    	
     	inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-    	
+		View view = inflater.inflate(R.layout.fragment_myinfo_screen, container, false);
     	ScrollView svMyInfo = (ScrollView) view.findViewById(R.id.svmyinfo);
     	svMyInfo.setOnTouchListener(MyInfoFragment.this);
     	
@@ -97,8 +112,6 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	birthdate = Calendar.getInstance();
     	
     	Log.d(TAG, "User has login with " + userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY) + " account.");
-    	
-    	oAuthProvider = userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY);
     	
     	// if user signed in with Facebook account, they can edit nothing in this screen.
     	if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)) {
@@ -131,12 +144,6 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     		etEmailAddress.setFocusable(false);
     		etEmailAddress.setClickable(false);
     		
-    		// disable password
-    		etNewPassword.setFocusable(false);
-    		etNewPassword.setClickable(false);
-    		etConfirmPassword.setFocusable(false);
-    		etConfirmPassword.setClickable(false);
-    		
     		// set Listener to birth date, and Gender fields
     		etLastName.setOnKeyListener(MyInfoFragment.this);
     		etBirthdate.setOnTouchListener(MyInfoFragment.this);
@@ -159,6 +166,10 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 		return view;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onAttach(android.app.Activity)
+	 */
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -166,35 +177,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 			onFragmentFinishListener = (MMOnFragmentFinishListener) activity;
 		}
 	}
-
-	@Override
-	public void onFragmentBackPressed() {
-		Log.d(TAG, response.toString());
-		// check if newPassword is the same as confirm password
-		newPassword = etNewPassword.getText().toString(); 
-		confirmPassword = etConfirmPassword.getText().toString();
-		if(checkFields()) {
-			try {
-				MMUserAdapter.updateUserInfo(new UserInfoUpdateCallback(), 
-										   	 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-										   	 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-										   	 MMConstants.PARTNER_ID, 
-										   	 newPassword, 
-										   	 etFirstName.getText().toString(),
-										   	 etLastName.getText().toString(),
-										   	 response.getLong(MMSDKConstants.KEY_BIRTHDATE), 
-										   	 convertGender(), 
-										   	 response.getString(MMSDKConstants.KEY_CITY), 
-										   	 response.getString(MMSDKConstants.KEY_STATE), 
-										   	 response.getString(MMSDKConstants.KEY_ZIP), 
-										   	 response.getBoolean(MMSDKConstants.KEY_ACCEPTEDTOS));
-				MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_updating_user_info));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
+	
 	/**
      * {@link OnTouchListener} handler for birthdate and gender {@link EditText}. When the {@link EditText}s are touched, it will prompt the user to select his/her birthdate or gender.
      */
@@ -226,6 +209,10 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 		return false;
 	}
 
+    /*
+     * (non-Javadoc)
+     * @see android.widget.DatePicker.OnDateChangedListener#onDateChanged(android.widget.DatePicker, int, int, int)
+     */
 	@Override
 	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		
@@ -249,6 +236,36 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public void onFragmentBackPressed() {
+		Log.d(TAG, response.toString());
+		// check if newPassword is the same as confirm password
+		newPassword = etNewPassword.getText().toString(); 
+//		confirmPassword = etConfirmPassword.getText().toString();
+		if(checkFields()) {
+			try {
+				MMProgressDialog.displayDialog(getActivity(),
+											   MMSDKConstants.DEFAULT_STRING_EMPTY,
+											   getString(R.string.pd_updating_user_info));
+				MMUserAdapter.updateUserInfo(new UserInfoUpdateCallback(),
+										   	 etFirstName.getText().toString(),
+										   	 etLastName.getText().toString(),
+										   	 newPassword,
+										   	 birthdate.getTimeInMillis(),
+										   	 convertGender(),
+										   	 response.getString(MMSDKConstants.KEY_CITY),
+										   	 response.getString(MMSDKConstants.KEY_STATE),
+										   	 response.getString(MMSDKConstants.KEY_ZIP),
+										   	 response.getBoolean(MMSDKConstants.KEY_ACCEPTEDTOS),
+											 MMConstants.PARTNER_ID,
+											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+										   	 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
     /**
@@ -280,11 +297,9 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	    	birthdate = Calendar.getInstance();
 	    	birthdate.setTimeInMillis(System.currentTimeMillis());
 	    	birthdate.set(birthdate.get(Calendar.YEAR) - 21, birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH));
-		    dpBirthdate.init(birthdate.get(Calendar.YEAR), birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH), MyInfoFragment.this);
-    	} else {
-    		dpBirthdate.init(birthdate.get(Calendar.YEAR), birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH), MyInfoFragment.this);
-    	}
-    	
+    	}    	
+	    dpBirthdate.init(birthdate.get(Calendar.YEAR), birthdate.get(Calendar.MONTH), birthdate.get(Calendar.DAY_OF_MONTH), MyInfoFragment.this);
+	    
     	new AlertDialog.Builder(getActivity())
     		.setTitle(R.string.ad_title_birthdate)
     		.setView(vBirthdate)
@@ -293,12 +308,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     			@Override
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
-					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
-					try {
-						response.put(MMSDKConstants.KEY_BIRTHDATE, birthdate.getTimeInMillis());
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
+					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), MMSDKConstants.DATE_FORMAT_MMM_DD_COMMA_YYYY));
 				}
 			})
 			.setNegativeButton(R.string.ad_btn_cancel, null)
@@ -322,34 +332,31 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     		.show();
     }
     
+    /**
+     * 
+     */
     public void setUserInfo() {
     	try{
-	    	//if user logged in with facebook
-        	if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)) {
-    			Session session = Session.getActiveSession();  
-    			Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(getActivity(), Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL, MMSDKConstants.FACEBOOK_REQ_PERM_BIRTHDAY));
-    			session.requestNewReadPermissions(request);
-    			Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
-    		} else {
-	        	etFirstName.setText(response.getString(MMSDKConstants.KEY_FIRST_NAME));
-	        	etLastName.setText(response.getString(MMSDKConstants.KEY_LAST_NAME));
-	        	etEmailAddress.setText(response.getString(MMSDKConstants.KEY_EMAIL_ADDRESS));
-	        	if(response.getInt(MMSDKConstants.KEY_GENDER) == MMSDKConstants.NUM_MALE)
-	        		etGender.setText(MMSDKConstants.TEXT_MALE);
-	        	else if(response.getInt(MMSDKConstants.KEY_GENDER) == MMSDKConstants.NUM_FEMALE)
-	        		etGender.setText(MMSDKConstants.TEXT_FEMALE);
-	        	birthdate.setTimeInMillis(response.getLong(MMSDKConstants.KEY_BIRTHDATE));
-	        	etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
-    		}
-    	} catch(Exception e)
-    	{
+        	etFirstName.setText(response.getString(MMSDKConstants.KEY_FIRST_NAME));
+        	etLastName.setText(response.getString(MMSDKConstants.KEY_LAST_NAME));
+        	etEmailAddress.setText(response.getString(MMSDKConstants.KEY_EMAIL_ADDRESS));
+        	birthdate.setTimeInMillis(response.getLong(MMSDKConstants.KEY_BIRTHDATE));
+        	etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), MMSDKConstants.DATE_FORMAT_MMM_DD_COMMA_YYYY));
+        	if(response.getInt(MMSDKConstants.KEY_GENDER) == MMSDKConstants.NUM_MALE)
+        		etGender.setText(MMSDKConstants.TEXT_MALE);
+        	else if(response.getInt(MMSDKConstants.KEY_GENDER) == MMSDKConstants.NUM_FEMALE)
+        		etGender.setText(MMSDKConstants.TEXT_FEMALE);
+    	} catch(Exception e) {
     		e.printStackTrace();
     	}
     }
     
+	/**
+     * Function that check if the first name {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
     private boolean checkFields() {
     	if(TextUtils.isEmpty(etFirstName.getText().toString())) {
-    		// alert: First name cannot be empty.
     		displayAlert(R.string.ad_message_first_name_empty);
     		return false;
     	}
@@ -358,9 +365,12 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	}
     }
     
+    /**
+     * Function that check if the last name {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
     private boolean checkLastName() {
     	if(TextUtils.isEmpty(etLastName.getText().toString())) {
-    		// alert: Last name cannot be empty.
     		displayAlert(R.string.ad_message_last_name_empty);
     		return false;
     	}
@@ -369,24 +379,53 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	}
     }
     
+    /**
+     * Function that check if the password {@link EditText} fields is empty, set the password to the oldPassword. Else check if the password fields are the same. 
+     * In addition, it compare the passwords to determine if they are equal and and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
     private boolean checkPassword() {
     	if(TextUtils.isEmpty(newPassword)) {
-    		if(TextUtils.isEmpty(confirmPassword)) {
-    			// if both new password and confirn password are empty, set it to the old password.
+    		if(TextUtils.isEmpty(etConfirmPassword.getText())) {
         		newPassword = userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY);
-        		return true;
-        	// else, if confirm password is not empty, and new password is empty, alert user.
+        		return checkBirthdate();
     		} else {
     			displayAlert(R.string.ad_message_password_not_match);
     			return false;
     		}
-    	// if new password and confirm password are not the same, alert user.
-    	} else if(!newPassword.equals(confirmPassword)){
-    		// alert: new password and confirm password is not the same.
+    	} else if(!newPassword.equals(etConfirmPassword.getText())){
     		displayAlert(R.string.ad_message_password_not_match);
+			userPrefsEditor.putString(MMSDKConstants.KEY_PASSWORD, newPassword);
+			userPrefsEditor.commit();
     		return false;
     	}
     	return true;
+    }
+    
+    /**
+     * Function that check if the birthdate {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
+    private boolean checkBirthdate() {
+    	if(!TextUtils.isEmpty(etBirthdate.getText())) {
+    		return checkGender();
+    	} else {
+    		displayAlert(R.string.ad_message_invalid_birthdate);
+    		return false;
+    	}
+    }
+    
+    /**
+     * Function that check if the gender {@link EditText} field is valid and is not empty and stored the value into a {@link HashMap}.
+     * @return <code>false</code> otherwise
+     */
+    private boolean checkGender() {
+    	if(!TextUtils.isEmpty(etGender.getText())) {
+    		return true;
+    	} else {
+    		displayAlert(R.string.ad_message_invalid_gender);
+    		return false;
+    	}
     }
     
     private void displayAlert(int messageId) {
@@ -397,6 +436,11 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 			.show();
 	}
     
+    /**
+     * 
+     * @author Dezapp, LLC
+     *
+     */
     private class UserInfoCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -404,7 +448,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 			
 			if(obj != null) {
 				try {
-					response = new JSONObject((String)obj);
+					response = new JSONObject((String) obj);
 					setUserInfo();
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -413,6 +457,11 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 		}
 	}
     
+    /**
+     * 
+     * @author Dezapp, LLC
+     *
+     */
     private class UserInfoUpdateCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -446,8 +495,8 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 				etFirstName.setText(facebookUser.getFirstName());
 	        	etLastName.setText(facebookUser.getLastName());
 	        	etEmailAddress.setText((String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
-	        	etGender.setText((String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_GENDER));
 	        	etBirthdate.setText(facebookUser.getBirthday());
+	        	etGender.setText((String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_GENDER));
 			}
 		}
 	}    

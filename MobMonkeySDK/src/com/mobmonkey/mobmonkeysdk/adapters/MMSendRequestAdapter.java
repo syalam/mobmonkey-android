@@ -36,8 +36,8 @@ public class MMSendRequestAdapter extends MMAdapter {
 								   String repeating, 
 								   String mediaType, 
 								   String partnerId,
-								   String emailAddress,
-								   String password) {
+								   String user,
+								   String auth) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_REQUESTMEDIA, mediaType);
 		createParamsInstance();
 		
@@ -67,8 +67,8 @@ public class MMSendRequestAdapter extends MMAdapter {
 			httpPost.setEntity(stringEntity);
 			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
 			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMSDKConstants.KEY_USER, emailAddress);
-			httpPost.setHeader(MMSDKConstants.KEY_AUTH, password);
+			httpPost.setHeader(MMSDKConstants.KEY_USER, user);
+			httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
 
 			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch(JSONException ex) {

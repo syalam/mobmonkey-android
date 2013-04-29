@@ -231,15 +231,17 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
     private void signUpTwitter() {
     	if(checkFirstName()) {
     		MMUserAdapter.signUpNewUserTwitter(new SignUpTwitterCallback(), 
-    				etFirstName.getText().toString(), 
-    				etLastName.getText().toString(), 
-    				getIntent().getStringExtra(MMSDKConstants.KEY_OAUTH_TOKEN), 
-    				providerUserName, 
-    				etEmailAddress.getText().toString(), 
-    				Long.toString(birthdate.getTimeInMillis()), 
-    				convertGender(), 
-    				MMConstants.PARTNER_ID);
-    		MMProgressDialog.displayDialog(SignUpTwitterScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up));
+    										   etFirstName.getText().toString(),
+    										   etLastName.getText().toString(),
+    										   getIntent().getStringExtra(MMSDKConstants.KEY_OAUTH_TOKEN),
+    										   providerUserName,
+    										   etEmailAddress.getText().toString(),
+    										   Long.toString(birthdate.getTimeInMillis()),
+    										   convertGender(),
+    										   MMConstants.PARTNER_ID);
+    		MMProgressDialog.displayDialog(SignUpTwitterScreen.this,
+    									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+    									   getString(R.string.pd_signing_up));
     	}
     }
     
@@ -352,7 +354,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 			
 			try {
 				JSONObject response = new JSONObject((String) obj);
-				if(response.getString(MMSDKConstants.KEY_RESPONSE_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
+				if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
 					Toast.makeText(SignUpTwitterScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
 					setResult(Activity.RESULT_OK);
 					userPrefsEditor.putString(MMSDKConstants.KEY_USER, providerUserName);
@@ -361,7 +363,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 					finish();
 					overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 				} else {
-					Toast.makeText(SignUpTwitterScreen.this, response.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_SHORT).show();
+					Toast.makeText(SignUpTwitterScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();

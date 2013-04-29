@@ -3,15 +3,15 @@ package com.mobmonkey.mobmonkeyandroid.listeners;
 import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
 
+import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeysdk.adapters.MMMediaAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 public class MMRejectMediaOnClickListener implements OnClickListener{
-
-	private String requestId, mediaId, partnerId, emailAddress, password;
+	private String requestId, mediaId, partnerId, user, auth;
 	private MMCallback mmCallback;
 	private Context context;
 	
@@ -19,27 +19,29 @@ public class MMRejectMediaOnClickListener implements OnClickListener{
 										String requestId, 
 										String mediaId,
 										String partnerId,
-										String emailAddress,
-										String password,
+										String user,
+										String auth,
 										Context context) {
 		this.requestId = requestId;
 		this.mediaId = mediaId;
 		this.mmCallback = mmCallback;
 		this.partnerId = partnerId;
-		this.emailAddress = emailAddress;
-		this.password = password;
+		this.user = user;
+		this.auth = auth;
 		this.context = context;
 	}
 	
 	@Override
 	public void onClick(View v) {
-		MMProgressDialog.displayDialog(context, null, "Rejecting request...");
-		MMMediaAdapter.rejectMedia(mmCallback, 
-								   partnerId, 
-								   emailAddress, 
-								   password, 
-								   requestId, 
-								   mediaId);
+		MMMediaAdapter.rejectMedia(mmCallback,
+								   requestId,
+				   				   mediaId,
+								   partnerId,
+								   user,
+								   auth);
+		MMProgressDialog.displayDialog(context,
+									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+									   context.getString(R.string.pd_rejecting_answered_request));
 	}
 	
 }

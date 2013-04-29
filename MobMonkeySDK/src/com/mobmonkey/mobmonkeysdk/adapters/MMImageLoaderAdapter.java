@@ -22,11 +22,25 @@ public final class MMImageLoaderAdapter {
 		throw new AssertionError();
 	}
 	
-	public static void loadImage(MMCallback mmCallback, String imageUrl) {
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param imageUrl
+	 */
+	public static void loadImage(MMCallback mmCallback,
+								 String imageUrl) {
 		new MMImageLoaderTask(mmCallback).execute(imageUrl);
 	}
 	
-	public static void loadVideoThumbnail(Context context, MMCallback mmCallback, Uri videoUri) {
+	/**
+	 * 
+	 * @param context
+	 * @param mmCallback
+	 * @param videoUri
+	 */
+	public static void loadVideoThumbnail(Context context,
+										  MMCallback mmCallback,
+										  Uri videoUri) {
 		new MMGetVideoThumbnailTask(context, mmCallback).execute(videoUri);
 	}
 }

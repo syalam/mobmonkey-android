@@ -75,7 +75,7 @@ public class AddMessageScreen extends Activity implements OnItemClickListener {
 		
 		etMessage.setText(getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_MESSAGE));
 		
-		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(AddMessageScreen.this, R.layout.mm_simple_listview_row, R.id.tvlabel, defaultMessages);
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(AddMessageScreen.this, R.layout.listview_row_simple, R.id.tvlabel, defaultMessages);
 		mmelvDefaultMessage.setAdapter(arrayAdapter);
 		mmelvDefaultMessage.setOnItemClickListener(AddMessageScreen.this);
 	}

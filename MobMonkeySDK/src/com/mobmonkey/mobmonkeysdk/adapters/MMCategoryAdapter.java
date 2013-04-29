@@ -21,11 +21,20 @@ public class MMCategoryAdapter extends MMAdapter {
 		throw new AssertionError();
 	}
 	
-	public static void getTopLevelCategories(MMCallback mmCallback, String user, String auth, String partnerId) {
-		getCategories(mmCallback, "1", user, auth, partnerId);
-	}
-	
-	public static void getCategories(MMCallback mmCallback, String categoryId, String user, String auth, String partnerId) {		
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param categoryId
+	 * @param user
+	 * @param auth
+	 * @param partnerId
+	 */
+	public static void getCategories(MMCallback mmCallback,
+									 String categoryId,
+									 String partnerId,
+									 String user,
+									 String auth) {		
+		
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_CATEGORY);
 		
 		Log.d(TAG, TAG + "categoryURL: " + uriBuilder.toString());
@@ -40,10 +49,23 @@ public class MMCategoryAdapter extends MMAdapter {
 		mmGetAsyncTask.execute(httpGet);
 	}
 	
-	public static void getAllCategories(MMCallback mmCallback, String user, String auth, String partnerId) {
-		getCategories(mmCallback, MMSDKConstants.DEFAULT_STRING_EMPTY, user, auth, partnerId);
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param user
+	 * @param auth
+	 * @param partnerId
+	 */
+	public static void getAllCategories(MMCallback mmCallback,
+										String partnerId,
+										String user,
+										String auth) {
+		getCategories(mmCallback, MMSDKConstants.DEFAULT_STRING_EMPTY, partnerId, user, auth);
 	}
 	
+	/**
+	 * 
+	 */
 	public static void cancelGetAllCategories() {
 		if(mmGetAsyncTask != null) {
 			if(!mmGetAsyncTask.isCancelled()) {

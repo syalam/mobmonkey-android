@@ -21,19 +21,38 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 		throw new AssertionError();
 	}
 	
-	private static void searchLocation(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String categoryID, String user, String auth, String partnerId) {
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param latitude
+	 * @param longitude
+	 * @param searchRadius
+	 * @param name
+	 * @param categoryID
+	 * @param partnerId
+	 * @param user
+	 * @param auth
+	 */
+	private static void searchLocation(MMCallback mmCallback,
+									   double latitude,
+									   double longitude,
+									   int searchRadius,
+									   String name,
+									   String categoryID,
+									   String partnerId,
+									   String user,
+									   String auth) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_SEARCH, MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
 		try {
-			params.put(MMSDKConstants.KEY_LONGITUDE, longitude);
 			params.put(MMSDKConstants.KEY_LATITUDE, latitude);
+			params.put(MMSDKConstants.KEY_LONGITUDE, longitude);
 			params.put(MMSDKConstants.KEY_RADIUS_IN_YARDS, searchRadius);
 			if(!name.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 				params.put(MMSDKConstants.KEY_NAME, name);
 			}
-			params.put(MMSDKConstants.KEY_NAME, name);
 			if(!categoryID.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 				params.put(MMSDKConstants.KEY_CATEGORY_IDS, categoryID);
 			}
@@ -58,19 +77,44 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 	/**
 	 * Function that searches locations with the specific input text
 	 * @param mmCallback The {@link MMCallback} to handle the response from MobMonkey server after posting the search location url
-	 * @param longitude Longitude value of user's current location
 	 * @param latitude Latitude value of user's current location
+	 * @param longitude Longitude value of user's current location
 	 * @param searchRadius Search radius from user's current location
 	 * @param name The specific input text to be search
+	 * @param partnerId MobMonkey unique partner id
 	 * @param user The email of the user if signed in normally with email or the provider username if signed in through social networks
 	 * @param auth The password of the user if signed in normally with email or the provider OAuth token if signed in through social networks
-	 * @param partnerId MobMonkey unique partner id
 	 */
-	public static void searchLocationWithText(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String name, String user, String auth, String partnerId) {
-		searchLocation(mmCallback, longitude, latitude, searchRadius, name, MMSDKConstants.DEFAULT_STRING_EMPTY, user, auth, partnerId);
+	public static void searchLocationWithText(MMCallback mmCallback,
+											  double latitude,
+											  double longitude,
+											  int searchRadius,
+											  String name,
+											  String partnerId,
+											  String user,
+											  String auth) {
+		searchLocation(mmCallback, latitude, longitude, searchRadius, name, MMSDKConstants.DEFAULT_STRING_EMPTY, partnerId, user, auth);
 	}
 
-	public static void searchLocationByAddress(MMCallback mmCallback, String streetAddress, String locality, String region, String postcode, String user, String auth, String partnerId) {
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param streetAddress
+	 * @param locality
+	 * @param region
+	 * @param postcode
+	 * @param partnerId
+	 * @param user
+	 * @param auth
+	 */
+	public static void searchLocationByAddress(MMCallback mmCallback,
+											   String streetAddress,
+											   String locality,
+											   String region,
+											   String postcode,
+											   String partnerId,
+											   String user,
+											   String auth) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_SEARCH, MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
@@ -109,21 +153,34 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 	 * @param auth
 	 * @param partnerId
 	 */
-	public static void searchLocationWithCategoryId(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String categoryID, String user, String auth, String partnerId) {
-		searchLocation(mmCallback, longitude, latitude, searchRadius, MMSDKConstants.DEFAULT_STRING_EMPTY, categoryID, user, auth, partnerId);
+	public static void searchLocationWithCategoryId(MMCallback mmCallback,
+													double latitude,
+													double longitude,
+													int searchRadius,
+													String categoryID,
+													String partnerId,
+													String user,
+													String auth) {
+		searchLocation(mmCallback, latitude, longitude, searchRadius, MMSDKConstants.DEFAULT_STRING_EMPTY, categoryID, partnerId, user, auth);
 	}
 	
 	/**
 	 * Function that searches all nearby location with the input text to be {@link MMSDKConstants#DEFAULT_STRING}
 	 * @param mmCallback The {@link MMCallback} to handle the response from MobMonkey server after posting the search location url
-	 * @param longitude Longitude value of user's current location
 	 * @param latitude Latitude value of user's current location
+	 * @param longitude Longitude value of user's current location
 	 * @param searchRadius Search radius from user's current location
+  	 * @param partnerId MobMonkey unique partner id
 	 * @param user The email of the user if signed in normally with email or the provider username if signed in through social networks
 	 * @param auth The password of the user if signed in normally with email or the provider OAuth token if signed in through social networks
-	 * @param partnerId MobMonkey unique partner id
 	 */
-	public static void searchAllNearby(MMCallback mmCallback, String longitude, String latitude, int searchRadius, String user, String auth, String partnerId) {
-		searchLocation(mmCallback, longitude, latitude, searchRadius, MMSDKConstants.DEFAULT_STRING_EMPTY, MMSDKConstants.DEFAULT_STRING_EMPTY, user, auth, partnerId);
+	public static void searchAllNearby(MMCallback mmCallback,
+									   double latitude,
+									   double longitude,
+									   int searchRadius,
+									   String partnerId,
+									   String user,
+									   String auth) {
+		searchLocation(mmCallback, latitude, longitude, searchRadius, MMSDKConstants.DEFAULT_STRING_EMPTY, MMSDKConstants.DEFAULT_STRING_EMPTY, partnerId, user, auth);
 	}
 }

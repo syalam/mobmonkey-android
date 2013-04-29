@@ -32,6 +32,10 @@ public class LocationDetailsMapFragment extends MMFragment {
 	private SupportMapFragment smfLocation;
 	private GoogleMap googleMap;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_locationdetails_map, container, false);
@@ -51,16 +55,7 @@ public class LocationDetailsMapFragment extends MMFragment {
 				position(resultLocLatLng).
 				title(jObj.getString(MMSDKConstants.JSON_KEY_NAME))
 				.snippet(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS)));
-			
-//			googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-//				@Override
-//				public boolean onMarkerClick(Marker marker) {
-//					Log.d(TAG, TAG + "marker clicked!");
-//					
-//					return false;
-//				}
-//			});
-//			
+
 			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
 			googleMap.setMyLocationEnabled(true);
 		} catch (JSONException e) {
@@ -70,6 +65,10 @@ public class LocationDetailsMapFragment extends MMFragment {
 		return view;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onDestroyView()
+	 */
 	@Override
 	public void onDestroyView() {
 		try {

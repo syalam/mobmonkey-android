@@ -185,9 +185,13 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 					userPrefsEditor.putString(MMSDKConstants.KEY_USER, Session.getActiveSession().getAccessToken());
 					userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
 					userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK);
-					MMUserAdapter.signUpNewUserFacebook(new SignUpCallback(), Session.getActiveSession().getAccessToken(), 
-							(String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL), MMConstants.PARTNER_ID);
-		    		MMProgressDialog.displayDialog(SignUpScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up_facebook));
+					MMUserAdapter.signUpNewUserFacebook(new SignUpCallback(),
+														MMConstants.PARTNER_ID,
+														(String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
+														Session.getActiveSession().getAccessToken());
+		    		MMProgressDialog.displayDialog(SignUpScreen.this,
+		    									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+		    									   getString(R.string.pd_signing_up_facebook));
 				}
 				break;
 		}
@@ -278,7 +282,9 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     				convertGender(),
     				cbAcceptedToS.isChecked(), 
     				MMConstants.PARTNER_ID);
-    		MMProgressDialog.displayDialog(SignUpScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_signing_up));
+    		MMProgressDialog.displayDialog(SignUpScreen.this,
+    									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+    									   getString(R.string.pd_signing_up));
     	}
     }
     
@@ -305,7 +311,9 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	if(checkAcceptedToS()) {
     		userPrefsEditor.putBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_TWITTER, true);
     		userPrefsEditor.commit();
-    		MMProgressDialog.displayDialog(SignUpScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_launch_twitter_auth_screen));
+    		MMProgressDialog.displayDialog(SignUpScreen.this,
+    									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+    									   getString(R.string.pd_launch_twitter_auth_screen));
     		Intent twitterAuthIntent = new Intent(SignUpScreen.this, TwitterAuthScreen.class);
     		twitterAuthIntent.putExtra(MMSDKConstants.REQUEST_CODE, MMSDKConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
     		startActivityForResult(twitterAuthIntent, MMSDKConstants.REQUEST_CODE_SIGN_UP_TWITTER_AUTH);
@@ -536,7 +544,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 			if(obj != null) {
 				try {
 					JSONObject response = new JSONObject((String) obj);
-					if(response.getString(MMSDKConstants.KEY_RESPONSE_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+					if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 						inputMethodManager.hideSoftInputFromWindow(etPasswordConfirm.getWindowToken(), 0);
 						Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
 						userPrefsEditor.commit();
@@ -544,7 +552,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 						finish();
 						overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
 					} else {
-						Toast.makeText(SignUpScreen.this, response.getString(MMSDKConstants.KEY_RESPONSE_DESC), Toast.LENGTH_LONG).show();
+						Toast.makeText(SignUpScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

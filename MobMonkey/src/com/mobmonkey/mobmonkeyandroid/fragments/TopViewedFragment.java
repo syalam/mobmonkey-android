@@ -20,13 +20,13 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMTopViewedArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMMediaItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMImageOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMShareMediaOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMVideoPlayOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
-import com.mobmonkey.mobmonkeyandroid.utils.MMMediaItem;
-import com.mobmonkey.mobmonkeyandroid.utils.MMTopViewedArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMTrendingAdapter;
@@ -73,12 +73,14 @@ public class TopViewedFragment extends MMFragment {
 	 */
 	private void getTrending() {
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-			MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, "Loading all top viewed...");
 			MMTrendingAdapter.getTopViewed(new TopViewedCallback(),
-												   MMSDKConstants.SEARCH_TIME_WEEK,
-												   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-												   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
-												   MMConstants.PARTNER_ID);
+										   MMSDKConstants.SEARCH_TIME_WEEK,
+										   MMConstants.PARTNER_ID,
+										   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+										   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMProgressDialog.displayDialog(getActivity(),
+										   MMSDKConstants.DEFAULT_STRING_EMPTY,
+										   getString(R.string.pd_retrieving_all_top_viewed));
 		}
 	}
 	
@@ -104,7 +106,7 @@ public class TopViewedFragment extends MMFragment {
 				topViewedItems[i].setShareMediaOnClickListener(new MMShareMediaOnClickListener(getActivity()));
 			}
 			
-			adapter = new MMTopViewedArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, topViewedItems);
+			adapter = new MMTopViewedArrayAdapter(getActivity(), R.layout.listview_row_topviewed, topViewedItems);
 			lvTopViewed.setAdapter(adapter);
 		} catch (JSONException ex) {
 			ex.printStackTrace();
