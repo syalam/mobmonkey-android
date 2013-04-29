@@ -21,7 +21,12 @@ public class MMMediaAdapter extends MMAdapter {
 		throw new AssertionError();
 	}
 	
-	public static void retrieveAllMediaForLocation(MMCallback mmCallback, String emailAddress, String password, String partnerId, String locationId, String providerId) {
+	public static void retrieveAllMediaForLocation(MMCallback mmCallback,												   
+												   String locationId,
+												   String providerId,
+												   String partnerId,
+												   String user,
+												   String auth) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_MEDIA);
 		uriBuilder.appendQueryParameter(MMSDKConstants.JSON_KEY_LOCATION_ID, locationId)
 			.appendQueryParameter(MMSDKConstants.JSON_KEY_PROVIDER_ID, providerId);
@@ -31,19 +36,19 @@ public class MMMediaAdapter extends MMAdapter {
 		HttpGet httpGet = new HttpGet(uriBuilder.toString());
 		httpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
 		httpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpGet.setHeader(MMSDKConstants.KEY_USER, emailAddress);
-		httpGet.setHeader(MMSDKConstants.KEY_AUTH, password);
+		httpGet.setHeader(MMSDKConstants.KEY_USER, user);
+		httpGet.setHeader(MMSDKConstants.KEY_AUTH, auth);
 
 		mmGetAsyncTask = new MMGetAsyncTask(mmCallback);
 		mmGetAsyncTask.execute(httpGet);
 	}
 	
 	public static void acceptMedia(MMCallback mmCallback,
-								   String partnerId,
-								   String emailAddress,
-								   String password,
 								   String requestId,
-								   String mediaId) {
+								   String mediaId,
+								   String partnerId,
+								   String user,
+								   String auth) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_MEDIA, MMSDKConstants.URI_PATH_REQUEST);
 
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
@@ -54,18 +59,18 @@ public class MMMediaAdapter extends MMAdapter {
 		HttpPost httpPost = new HttpPost(uriBuilder.toString());
 		httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
 		httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader(MMSDKConstants.KEY_USER, emailAddress);
-		httpPost.setHeader(MMSDKConstants.KEY_AUTH, password);
+		httpPost.setHeader(MMSDKConstants.KEY_USER, user);
+		httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
 
 		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
 
 	public static void rejectMedia(MMCallback mmCallback,
-								   String partnerId,
-								   String emailAddress,
-								   String password,
 								   String requestId,
-								   String mediaId) {
+								   String mediaId,
+								   String partnerId,
+								   String user,
+								   String auth) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_MEDIA, MMSDKConstants.URI_PATH_REQUEST);
 
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
@@ -76,8 +81,8 @@ public class MMMediaAdapter extends MMAdapter {
 		HttpDelete httpDelete = new HttpDelete(uriBuilder.toString());
 		httpDelete.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
 		httpDelete.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpDelete.setHeader(MMSDKConstants.KEY_USER, emailAddress);
-		httpDelete.setHeader(MMSDKConstants.KEY_AUTH, password);
+		httpDelete.setHeader(MMSDKConstants.KEY_USER, user);
+		httpDelete.setHeader(MMSDKConstants.KEY_AUTH, auth);
 
 		new MMDeleteAsyncTask(mmCallback).execute(httpDelete);
 	}
