@@ -1,5 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
+import java.io.File;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,7 +9,6 @@ import org.json.JSONObject;
 import com.mobmonkey.mobmonkeyandroid.LocationDetailsMediaScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.MakeARequestScreen;
-import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMLocationDetailsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMLocationDetailsItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
@@ -15,6 +16,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
+import com.mobmonkey.mobmonkeysdk.adapters.MMDownloadVideoAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMLocationDetailsAdapter;
@@ -29,7 +31,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -339,6 +340,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						streamMediaCount++;
 					} else if(media.equals(MMSDKConstants.MEDIA_VIDEO)) {
 						if(isFirstMedia) {
+							MMDownloadVideoAdapter.downloadVideo(new CreateVideoThumbnailCallback(), 
+																 jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 	//						MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(), Uri.parse(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 							tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 							ibPlay.setVisibility(View.VISIBLE);
@@ -612,6 +615,27 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
 				userPrefsEditor.commit();
 			}
+		}
+	}
+	
+	/**
+	 * Callback to create a thumbnail from a recently downloaded video
+	 * @author Dezapp, LLC
+	 * 
+	 */
+	private class CreateVideoThumbnailCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				Uri videoUri = (Uri) obj;	
+				
+				MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
+		        mRetriever.setDataSource(videoUri.getPath());
+		        ivtnMedia.setImageBitmap(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC));
+		        File videoFile = new File(videoUri.getPath());
+		        videoFile.delete();
+			}
+			
 		}
 	}
 }
