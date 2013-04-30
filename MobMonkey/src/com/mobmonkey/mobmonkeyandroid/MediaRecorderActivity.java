@@ -26,7 +26,7 @@ public class MediaRecorderActivity extends Activity{
 	private MMCameraSurfaceView cameraSurfaceView;
 	private MediaRecorder mediaRecorder;
 	
-	private Button recordButton;
+	private Button recordButton, recordButtonAccept, recordButtonCancel;
 	private TextView recordTime;
 	private boolean recording;
 	
@@ -54,7 +54,11 @@ public class MediaRecorderActivity extends Activity{
 		FrameLayout frame = (FrameLayout) findViewById(R.id.flvideoview);
 		frame.addView(cameraSurfaceView);
 		recordButton = (Button) findViewById(R.id.btnrecord);
-		recordButton.setOnClickListener(new recordOnButtonClickListener());
+		recordButton.setOnClickListener(new RecordOnButtonClickListener());
+		recordButtonAccept = (Button) findViewById(R.id.btnrecordaccept);
+		recordButtonAccept.setOnClickListener(new RecordAcceptOnButtonClickListener());
+		recordButtonCancel = (Button) findViewById(R.id.btnrecordcancel);
+		recordButtonCancel.setOnClickListener(new RecordCancelOnButtonClickListener());
 		recordTime = (TextView) findViewById(R.id.tvrecordedTime);
 		recordTime.setTextSize(24);
 		recordTime.setTextColor(Color.WHITE);
@@ -72,7 +76,47 @@ public class MediaRecorderActivity extends Activity{
 		return c;
 	}
 	
-	private class recordOnButtonClickListener implements OnClickListener {
+	private class RecordAcceptOnButtonClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			// release camera and mediarecorder
+			releaseCamera();
+			releaseMediaRecorder();
+			
+			Intent intent = new Intent();
+			setResult(RESULT_OK, intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_VIDEO_PATH, 
+												 videoPath));
+			recordTimer.cancel();
+			recordTimer = null;
+			finish();
+		}
+		
+	}
+	
+	private class RecordCancelOnButtonClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+//			releaseMediaRecorder();
+//			releaseCamera();
+			recording = false;
+			
+			// hide "OK" and "Cancel" buttons
+			recordButtonAccept.setVisibility(View.INVISIBLE);
+			recordButtonCancel.setVisibility(View.INVISIBLE);
+			
+			// show "REC" button
+			recordButton.setVisibility(View.VISIBLE);
+			recordButton.setText("REC");
+			
+			// hide recordTimer
+			recordTime.setVisibility(View.INVISIBLE);
+		}
+		
+	}
+	
+	private class RecordOnButtonClickListener implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
@@ -81,12 +125,16 @@ public class MediaRecorderActivity extends Activity{
 				// stop recorder
 				mediaRecorder.stop();
 				releaseMediaRecorder();
-				Intent intent = new Intent();
-				setResult(RESULT_OK, intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_VIDEO_PATH, 
-													 videoPath));
+				
+				// show "OK" and "Cancel" buttons
+				recordButtonAccept.setVisibility(View.VISIBLE);
+				recordButtonCancel.setVisibility(View.VISIBLE);
+				
+				// hide "REC" button
+				recordButton.setVisibility(View.INVISIBLE);
+				
 				recordTimer.cancel();
-				recordTimer = null;
-				finish();
+				
 			} else {
 				releaseCamera();
 				if(!prepareMediaRecorder()) {
@@ -97,6 +145,7 @@ public class MediaRecorderActivity extends Activity{
 					finish();
 				}
 				
+				recordTime.setVisibility(View.VISIBLE);
 				mediaRecorder.start();
 				recording = true;
 				recordButton.setText("STOP");

@@ -31,12 +31,12 @@ public final class MMLocationManager {
 	}
 	
 	public static double getLocationLatitude() {
-		return Double.valueOf(decimalFormat.format(location.getLatitude()));
-//		return 37.787205;
+//		return Double.valueOf(decimalFormat.format(location.getLatitude()));
+		return 37.787205;
 	}
 	
 	public static double getLocationLongitude() {
-		return Double.valueOf(decimalFormat.format(location.getLongitude()));
-//		return -122.410973;
+//		return Double.valueOf(decimalFormat.format(location.getLongitude()));
+		return -122.410973;
 	}
 }
