@@ -314,7 +314,22 @@ public class MMUserAdapter extends MMAdapter {
 		new MMGetAsyncTask(mmCallback).execute(httpGet);
 	}
 	
-
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param firstName
+	 * @param lastName
+	 * @param password
+	 * @param birthdate
+	 * @param gender
+	 * @param city
+	 * @param state
+	 * @param zip
+	 * @param acceptedtos
+	 * @param partnerId
+	 * @param user
+	 * @param auth
+	 */
 	public static void updateUserInfo(MMCallback mmCallback,
 									  String firstName,
 									  String lastName,
@@ -358,5 +373,26 @@ public class MMUserAdapter extends MMAdapter {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param partnerId
+	 * @param user
+	 * @param auth
+	 */
+	public static void subscribeUser(MMCallback mmCallback, String partnerId, String user, String auth) {
+		createUriBuilderInstance(MMSDKConstants.URI_PATH_USER, MMSDKConstants.URI_PATH_PAID_SUBSCRIPTION);
+		uriBuilder.appendQueryParameter(MMSDKConstants.URI_QUERY_PARAM_KEY_EMAIL, user)
+			.appendQueryParameter(MMSDKConstants.URI_QUERY_PARAM_KEY_PARTNER_ID, partnerId);
+		
+		HttpPost httpPost = new HttpPost(uriBuilder.toString());
+		httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
+		httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
+		httpPost.setHeader(MMSDKConstants.KEY_USER, user);
+		httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		
+		new MMPostAsyncTask(mmCallback).execute(httpPost);
 	}
 }

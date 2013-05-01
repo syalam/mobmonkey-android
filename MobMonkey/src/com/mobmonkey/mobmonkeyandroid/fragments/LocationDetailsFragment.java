@@ -90,6 +90,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	
 	private String mediaResults;
 	private boolean retrieveLocationDetails = true;
+	private boolean retrieveVideoMedia = true;
 	private boolean retrieveImageMedia = true;
 	private Bitmap imageMedia;
 	private View mediaButtonSelected;
@@ -340,8 +341,13 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						streamMediaCount++;
 					} else if(media.equals(MMSDKConstants.MEDIA_VIDEO)) {
 						if(isFirstMedia) {
-							MMDownloadVideoAdapter.downloadVideo(new CreateVideoThumbnailCallback(), 
-																 jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+							if(retrieveVideoMedia) {
+								MMDownloadVideoAdapter.downloadVideo(new CreateVideoThumbnailCallback(), 
+																	 jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL),
+																	 0);
+							} else {
+								ivtnMedia.setImageBitmap(imageMedia);
+							}
 	//						MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(), Uri.parse(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 							tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 							ibPlay.setVisibility(View.VISIBLE);
@@ -629,9 +635,13 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			if(obj != null) {
 				Uri videoUri = (Uri) obj;	
 				
+				Log.d(TAG, "videoUri: " + videoUri.getPath());
+				
 				MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
 		        mRetriever.setDataSource(videoUri.getPath());
-		        ivtnMedia.setImageBitmap(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC));
+				retrieveVideoMedia = false;
+		        imageMedia = mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+		        ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
 		        File videoFile = new File(videoUri.getPath());
 		        videoFile.delete();
 			}

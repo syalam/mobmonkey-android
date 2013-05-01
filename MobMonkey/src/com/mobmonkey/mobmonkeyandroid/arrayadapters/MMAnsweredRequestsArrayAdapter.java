@@ -86,7 +86,7 @@ public class MMAnsweredRequestsArrayAdapter extends ArrayAdapter<MMMediaItem>{
 			} else if(mmMediaItem.isVideo()) {
 				vHolder.ibPlay.setVisibility(View.VISIBLE);
 				vHolder.ibPlay.setOnClickListener(mmMediaItem.getPlayOnClickListener());
-//				vholder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
+				vHolder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
 			}
 //		} else {
 			// TODO: handle null media

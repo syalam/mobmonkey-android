@@ -111,7 +111,7 @@
 
 		</activity>
 		
-		<activity android:name=".MediaRecorderActivity"
+		<activity android:name=".VideoRecorderActivity"
 		    android:screenOrientation="portrait">
 		    
 		</activity>

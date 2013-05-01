@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	
+    <FrameLayout android:id="@+id/flvideopreview"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+    
+	<TextView android:id="@+id/tvelapsedtime"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_marginTop="3dp"
+		android:layout_marginRight="3dp"
+		android:textAppearance="?android:textAppearanceLarge"
+		android:textColor="@android:color/white"/>
+	
+	<Button android:id="@+id/btnrecordstop"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_alignParentBottom="true"
+		android:background="@drawable/orange_button_background"
+		android:text="@string/btn_record"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="@android:color/white"
+		android:textStyle="bold"
+		android:onClick="viewOnClick"/>
+	
+	<LinearLayout android:id="@+id/llvideookcancel"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:orientation="horizontal"
+		android:paddingLeft="5dp"
+		android:paddingRight="5dp"
+		android:visibility="invisible">
+		
+		<Button android:id="@+id/btnok"
+		    android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:layout_marginRight="5dp"
+			android:background="@drawable/orange_button_background"
+			android:text="@string/ad_btn_ok"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textColor="@android:color/white"
+			android:textStyle="bold"
+			android:onClick="viewOnClick"/>
+		
+		<Button android:id="@+id/btncancel"
+		    android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:background="@drawable/orange_button_background"
+			android:text="@string/ad_btn_cancel"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textColor="@android:color/white"
+			android:textStyle="bold"
+			android:onClick="viewOnClick"/>
+	
+	</LinearLayout>
+
+</RelativeLayout>

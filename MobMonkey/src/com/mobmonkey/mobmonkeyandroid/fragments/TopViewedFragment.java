@@ -1,5 +1,6 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
+import java.io.File;
 import java.util.LinkedList;
 
 import org.json.JSONArray;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import com.mobmonkey.mobmonkeyandroid.listeners.MMVideoPlayOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
+import com.mobmonkey.mobmonkeysdk.adapters.MMDownloadVideoAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMTrendingAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
@@ -95,8 +98,9 @@ public class TopViewedFragment extends MMFragment {
 					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 					topViewedItems[i].setIsImage(true);
 				} else if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_VIDEO)) {
-					// TODO: create thumbnail from video
-					MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(i), Uri.parse(jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
+					MMDownloadVideoAdapter.downloadVideo(new CreateVideoThumbnailCallback(i),
+														 jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL),
+														 i);
 					topViewedItems[i].setIsVideo(true);
 					topViewedItems[i].setPlayOnClickListener(new MMVideoPlayOnClickListener(getActivity(), jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 				}
@@ -167,6 +171,37 @@ public class TopViewedFragment extends MMFragment {
 //				lvtopviewed.setAdapter(adapter);
 				adapter.notifyDataSetChanged();
 			}
+		}
+	}
+	
+	/**
+	 * Callback to create a thumbnail from a recently downloaded video
+	 * @author Dezapp, LLC
+	 * 
+	 */
+	private class CreateVideoThumbnailCallback implements MMCallback {
+		int position;
+		
+		public CreateVideoThumbnailCallback(int position) {
+			this.position = position;
+		}
+		
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				Uri videoUri = (Uri) obj;	
+				
+				Log.d(TAG, "videoUri: " + videoUri.getPath());
+				
+				MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
+		        mRetriever.setDataSource(videoUri.getPath());
+//		        answeredRequestItems[position].setImageMedia(ThumbnailUtils.extractThumbnail(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC), mediaWidth, mediaHeight));
+		        topViewedItems[position].setImageMedia(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC));
+		        File videoFile = new File(videoUri.getPath());
+		        videoFile.delete();
+		        adapter.notifyDataSetChanged();
+			}
+			
 		}
 	}
 }

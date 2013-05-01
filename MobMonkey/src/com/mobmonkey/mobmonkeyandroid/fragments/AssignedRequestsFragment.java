@@ -34,7 +34,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.mobmonkey.mobmonkeyandroid.MediaRecorderActivity;
+import com.mobmonkey.mobmonkeyandroid.VideoRecorderActivity;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMAssignedRequestsItem;
@@ -160,7 +160,7 @@ public class AssignedRequestsFragment extends MMFragment {
 						break;
 					// Video request
 					case 2:
-						Intent takeVideoIntent = new Intent(getActivity(), MediaRecorderActivity.class);
+						Intent takeVideoIntent = new Intent(getActivity(), VideoRecorderActivity.class);
 						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
 						break;
 						/*
@@ -221,40 +221,22 @@ public class AssignedRequestsFragment extends MMFragment {
 			}					   
 		} 
 		// video 
-		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {
-			
-			//Uri vid = data.getData();
-		    //String videoPath = getRealPathFromURI(vid);
-			String videoPath = data.getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_VIDEO_PATH);
-		    
-		    try {
-		    	FileInputStream fis = new FileInputStream(new File(videoPath));
-
-		    	// TODO: changed the file format to .mp4
-		    	File tmpFile = new File(Environment.getExternalStorageDirectory(), 
-		    							MMSDKConstants.MOBMONKEY_VIDEO_TEMP_FILENAME); 
-
-		    	//save the video to the File path
-		    	FileOutputStream fos = new FileOutputStream(tmpFile);
-
-		    	byte[] buf = new byte[1024];
-		    	int len;
-		    	while ((len = fis.read(buf)) > 0) {
-		    		fos.write(buf, 0, len);
-		    	}       
-		    	fis.close();
-		    	fos.close();
-		    	  
+		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {		    
+		    try {		    	  
 		    	// encode to base64
-		    	String videoEncoded = "";
-		    	BufferedInputStream in = new BufferedInputStream(new FileInputStream(tmpFile));
+		    	File videoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
+		    	String videoEncoded = MMSDKConstants.DEFAULT_STRING_EMPTY;
+		    	BufferedInputStream in = new BufferedInputStream(new FileInputStream(videoFile));
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				long fileLength = tmpFile.length();
+				long fileLength = videoFile.length();
 				byte[] b = new byte[(int) fileLength];
 				int bytesRead;
 		        while ((bytesRead = in.read(b)) != -1) {
 		        	bos.write(b, 0, bytesRead);
 		        }
+		        
+		        in.close();
+		        
 		        try {
 		        	byte[] ficheroAEnviar = bos.toByteArray();
 			        videoEncoded = Base64.encodeToString(ficheroAEnviar, Base64.DEFAULT);
@@ -301,21 +283,9 @@ public class AssignedRequestsFragment extends MMFragment {
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				// if successfully uploaded a media, refresh list
 				try {
 					JSONObject jObj = new JSONObject((String) obj);
 					if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-	//					MMAssignedRequestsItem[] items, data;
-	//					data = getAssignedRequestItems();
-	//					items = new MMAssignedRequestsItem[data.length - 1];
-	//					
-	//					for(int i = 0; i < data.length; i++) {
-	//						if(i < positionClicked) {
-	//							items[i] = data[i];
-	//						} else if (i > positionClicked) {
-	//							items[i-1] = data[i];
-	//						}
-	//					}
 						JSONArray newArray = new JSONArray();
 						for(int i = 0; i < assignedRequests.length(); i++) {
 							if(i != clickedPosition) {
@@ -333,12 +303,10 @@ public class AssignedRequestsFragment extends MMFragment {
 									   Toast.LENGTH_LONG).
 									   show();
 						
-						// remove temp video files
-						File mmTempFile = new File("sdcard/" + MMSDKConstants.MOBMONKEY_VIDEO_TEMP_FILENAME),
-							 mmVideoFile = new File("sdcard/" + MMSDKConstants.MOBMONKEY_VIDEO_FILENAME);
+						// remove recorded video file
+						File mmVideoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
 						
-						boolean deletedTemp = mmTempFile.delete(),
-								deletedVideo = mmVideoFile.delete();
+						Log.d(TAG, TAG + "deleted video: " + mmVideoFile.delete());
 					} 
 					// if fail
 					else {

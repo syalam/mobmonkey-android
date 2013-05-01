@@ -125,8 +125,17 @@
 	<string name="pd_uploading_image">Uploading image&#8230;</string>
 	<string name="pd_uploading_video">Uploading video&#8230;</string>
 	
-	<!-- Send Request Screen -->
 	<string name="toast_request_successful">Successfully sent request</string>
+	
+	<!-- Video Recorder Activity -->
+	<string name="ad_title_camera_error">Camera Error</string>
+	<string name="ad_message_camera_error">Unable to open or no back-facing camera.</string>
+	
+	<string name="ad_title_video_recording_error">Video Recording Error</string>
+	<string name="ad_message_video_recording_error">Unable to begin video recording</string>
+	
+	<string name="btn_record">Record</string>
+	<string name="btn_stop">Stop</string>
 	
 	<!-- Search Fragment -->
 	<string name="btn_filter">Filter</string>

@@ -1,5 +1,6 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
+import java.io.File;
 import java.text.ParseException;
 
 import org.json.JSONArray;
@@ -11,6 +12,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -34,6 +38,7 @@ import com.mobmonkey.mobmonkeyandroid.listeners.OnLocationNameClickFragmentListe
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
+import com.mobmonkey.mobmonkeysdk.adapters.MMDownloadVideoAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMRequestAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -122,6 +127,9 @@ public class AnsweredRequestsFragment extends MMFragment {
 												   media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 					answeredRequestItem.setIsImage(true);
 				} else if(mediaType == MMSDKConstants.MEDIA_TYPE_VIDEO) {
+					MMDownloadVideoAdapter.downloadVideo(new CreateVideoThumbnailCallback(i),
+														 media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL), 
+														 i);
 					answeredRequestItem.setIsVideo(true);
 					answeredRequestItem.setPlayOnClickListener(new MMVideoPlayOnClickListener(getActivity(), media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 				}
@@ -244,6 +252,37 @@ public class AnsweredRequestsFragment extends MMFragment {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	/**
+	 * Callback to create a thumbnail from a recently downloaded video
+	 * @author Dezapp, LLC
+	 * 
+	 */
+	private class CreateVideoThumbnailCallback implements MMCallback {
+		int position;
+		
+		public CreateVideoThumbnailCallback(int position) {
+			this.position = position;
+		}
+		
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				Uri videoUri = (Uri) obj;	
+				
+				Log.d(TAG, "videoUri: " + videoUri.getPath());
+				
+				MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
+		        mRetriever.setDataSource(videoUri.getPath());
+//		        answeredRequestItems[position].setImageMedia(ThumbnailUtils.extractThumbnail(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC), mediaWidth, mediaHeight));
+		        answeredRequestItems[position].setImageMedia(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC));
+		        File videoFile = new File(videoUri.getPath());
+		        videoFile.delete();
+		        adapter.notifyDataSetChanged();
+			}
+			
 		}
 	}
 }

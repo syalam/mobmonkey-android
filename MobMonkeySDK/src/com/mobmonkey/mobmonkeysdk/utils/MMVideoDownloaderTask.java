@@ -23,23 +23,21 @@ public class MMVideoDownloaderTask extends AsyncTask<String, Void, Uri>{
 	public MMVideoDownloaderTask(MMCallback mmCallback) {
 		this.mmCallback = mmCallback;
 	}
-	
-	@Override 
-	protected void onPostExecute(Uri result) {
-		super.onPostExecute(result);
-		mmCallback.processCallback(result);
-	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.os.AsyncTask#doInBackground(Params[])
+	 */
 	@Override
 	protected Uri doInBackground(String... params) {
 		android.os.Debug.waitForDebugger();		
 		final int TIMEOUT_CONNECTION = 5000;
 		final int TIMEOUT_SOCKET = 30000;
-		String videoUri = null;
+		String videoPath = null;
 		
 		try {
 			URL videoUrl = new URL(params[0]);
-			String videoExt = "";
+			String videoExt = MMSDKConstants.DEFAULT_STRING_EMPTY;
 			int i = videoUrl.getFile().lastIndexOf('.');
 			if (i > 0) {
 			    videoExt = videoUrl.getFile().substring(i);
@@ -56,14 +54,13 @@ public class MMVideoDownloaderTask extends AsyncTask<String, Void, Uri>{
 			if(conn.getContentLength() > 0) {
 				InputStream is = conn.getInputStream();
 				BufferedInputStream isBuff = new BufferedInputStream(is, 1024 * 5);
-				videoUri = "file://storage" + Environment.getExternalStorageDirectory() + "/mobMonkeyTempVideo" + videoExt;
-				File file = new File(videoUri);
+				videoPath = Environment.getExternalStorageDirectory() + "/mmTempVideo" + params[1] + videoExt;
+				File file = new File(videoPath);
 				FileOutputStream outStream = new FileOutputStream(file);
 				byte[] buff = new byte[5 * 1024];
 				
 				int len;
-				while((len = isBuff.read(buff)) != -1)
-				{
+				while((len = isBuff.read(buff)) != -1) {
 					outStream.write(buff,0,len);
 				}
 				
@@ -80,7 +77,16 @@ public class MMVideoDownloaderTask extends AsyncTask<String, Void, Uri>{
 			e.printStackTrace();
 		}
 		
-		return Uri.parse(videoUri);
+		return Uri.parse(videoPath);
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+	 */
+	@Override 
+	protected void onPostExecute(Uri result) {
+		super.onPostExecute(result);
+		mmCallback.processCallback(result);
+	}
 }

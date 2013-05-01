@@ -7,7 +7,7 @@ import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class MMCameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
+public class MMCameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
 	private SurfaceHolder holder;
 	private Camera camera;
@@ -21,9 +21,12 @@ public class MMCameraSurfaceView extends SurfaceView implements SurfaceHolder.Ca
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.view.SurfaceHolder.Callback#surfaceChanged(android.view.SurfaceHolder, int, int, int)
+	 */
 	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		// if preview does not exist
 		if(holder.getSurface() == null) {
 			return;
@@ -45,6 +48,10 @@ public class MMCameraSurfaceView extends SurfaceView implements SurfaceHolder.Ca
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.view.SurfaceHolder.Callback#surfaceCreated(android.view.SurfaceHolder)
+	 */
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		// surface created, draw preview for camera
@@ -57,10 +64,12 @@ public class MMCameraSurfaceView extends SurfaceView implements SurfaceHolder.Ca
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.view.SurfaceHolder.Callback#surfaceDestroyed(android.view.SurfaceHolder)
+	 */
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		
 	}
-
-	
 }

@@ -1,5 +1,9 @@
 package com.mobmonkey.mobmonkeysdk.utils;
 
+import java.io.File;
+
+import android.os.Environment;
+
 /**
  * Constants class that stores all the data values for MobMonkeyAPI
  * @author Dezapp, LLC
@@ -32,8 +36,8 @@ public final class MMSDKConstants {
 	public static final String MOBMONKEY_URL = "http://api.mobmonkey.com/rest/";
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
 	
-	public static final String MOBMONKEY_VIDEO_FILENAME = "mmvideo.mp4";
-	public static final String MOBMONKEY_VIDEO_TEMP_FILENAME = "MobMonkeyTemp.mp4";
+	public static final String MOBMONKEY_DIRECTORY = Environment.getExternalStorageDirectory() + File.separator + "MobMonkey";
+	public static final String MOBMONKEY_RECORDED_VIDEO_FILENAME = Environment.getExternalStorageDirectory() + File.separator + "MobMonkey" + File.separator + "mmvideo.mp4";
 	
 	// Uri path values
 	public static final String URI_PATH_ASSIGNEDREQUESTS = "assignedrequests";
@@ -46,6 +50,7 @@ public final class MMSDKConstants {
 	public static final String URI_PATH_LOCATION = "location";
 	public static final String URI_PATH_MEDIA = "media";
 	public static final String URI_PATH_OPENREQUESTS = "openrequests";
+	public static final String URI_PATH_PAID_SUBSCRIPTION = "paidsubscription";
 	public static final String URI_PATH_REGISTEREMAIL = "registeremail";
 	public static final String URI_PATH_REQUEST = "request";
 	public static final String URI_PATH_REQUESTMEDIA = "requestmedia";
@@ -59,11 +64,13 @@ public final class MMSDKConstants {
 	// Uri query parameter keys
 	public static final String URI_QUERY_PARAM_KEY_CATEGORY_IDS = "categoryIds";
 	public static final String URI_QUERY_PARAM_KEY_COUNTS_ONLY = "countsonly";
+	public static final String URI_QUERY_PARAM_KEY_EMAIL = "email";
 	public static final String URI_QUERY_PARAM_KEY_FAVORITES_ONLY = "bookmarksonly";
 	public static final String URI_QUERY_PARAM_KEY_LATITUDE = "latitude";
 	public static final String URI_QUERY_PARAM_KEY_LONGITUDE = "longitude";
 	public static final String URI_QUERY_PARAM_KEY_MY_INTEREST = "myinterests";
 	public static final String URI_QUERY_PARAM_KEY_NEARBY = "nearby";
+	public static final String URI_QUERY_PARAM_KEY_PARTNER_ID = "partnerId";
 	public static final String URI_QUERY_PARAM_KEY_RADIUS = "radius";
 	public static final String URI_QUERY_PARAM_KEY_TIME_SPAN = "timeSpan";
 	

@@ -16,8 +16,9 @@ public class MMDownloadVideoAdapter extends MMAdapter{
 	}
 	
 	public static void downloadVideo(MMCallback mmCallback, 
-									String mediaUrl) {
-		new MMVideoDownloaderTask(mmCallback).execute(mediaUrl);
+									 String mediaUrl,
+									 int videoThumbnailCount) {
+		new MMVideoDownloaderTask(mmCallback).execute(mediaUrl, Integer.toString(videoThumbnailCount));
 	}
 
 }
