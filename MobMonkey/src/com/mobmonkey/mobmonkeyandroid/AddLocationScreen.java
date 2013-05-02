@@ -1,5 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -7,20 +9,19 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 
-import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeysdk.adapters.MMAddLocationAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 /**
  * @author Dezapp, LLC
@@ -127,10 +128,12 @@ public class AddLocationScreen extends Activity {
 					catch(JSONException e)
 					{
 						e.printStackTrace();
-					}					
-					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, topLevelCats.toString());
+					}
+					
+					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, topLevelCats);
 					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, "Categories");
-					startActivity(categoryScreenIntent);
+					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY, new ArrayList<String>());
+					startActivityForResult(categoryScreenIntent, MMSDKConstants.REQUEST_CODE_ADD_CATEGORY);
 				}
 				return false;
 			}
@@ -245,5 +248,29 @@ public class AddLocationScreen extends Activity {
 			
 		}
 		
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if(requestCode == MMSDKConstants.REQUEST_CODE_ADD_CATEGORY) {
+			if(resultCode == RESULT_OK) {
+				ArrayList<String> selectedCategories = (ArrayList<String>)data.getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY);
+				Log.d("AddLocationScreen", "Size: " + selectedCategories.size());
+				
+				String cats = "";
+				etCats.setSingleLine(false);
+				etCats.setLines(selectedCategories.size());
+				for(int i = 0; i < selectedCategories.size(); i++) {
+					if(i != selectedCategories.size() - 1) {
+						cats += selectedCategories.get(i) + "\n";
+					} else {
+						cats += selectedCategories.get(i);
+					}
+				}
+				etCats.setText(cats);
+			}
+		}
 	}
 }
