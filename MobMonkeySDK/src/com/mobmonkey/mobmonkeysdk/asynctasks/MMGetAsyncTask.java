@@ -1,7 +1,6 @@
-package com.mobmonkey.mobmonkeysdk.utils;
+package com.mobmonkey.mobmonkeysdk.asynctasks;
 
 import java.io.BufferedReader;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,28 +9,31 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+
+import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.os.AsyncTask;
 
-
-public class MMDeleteAsyncTask extends AsyncTask<HttpDelete, Void, String>{
-
+public class MMGetAsyncTask extends AsyncTask<HttpGet, Void, String>{
 	private StringBuilder stringBuilder;
 	private MMCallback mmCallback;
 	
-	public MMDeleteAsyncTask(MMCallback mmCallback) {
+	/**
+	 * Constructor that takes in a {@link MMCallback} to be invoke after the background task is finished
+	 * @param mmc
+	 */
+	public MMGetAsyncTask(MMCallback mmCallback) {
 		this.mmCallback = mmCallback;
 	}
 	
 	@Override
-	protected String doInBackground(HttpDelete... http) {
-		
+	protected String doInBackground(HttpGet... params) {
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
-			
-			HttpResponse httpResponse = httpClient.execute(http[0]);
+			HttpResponse httpResponse = httpClient.execute(params[0]);
 			HttpEntity httpEntity = httpResponse.getEntity();
 			InputStream inStream = httpEntity.getContent();
 			
@@ -42,23 +44,20 @@ public class MMDeleteAsyncTask extends AsyncTask<HttpDelete, Void, String>{
 				stringBuilder.append(line + MMSDKConstants.DEFAULT_STRING_NEWLINE);
 			}
 			inStream.close();
-			
-			
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 		return stringBuilder.toString();
-		
 	}
 
+	/* (non-Javadoc)
+	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+	 */
 	@Override
 	protected void onPostExecute(String result) {
 		mmCallback.processCallback(result);
 		super.onPostExecute(result);
 	}
-	
-	
 }

@@ -8,10 +8,10 @@ import org.json.JSONException;
 
 import android.util.Log;
 
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMPutAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMPutAsyncTask;
 
 public class MMAddLocationAdapter extends MMAdapter {
 	private final static String TAG = "MMAddLocation: ";

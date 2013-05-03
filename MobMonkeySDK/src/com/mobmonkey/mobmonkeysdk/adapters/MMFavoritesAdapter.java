@@ -11,12 +11,12 @@ import org.json.JSONException;
 
 import android.util.Log;
 
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMDeleteAsyncTask;
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMGetAsyncTask;
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMPostAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMDeleteAsyncTask;
-import com.mobmonkey.mobmonkeysdk.utils.MMGetAsyncTask;
-import com.mobmonkey.mobmonkeysdk.utils.MMPostAsyncTask;
 
 public class MMFavoritesAdapter extends MMAdapter {
 	private final static String TAG = "MMFavorites";

@@ -13,13 +13,13 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 import android.util.Log;
 
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMGetAsyncTask;
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMPostAsyncTask;
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMPutAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMDeviceUUID;
-import com.mobmonkey.mobmonkeysdk.utils.MMGetAsyncTask;
-import com.mobmonkey.mobmonkeysdk.utils.MMPostAsyncTask;
-import com.mobmonkey.mobmonkeysdk.utils.MMPutAsyncTask;
 
 /**
  * Final adapter class that handles all the user functionalities of MobMonkey Android

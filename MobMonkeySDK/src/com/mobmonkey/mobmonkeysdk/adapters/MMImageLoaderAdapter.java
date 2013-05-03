@@ -4,9 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMLoadImageAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMGetVideoThumbnailTask;
-import com.mobmonkey.mobmonkeysdk.utils.MMImageLoaderTask;
 
 /**
  * @author Dezapp, LLC
@@ -29,18 +28,18 @@ public final class MMImageLoaderAdapter {
 	 */
 	public static void loadImage(MMCallback mmCallback,
 								 String imageUrl) {
-		new MMImageLoaderTask(mmCallback).execute(imageUrl);
+		new MMLoadImageAsyncTask(mmCallback).execute(imageUrl);
 	}
 	
-	/**
-	 * 
-	 * @param context
-	 * @param mmCallback
-	 * @param videoUri
-	 */
-	public static void loadVideoThumbnail(Context context,
-										  MMCallback mmCallback,
-										  Uri videoUri) {
-		new MMGetVideoThumbnailTask(context, mmCallback).execute(videoUri);
-	}
+//	/**
+//	 * 
+//	 * @param context
+//	 * @param mmCallback
+//	 * @param videoUri
+//	 */
+//	public static void loadVideoThumbnail(Context context,
+//										  MMCallback mmCallback,
+//										  Uri videoUri) {
+//		new MMGetVideoThumbnailTask(context, mmCallback).execute(videoUri);
+//	}
 }

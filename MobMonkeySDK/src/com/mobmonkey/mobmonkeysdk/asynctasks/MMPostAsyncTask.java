@@ -1,20 +1,33 @@
-package com.mobmonkey.mobmonkeysdk.utils;
+package com.mobmonkey.mobmonkeysdk.asynctasks;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.SocketException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+
+import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.os.AsyncTask;
 
-public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
+/**
+ * Custom {@link AsyncTask} for MobMonkey to do a {@link HttpPost} to the MobMonkey server as a background task on the Android device
+ * @author Dezapp, LLC
+ *
+ */
+public class MMPostAsyncTask extends AsyncTask<HttpPost, Void, String> {
 	private StringBuilder stringBuilder;
 	private MMCallback mmCallback;
 	
@@ -22,7 +35,7 @@ public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
 	 * Constructor that takes in a {@link MMCallback} to be invoke after the background task is finished
 	 * @param mmc
 	 */
-	public MMPutAsyncTask(MMCallback mmCallback) {
+	public MMPostAsyncTask(MMCallback mmCallback) {
 		this.mmCallback = mmCallback;
 	}
 	
@@ -31,9 +44,14 @@ public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
 	@Override
-	protected String doInBackground(HttpPut... params) {
+	protected String doInBackground(HttpPost... params) {
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
+			HttpParams httpParams = httpClient.getParams();
+			HttpConnectionParams.setConnectionTimeout(httpParams, MMSDKConstants.TIMEOUT_CONNECTION);
+			HttpConnectionParams.setSoTimeout(httpParams, MMSDKConstants.TIMEOUT_CONNECTION);
+			ConnManagerParams.setTimeout(httpParams, MMSDKConstants.TIMEOUT_CONNECTION);
+			
 			HttpResponse httpResponse = httpClient.execute(params[0]);
 			HttpEntity httpEntity = httpResponse.getEntity();
 			InputStream inStream = httpEntity.getContent();
@@ -45,6 +63,13 @@ public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
 				stringBuilder.append(line + MMSDKConstants.DEFAULT_STRING_NEWLINE);
 			}
 			inStream.close();
+		} catch (ConnectTimeoutException e) {
+			e.printStackTrace();
+			return MMSDKConstants.CONNECTION_TIMED_OUT;
+		} catch (SocketException e) {
+			if(e.getMessage().equals(MMSDKConstants.OPERATION_TIMED_OUT)) {
+				return MMSDKConstants.CONNECTION_TIMED_OUT;
+			}
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -1,4 +1,4 @@
-package com.mobmonkey.mobmonkeysdk.utils;
+package com.mobmonkey.mobmonkeysdk.asynctasks;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,12 +9,15 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.DefaultHttpClient;
+
+import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.os.AsyncTask;
 
-public class MMGetAsyncTask extends AsyncTask<HttpGet, Void, String>{
+public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
 	private StringBuilder stringBuilder;
 	private MMCallback mmCallback;
 	
@@ -22,12 +25,16 @@ public class MMGetAsyncTask extends AsyncTask<HttpGet, Void, String>{
 	 * Constructor that takes in a {@link MMCallback} to be invoke after the background task is finished
 	 * @param mmc
 	 */
-	public MMGetAsyncTask(MMCallback mmCallback) {
+	public MMPutAsyncTask(MMCallback mmCallback) {
 		this.mmCallback = mmCallback;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.os.AsyncTask#doInBackground(Params[])
+	 */
 	@Override
-	protected String doInBackground(HttpGet... params) {
+	protected String doInBackground(HttpPut... params) {
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpResponse httpResponse = httpClient.execute(params[0]);
@@ -49,7 +56,8 @@ public class MMGetAsyncTask extends AsyncTask<HttpGet, Void, String>{
 		return stringBuilder.toString();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
 	@Override

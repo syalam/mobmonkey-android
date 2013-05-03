@@ -23,5 +23,6 @@ public class VideoPlayerScreen extends Activity {
 		vvVideoPlayer = (VideoView) findViewById(R.id.vvvideoplayer);
 		vvVideoPlayer.setVideoURI(Uri.parse(getIntent().getStringExtra(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 		vvVideoPlayer.setMediaController(new MediaController(VideoPlayerScreen.this));
+		vvVideoPlayer.start();
 	}
 }

@@ -2,8 +2,8 @@ package com.mobmonkey.mobmonkeysdk.adapters;
 
 import android.content.Context;
 
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMGeocodeAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.GeocoderTask;
 
 /**
  * @author Dezapp, LLC
@@ -20,7 +20,7 @@ public final class MMGeocoderAdapter {
 	public static void getFromLocationName(Context context,
 										   MMCallback mmCallback,
 										   String address) {
-		new GeocoderTask(context, mmCallback).execute(address);
+		new MMGeocodeAsyncTask(context, mmCallback).execute(address);
 	}
 	
 	/**
@@ -34,6 +34,6 @@ public final class MMGeocoderAdapter {
 									   MMCallback mmCallback,
 									   double latitude,
 									   double longitude) {
-		new GeocoderTask(context, mmCallback).execute(latitude, longitude);
+		new MMGeocodeAsyncTask(context, mmCallback).execute(latitude, longitude);
 	}
 }

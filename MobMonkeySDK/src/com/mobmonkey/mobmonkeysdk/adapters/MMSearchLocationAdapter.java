@@ -4,6 +4,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import android.util.Log;
 
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMPostAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.*;
 
 /**

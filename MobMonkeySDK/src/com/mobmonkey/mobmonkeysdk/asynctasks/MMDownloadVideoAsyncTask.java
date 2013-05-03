@@ -1,4 +1,4 @@
-package com.mobmonkey.mobmonkeysdk.utils;
+package com.mobmonkey.mobmonkeysdk.asynctasks;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -9,18 +9,23 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.http.conn.ConnectTimeoutException;
+
+import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
+
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
-public class MMVideoDownloaderTask extends AsyncTask<String, Void, Uri>{
+public class MMDownloadVideoAsyncTask extends AsyncTask<String, Void, Uri>{
 	private static final String TAG = "MMVideoDownloaderTask";
 	
 	private MMCallback mmCallback;
 	
-	public MMVideoDownloaderTask(MMCallback mmCallback) {
+	public MMDownloadVideoAsyncTask(MMCallback mmCallback) {
 		this.mmCallback = mmCallback;
 	}
 
@@ -30,9 +35,7 @@ public class MMVideoDownloaderTask extends AsyncTask<String, Void, Uri>{
 	 */
 	@Override
 	protected Uri doInBackground(String... params) {
-		android.os.Debug.waitForDebugger();		
-		final int TIMEOUT_CONNECTION = 5000;
-		final int TIMEOUT_SOCKET = 30000;
+//		android.os.Debug.waitForDebugger();
 		String videoPath = null;
 		
 		try {
@@ -46,8 +49,9 @@ public class MMVideoDownloaderTask extends AsyncTask<String, Void, Uri>{
 			Log.i(TAG, "video download beginning");			
 			
 			HttpURLConnection conn = (HttpURLConnection) videoUrl.openConnection();
-			conn.setReadTimeout(TIMEOUT_CONNECTION);
-			conn.setConnectTimeout(TIMEOUT_SOCKET);
+//			conn.setRequestMethod(HttpURLConnection.)
+			conn.setConnectTimeout(MMSDKConstants.TIMEOUT_CONNECTION);
+			conn.setReadTimeout(MMSDKConstants.TIMEOUT_SOCKET);
 			conn.setDoInput(true);
 			conn.connect();
 			
@@ -71,6 +75,9 @@ public class MMVideoDownloaderTask extends AsyncTask<String, Void, Uri>{
 				Log.i(TAG, "video download finished in " + ((System.currentTimeMillis() - startTime) / 1000) + " sec");			
 			}
 			conn.disconnect();
+		} catch (ConnectTimeoutException e) {
+			e.printStackTrace();
+//			return MMSDKConstants.CONNECTION_TIMED_OUT;
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

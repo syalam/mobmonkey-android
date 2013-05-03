@@ -332,21 +332,27 @@ public class SignInScreen extends Activity {
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				try {
-					JSONObject response = new JSONObject((String) obj);
-					if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
-						inputMethodManager.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
-						Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
-						if(requestEmail == false) {
-							requestEmail = true;
+				String result = (String) obj;
+				
+				if(result.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(SignInScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject response = new JSONObject(result);
+						if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
+							inputMethodManager.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
+							Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();
+							if(requestEmail == false) {
+								requestEmail = true;
+							}
+							userPrefsEditor.commit();
+							startActivity(new Intent(SignInScreen.this, MainScreen.class));
+						} else {
+							Toast.makeText(SignInScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 						}
-						userPrefsEditor.commit();
-						startActivity(new Intent(SignInScreen.this, MainScreen.class));
-					} else {
-						Toast.makeText(SignInScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 			Log.d(TAG, TAG + "response: " + (String) obj);

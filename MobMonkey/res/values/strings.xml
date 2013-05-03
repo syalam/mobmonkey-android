@@ -24,6 +24,7 @@
 	<string name="pd_signing_in_facebook">Signing in via Facebook&#8230;</string>
 	<string name="pd_signing_in_twitter">Signing in via Twitter&#8230;</string>
 	
+	<string name="toast_connection_timed_out">Connection to MobMonkey server has timed out, please try again later.</string>
 	<string name="toast_new_twitter_user">New Twitter user, please sign up with your user info</string>
 	<string name="toast_sign_in_successful">Successfully signed in</string>
 	

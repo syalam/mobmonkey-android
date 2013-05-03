@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.mobmonkey.mobmonkeyandroid.LocationDetailsMediaScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.MakeARequestScreen;
+import com.mobmonkey.mobmonkeyandroid.SignInScreen;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMLocationDetailsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMLocationDetailsItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
@@ -552,11 +553,16 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private class LoadImageCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-//			imageMedia = (Bitmap) obj;
-			retrieveImageMedia = false;
-			imageMedia = (Bitmap) obj;
-			ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
-			ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
+			if(obj != null) {
+				if(obj instanceof String) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else if(obj instanceof Bitmap){				
+					retrieveImageMedia = false;
+					imageMedia = (Bitmap) obj;
+					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
+					ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
+				}
+			}
 		}
 	}
 	

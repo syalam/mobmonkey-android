@@ -37,7 +37,7 @@ public class MMShareMediaOnClickListener implements OnClickListener {
 		shareMediaActionSheet.getWindow().getAttributes().gravity = Gravity.BOTTOM;
 		shareMediaActionSheet.getWindow().getAttributes().width = WindowManager.LayoutParams.MATCH_PARENT;
 		shareMediaActionSheet.getWindow().getAttributes().height = WindowManager.LayoutParams.WRAP_CONTENT;
-		shareMediaActionSheet.setCancelable(false);
+//		shareMediaActionSheet.setCancelable(false);
 		shareMediaActionSheet.setCanceledOnTouchOutside(false);
 		shareMediaActionSheet.setContentView(R.layout.share_media_action_sheet);
 		

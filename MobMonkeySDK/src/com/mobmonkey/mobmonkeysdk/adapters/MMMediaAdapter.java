@@ -6,6 +6,9 @@ import org.apache.http.client.methods.HttpPost;
 
 import android.util.Log;
 
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMDeleteAsyncTask;
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMGetAsyncTask;
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMPostAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.*;
 
 /**

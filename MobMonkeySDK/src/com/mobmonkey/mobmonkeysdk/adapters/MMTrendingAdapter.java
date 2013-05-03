@@ -4,10 +4,10 @@ import org.apache.http.client.methods.HttpGet;
 
 import android.util.Log;
 
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMGetAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMGetAsyncTask;
 
 public class MMTrendingAdapter extends MMAdapter {
 	private static String TAG = "MMTrendingAdapter: ";

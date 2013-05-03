@@ -301,5 +301,11 @@ public final class MMSDKConstants {
 	public static final String REQUEST_REPEAT_RATE_WEEKLY = "weekly";
 	public static final String REQUEST_REPEAT_RATE_MONTHLY = "monthly";
 	
+	public static final int TIMEOUT_CONNECTION = 10 * 1000;
+	public static final int TIMEOUT_SOCKET = 30 * 1000;
+	
+	public static final String CONNECTION_TIMED_OUT = "Connection timed out";
+	public static final String OPERATION_TIMED_OUT = "The operation timed out";
+	
 	public static final String INTENT_FILTER_DISPLAY_MESSAGE = "com.mobmonkey.mobmonkeyandroid.DISPLAY_MESSAGE";
 }

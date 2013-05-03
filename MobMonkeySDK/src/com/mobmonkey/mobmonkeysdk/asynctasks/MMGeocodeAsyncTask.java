@@ -1,8 +1,10 @@
-package com.mobmonkey.mobmonkeysdk.utils;
+package com.mobmonkey.mobmonkeysdk.asynctasks;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
+import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 
 import android.content.Context;
 import android.location.Address;
@@ -13,11 +15,11 @@ import android.os.AsyncTask;
  * @author Dezapp, LLC
  *
  */
-public class GeocoderTask extends AsyncTask<Object, Void, Address> {
+public class MMGeocodeAsyncTask extends AsyncTask<Object, Void, Address> {
 	Context context;
 	MMCallback mmCallback;
 	
-	public GeocoderTask(Context context, MMCallback mmCallback) {
+	public MMGeocodeAsyncTask(Context context, MMCallback mmCallback) {
 		this.context = context;
 		this.mmCallback = mmCallback;
 	}

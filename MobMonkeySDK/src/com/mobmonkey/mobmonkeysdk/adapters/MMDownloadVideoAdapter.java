@@ -2,9 +2,9 @@ package com.mobmonkey.mobmonkeysdk.adapters;
 
 import android.content.Context;
 
+import com.mobmonkey.mobmonkeysdk.asynctasks.MMDownloadVideoAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMVideoDownloaderTask;
 
 public class MMDownloadVideoAdapter extends MMAdapter{
 	
@@ -18,7 +18,7 @@ public class MMDownloadVideoAdapter extends MMAdapter{
 	public static void downloadVideo(MMCallback mmCallback, 
 									 String mediaUrl,
 									 int videoThumbnailCount) {
-		new MMVideoDownloaderTask(mmCallback).execute(mediaUrl, Integer.toString(videoThumbnailCount));
+		new MMDownloadVideoAsyncTask(mmCallback).execute(mediaUrl, Integer.toString(videoThumbnailCount));
 	}
 
 }

@@ -38,7 +38,6 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
-import com.mobmonkey.mobmonkeysdk.utils.MMPostAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 
 /**

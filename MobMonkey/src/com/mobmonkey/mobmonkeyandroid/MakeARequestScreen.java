@@ -25,7 +25,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSegmentedRadioGroup;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
-import com.mobmonkey.mobmonkeysdk.adapters.MMSendRequestAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMMakeARequestAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
@@ -58,7 +58,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	private JSONObject jObj;
 	private boolean repeat = true;
 	private String repeatRate;
-	private int radiusInYards = 50; //TODO: Remove hard-coded value for radius
+//	private int radiusInYards = 50; //TODO: Remove hard-coded value for radius
 	
 	private SharedPreferences userPrefs;
 	private String locationId;
@@ -154,7 +154,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			if(mediaType.equals(MMSDKConstants.MEDIA_TEXT) && message.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 				Toast.makeText(MakeARequestScreen.this, R.string.toast_no_message_detected, Toast.LENGTH_SHORT).show();
 			} else {
-				sendRequest();
+				makeARequest();
 			}
 		}
 	}
@@ -317,19 +317,18 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 	/**
 	 * 
 	 */
-	private void sendRequest() {
-		MMSendRequestAdapter.sendRequest(new SendRequestCallback(), 
-										 message,
-										 scheduleDate, 
-										 providerId,
-										 locationId,
-										 duration,
-										 radiusInYards,
-										 repeatRate,
-										 mediaType, 
-										 MMConstants.PARTNER_ID,
-										 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-										 userPrefs.getString(MMSDKConstants.KEY_AUTH,MMSDKConstants.DEFAULT_STRING_EMPTY));
+	private void makeARequest() {
+		MMMakeARequestAdapter.makeARequest(new SendRequestCallback(),
+										   message,
+										   scheduleDate,
+										   providerId,
+										   locationId,
+										   duration,
+										   repeatRate,
+										   mediaType,
+										   MMConstants.PARTNER_ID,
+										   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+										   userPrefs.getString(MMSDKConstants.KEY_AUTH,MMSDKConstants.DEFAULT_STRING_EMPTY));
 		MMProgressDialog.displayDialog(MakeARequestScreen.this,
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 									   getString(R.string.pd_sending_request));
