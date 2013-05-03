@@ -140,6 +140,7 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
 	public static final String KEY_INTENT_EXTRA_VIDEO_PATH = "returnedVideo";
 	public static final String KEY_INTENT_EXTRA_ADD_CATEGORY = "add category";
+	public static final String KEY_INTENT_EXTRA_ADD_CATEGORY_IDS = "add categoryIds";
 	
 	// MobMonkey server call key values
 	public static final String KEY_ACCEPTEDTOS = "acceptedtos";
