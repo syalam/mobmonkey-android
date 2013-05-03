@@ -139,6 +139,8 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON = "ToS display button";
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
 	public static final String KEY_INTENT_EXTRA_VIDEO_PATH = "returnedVideo";
+	public static final String KEY_INTENT_EXTRA_ADD_CATEGORY = "add category";
+	public static final String KEY_INTENT_EXTRA_ADD_CATEGORY_IDS = "add categoryIds";
 	
 	// MobMonkey server call key values
 	public static final String KEY_ACCEPTEDTOS = "acceptedtos";
@@ -206,6 +208,7 @@ public final class MMSDKConstants {
 	public static final int REQUEST_CODE_IMAGE = 10000;
 	public static final int REQUEST_CODE_VIDEO = 10001;
 	public static final int REQUEST_CODE_ADD_MESSAGE = 100000;
+	public static final int REQUEST_CODE_ADD_CATEGORY = 10000011;
 	public static final int REQUEST_CODE_SCHEDULE_REQUEST = 100001;
 	
 	// Result code values

@@ -1,26 +1,28 @@
 package com.mobmonkey.mobmonkeyandroid;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 
-import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeysdk.adapters.MMAddLocationAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 /**
  * @author Dezapp, LLC
@@ -59,30 +61,34 @@ public class AddLocationScreen extends Activity {
 	
 	protected void onResume() {
 		super.onResume();
-		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST)) {
-			String displayCategoriesSelected = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMSDKConstants.DEFAULT_STRING_EMPTY);
-			try {
-				JSONArray selectedCategoriesList = new JSONArray(displayCategoriesSelected);
-				displayCategoriesSelected = null;
-				for(int i=0; i < selectedCategoriesList.length(); i++)
-				{
-					if(displayCategoriesSelected == null)
-						displayCategoriesSelected = selectedCategoriesList.getJSONObject(i).getString("en");
-					else
-						displayCategoriesSelected = displayCategoriesSelected + ", " + selectedCategoriesList.getJSONObject(i).getString("en");
-					
-					if(categories == null)
-						categories = selectedCategoriesList.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID);
-					else
-						categories = categories + "," + selectedCategoriesList.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID);
-				}
-				etCats.setText(displayCategoriesSelected);
-				
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			
-		}
+		
+		
+		
+		Log.d("Test", "categories: "+categories);
+//		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST)) {
+//			String displayCategoriesSelected = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMSDKConstants.DEFAULT_STRING_EMPTY);
+//			try {
+//				JSONArray selectedCategoriesList = new JSONArray(displayCategoriesSelected);
+//				displayCategoriesSelected = null;
+//				for(int i=0; i < selectedCategoriesList.length(); i++)
+//				{
+//					if(displayCategoriesSelected == null)
+//						displayCategoriesSelected = selectedCategoriesList.getJSONObject(i).getString("en");
+//					else
+//						displayCategoriesSelected = displayCategoriesSelected + ", " + selectedCategoriesList.getJSONObject(i).getString("en");
+//					
+//					if(categories == null)
+//						categories = selectedCategoriesList.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID);
+//					else
+//						categories = categories + "," + selectedCategoriesList.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID);
+//				}
+//				etCats.setText(displayCategoriesSelected);
+//				
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			}
+//			
+//		}
 	}
 	
 	@Override
@@ -127,10 +133,13 @@ public class AddLocationScreen extends Activity {
 					catch(JSONException e)
 					{
 						e.printStackTrace();
-					}					
-					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, topLevelCats.toString());
+					}
+					
+					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, topLevelCats);
 					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, "Categories");
-					startActivity(categoryScreenIntent);
+					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY, new ArrayList<String>());
+					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY_IDS, new ArrayList<Integer>());
+					startActivityForResult(categoryScreenIntent, MMSDKConstants.REQUEST_CODE_ADD_CATEGORY);
 				}
 				return false;
 			}
@@ -152,10 +161,25 @@ public class AddLocationScreen extends Activity {
 	private void addLocation() throws JSONException {
 		if(checkValues())
 		{
-			MMAddLocationAdapter.addLocation(new AddLocationCallback(), userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-					userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), MMConstants.PARTNER_ID, street, "", "", 
-					categories, "United States", latitude, city, longitude, name, "", 
-					phone, postalCode, "", state, "");
+			MMAddLocationAdapter.addLocation(new AddLocationCallback(), 
+											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+											 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
+											 MMConstants.PARTNER_ID, 
+											 street, 
+											 "", 
+											 "", 
+											 categories, 
+											 "United States", 
+											 latitude, 
+											 city, 
+											 longitude, 
+											 name, 
+											 "", 
+											 phone, 
+											 postalCode, 
+											 "", 
+											 state, 
+											 "");
 		}
 	}
 	
@@ -245,5 +269,84 @@ public class AddLocationScreen extends Activity {
 			
 		}
 		
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if(requestCode == MMSDKConstants.REQUEST_CODE_ADD_CATEGORY) {
+			if(resultCode == RESULT_OK) {
+				ArrayList<String> selectedCategories = (ArrayList<String>)data.getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY);
+				Log.d("AddLocationScreen", "Size: " + selectedCategories.size());
+				
+				String cats = "";
+				etCats.setSingleLine(false);
+				etCats.setLines(selectedCategories.size());
+				for(int i = 0; i < selectedCategories.size(); i++) {
+					if(i != selectedCategories.size() - 1) {
+						cats += selectedCategories.get(i) + "\n";
+					} else {
+						cats += selectedCategories.get(i);
+					}
+				}
+				etCats.setText(cats);
+				
+				// set categories
+				categories = "";
+				for(String catsName : selectedCategories) {
+					try {
+						categories += getCategoriesId(catsName) + ",";
+//						Log.d("Test", catsName + ": " + getCategoriesId(catsName));
+					} catch (Exception ex) {
+						ex.printStackTrace();
+//						Log.d("Test", "error at finding cats ids");
+					}
+				}
+				categories = categories.substring(0, categories.length()-1);
+				Log.d("Test", "categories id: " + categories);
+			}
+		}
+	}
+	
+	private int getCategoriesId(String catsName) throws JSONException {
+		int id = -1;
+		String name = catsName;
+		String[] topCatsName = MMCategories.getTopLevelCategories(this);
+		
+		if(isTopCats(name)) {
+			if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
+				JSONObject cats = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
+				JSONObject jObj = cats.getJSONArray(name).getJSONObject(0);
+				id = Integer.parseInt(jObj.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID));
+			}
+		} else {
+			FindIDs:
+			for(int i = 0; i < topCatsName.length; i++) {
+				JSONArray jArr = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(this, topCatsName[i]));
+				for(int j = 0; j < jArr.length(); j++) {
+					JSONObject jObj = jArr.getJSONObject(j);
+					if(jObj.getString("en").equals(name)) {
+						id = Integer.parseInt(jObj.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID));
+						break FindIDs;
+					}
+				}
+			}
+		}
+		
+		return id;
+	}
+	
+	private boolean isTopCats(String name) throws JSONException {
+		String[] topCatsName = MMCategories.getTopLevelCategories(this);
+		boolean flag = false;
+		isTop:
+		for(String str : topCatsName) {
+			if(str.equals(name)) {
+				flag = true;
+				break isTop;
+			}
+		}
+		return flag;
 	}
 }
