@@ -48,7 +48,7 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 	@Override
 	public void onMapClick(LatLng pointClicked) {
 		MMGeocoderAdapter.getFromLocation(AddLocationMapScreen.this, new ReverseGeocodeCallback(), pointClicked.latitude, pointClicked.longitude);
-		MMProgressDialog.displayDialog(AddLocationMapScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, "");
+		MMProgressDialog.displayDialog(AddLocationMapScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_retrieving_location_information));
 	}
 	
 	/* (non-Javadoc)

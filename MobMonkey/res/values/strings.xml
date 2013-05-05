@@ -324,4 +324,5 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	<string name="ad_no_state">Please enter a state</string>
 	<string name="ad_no_zip">Please enter a zip code</string>
 
+	<string name="pd_retrieving_location_information">Retrieving location information&#8230;</string>	
 </resources>

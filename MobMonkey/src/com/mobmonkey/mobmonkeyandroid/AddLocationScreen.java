@@ -159,27 +159,26 @@ public class AddLocationScreen extends Activity {
     }
 
 	private void addLocation() throws JSONException {
-		if(checkValues())
-		{
+		if(checkValues()) {
 			MMAddLocationAdapter.addLocation(new AddLocationCallback(), 
 											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 											 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
 											 MMConstants.PARTNER_ID, 
 											 street, 
-											 "", 
-											 "", 
+											 MMSDKConstants.DEFAULT_STRING_EMPTY, 
+											 MMSDKConstants.DEFAULT_STRING_EMPTY, 
 											 categories, 
 											 "United States", 
 											 latitude, 
 											 city, 
 											 longitude, 
 											 name, 
-											 "", 
+											 MMSDKConstants.DEFAULT_STRING_EMPTY, 
 											 phone, 
 											 postalCode, 
-											 "", 
+											 MMSDKConstants.DEFAULT_STRING_EMPTY, 
 											 state, 
-											 "");
+											 MMSDKConstants.DEFAULT_STRING_EMPTY);
 		}
 	}
 	
@@ -222,7 +221,7 @@ public class AddLocationScreen extends Activity {
 		if(!etPhone.getText().toString().isEmpty())
 			phone =  etPhone.getText().toString();
 		else
-			phone = "";
+			phone = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		return true;
 	}
 	
@@ -280,31 +279,33 @@ public class AddLocationScreen extends Activity {
 				ArrayList<String> selectedCategories = (ArrayList<String>)data.getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY);
 				Log.d("AddLocationScreen", "Size: " + selectedCategories.size());
 				
-				String cats = "";
-				etCats.setSingleLine(false);
-				etCats.setLines(selectedCategories.size());
-				for(int i = 0; i < selectedCategories.size(); i++) {
-					if(i != selectedCategories.size() - 1) {
-						cats += selectedCategories.get(i) + "\n";
-					} else {
-						cats += selectedCategories.get(i);
+				if(selectedCategories.size() > 0) {
+					String cats = MMSDKConstants.DEFAULT_STRING_EMPTY;
+					etCats.setSingleLine(false);
+					etCats.setLines(selectedCategories.size());
+					for(int i = 0; i < selectedCategories.size(); i++) {
+						if(i != selectedCategories.size() - 1) {
+							cats += selectedCategories.get(i) + "\n";
+						} else {
+							cats += selectedCategories.get(i);
+						}
 					}
-				}
-				etCats.setText(cats);
-				
-				// set categories
-				categories = "";
-				for(String catsName : selectedCategories) {
-					try {
-						categories += getCategoriesId(catsName) + ",";
-//						Log.d("Test", catsName + ": " + getCategoriesId(catsName));
-					} catch (Exception ex) {
-						ex.printStackTrace();
-//						Log.d("Test", "error at finding cats ids");
+					etCats.setText(cats);
+					
+					// set categories
+					categories = "";
+					for(String catsName : selectedCategories) {
+						try {
+							categories += getCategoriesId(catsName) + ",";
+	//						Log.d("Test", catsName + ": " + getCategoriesId(catsName));
+						} catch (Exception ex) {
+							ex.printStackTrace();
+	//						Log.d("Test", "error at finding cats ids");
+						}
 					}
+					categories = categories.substring(0, categories.length()-1);
+					Log.d("Test", "categories id: " + categories);
 				}
-				categories = categories.substring(0, categories.length()-1);
-				Log.d("Test", "categories id: " + categories);
 			}
 		}
 	}
