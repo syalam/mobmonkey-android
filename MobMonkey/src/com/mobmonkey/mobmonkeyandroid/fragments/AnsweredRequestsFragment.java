@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.mobmonkey.mobmonkeyandroid.MakeARequestScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMAnsweredRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMAnsweredRequestItem;
@@ -173,7 +174,12 @@ public class AnsweredRequestsFragment extends MMFragment {
 		public void processCallback(Object obj) {
 			Log.d(TAG, "AnsweredRequestCallback: "+(String) obj);
 			try {
-				getAnsweredRequestItems((String) obj);				
+				JSONObject response = new JSONObject((String) obj);
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					getAnsweredRequestItems((String) obj);	
+				}	
 			} catch (JSONException ex) {
 				Log.e(TAG, "JSONException occured!");
 				ex.printStackTrace();
@@ -199,9 +205,19 @@ public class AnsweredRequestsFragment extends MMFragment {
 		
 		@Override
 		public void processCallback(Object obj) {
-			answeredRequestItems[position].setImageMedia((Bitmap) obj);
-			answeredRequestItems[position].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
-			adapter.notifyDataSetChanged();
+			
+			try {
+				JSONObject response = new JSONObject((String) obj);
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					answeredRequestItems[position].setImageMedia((Bitmap) obj);
+					answeredRequestItems[position].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
+					adapter.notifyDataSetChanged();
+				}
+			} catch (JSONException ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 	
@@ -216,13 +232,17 @@ public class AnsweredRequestsFragment extends MMFragment {
 			Log.d(TAG, (String)obj);
 			try {
 				JSONObject jObj = new JSONObject((String) obj);
-				MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
+				MMProgressDialog.dismissDialog();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
 													 MMConstants.PARTNER_ID,
 													 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
 													 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 				
-				Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
-				MMProgressDialog.dismissDialog();
+					Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -240,15 +260,19 @@ public class AnsweredRequestsFragment extends MMFragment {
 		public void processCallback(Object obj) {
 			Log.d(TAG, (String)obj);
 			try {
-				
 				JSONObject jObj = new JSONObject((String) obj);
-				MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(),
+				MMProgressDialog.dismissDialog();
+				
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(),
 												   MMConstants.PARTNER_ID,
 												   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
 												   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 				
 				Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
-				MMProgressDialog.dismissDialog();
+				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -270,17 +294,22 @@ public class AnsweredRequestsFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				Uri videoUri = (Uri) obj;	
 				
-				Log.d(TAG, "videoUri: " + videoUri.getPath());
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					Uri videoUri = (Uri) obj;	
 				
-				MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
-		        mRetriever.setDataSource(videoUri.getPath());
-//		        answeredRequestItems[position].setImageMedia(ThumbnailUtils.extractThumbnail(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC), mediaWidth, mediaHeight));
-		        answeredRequestItems[position].setImageMedia(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC));
-		        File videoFile = new File(videoUri.getPath());
-		        videoFile.delete();
-		        adapter.notifyDataSetChanged();
+					Log.d(TAG, "videoUri: " + videoUri.getPath());
+					
+					MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
+			        mRetriever.setDataSource(videoUri.getPath());
+	//		        answeredRequestItems[position].setImageMedia(ThumbnailUtils.extractThumbnail(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC), mediaWidth, mediaHeight));
+			        answeredRequestItems[position].setImageMedia(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC));
+			        File videoFile = new File(videoUri.getPath());
+			        videoFile.delete();
+			        adapter.notifyDataSetChanged();
+				}
 			}
 			
 		}

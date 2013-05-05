@@ -202,6 +202,8 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 						Toast.makeText(getActivity().getApplicationContext(), 
 								getString(R.string.toast_request) + MMSDKConstants.DEFAULT_STRING_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), 
 								Toast.LENGTH_LONG).show();
+					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 					else {
 						Toast.makeText(getActivity().getApplicationContext(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();

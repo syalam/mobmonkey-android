@@ -58,7 +58,12 @@ public class SubscribeScreen extends Activity{
 			if(obj != null) {
 				try {
 					JSONObject jObj = new JSONObject((String) obj);
-					Toast.makeText(SubscribeScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
+					
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(SubscribeScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(SubscribeScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

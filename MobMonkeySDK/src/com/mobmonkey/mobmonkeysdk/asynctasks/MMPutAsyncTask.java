@@ -10,6 +10,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -48,11 +49,14 @@ public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
 				stringBuilder.append(line + MMSDKConstants.DEFAULT_STRING_NEWLINE);
 			}
 			inStream.close();
+		} catch (ConnectTimeoutException e) {
+			e.printStackTrace();
+			return MMSDKConstants.CONNECTION_TIMED_OUT;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
 		return stringBuilder.toString();
 	}
 

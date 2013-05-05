@@ -494,6 +494,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 //								getActivity().getString(R.string.toast_unable_to_load_location_info)).show();
 
 						getActivity().onBackPressed();
+					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					} else {
 						retrieveLocationDetails = false;
 						setLocationDetails();
@@ -521,6 +523,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
 						mediaResults = (String) obj;
 						hasMedia();
+					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					} else {
 						MMProgressDialog.dismissDialog();
 						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
@@ -581,6 +585,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						Toast.makeText(getActivity(), R.string.toast_add_favorite, Toast.LENGTH_SHORT).show();
 						tvFavorite.setText(R.string.tv_remove_favorite);
 						updateFavoritesList();
+					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -604,6 +610,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						Toast.makeText(getActivity(), R.string.toast_remove_favorite, Toast.LENGTH_SHORT).show();
 						tvFavorite.setText(R.string.tv_favorite);
 						updateFavoritesList();
+					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -623,9 +631,14 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				Log.d(TAG, TAG + "response: " + ((String) obj));
-				userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
-				userPrefsEditor.commit();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					Log.d(TAG, TAG + "response: " + ((String) obj));
+					userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
+					userPrefsEditor.commit();
+				}
+				
 			}
 		}
 	}
@@ -639,19 +652,23 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				Uri videoUri = (Uri) obj;	
 				
-				Log.d(TAG, "videoUri: " + videoUri.getPath());
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					Uri videoUri = (Uri) obj;	
 				
-				MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
-		        mRetriever.setDataSource(videoUri.getPath());
-				retrieveVideoMedia = false;
-		        imageMedia = mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-		        ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
-		        File videoFile = new File(videoUri.getPath());
-		        videoFile.delete();
+					Log.d(TAG, "videoUri: " + videoUri.getPath());
+					
+					MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
+			        mRetriever.setDataSource(videoUri.getPath());
+					retrieveVideoMedia = false;
+			        imageMedia = mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+			        ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
+			        File videoFile = new File(videoUri.getPath());
+			        videoFile.delete();
+				}
 			}
-			
 		}
 	}
 }

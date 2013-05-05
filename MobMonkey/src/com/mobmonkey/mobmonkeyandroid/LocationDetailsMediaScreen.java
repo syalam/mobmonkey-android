@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 /**
@@ -253,9 +254,23 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
-				mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
-				imageAdapter.notifyDataSetChanged();
+				try {
+					String response = (String) obj;
+					
+					if(response.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(LocationDetailsMediaScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else if(obj instanceof Bitmap){
+						mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
+						mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
+						imageAdapter.notifyDataSetChanged();
+					} else {
+						// TODO: toast message when obj is not a bitmap
+					}
+					
+				} catch (JSONException ex) {
+					ex.printStackTrace();
+				}
+				
 			}
 		}
 	}

@@ -362,6 +362,8 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 					userPrefsEditor.commit();
 					finish();
 					overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
+				} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(SignUpTwitterScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
 					Toast.makeText(SignUpTwitterScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
 				}

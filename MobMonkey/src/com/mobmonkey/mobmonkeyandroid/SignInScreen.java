@@ -334,7 +334,7 @@ public class SignInScreen extends Activity {
 			if(obj != null) {
 				String result = (String) obj;
 				
-				if(result.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(SignInScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
 					try {

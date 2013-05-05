@@ -113,10 +113,13 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 						session.closeAndClearTokenInformation();
 					}
 					Toast.makeText(getActivity(), R.string.toast_sign_out_successful, Toast.LENGTH_SHORT).show();
+					
+					userPrefsEditor.remove(MMSDKConstants.TAB_TITLE_CURRENT_TAG);
+					userPrefsEditor.commit();
+	 				getActivity().finish();
+				} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				}
-				userPrefsEditor.remove(MMSDKConstants.TAB_TITLE_CURRENT_TAG);
-				userPrefsEditor.commit();
- 				getActivity().finish();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

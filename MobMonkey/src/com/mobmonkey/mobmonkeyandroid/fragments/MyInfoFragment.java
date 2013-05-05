@@ -448,8 +448,12 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 			
 			if(obj != null) {
 				try {
-					response = new JSONObject((String) obj);
-					setUserInfo();
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else {
+						response = new JSONObject((String) obj);
+					setU	serInfo();
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -473,6 +477,8 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 					if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
 						onFragmentFinishListener.onFragmentFinish();
+					} if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

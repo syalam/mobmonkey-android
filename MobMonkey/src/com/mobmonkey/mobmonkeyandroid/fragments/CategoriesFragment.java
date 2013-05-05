@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
@@ -269,8 +270,18 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "Response: " + ((String) obj));
-				
-				noCategoryItemClickListener.onNoCategoryFragmentItemClick(0, searchText, ((String) obj));
+				try {
+					JSONObject response = new JSONObject((String) obj);
+					if(response.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else {
+						noCategoryItemClickListener.onNoCategoryFragmentItemClick(0, searchText, ((String) obj));
+					}
+				} catch(JSONException ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 	}
@@ -284,9 +295,21 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				hasResults = true;
-				Log.d(TAG, TAG + "hasResults: " + hasResults);
-				results = (String) obj;
+				
+				try {
+					JSONObject response = new JSONObject((String) obj);
+					if(response.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else {
+						hasResults = true;
+						Log.d(TAG, TAG + "hasResults: " + hasResults);
+						results = (String) obj;
+					}
+				} catch (JSONException ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 	}
