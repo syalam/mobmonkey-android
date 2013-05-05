@@ -112,7 +112,7 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 		@Override
 		public void processCallback(Object obj) {
 			MMProgressDialog.dismissDialog();
-			
+
 			if(obj != null) {
 				Address locationClicked = (Address) obj;
 				

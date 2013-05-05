@@ -551,7 +551,9 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 						startActivity(new Intent(SignUpScreen.this, MainScreen.class));
 						finish();
 						overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
-					} else {
+					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(SignUpScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}else {
 						Toast.makeText(SignUpScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 					}
 				} catch (JSONException e) {

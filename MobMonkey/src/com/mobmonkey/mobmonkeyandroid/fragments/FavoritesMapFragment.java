@@ -241,6 +241,8 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
+				
+				
 				Address locationClicked = (Address) obj;
 				
 				Bundle bundle = new Bundle();

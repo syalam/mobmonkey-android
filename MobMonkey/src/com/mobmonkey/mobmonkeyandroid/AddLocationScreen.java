@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
@@ -258,8 +259,14 @@ public class AddLocationScreen extends Activity {
 //					locationDetailsScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, (String) obj);
 //					locationDetailsScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION, location);
 //					startActivity(locationDetailsScreenIntent);
-					finish();
+					String response = (String) obj;
+					
+					if(response.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(AddLocationScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else {
+						finish();
 					overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

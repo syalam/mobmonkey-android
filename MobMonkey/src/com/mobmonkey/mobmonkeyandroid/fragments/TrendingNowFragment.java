@@ -14,8 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.mobmonkey.mobmonkeyandroid.MainScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMTrendingArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMTrendingItem;
@@ -237,7 +239,11 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 			if(obj != null) {
 				Log.d(TAG, TAG + "Trending: " + ((String) obj));
 				try {
-					setTrendingCounts(new JSONObject((String) obj));
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else {
+						setTrendingCounts(new JSONObject((String) obj));
+					}
 				} catch (JSONException ex) {
 					ex.printStackTrace();
 				}

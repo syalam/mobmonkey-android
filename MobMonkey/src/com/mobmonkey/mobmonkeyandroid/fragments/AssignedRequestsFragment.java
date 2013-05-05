@@ -34,7 +34,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.mobmonkey.mobmonkeyandroid.VideoRecorderActivity;
+import com.mobmonkey.mobmonkeyandroid.VideoRecorderActivity;MMCallback;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMAssignedRequestsItem;
@@ -285,7 +285,10 @@ public class AssignedRequestsFragment extends MMFragment {
 			if(obj != null) {
 				try {
 					JSONObject jObj = new JSONObject((String) obj);
-					if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+					
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 						JSONArray newArray = new JSONArray();
 						for(int i = 0; i < assignedRequests.length(); i++) {
 							if(i != clickedPosition) {
@@ -315,6 +318,8 @@ public class AssignedRequestsFragment extends MMFragment {
 								   	   Toast.LENGTH_LONG)
 								   	   .show();
 					}
+					
+					
 				} catch(JSONException e) {
 					e.printStackTrace();
 				} catch (NumberFormatException e) {
@@ -392,10 +397,17 @@ public class AssignedRequestsFragment extends MMFragment {
 			if(obj != null) {
 				Log.d(TAG, "AssignedRequest: " + (String) obj);
 				try {
-					assignedRequests = new JSONArray((String) obj);
-					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
-					lvAssignedRequests.setAdapter(arrayAdapter);
-					lvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
+					
+					JSONObject response = new JSONObject((String) obj);
+					
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else {
+						assignedRequests = new JSONArray((String) obj);
+						arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
+						lvAssignedRequests.setAdapter(arrayAdapter);
+						lvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				} catch (NumberFormatException e) {

@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMTopViewedArrayAdapter;
@@ -131,10 +132,14 @@ public class TopViewedFragment extends MMFragment {
 			
 			if(obj != null) {
 				try {
-					topViewed = new JSONArray((String) obj);
-					topViewedItems = new MMMediaItem[topViewed.length()];
-					Log.d(TAG, TAG + topViewed.toString());
-					getMediaForAllLocation();
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else {
+						topViewed = new JSONArray((String) obj);
+						topViewedItems = new MMMediaItem[topViewed.length()];
+						Log.d(TAG, TAG + topViewed.toString());
+						getMediaForAllLocation();
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 					// TODO: display custom dialog informing user there is an error occurred while loading topview locations

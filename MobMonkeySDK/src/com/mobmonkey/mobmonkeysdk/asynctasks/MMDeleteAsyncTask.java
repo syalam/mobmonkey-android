@@ -11,6 +11,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -49,7 +50,11 @@ public class MMDeleteAsyncTask extends AsyncTask<HttpDelete, Void, String>{
 			
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (ConnectTimeoutException e) {
+			e.printStackTrace();
+			return MMSDKConstants.CONNECTION_TIMED_OUT;
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		

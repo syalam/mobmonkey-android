@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -170,7 +171,11 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 			if(obj != null) {
 				Log.d(TAG, "inbox: " + (String) obj);
 				try {
-					setInboxCounts(new JSONObject((String) obj));
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else {
+						setInboxCounts(new JSONObject((String) obj));
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

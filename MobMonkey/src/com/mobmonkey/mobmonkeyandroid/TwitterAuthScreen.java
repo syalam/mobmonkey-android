@@ -177,7 +177,9 @@ public class TwitterAuthScreen extends Activity {
 					resultIntent.putExtra(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, twitterAccessToken.getScreenName());
 					resultIntent.putExtra(MMSDKConstants.KEY_OAUTH_TOKEN, twitterAccessToken.getToken());
 					setResult(MMSDKConstants.RESULT_CODE_NOT_FOUND, resultIntent);
-				} else {
+				} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(TwitterAuthScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				}else {
 					Toast.makeText(TwitterAuthScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 				}
 				finish();

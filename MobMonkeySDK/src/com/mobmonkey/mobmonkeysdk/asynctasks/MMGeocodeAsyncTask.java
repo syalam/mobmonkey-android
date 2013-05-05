@@ -1,10 +1,14 @@
 package com.mobmonkey.mobmonkeysdk.asynctasks;
 
 import java.io.IOException;
+
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.http.conn.ConnectTimeoutException;
+
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.content.Context;
 import android.location.Address;
@@ -34,6 +38,8 @@ public class MMGeocodeAsyncTask extends AsyncTask<Object, Void, Address> {
 			} else if(params[0] instanceof Double) {
 				addresses = gc.getFromLocation((Double) params[0], (Double) params[1], 1);
 			}
+		} catch (ConnectTimeoutException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

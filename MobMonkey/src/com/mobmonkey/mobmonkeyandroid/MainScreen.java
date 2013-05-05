@@ -329,7 +329,9 @@ public class MainScreen extends TabActivity {
 				try {
 					JSONObject jObj = new JSONObject((String) obj);
 					
-					if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
 						userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
 					}
 					userPrefsEditor.commit();
@@ -360,6 +362,8 @@ public class MainScreen extends TabActivity {
 						userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
 						userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES);
 						userPrefsEditor.commit();
+					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
