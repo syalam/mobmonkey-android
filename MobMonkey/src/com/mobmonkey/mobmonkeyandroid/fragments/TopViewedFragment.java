@@ -169,9 +169,11 @@ public class TopViewedFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-				} else {
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
+				} else if(obj instanceof Bitmap) {
 					Display display = getActivity().getWindowManager().getDefaultDisplay();
 					topViewedItems[topViewedLocation].setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, 350, 270));
 					topViewedItems[topViewedLocation].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
@@ -196,9 +198,11 @@ public class TopViewedFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-				} else {
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
+				} else if(obj instanceof Uri) {
 					Uri videoUri = (Uri) obj;	
 					
 					Log.d(TAG, "videoUri: " + videoUri.getPath());

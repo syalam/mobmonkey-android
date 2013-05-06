@@ -667,9 +667,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		public void processCallback(Object obj) {
 			if(obj != null) {
 				
-				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-				} else {
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
+				} else if(obj instanceof Uri) {
 					Uri videoUri = (Uri) obj;	
 				
 					Log.d(TAG, "videoUri: " + videoUri.getPath());

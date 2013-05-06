@@ -199,7 +199,7 @@ public class AssignedRequestsFragment extends MMFragment {
 			
 			// encode image to Base64 String
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+			mImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 			byte[] b = baos.toByteArray();
 			String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
 			

@@ -82,16 +82,14 @@ public class MMCategories extends Activity {
 	}
 	
 	public static String getSubCategoriesWithCategoryName(Context context, String categoryName) throws JSONException {
-		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, 0);
+		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 		JSONArray subCategoriesList = null;
 		
-		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES))
-		{
+		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
 			subCategoriesList = new JSONArray();
 			JSONObject cats = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			JSONArray topCategory = cats.getJSONArray(categoryName);
-			for(int i=0; i < topCategory.length(); i++)
-			{
+			for(int i=0; i < topCategory.length(); i++) {
 				if(!topCategory.getJSONObject(i).get(Locale.getDefault().getLanguage()).toString().equals(categoryName))
 					subCategoriesList.put(topCategory.getJSONObject(i));
 			}
