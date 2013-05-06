@@ -332,13 +332,11 @@ public class SignInScreen extends Activity {
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				String result = (String) obj;
-				
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(SignInScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
 					try {
-						JSONObject response = new JSONObject(result);
+						JSONObject response = new JSONObject((String) obj);
 						if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
 							inputMethodManager.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
 							Toast.makeText(SignInScreen.this, R.string.toast_sign_in_successful, Toast.LENGTH_SHORT).show();

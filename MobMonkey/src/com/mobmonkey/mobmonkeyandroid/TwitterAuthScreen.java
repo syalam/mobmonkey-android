@@ -164,28 +164,30 @@ public class TwitterAuthScreen extends Activity {
 		public void processCallback(Object obj) {
 			MMProgressDialog.dismissDialog();
 			
-			try {
-				JSONObject response = new JSONObject((String) obj);
-				if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
-					setResult(MMSDKConstants.RESULT_CODE_SUCCESS);
-					userPrefsEditor.putString(MMSDKConstants.KEY_USER, twitterAccessToken.getScreenName());
-					userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, twitterAccessToken.getToken());
-					userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_TWITTER);
-					userPrefsEditor.commit();
-				} else if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_NOT_FOUND)) {
-					Intent resultIntent = new Intent();
-					resultIntent.putExtra(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, twitterAccessToken.getScreenName());
-					resultIntent.putExtra(MMSDKConstants.KEY_OAUTH_TOKEN, twitterAccessToken.getToken());
-					setResult(MMSDKConstants.RESULT_CODE_NOT_FOUND, resultIntent);
-				} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-					Toast.makeText(TwitterAuthScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-				}else {
-					Toast.makeText(TwitterAuthScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+			if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+				Toast.makeText(TwitterAuthScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+			} else {
+				try {
+					JSONObject response = new JSONObject((String) obj);
+					if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
+						setResult(MMSDKConstants.RESULT_CODE_SUCCESS);
+						userPrefsEditor.putString(MMSDKConstants.KEY_USER, twitterAccessToken.getScreenName());
+						userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, twitterAccessToken.getToken());
+						userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_TWITTER);
+						userPrefsEditor.commit();
+					} else if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_NOT_FOUND)) {
+						Intent resultIntent = new Intent();
+						resultIntent.putExtra(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, twitterAccessToken.getScreenName());
+						resultIntent.putExtra(MMSDKConstants.KEY_OAUTH_TOKEN, twitterAccessToken.getToken());
+						setResult(MMSDKConstants.RESULT_CODE_NOT_FOUND, resultIntent);
+					} else {
+						Toast.makeText(TwitterAuthScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+					}
+					finish();
+					overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-				finish();
-				overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 			Log.d(TAG, TAG + "response: " + (String) obj);
 		}

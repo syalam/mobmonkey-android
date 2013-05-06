@@ -345,20 +345,22 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				try {
-					JSONObject response = new JSONObject((String)obj);
-					
-					if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-						Toast.makeText(MakeARequestScreen.this, R.string.toast_request_successful, Toast.LENGTH_SHORT).show();
-						finish();
-						overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
-					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(MakeARequestScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else {
-						Toast.makeText(MakeARequestScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(MakeARequestScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject response = new JSONObject((String)obj);
+						
+						if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							Toast.makeText(MakeARequestScreen.this, R.string.toast_request_successful, Toast.LENGTH_SHORT).show();
+							finish();
+							overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
+						} else {
+							Toast.makeText(MakeARequestScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 		}

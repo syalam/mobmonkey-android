@@ -56,16 +56,15 @@ public class SubscribeScreen extends Activity{
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				try {
-					JSONObject jObj = new JSONObject((String) obj);
-					
-					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(SubscribeScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else {
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(SubscribeScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
 						Toast.makeText(SubscribeScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 		}

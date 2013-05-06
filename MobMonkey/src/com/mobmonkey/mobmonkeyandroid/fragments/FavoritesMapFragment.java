@@ -241,21 +241,25 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				
-				
-				Address locationClicked = (Address) obj;
-				
-				Bundle bundle = new Bundle();
-				bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
-				bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
-				bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
-				bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
-				bundle.putDouble(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
-				bundle.putDouble(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
-				
-				Intent intent = new Intent(getActivity(), AddLocationScreen.class);
-				intent.putExtras(bundle);
-				startActivity(intent);
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
+				} else if(obj instanceof Address){
+					Address locationClicked = (Address) obj;
+					
+					Bundle bundle = new Bundle();
+					bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
+					bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+					bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+					bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+					bundle.putDouble(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
+					bundle.putDouble(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
+					
+					Intent intent = new Intent(getActivity(), AddLocationScreen.class);
+					intent.putExtras(bundle);
+					startActivity(intent);
+				}
 			}
 		}
 	}

@@ -44,16 +44,16 @@ public class MMLoadImageAsyncTask extends AsyncTask<String, Void, Object> {
 				is.close();
 			}
 			conn.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
 		} catch (ConnectTimeoutException e) {
 			e.printStackTrace();
 			return MMSDKConstants.CONNECTION_TIMED_OUT;
 		} catch (SocketException e) {
+			e.printStackTrace();
 			if(e.getMessage().equals(MMSDKConstants.OPERATION_TIMED_OUT)) {
 				return MMSDKConstants.CONNECTION_TIMED_OUT;
 			}
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.mobmonkey.mobmonkeyandroid.MainScreen;
 import com.mobmonkey.mobmonkeyandroid.MakeARequestScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMAnsweredRequestsArrayAdapter;
@@ -173,20 +174,20 @@ public class AnsweredRequestsFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			Log.d(TAG, "AnsweredRequestCallback: "+(String) obj);
-			try {
-				JSONObject response = new JSONObject((String) obj);
+			if(obj != null) {
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
-					getAnsweredRequestItems((String) obj);	
-				}	
-			} catch (JSONException ex) {
-				Log.e(TAG, "JSONException occured!");
-				ex.printStackTrace();
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			} catch (ParseException e) {
-				e.printStackTrace();
+					try {
+						getAnsweredRequestItems((String) obj);	
+					} catch (JSONException e) {
+						e.printStackTrace();
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+			}
 			}
 		}
 	}
@@ -205,9 +206,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 		
 		@Override
 		public void processCallback(Object obj) {
-			
-			try {
-				JSONObject response = new JSONObject((String) obj);
+			if(obj != null) {
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
@@ -215,8 +214,6 @@ public class AnsweredRequestsFragment extends MMFragment {
 					answeredRequestItems[position].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
 					adapter.notifyDataSetChanged();
 				}
-			} catch (JSONException ex) {
-				ex.printStackTrace();
 			}
 		}
 	}
@@ -229,22 +226,25 @@ public class AnsweredRequestsFragment extends MMFragment {
 	private class MMAcceptedRequestCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-			Log.d(TAG, (String)obj);
-			try {
-				JSONObject jObj = new JSONObject((String) obj);
-				MMProgressDialog.dismissDialog();
+			Log.d(TAG, (String) obj);
+			MMProgressDialog.dismissDialog();
+			
+			if(obj != null) {
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
-					MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
-													 MMConstants.PARTNER_ID,
-													 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-													 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-				
-					Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
+															 MMConstants.PARTNER_ID,
+															 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+															 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+					
+						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 		}
 		
@@ -258,23 +258,26 @@ public class AnsweredRequestsFragment extends MMFragment {
 	private class MMRejectRequestCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
-			Log.d(TAG, (String)obj);
-			try {
-				JSONObject jObj = new JSONObject((String) obj);
-				MMProgressDialog.dismissDialog();
+			MMProgressDialog.dismissDialog();
+			
+			if(obj != null) {
+				Log.d(TAG, (String) obj);
 				
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
-					MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(),
-												   MMConstants.PARTNER_ID,
-												   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-												   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-				
-				Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(),
+															 MMConstants.PARTNER_ID,
+															 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+															 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+						
+						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -294,7 +297,6 @@ public class AnsweredRequestsFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {

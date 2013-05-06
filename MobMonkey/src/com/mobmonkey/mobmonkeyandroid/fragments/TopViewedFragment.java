@@ -131,21 +131,21 @@ public class TopViewedFragment extends MMFragment {
 			Log.d(TAG, TAG + "topViewed: " + ((String) obj));
 			
 			if(obj != null) {
-				try {
 					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					} else {
-						topViewed = new JSONArray((String) obj);
-						topViewedItems = new MMMediaItem[topViewed.length()];
-						Log.d(TAG, TAG + topViewed.toString());
-						getMediaForAllLocation();
+						try {
+							topViewed = new JSONArray((String) obj);
+							topViewedItems = new MMMediaItem[topViewed.length()];
+							Log.d(TAG, TAG + topViewed.toString());
+							getMediaForAllLocation();
+						} catch (JSONException e) {
+							e.printStackTrace();
+							// TODO: display custom dialog informing user there is an error occurred while loading topview locations
+//							MMDialog.displayCustomDialog(getActivity(), customProgressDialog);
+							getActivity().onBackPressed();
+						}
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-					// TODO: display custom dialog informing user there is an error occurred while loading topview locations
-//					MMDialog.displayCustomDialog(getActivity(), customProgressDialog);
-					getActivity().onBackPressed();
-				}
 			} else {
 				// TODO: display custom dialog informing user there are no topviewed locations
 //				MMDialog.displayCustomDialog(getActivity(), customProgressDialog);
@@ -169,12 +169,14 @@ public class TopViewedFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				Display display = getActivity().getWindowManager().getDefaultDisplay();
-				topViewedItems[topViewedLocation].setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, 350, 270));
-				topViewedItems[topViewedLocation].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
-//				MMTopViewedArrayAdapter adapter = new MMTopViewedArrayAdapter(getActivity(), R.layout.top_viewed_listview_row, topViewedItems);
-//				lvtopviewed.setAdapter(adapter);
-				adapter.notifyDataSetChanged();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					Display display = getActivity().getWindowManager().getDefaultDisplay();
+					topViewedItems[topViewedLocation].setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, 350, 270));
+					topViewedItems[topViewedLocation].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
+					adapter.notifyDataSetChanged();
+				}
 			}
 		}
 	}
@@ -194,19 +196,22 @@ public class TopViewedFragment extends MMFragment {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				Uri videoUri = (Uri) obj;	
-				
-				Log.d(TAG, "videoUri: " + videoUri.getPath());
-				
-				MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
-		        mRetriever.setDataSource(videoUri.getPath());
-//		        answeredRequestItems[position].setImageMedia(ThumbnailUtils.extractThumbnail(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC), mediaWidth, mediaHeight));
-		        topViewedItems[position].setImageMedia(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC));
-		        File videoFile = new File(videoUri.getPath());
-		        videoFile.delete();
-		        adapter.notifyDataSetChanged();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					Uri videoUri = (Uri) obj;	
+					
+					Log.d(TAG, "videoUri: " + videoUri.getPath());
+					
+					MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
+			        mRetriever.setDataSource(videoUri.getPath());
+//			        answeredRequestItems[position].setImageMedia(ThumbnailUtils.extractThumbnail(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC), mediaWidth, mediaHeight));
+			        topViewedItems[position].setImageMedia(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC));
+			        File videoFile = new File(videoUri.getPath());
+			        videoFile.delete();
+			        adapter.notifyDataSetChanged();
+				}
 			}
-			
 		}
 	}
 }

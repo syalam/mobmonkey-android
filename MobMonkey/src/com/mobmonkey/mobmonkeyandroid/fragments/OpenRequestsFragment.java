@@ -183,38 +183,39 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 			
 			if(obj != null) {
 				Log.d(TAG, (String)obj);
-				try {
-					JSONObject jObj = new JSONObject((String)obj);
-					if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-						
-						ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
-						
-						for(int i = 0; i < openRequests.length(); i++) {
-							temp.add(openRequests.getJSONObject(i));
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject jObj = new JSONObject((String)obj);
+						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							
+							ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
+							
+							for(int i = 0; i < openRequests.length(); i++) {
+								temp.add(openRequests.getJSONObject(i));
+							}
+							temp.remove(position);
+							openRequests = new JSONArray(temp);
+							
+							arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.listview_row_openrequests, getOpenedRequestItems());
+							lvOpenedRequests.setAdapter(arrayAdapter);
+							lvOpenedRequests.invalidate();
+							
+							Toast.makeText(getActivity().getApplicationContext(), 
+									getString(R.string.toast_request) + MMSDKConstants.DEFAULT_STRING_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), 
+									Toast.LENGTH_LONG).show();
+						} else {
+							Toast.makeText(getActivity().getApplicationContext(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 						}
-						temp.remove(position);
-						openRequests = new JSONArray(temp);
 						
-						arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.listview_row_openrequests, getOpenedRequestItems());
-						lvOpenedRequests.setAdapter(arrayAdapter);
-						lvOpenedRequests.invalidate();
-						
-						Toast.makeText(getActivity().getApplicationContext(), 
-								getString(R.string.toast_request) + MMSDKConstants.DEFAULT_STRING_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), 
-								Toast.LENGTH_LONG).show();
-					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					} catch (ParseException e) {
+						e.printStackTrace();
 					}
-					else {
-						Toast.makeText(getActivity().getApplicationContext(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
-					}
-					
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				} catch (ParseException e) {
-					e.printStackTrace();
 				}
 			}
 		}
@@ -229,19 +230,23 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 		@Override
 		public void processCallback(Object obj) {
 			MMProgressDialog.dismissDialog();
-			if(obj != null) {			
-				try {
-					Log.d(TAG, "OpenRequestCallback: " + (String) obj);
-					openRequests = new JSONArray((String) obj);
-					arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.listview_row_openrequests, getOpenedRequestItems());
-					lvOpenedRequests.setAdapter(arrayAdapter);
-					lvOpenedRequests.setOnItemClickListener(OpenRequestsFragment.this);				
-				} catch (JSONException ex) {
-					ex.printStackTrace();
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				} catch (ParseException e) {
-					e.printStackTrace();
+			if(obj != null) {
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						Log.d(TAG, "OpenRequestCallback: " + (String) obj);
+						openRequests = new JSONArray((String) obj);
+						arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.listview_row_openrequests, getOpenedRequestItems());
+						lvOpenedRequests.setAdapter(arrayAdapter);
+						lvOpenedRequests.setOnItemClickListener(OpenRequestsFragment.this);				
+					} catch (JSONException ex) {
+						ex.printStackTrace();
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

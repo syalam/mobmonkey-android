@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
-import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
@@ -447,15 +446,15 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				try {
-					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else {
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
 						response = new JSONObject((String) obj);
-					setU	serInfo();
+						setUserInfo();
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 		}
@@ -472,16 +471,18 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				try {
-					JSONObject jObj = new JSONObject((String) obj);
-					if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
-						onFragmentFinishListener.onFragmentFinish();
-					} if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
+							onFragmentFinishListener.onFragmentFinish();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 		}

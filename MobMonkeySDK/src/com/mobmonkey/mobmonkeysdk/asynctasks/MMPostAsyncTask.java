@@ -63,18 +63,20 @@ public class MMPostAsyncTask extends AsyncTask<HttpPost, Void, String> {
 				stringBuilder.append(line + MMSDKConstants.DEFAULT_STRING_NEWLINE);
 			}
 			inStream.close();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
 		} catch (ConnectTimeoutException e) {
 			e.printStackTrace();
 			return MMSDKConstants.CONNECTION_TIMED_OUT;
 		} catch (SocketException e) {
+			e.printStackTrace();
 			if(e.getMessage().equals(MMSDKConstants.OPERATION_TIMED_OUT)) {
 				return MMSDKConstants.CONNECTION_TIMED_OUT;
 			}
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		return stringBuilder.toString();
 	}
 

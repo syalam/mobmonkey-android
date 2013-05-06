@@ -270,17 +270,10 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "Response: " + ((String) obj));
-				try {
-					JSONObject response = new JSONObject((String) obj);
-					if(response.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else {
-						noCategoryItemClickListener.onNoCategoryFragmentItemClick(0, searchText, ((String) obj));
-					}
-				} catch(JSONException ex) {
-					ex.printStackTrace();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					noCategoryItemClickListener.onNoCategoryFragmentItemClick(0, searchText, ((String) obj));
 				}
 			}
 		}
@@ -295,20 +288,12 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				
-				try {
-					JSONObject response = new JSONObject((String) obj);
-					if(response.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else {
-						hasResults = true;
-						Log.d(TAG, TAG + "hasResults: " + hasResults);
-						results = (String) obj;
-					}
-				} catch (JSONException ex) {
-					ex.printStackTrace();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					hasResults = true;
+					Log.d(TAG, TAG + "hasResults: " + hasResults);
+					results = (String) obj;
 				}
 			}
 		}

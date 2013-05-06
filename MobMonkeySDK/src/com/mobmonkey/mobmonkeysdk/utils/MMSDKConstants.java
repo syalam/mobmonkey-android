@@ -21,6 +21,7 @@ public final class MMSDKConstants {
 	// MobMonkey default data values
 	public static final String DEFAULT_STRING_EMPTY = "";
 	public static final String DEFAULT_STRING_COMMA = ",";
+	public static final String DEFAULT_STRING_COMMA_NEWLINE = ",\n";
 	public static final String DEFAULT_STRING_COMMA_SPACE = ", ";
 	public static final String DEFAULT_STRING_NEWLINE = "\n";
 	public static final String DEFAULT_STRING_NULL = "null";

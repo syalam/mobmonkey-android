@@ -387,26 +387,6 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	
 	/**
 	 * 
-	 * @param latitude
-	 * @param longitude
-	 * @return
-	 * @throws IOException
-	 */
-	public Address getAddressForLocation(double latitude, double longitude) throws IOException {
-        int maxResults = 1;
-
-        Geocoder gc = new Geocoder(getActivity(), Locale.getDefault());
-        List<Address> addresses = gc.getFromLocation(latitude, longitude, maxResults);
-
-        if (addresses.size() == 1) {
-            return addresses.get(0);
-        } else {
-            return null;
-        }
-    }
-	
-	/**
-	 * 
 	 */
 	private void ibMapClick() {
 		if(lvSearchResults.getVisibility() == View.VISIBLE) {
@@ -458,10 +438,11 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				
-				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-				} else {
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
+				} else if(obj instanceof Address) {
 					Address locationClicked = (Address) obj;
 				
 					Bundle bundle = new Bundle();

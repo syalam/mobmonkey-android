@@ -352,23 +352,27 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 		public void processCallback(Object obj) {
 			MMProgressDialog.dismissDialog();
 			
-			try {
-				JSONObject response = new JSONObject((String) obj);
-				if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
-					Toast.makeText(SignUpTwitterScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
-					setResult(Activity.RESULT_OK);
-					userPrefsEditor.putString(MMSDKConstants.KEY_USER, providerUserName);
-					userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, getIntent().getStringExtra(MMSDKConstants.KEY_OAUTH_TOKEN));
-					userPrefsEditor.commit();
-					finish();
-					overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
-				} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+			if(obj != null) {
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(SignUpTwitterScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(SignUpTwitterScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
+					try {
+						JSONObject response = new JSONObject((String) obj);
+						if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
+							Toast.makeText(SignUpTwitterScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
+							setResult(Activity.RESULT_OK);
+							userPrefsEditor.putString(MMSDKConstants.KEY_USER, providerUserName);
+							userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, getIntent().getStringExtra(MMSDKConstants.KEY_OAUTH_TOKEN));
+							userPrefsEditor.commit();
+							finish();
+							overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
+						} else {
+							Toast.makeText(SignUpTwitterScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 			Log.d(TAG, TAG + "response: " + (String)obj);
 		}

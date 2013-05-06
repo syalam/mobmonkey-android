@@ -1,6 +1,7 @@
 package com.mobmonkey.mobmonkeysdk.asynctasks;
 
 import java.io.IOException;
+import java.net.SocketException;
 
 import java.util.List;
 import java.util.Locale;
@@ -19,7 +20,7 @@ import android.os.AsyncTask;
  * @author Dezapp, LLC
  *
  */
-public class MMGeocodeAsyncTask extends AsyncTask<Object, Void, Address> {
+public class MMGeocodeAsyncTask extends AsyncTask<Object, Void, Object> {
 	Context context;
 	MMCallback mmCallback;
 	
@@ -29,7 +30,7 @@ public class MMGeocodeAsyncTask extends AsyncTask<Object, Void, Address> {
 	}
 	
 	@Override
-	protected Address doInBackground(Object... params) {
+	protected Object doInBackground(Object... params) {
         Geocoder gc = new Geocoder(context, Locale.getDefault());
         List<Address> addresses = null;
 		try {
@@ -40,6 +41,12 @@ public class MMGeocodeAsyncTask extends AsyncTask<Object, Void, Address> {
 			}
 		} catch (ConnectTimeoutException e) {
 			e.printStackTrace();
+			return MMSDKConstants.CONNECTION_TIMED_OUT;
+		} catch (SocketException e) {
+			e.printStackTrace();
+			if(e.getMessage().equals(MMSDKConstants.OPERATION_TIMED_OUT)) {
+				return MMSDKConstants.CONNECTION_TIMED_OUT;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -52,7 +59,7 @@ public class MMGeocodeAsyncTask extends AsyncTask<Object, Void, Address> {
 	}
 
 	@Override
-	protected void onPostExecute(Address result) {
+	protected void onPostExecute(Object result) {
 		super.onPostExecute(result);
 		mmCallback.processCallback(result);
 	}

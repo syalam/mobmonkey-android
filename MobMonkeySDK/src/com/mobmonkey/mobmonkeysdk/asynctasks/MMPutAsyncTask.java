@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.SocketException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -11,7 +12,10 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
@@ -38,6 +42,11 @@ public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
 	protected String doInBackground(HttpPut... params) {
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
+			HttpParams httpParams = httpClient.getParams();
+			HttpConnectionParams.setConnectionTimeout(httpParams, MMSDKConstants.TIMEOUT_CONNECTION);
+			HttpConnectionParams.setSoTimeout(httpParams, MMSDKConstants.TIMEOUT_CONNECTION);
+			ConnManagerParams.setTimeout(httpParams, MMSDKConstants.TIMEOUT_CONNECTION);
+			
 			HttpResponse httpResponse = httpClient.execute(params[0]);
 			HttpEntity httpEntity = httpResponse.getEntity();
 			InputStream inStream = httpEntity.getContent();
@@ -49,11 +58,16 @@ public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
 				stringBuilder.append(line + MMSDKConstants.DEFAULT_STRING_NEWLINE);
 			}
 			inStream.close();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
 		} catch (ConnectTimeoutException e) {
 			e.printStackTrace();
 			return MMSDKConstants.CONNECTION_TIMED_OUT;
-		} catch (ClientProtocolException e) {
+		} catch (SocketException e) {
 			e.printStackTrace();
+			if(e.getMessage().equals(MMSDKConstants.OPERATION_TIMED_OUT)) {
+				return MMSDKConstants.CONNECTION_TIMED_OUT;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 

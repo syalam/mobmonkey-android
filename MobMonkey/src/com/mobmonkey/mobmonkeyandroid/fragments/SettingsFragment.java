@@ -103,25 +103,29 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 		public void processCallback(Object obj) {
 			MMProgressDialog.dismissDialog();
 
-			try {
-				JSONObject response = new JSONObject((String) obj);
-				if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-					// TODO: clear all the saved username/email/passwords/tokens
-					Session session = Session.getActiveSession();
-					if(session != null) {
-						Log.d(TAG, TAG + "session not null");
-						session.closeAndClearTokenInformation();
-					}
-					Toast.makeText(getActivity(), R.string.toast_sign_out_successful, Toast.LENGTH_SHORT).show();
-					
-					userPrefsEditor.remove(MMSDKConstants.TAB_TITLE_CURRENT_TAG);
-					userPrefsEditor.commit();
-	 				getActivity().finish();
-				} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+			if(obj != null) {
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject response = new JSONObject((String) obj);
+						if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							// TODO: clear all the saved username/email/passwords/tokens
+							Session session = Session.getActiveSession();
+							if(session != null) {
+								Log.d(TAG, TAG + "session not null");
+								session.closeAndClearTokenInformation();
+							}
+							Toast.makeText(getActivity(), R.string.toast_sign_out_successful, Toast.LENGTH_SHORT).show();
+							
+							userPrefsEditor.remove(MMSDKConstants.TAB_TITLE_CURRENT_TAG);
+							userPrefsEditor.commit();
+			 				getActivity().finish();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 
 			Log.d(TAG, TAG + "callback response: " + (String) obj);

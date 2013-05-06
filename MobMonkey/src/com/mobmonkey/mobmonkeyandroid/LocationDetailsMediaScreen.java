@@ -253,24 +253,16 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		
 		@Override
 		public void processCallback(Object obj) {
-			if(obj != null) {
-				try {
-					String response = (String) obj;
-					
-					if(response.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+			if(obj != null) {				
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 						Toast.makeText(LocationDetailsMediaScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else if(obj instanceof Bitmap){
-						mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
-						mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
-						imageAdapter.notifyDataSetChanged();
-					} else {
-						// TODO: toast message when obj is not a bitmap
 					}
-					
-				} catch (JSONException ex) {
-					ex.printStackTrace();
+				} else if(obj instanceof Bitmap) {
+					mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
+					mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
+					imageAdapter.notifyDataSetChanged();
 				}
-				
 			}
 		}
 	}
@@ -290,18 +282,23 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				Uri videoUri = (Uri) obj;	
-				
-				Log.d(TAG, "videoUri: " + videoUri.getPath());
-				
-				MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
-		        mRetriever.setDataSource(videoUri.getPath());
-				mmVideoMediaItems.get(position).setImageMedia(ThumbnailUtils.extractThumbnail(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC), mediaWidth, mediaHeight));
-		        File videoFile = new File(videoUri.getPath());
-		        videoFile.delete();
-		        videoAdapter.notifyDataSetChanged();
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(LocationDetailsMediaScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
+				} else {
+					Uri videoUri = (Uri) obj;
+					
+					Log.d(TAG, "videoUri: " + videoUri.getPath());
+					
+					MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
+			        mRetriever.setDataSource(videoUri.getPath());
+					mmVideoMediaItems.get(position).setImageMedia(ThumbnailUtils.extractThumbnail(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC), mediaWidth, mediaHeight));
+			        File videoFile = new File(videoUri.getPath());
+			        videoFile.delete();
+			        videoAdapter.notifyDataSetChanged();
+				}
 			}
-			
 		}
 	}
 }

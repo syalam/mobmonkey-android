@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import com.mobmonkey.mobmonkeyandroid.LocationDetailsMediaScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.MakeARequestScreen;
-import com.mobmonkey.mobmonkeyandroid.SignInScreen;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMLocationDetailsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMLocationDetailsItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
@@ -472,36 +471,37 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-//				Log.d(TAG, TAG + "Response: " + ((String) obj));
-				try {
-					locationDetails = new JSONObject((String) obj);
-					
-					if(locationDetails.has(MMSDKConstants.JSON_KEY_STATUS)) {
-						MMMediaAdapter.cancelRetrieveAllMediaForLocation();
-						MMProgressDialog.dismissDialog();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						locationDetails = new JSONObject((String) obj);
 						
-						LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-						View customDialog = inflater.inflate(com.mobmonkey.mobmonkeysdk.R.layout.mmtoast, null);
-						ImageView ivToastImage = (ImageView)customDialog.findViewById(R.id.ivtoastimage);
-						ivToastImage.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
-						
-						TextView ivToastText = (TextView)customDialog.findViewById(R.id.tvtoasttext);
-						ivToastText.setText(R.string.toast_unable_to_load_location_info);
-						MMDialog.displayCustomDialog(getActivity(), customDialog);
-						
-//						MMToast.makeToastWithImage(getActivity().getApplicationContext(), 
-//								getActivity().getResources().getDrawable(android.R.drawable.ic_menu_close_clear_cancel), 
-//								getActivity().getString(R.string.toast_unable_to_load_location_info)).show();
-
-						getActivity().onBackPressed();
-					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else {
-						retrieveLocationDetails = false;
-						setLocationDetails();
+						if(locationDetails.has(MMSDKConstants.JSON_KEY_STATUS)) {
+							MMMediaAdapter.cancelRetrieveAllMediaForLocation();
+							MMProgressDialog.dismissDialog();
+							
+							LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+							View customDialog = inflater.inflate(com.mobmonkey.mobmonkeysdk.R.layout.mmtoast, null);
+							ImageView ivToastImage = (ImageView)customDialog.findViewById(R.id.ivtoastimage);
+							ivToastImage.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
+							
+							TextView ivToastText = (TextView)customDialog.findViewById(R.id.tvtoasttext);
+							ivToastText.setText(R.string.toast_unable_to_load_location_info);
+							MMDialog.displayCustomDialog(getActivity(), customDialog);
+							
+	//						MMToast.makeToastWithImage(getActivity().getApplicationContext(), 
+	//								getActivity().getResources().getDrawable(android.R.drawable.ic_menu_close_clear_cancel), 
+	//								getActivity().getString(R.string.toast_unable_to_load_location_info)).show();
+	
+							getActivity().onBackPressed();
+						} else {
+							retrieveLocationDetails = false;
+							setLocationDetails();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 		}
@@ -518,19 +518,21 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "mediaResults: " + (String) obj);
-				try {
-					JSONObject jObj = new JSONObject((String) obj);
-					if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
-						mediaResults = (String) obj;
-						hasMedia();
-					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else {
-						MMProgressDialog.dismissDialog();
-						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+							mediaResults = (String) obj;
+							hasMedia();
+						} else {
+							MMProgressDialog.dismissDialog();
+							Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+				}
 				}
 			}
 		}
@@ -559,7 +561,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		public void processCallback(Object obj) {
 			if(obj != null) {
 				if(obj instanceof String) {
-					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
 				} else if(obj instanceof Bitmap){				
 					retrieveImageMedia = false;
 					imageMedia = (Bitmap) obj;
@@ -579,17 +583,22 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				try {
-					JSONObject response = new JSONObject(((String) obj));
-					if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-						Toast.makeText(getActivity(), R.string.toast_add_favorite, Toast.LENGTH_SHORT).show();
-						tvFavorite.setText(R.string.tv_remove_favorite);
-						updateFavoritesList();
-					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject response = new JSONObject(((String) obj));
+						if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							Toast.makeText(getActivity(), R.string.toast_add_favorite_success, Toast.LENGTH_SHORT).show();
+							tvFavorite.setText(R.string.tv_remove_favorite);
+							updateFavoritesList();
+						} else {
+							MMDialog.dismissDialog();
+							Toast.makeText(getActivity(), R.string.toast_add_favorite_fail, Toast.LENGTH_SHORT).show();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 		}
@@ -604,17 +613,22 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				try {
-					JSONObject response = new JSONObject(((String) obj));
-					if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-						Toast.makeText(getActivity(), R.string.toast_remove_favorite, Toast.LENGTH_SHORT).show();
-						tvFavorite.setText(R.string.tv_favorite);
-						updateFavoritesList();
-					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject response = new JSONObject(((String) obj));
+						if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							Toast.makeText(getActivity(), R.string.toast_remove_favorite_successs, Toast.LENGTH_SHORT).show();
+							tvFavorite.setText(R.string.tv_favorite);
+							updateFavoritesList();
+						} else {
+							MMProgressDialog.dismissDialog();
+							Toast.makeText(getActivity(), R.string.toast_remove_favorite_fail, Toast.LENGTH_SHORT).show();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+				}
 				}
 			}
 		}

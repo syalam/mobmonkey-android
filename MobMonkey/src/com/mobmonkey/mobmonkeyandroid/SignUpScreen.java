@@ -542,22 +542,24 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				try {
-					JSONObject response = new JSONObject((String) obj);
-					if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-						inputMethodManager.hideSoftInputFromWindow(etPasswordConfirm.getWindowToken(), 0);
-						Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
-						userPrefsEditor.commit();
-						startActivity(new Intent(SignUpScreen.this, MainScreen.class));
-						finish();
-						overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
-					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(SignUpScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					}else {
-						Toast.makeText(SignUpScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(SignUpScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject response = new JSONObject((String) obj);
+						if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							inputMethodManager.hideSoftInputFromWindow(etPasswordConfirm.getWindowToken(), 0);
+							Toast.makeText(SignUpScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
+							userPrefsEditor.commit();
+							startActivity(new Intent(SignUpScreen.this, MainScreen.class));
+							finish();
+							overridePendingTransition(R.anim.slide_hold, R.anim.slide_right_out);
+						} else {
+							Toast.makeText(SignUpScreen.this, response.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 			Log.d(TAG, TAG + "response: " + (String) obj);

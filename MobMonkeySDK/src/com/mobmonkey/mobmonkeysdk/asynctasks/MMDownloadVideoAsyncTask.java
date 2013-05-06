@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 
 import org.apache.http.conn.ConnectTimeoutException;
@@ -20,7 +21,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
-public class MMDownloadVideoAsyncTask extends AsyncTask<String, Void, Uri>{
+public class MMDownloadVideoAsyncTask extends AsyncTask<String, Void, Object>{
 	private static final String TAG = "MMVideoDownloaderTask";
 	
 	private MMCallback mmCallback;
@@ -34,7 +35,7 @@ public class MMDownloadVideoAsyncTask extends AsyncTask<String, Void, Uri>{
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
 	@Override
-	protected Uri doInBackground(String... params) {
+	protected Object doInBackground(String... params) {
 //		android.os.Debug.waitForDebugger();
 		String videoPath = null;
 		
@@ -75,11 +76,16 @@ public class MMDownloadVideoAsyncTask extends AsyncTask<String, Void, Uri>{
 				Log.i(TAG, "video download finished in " + ((System.currentTimeMillis() - startTime) / 1000) + " sec");			
 			}
 			conn.disconnect();
-		} catch (ConnectTimeoutException e) {
-			e.printStackTrace();
-//			return MMSDKConstants.CONNECTION_TIMED_OUT;
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
+		} catch (ConnectTimeoutException e) {
+			e.printStackTrace();
+			return MMSDKConstants.CONNECTION_TIMED_OUT;
+		} catch (SocketException e) {
+			e.printStackTrace();
+			if(e.getMessage().equals(MMSDKConstants.OPERATION_TIMED_OUT)) {
+				return MMSDKConstants.CONNECTION_TIMED_OUT;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -92,7 +98,7 @@ public class MMDownloadVideoAsyncTask extends AsyncTask<String, Void, Uri>{
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
 	@Override 
-	protected void onPostExecute(Uri result) {
+	protected void onPostExecute(Object result) {
 		super.onPostExecute(result);
 		mmCallback.processCallback(result);
 	}

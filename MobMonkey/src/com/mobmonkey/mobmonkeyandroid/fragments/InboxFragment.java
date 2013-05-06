@@ -170,14 +170,14 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		public void processCallback(Object obj) {
 			if(obj != null) {
 				Log.d(TAG, "inbox: " + (String) obj);
-				try {
-					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else {
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
 						setInboxCounts(new JSONObject((String) obj));
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 		}

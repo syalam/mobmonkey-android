@@ -238,14 +238,14 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 			
 			if(obj != null) {
 				Log.d(TAG, TAG + "Trending: " + ((String) obj));
-				try {
-					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else {
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
 						setTrendingCounts(new JSONObject((String) obj));
+					} catch (JSONException ex) {
+						ex.printStackTrace();
 					}
-				} catch (JSONException ex) {
-					ex.printStackTrace();
 				}
 			}
 		}

@@ -34,7 +34,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.mobmonkey.mobmonkeyandroid.VideoRecorderActivity;MMCallback;
+import com.mobmonkey.mobmonkeyandroid.VideoRecorderActivity;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMAssignedRequestsItem;
@@ -272,6 +272,20 @@ public class AssignedRequestsFragment extends MMFragment {
 	}
 	
 	/**
+	 * Returns the real path of a file from its {@link Uri}
+	 * 
+	 * @param {@link Uri} of a file
+	 * @return {@link String} of the real path of an {@link Uri}.
+	 */
+	public String getRealPathFromURI(Uri contentUri) {
+	    String[] proj = { MediaStore.Images.Media.DATA };
+	    Cursor cursor = getActivity().managedQuery(contentUri, proj, null, null, null);
+	    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+	    cursor.moveToFirst();
+	    return cursor.getString(column_index);
+	}
+	
+	/**
 	 * {@link MMCallback} function. Get call after successfully fulfilled a request.
 	 *
 	 */
@@ -283,108 +297,50 @@ public class AssignedRequestsFragment extends MMFragment {
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
-				try {
-					JSONObject jObj = new JSONObject((String) obj);
-					
-					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-						JSONArray newArray = new JSONArray();
-						for(int i = 0; i < assignedRequests.length(); i++) {
-							if(i != clickedPosition) {
-								newArray.put(assignedRequests.getJSONObject(i));
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						
+						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							JSONArray newArray = new JSONArray();
+							for(int i = 0; i < assignedRequests.length(); i++) {
+								if(i != clickedPosition) {
+									newArray.put(assignedRequests.getJSONObject(i));
+								}
 							}
+							assignedRequests = newArray;
+							
+							arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
+							lvAssignedRequests.setAdapter(arrayAdapter);
+							lvAssignedRequests.invalidate();
+							
+							Toast.makeText(getActivity().getApplicationContext(),
+										   "You have successfully fulfilled a request.",
+										   Toast.LENGTH_LONG).
+										   show();
+							
+							// remove recorded video file
+							File mmVideoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
+							mmVideoFile.delete();
+						} else {
+							Toast.makeText(getActivity().getApplicationContext(), 
+									   	   "An error has occured while uploading media.", 
+									   	   Toast.LENGTH_LONG)
+									   	   .show();
 						}
-						assignedRequests = newArray;
-						
-						arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
-						lvAssignedRequests.setAdapter(arrayAdapter);
-						lvAssignedRequests.invalidate();
-						
-						Toast.makeText(getActivity().getApplicationContext(),
-									   "You have successfully fulfilled a request.",
-									   Toast.LENGTH_LONG).
-									   show();
-						
-						// remove recorded video file
-						File mmVideoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
-						
-						Log.d(TAG, TAG + "deleted video: " + mmVideoFile.delete());
-					} 
-					// if fail
-					else {
-						Toast.makeText(getActivity().getApplicationContext(), 
-								   	   "An error has occured while uploading media.", 
-								   	   Toast.LENGTH_LONG)
-								   	   .show();
+					} catch(JSONException e) {
+						e.printStackTrace();
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					} catch (ParseException e) {
+						e.printStackTrace();
 					}
-					
-					
-				} catch(JSONException e) {
-					e.printStackTrace();
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				} catch (ParseException e) {
-					e.printStackTrace();
 				}
 			}
-			
-//			try {
-//				JSONObject jObj = new JSONObject((String)obj);
-//				if(jObj.getString(MMAPIConstants.JSON_KEY_STATUS).equals(MMAPIConstants.RESPONSE_STATUS_SUCCESS)) {
-//					MMAssignedRequestsItem[] items, data;
-//					data = getAssignedRequestItems();
-//					items = new MMAssignedRequestsItem[data.length - 1];
-//					
-//					for(int i = 0; i < data.length; i++) {
-//						if(i < positionClicked) {
-//							items[i] = data[i];
-//						} else if (i > positionClicked) {
-//							items[i-1] = data[i];
-//						}
-//					}
-//					
-//					assignedRequests = new JSONArray((String)obj);
-//					arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.assignedrequests_listview_row, data = getAssignedRequestItems());
-//					lvAssignedRequests.setAdapter(arrayAdapter);
-//					lvAssignedRequests.invalidate();
-//					
-//					Toast.makeText(getActivity().getApplicationContext(), 
-//							   "You have successfully fulfilled a request.", 
-//							   Toast.LENGTH_LONG)
-//							   .show();
-//				} else {
-//					Toast.makeText(getActivity().getApplicationContext(), 
-//							   "An error has occured while uploading media.", 
-//							   Toast.LENGTH_LONG)
-//							   .show();
-//				}
-//				
-//				
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			} catch (NumberFormatException e) {
-//				e.printStackTrace();
-//			} catch (ParseException e) {
-//				e.printStackTrace();
-//			}
 		}
 		
-	}
-	
-	/**
-	 * Returns the real path of a file from its {@link Uri}
-	 * 
-	 * @param {@link Uri} of a file
-	 * @return {@link String} of the real path of an {@link Uri}.
-	 */
-	
-	public String getRealPathFromURI(Uri contentUri) {
-	    String[] proj = { MediaStore.Images.Media.DATA };
-	    Cursor cursor = getActivity().managedQuery(contentUri, proj, null, null, null);
-	    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-	    cursor.moveToFirst();
-	    return cursor.getString(column_index);
 	}
 	
 	/**
@@ -396,24 +352,21 @@ public class AssignedRequestsFragment extends MMFragment {
 		public void processCallback(Object obj) {
 			if(obj != null) {
 				Log.d(TAG, "AssignedRequest: " + (String) obj);
-				try {
-					
-					JSONObject response = new JSONObject((String) obj);
-					
-					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else {
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
 						assignedRequests = new JSONArray((String) obj);
 						arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
 						lvAssignedRequests.setAdapter(arrayAdapter);
 						lvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
+					} catch (JSONException e) {
+						e.printStackTrace();
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					} catch (ParseException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				} catch (ParseException e) {
-					e.printStackTrace();
 				}
 			}
 		}

@@ -193,8 +193,10 @@
 	<string name="pd_updating_favorites">Updating favorites&#8230;</string>
 	
 	<string name="toast_unable_to_load_location_info">Unable to load location information</string>
-	<string name="toast_add_favorite">Successfully added location to favorites</string>
-	<string name="toast_remove_favorite">Successfully removed location to favorites</string>
+	<string name="toast_add_favorite_success">Successfully added location to favorites</string>
+	<string name="toast_add_favorite_fail">Failed to successfully add location to favorites</string>
+	<string name="toast_remove_favorite_successs">Successfully removed location from favorites</string>
+	<string name="toast_remove_favorite_fail">Failed to successfully remove location from favorites</string>
 	
 	<!-- LocatioDetailsMedia Screen -->
 	<string name="rb_stream">Live Camera</string>

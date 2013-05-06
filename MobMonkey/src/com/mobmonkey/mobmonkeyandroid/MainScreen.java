@@ -326,17 +326,18 @@ public class MainScreen extends TabActivity {
 			if(obj != null) {
 				Log.d(TAG, TAG + "CategoriesCallback: " + ((String) obj));
 				
-				try {
-					JSONObject jObj = new JSONObject((String) obj);
-					
-					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					} else if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
-						userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+							userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
+						}
+						userPrefsEditor.commit();
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-					userPrefsEditor.commit();
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 		}
@@ -352,21 +353,23 @@ public class MainScreen extends TabActivity {
 		public void processCallback(Object obj) {
 			if(obj != null) {
 				Log.d(TAG, TAG + "FavoritesCallback: " + ((String) obj));
-				try {
-					userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
-					userPrefsEditor.commit();
-					
-					JSONObject jObj = new JSONObject((String) obj);
-					if(jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
-						Toast.makeText(MainScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
-						userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
-						userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES);
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
 						userPrefsEditor.commit();
-					} else if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+						
+						JSONObject jObj = new JSONObject((String) obj);
+						if(jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+							Toast.makeText(MainScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+							userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
+							userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES);
+							userPrefsEditor.commit();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-				} catch (JSONException e) {
-					e.printStackTrace();
 				}
 			}
 			
@@ -374,11 +377,20 @@ public class MainScreen extends TabActivity {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class CheckUserInCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {			
 			if(obj != null) {
-				Log.d(TAG, TAG + "checkinuser response: " + (String) obj);
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					Log.d(TAG, TAG + "checkinuser response: " + (String) obj);
+				}
 			}
 		}
 	}
