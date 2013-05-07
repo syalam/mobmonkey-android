@@ -73,8 +73,8 @@ public class MMUserAdapter extends MMAdapter {
 	 */
 	public static void signInUserFacebook(MMCallback mmCallback,
 			  							  String partnerId,
-										  String oauthToken,
-										  String providerUserName) {
+										  String providerUserName,
+										  String oauthToken) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_SIGNIN);
 		uriBuilder.appendQueryParameter(MMSDKConstants.KEY_DEVICE_TYPE, MMSDKConstants.DEVICE_TYPE)
 			.appendQueryParameter(MMSDKConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())

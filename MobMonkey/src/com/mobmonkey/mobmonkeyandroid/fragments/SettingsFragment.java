@@ -120,8 +120,8 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 							
 							userPrefsEditor.remove(MMSDKConstants.TAB_TITLE_CURRENT_TAG);
 							userPrefsEditor.commit();
-			 				getActivity().finish();
 						}
+		 				getActivity().finish();
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
