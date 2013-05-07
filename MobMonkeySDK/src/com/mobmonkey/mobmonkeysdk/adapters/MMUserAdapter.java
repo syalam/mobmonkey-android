@@ -72,9 +72,9 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 */
 	public static void signInUserFacebook(MMCallback mmCallback,
+			  							  String partnerId,
 										  String oauthToken,
-										  String providerUserName,
-										  String partnerId) {
+										  String providerUserName) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_SIGNIN);
 		uriBuilder.appendQueryParameter(MMSDKConstants.KEY_DEVICE_TYPE, MMSDKConstants.DEVICE_TYPE)
 			.appendQueryParameter(MMSDKConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())

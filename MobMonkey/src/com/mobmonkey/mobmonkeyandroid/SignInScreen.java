@@ -129,9 +129,9 @@ public class SignInScreen extends Activity {
 						Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 					} else {
 						MMUserAdapter.signInUserFacebook(new SignInCallback(),
-															MMConstants.PARTNER_ID,
-															(String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
-															Session.getActiveSession().getAccessToken());
+														 MMConstants.PARTNER_ID,
+														 (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
+														 Session.getActiveSession().getAccessToken());
 						MMProgressDialog.displayDialog(SignInScreen.this,
 													   MMSDKConstants.DEFAULT_STRING_EMPTY,
 													   getString(R.string.pd_signing_in_facebook));

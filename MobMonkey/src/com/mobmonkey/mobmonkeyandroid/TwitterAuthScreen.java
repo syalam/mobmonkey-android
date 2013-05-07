@@ -111,10 +111,12 @@ public class TwitterAuthScreen extends Activity {
 		try {
 			if(uri.getQueryParameter(MMSDKConstants.TWITTER_OAUTH_VERIFIER) != null) {
 				twitterAccessToken = twitter.getOAuthAccessToken(requestToken, uri.getQueryParameter(MMSDKConstants.TWITTER_OAUTH_VERIFIER));
+				Log.d(TAG, TAG + "provider name: " + twitterAccessToken.getScreenName());
+				Log.d(TAG, TAG + "provider access token: " + twitterAccessToken.getToken());
 				MMUserAdapter.signInUserTwitter(new TwitterAuthCallback(),
-												twitterAccessToken.getToken(),
+												MMConstants.PARTNER_ID,
 												twitterAccessToken.getScreenName(),
-												MMConstants.PARTNER_ID);
+												twitterAccessToken.getToken());
 				
 				int requestCode = getIntent().getIntExtra(MMSDKConstants.REQUEST_CODE, MMSDKConstants.DEFAULT_INT);
 				

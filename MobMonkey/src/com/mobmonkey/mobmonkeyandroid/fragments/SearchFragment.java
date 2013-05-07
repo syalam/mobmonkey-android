@@ -188,47 +188,49 @@ public class SearchFragment extends MMFragment implements OnClickListener,
 	 * @throws JSONException
 	 */
 	private void setSearchCategory() throws JSONException {
-		MMSearchCategoriesItem[] searchCategoryItems = new MMSearchCategoriesItem[topLevelCategories.length];
-		for(int i = 0; i < searchCategoryItems.length; i++) {
-			searchCategoryItems[i] = new MMSearchCategoriesItem();
-			searchCategoryItems[i].setCatName(topLevelCategories[i]);
-		}
-		
-		searchCategoryItems[0].setCatIconId(R.drawable.cat_icon_coffee_shops);
-		searchCategoryItems[1].setCatIconId(R.drawable.cat_icon_schools);
-		searchCategoryItems[2].setCatIconId(R.drawable.cat_icon_beaches);
-		searchCategoryItems[3].setCatIconId(R.drawable.cat_icon_supermarkets);
-		searchCategoryItems[4].setCatIconId(R.drawable.cat_icon_conferences);
-		searchCategoryItems[5].setCatIconId(R.drawable.cat_icon_restaurants);
-		searchCategoryItems[6].setCatIconId(R.drawable.cat_icon_hotels);
-		searchCategoryItems[7].setCatIconId(R.drawable.cat_icon_pubs);
-		searchCategoryItems[8].setCatIconId(R.drawable.cat_icon_dog_parks);
-		searchCategoryItems[9].setCatIconId(R.drawable.cat_icon_night_clubs);
-		searchCategoryItems[10].setCatIconId(R.drawable.cat_icon_stadiums);
-		searchCategoryItems[11].setCatIconId(R.drawable.cat_icon_health_clubs);
-		searchCategoryItems[12].setCatIconId(R.drawable.cat_icon_cinemas);
-		
-		ArrayAdapter<MMSearchCategoriesItem> arrayAdapter = new MMSearchCategoriesArrayAdapter(getActivity(), R.layout.listview_row_searchcategory, searchCategoryItems);
-		elvSearchCategory.setAdapter(arrayAdapter);
-		elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
-				try {
-					selectedCategory = topLevelCategories[position];
-					JSONArray subCategories = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(getActivity(), selectedCategory));
-					
-					if(!subCategories.isNull(0)) {
-						mmCategoryItemClickFragmentListener.onCategoryFragmentItemClick(subCategories, selectedCategory);
-					} else if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
-						searchByCategoryId(position);
-					}
-				} catch (JSONException e) { 
-					e.printStackTrace();
-				}
+		if(topLevelCategories.length > 0) {
+			MMSearchCategoriesItem[] searchCategoryItems = new MMSearchCategoriesItem[topLevelCategories.length];
+			for(int i = 0; i < searchCategoryItems.length; i++) {
+				searchCategoryItems[i] = new MMSearchCategoriesItem();
+				searchCategoryItems[i].setCatName(topLevelCategories[i]);
 			}
-		});
-		
-		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
-			elvSearchCategory.setEnabled(false);
+			
+			searchCategoryItems[0].setCatIconId(R.drawable.cat_icon_coffee_shops);
+			searchCategoryItems[1].setCatIconId(R.drawable.cat_icon_schools);
+			searchCategoryItems[2].setCatIconId(R.drawable.cat_icon_beaches);
+			searchCategoryItems[3].setCatIconId(R.drawable.cat_icon_supermarkets);
+			searchCategoryItems[4].setCatIconId(R.drawable.cat_icon_conferences);
+			searchCategoryItems[5].setCatIconId(R.drawable.cat_icon_restaurants);
+			searchCategoryItems[6].setCatIconId(R.drawable.cat_icon_hotels);
+			searchCategoryItems[7].setCatIconId(R.drawable.cat_icon_pubs);
+			searchCategoryItems[8].setCatIconId(R.drawable.cat_icon_dog_parks);
+			searchCategoryItems[9].setCatIconId(R.drawable.cat_icon_night_clubs);
+			searchCategoryItems[10].setCatIconId(R.drawable.cat_icon_stadiums);
+			searchCategoryItems[11].setCatIconId(R.drawable.cat_icon_health_clubs);
+			searchCategoryItems[12].setCatIconId(R.drawable.cat_icon_cinemas);
+			
+			ArrayAdapter<MMSearchCategoriesItem> arrayAdapter = new MMSearchCategoriesArrayAdapter(getActivity(), R.layout.listview_row_searchcategory, searchCategoryItems);
+			elvSearchCategory.setAdapter(arrayAdapter);
+			elvSearchCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+					try {
+						selectedCategory = topLevelCategories[position];
+						JSONArray subCategories = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(getActivity(), selectedCategory));
+						
+						if(!subCategories.isNull(0)) {
+							mmCategoryItemClickFragmentListener.onCategoryFragmentItemClick(subCategories, selectedCategory);
+						} else if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
+							searchByCategoryId(position);
+						}
+					} catch (JSONException e) { 
+						e.printStackTrace();
+					}
+				}
+			});
+			
+			if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+				elvSearchCategory.setEnabled(false);
+			}
 		}
 	}
 	
