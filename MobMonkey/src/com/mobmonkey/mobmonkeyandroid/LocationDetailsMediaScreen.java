@@ -13,7 +13,6 @@ import com.mobmonkey.mobmonkeyandroid.listeners.MMImageOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMShareMediaOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMVideoPlayOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
-import com.mobmonkey.mobmonkeysdk.adapters.MMDownloadVideoAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -180,11 +179,11 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 			for(int i = 0; i < streamMediaUrls.length(); i++) {
 				JSONObject jObj = streamMediaUrls.getJSONObject(i);
 				MMMediaItem mmMediaItem = new MMMediaItem();
-				// TODO: temporary, to be changed to lastStreamMedia = true
+				MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(i),
+											   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 				if(i == streamMediaUrls.length() - 1) {
 					retrieveStreamMedia = false;
 				}
-				// TODO: load thumbnails for videos
 				mmMediaItem.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 				mmMediaItem.setIsVideo(true);
 				mmMediaItem.setPlayOnClickListener(new MMVideoPlayOnClickListener(LocationDetailsMediaScreen. this, jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
@@ -201,14 +200,11 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 			for(int i = 0; i < videoMediaUrls.length(); i++) {
 				JSONObject jObj = videoMediaUrls.getJSONObject(i);
 				MMMediaItem mmMediaItem = new MMMediaItem();
-				// TODO: temporary, to be changed to lastVideoMedia = true
-				MMDownloadVideoAdapter.downloadVideo(new CreateVideoThumbnailCallback(i),
-													 jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL),
-													 i);
+				MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(i),
+											   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 				if(i == videoMediaUrls.length() - 1) {
 					retrieveVideoMedia = false;
 				}
-				// TODO: load thumbnails for videos
 				mmMediaItem.setExpiryDate(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 				mmMediaItem.setIsVideo(true);
 				mmMediaItem.setPlayOnClickListener(new MMVideoPlayOnClickListener(LocationDetailsMediaScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
@@ -240,6 +236,62 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 	}
 	
 	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class LoadStreamThumbnailCallback implements MMCallback {
+		int mediaPosition;
+		
+		public LoadStreamThumbnailCallback(int mediaPosition) {
+			this.mediaPosition = mediaPosition;
+		}
+		
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(LocationDetailsMediaScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
+				} else if(obj instanceof Bitmap) {
+					mmStreamMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
+					mmStreamMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
+					streamAdapter.notifyDataSetChanged();
+				}
+			}
+		}	
+	}
+	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class LoadVideoThumbnailCallback implements MMCallback {
+		int mediaPosition;
+		
+		public LoadVideoThumbnailCallback(int mediaPosition) {
+			this.mediaPosition = mediaPosition;
+		}
+		
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(LocationDetailsMediaScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
+				} else if(obj instanceof Bitmap) {
+					mmVideoMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
+					mmVideoMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
+					videoAdapter.notifyDataSetChanged();
+				}
+			}
+		}	
+	}
+	
+	/**
 	 * Callback to display the image it retrieve from the mediaurl
 	 * @author Dezapp, LLC
 	 *
@@ -262,41 +314,6 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 					mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
 					mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
 					imageAdapter.notifyDataSetChanged();
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Callback to create a thumbnail from a recently downloaded video
-	 * @author Dezapp, LLC
-	 * 
-	 */
-	private class CreateVideoThumbnailCallback implements MMCallback {
-		int position;
-		
-		public CreateVideoThumbnailCallback(int position) {
-			this.position = position;
-		}
-		
-		@Override
-		public void processCallback(Object obj) {
-			if(obj != null) {
-				if(obj instanceof String) {
-					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(LocationDetailsMediaScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					}
-				} else if(obj instanceof Uri) {
-					Uri videoUri = (Uri) obj;
-					
-					Log.d(TAG, "videoUri: " + videoUri.getPath());
-					
-					MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
-			        mRetriever.setDataSource(videoUri.getPath());
-					mmVideoMediaItems.get(position).setImageMedia(ThumbnailUtils.extractThumbnail(mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC), mediaWidth, mediaHeight));
-			        File videoFile = new File(videoUri.getPath());
-			        videoFile.delete();
-			        videoAdapter.notifyDataSetChanged();
 				}
 			}
 		}

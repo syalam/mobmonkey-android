@@ -332,4 +332,5 @@
 	
 	<!-- Add Location Category List Screen -->
 	<string name="tv_title_categories">Categories</string>
+	<string name="btn_done">Done</string>
 </resources>

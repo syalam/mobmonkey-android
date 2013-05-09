@@ -112,7 +112,6 @@ public final class MMSDKConstants {
 	// SharePreferences Key
 	public static final String USER_PREFS = "User Preferences";
 	public static final String SHARED_PREFS_KEY_ALL_CATEGORIES = "All categories";
-	public static final String SHARED_PREFS_KEY_CATEGORY_LIST = "categoryList";
 	public static final String SHARED_PREFS_KEY_FAVORITES = "favorites";
 	public static final String SHARED_PREFS_KEY_HISTORY = "history";
 	public static final String SHARED_PREFS_KEY_NARROW_BY_LIVE_VIDEO = "Narrow by live video";
@@ -122,7 +121,7 @@ public final class MMSDKConstants {
 	public static final String SHARED_PREFS_KEY_TOS_TWITTER = "ToS Twitter";
 	
 	// Intent extra/Bundle key values
-	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
+	public static final String KEY_INTENT_EXTRA_CATEGORIES = "Categories";
 	public static final String KEY_INTENT_EXTRA_CATEGORY_TITLE = "Category title";
 	public static final String KEY_INTENT_EXTRA_DISPLAY_MAP = "Display map";
 	public static final String KEY_INTENT_EXTRA_IMAGE_MEDIA = "Image media";
@@ -139,11 +138,11 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
 	public static final String KEY_INTENT_EXTRA_SELECTED_CATEGORIES = "Selected categories";
+	public static final String KEY_INTENT_EXTRA_SELECTED_CATEGORIES_IDS = "Selected categories IDs";
 	public static final String KEY_INTENT_EXTRA_TOP_LEVEL = "Top level";
 	public static final String KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON = "ToS display button";
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
 	public static final String KEY_INTENT_EXTRA_VIDEO_PATH = "returnedVideo";
-	public static final String KEY_INTENT_EXTRA_ADD_CATEGORY_IDS = "add categoryIds";
 	
 	// MobMonkey server call key values
 	public static final String KEY_ACCEPTEDTOS = "acceptedtos";
@@ -274,6 +273,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_REQUEST_TYPE = "requestType";
 	public static final String JSON_KEY_SCHEDULE_DATE = "scheduleDate";
 	public static final String JSON_KEY_STATUS = "status";
+	public static final String JSON_KEY_THUMB_URL = "thumbURL";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
 	public static final String JSON_KEY_TOTAL_ITEMS = "totalItems";
 	public static final String JSON_KEY_TYPE = "type";

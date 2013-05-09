@@ -160,14 +160,19 @@ public class AssignedRequestsFragment extends MMFragment {
 						break;
 					// Video request
 					case 2:
+						File mmDir = new File(MMSDKConstants.MOBMONKEY_DIRECTORY);
+//						Log.d(TAG, TAG + "mmDir exists: " + mmDir.exists());
+						if(!mmDir.exists()) {
+							mmDir.mkdirs();
+						}
+//						Log.d(TAG, TAG + "video file: " + new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.mp4").getAbsolutePath());
 						Intent takeVideoIntent = new Intent(getActivity(), VideoRecorderActivity.class);
 						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
+//						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+//						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+//						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.mp4")));
+//						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
 						break;
-						/*
-						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
-						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
-						*/
 					default:
 						break;
 				}

@@ -93,7 +93,7 @@ public class SearchActivity extends FragmentActivity implements MMOnNearbyLocati
 		CategoriesFragment categoriesFragment = new CategoriesFragment();
 		Bundle data = new Bundle();
 		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY_TITLE, selectedCategory);
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, subCategories.toString());
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORIES, subCategories.toString());
 		data.putBoolean(MMSDKConstants.KEY_INTENT_EXTRA_TOP_LEVEL, isTopLevel);
 		categoriesFragment.setArguments(data);
 		performTransaction(categoriesFragment);

@@ -1,7 +1,5 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -11,19 +9,14 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -149,7 +142,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 		boolean topLevel = getArguments().getBoolean(MMSDKConstants.KEY_INTENT_EXTRA_TOP_LEVEL);
 		
 		try {
-			categoriesArray = new JSONArray(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY));
+			categoriesArray = new JSONArray(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORIES));
 			MMSearchCategoriesItem[] mmSearchCategoriesItems = new MMSearchCategoriesItem[categoriesArray.length()];
 			
 			for(int i = 0; i < categoriesArray.length(); i++) {

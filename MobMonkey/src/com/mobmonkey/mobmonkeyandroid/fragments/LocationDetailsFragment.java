@@ -16,7 +16,6 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
-import com.mobmonkey.mobmonkeysdk.adapters.MMDownloadVideoAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMLocationDetailsAdapter;
@@ -326,12 +325,12 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					
 					if(media.equals(MMSDKConstants.MEDIA_LIVESTREAMING)) {
 						if(isFirstMedia) {
-	//						mediaStreamVideoUrl = jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL);
-	//						vvMedia.setVideoURI(Uri.parse(mediaStreamVideoUrl));
-	//						vvMedia.seekTo(1);
-							MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-							mmr.setDataSource(getActivity(), Uri.parse(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
-							ivtnMedia.setImageBitmap(mmr.getFrameAtTime(1000));
+							if(retrieveVideoMedia) {
+								MMImageLoaderAdapter.loadImage(new LoadImageCallback(),
+															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
+							} else {
+								ivtnMedia.setImageBitmap(imageMedia);
+							}
 							tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 							ibPlay.setVisibility(View.VISIBLE);
 							ibPlay.setOnClickListener(LocationDetailsFragment.this);
@@ -342,13 +341,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					} else if(media.equals(MMSDKConstants.MEDIA_VIDEO)) {
 						if(isFirstMedia) {
 							if(retrieveVideoMedia) {
-								MMDownloadVideoAdapter.downloadVideo(new CreateVideoThumbnailCallback(), 
-																	 jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL),
-																	 0);
+								MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(),
+															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 							} else {
 								ivtnMedia.setImageBitmap(imageMedia);
 							}
-//							MMImageLoaderAdapter.loadVideoThumbnail(getActivity(), new LoadImageCallback(), Uri.parse(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 							tvExpiryDate.setVisibility(View.VISIBLE);
 							tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
 							ibPlay.setVisibility(View.VISIBLE);
@@ -553,6 +550,28 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 //	}	
 	
 	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class LoadVideoThumbnailCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
+				} else if(obj instanceof Bitmap){				
+					retrieveImageMedia = false;
+					imageMedia = (Bitmap) obj;
+					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Callback to display the image it retrieve from the mediaurl
 	 * @author Dezapp, LLC
 	 *
@@ -654,37 +673,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					userPrefsEditor.commit();
 				}
 				
-			}
-		}
-	}
-	
-	/**
-	 * Callback to create a thumbnail from a recently downloaded video
-	 * @author Dezapp, LLC
-	 * 
-	 */
-	private class CreateVideoThumbnailCallback implements MMCallback {
-		@Override
-		public void processCallback(Object obj) {
-			if(obj != null) {
-				
-				if(obj instanceof String) {
-					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					}
-				} else if(obj instanceof Uri) {
-					Uri videoUri = (Uri) obj;	
-				
-					Log.d(TAG, "videoUri: " + videoUri.getPath());
-					
-					MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
-			        mRetriever.setDataSource(videoUri.getPath());
-					retrieveVideoMedia = false;
-			        imageMedia = mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-			        ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
-			        File videoFile = new File(videoUri.getPath());
-			        videoFile.delete();
-				}
 			}
 		}
 	}

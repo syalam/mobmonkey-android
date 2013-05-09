@@ -15,8 +15,22 @@
 		    android:text="@string/tv_title_categories"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
 		    android:textColor="@android:color/white"
-		    android:textStyle="bold" />
+		    android:textStyle="bold"/>
 
+		<Button android:id="@+id/btndone"
+		    android:layout_width="wrap_content"
+		    android:layout_height="33dp"
+		    android:layout_alignParentRight="true"
+		    android:layout_centerVertical="true"
+		    android:layout_marginRight="10dp"
+		    android:background="@drawable/nav_bar_button_blank"
+		    android:paddingLeft="15dp"
+		    android:paddingRight="15dp"
+		    android:text="@string/btn_done"
+		    android:textColor="@android:color/white"
+		    android:textStyle="bold"
+		    android:onClick="viewOnClick"/>
+		
 	</RelativeLayout>
 
 	<ListView android:id="@+id/lvcategories"

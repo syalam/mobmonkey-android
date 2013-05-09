@@ -189,7 +189,7 @@
 		    
 		</activity>
 		
-		<activity android:name=".AddLocationCategoryList"
+		<activity android:name=".AddLocationCategoryScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
