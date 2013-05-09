@@ -7,5 +7,5 @@ import org.json.JSONArray;
  *
  */
 public interface MMOnCategoryFragmentItemClickListener {
-	public void onCategoryFragmentItemClick(JSONArray subCategories, String selectedCategory);
+	public void onCategoryFragmentItemClick(String selectedCategory, JSONArray subCategories, boolean isTopLevel);
 }

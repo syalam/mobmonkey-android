@@ -7,6 +7,7 @@ package com.mobmonkey.mobmonkeyandroid.arrayadaptersitems;
 public class MMSearchCategoriesItem {
 	private int catIconId;
 	private String catName;
+	private int catIndicatorIconId;
 	
 	/**
 	 * 
@@ -39,6 +40,18 @@ public class MMSearchCategoriesItem {
 	public void setCatName(String catName) {
 		this.catName = catName;
 	}
-	
 
+	/**
+	 * @return the catIndicatorIconId
+	 */
+	public int getCatIndicatorIconId() {
+		return catIndicatorIconId;
+	}
+
+	/**
+	 * @param catIndicatorIconId the catIndicatorIconId to set
+	 */
+	public void setCatIndicatorIconId(int catIndicatorIconId) {
+		this.catIndicatorIconId = catIndicatorIconId;
+	}
 }

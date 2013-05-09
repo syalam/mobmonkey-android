@@ -81,7 +81,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
 		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
 		btnCancel = (Button) view.findViewById(R.id.btncancel);
-		smfFavoriteLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmap);
+		smfFavoriteLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragfavoritesmap);
 		
 		googleMap = smfFavoriteLocations.getMap();
 		markerHashMap = new HashMap<Marker, JSONObject>();		
@@ -171,7 +171,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 			transaction.remove(smfFavoriteLocations);
 			transaction.commit();
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 	}
 	

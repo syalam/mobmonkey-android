@@ -29,4 +29,11 @@ public class MMImageOnClickListener implements OnClickListener {
 		context.startActivity(intent);
 	}	
 
+	private Bitmap scaleDownBitmap(int newHeight) {
+		float densityMultiplier = context.getResources().getDisplayMetrics().density;
+		int h = (int) (newHeight * densityMultiplier);
+		int w = (int) (h * imageMedia.getWidth() / ((double) imageMedia.getHeight()));
+		
+		return Bitmap.createScaledBitmap(imageMedia, w, h, true);
+	}
 }

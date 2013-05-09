@@ -5,9 +5,12 @@ import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchCategoriesArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchCategoriesItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -24,19 +27,28 @@ import android.content.Intent;
 import android.graphics.Typeface;
 
 public class AddLocationCategoryList extends Activity implements OnItemClickListener {
-	
-	private int[] categoryIcons;
-	private int[] categoryIndicatorIcons;
-	private String[] topLevelCategories;
-	private ArrayAdapter<Object> arrayAdapter;
+	private MMSearchCategoriesItem[] mmSearchCategoriesItems;
+	private ArrayAdapter<MMSearchCategoriesItem> arrayAdapter;
 	
 	protected static final String TAG = "AddLocationCategoryList ";
-	private ListView categoriesList;
-	private TextView navigationbarText;
+	private ListView lvCategories;
 	
-	private String[] categories;
-	
+	private JSONArray categories;
 	private ArrayList<String> selectedCategories;
+	
+	private int[] topLevelCatIcons = new int[] {R.drawable.cat_icon_coffee_shops,
+												R.drawable.cat_icon_schools,
+												R.drawable.cat_icon_beaches,
+												R.drawable.cat_icon_supermarkets,
+												R.drawable.cat_icon_conferences,
+												R.drawable.cat_icon_restaurants,
+												R.drawable.cat_icon_hotels,
+												R.drawable.cat_icon_pubs,
+												R.drawable.cat_icon_dog_parks,
+												R.drawable.cat_icon_night_clubs,
+												R.drawable.cat_icon_stadiums,
+												R.drawable.cat_icon_health_clubs,
+												R.drawable.cat_icon_cinemas};
 	
 	/*
 	 * (non-Javadoc)
@@ -46,6 +58,7 @@ public class AddLocationCategoryList extends Activity implements OnItemClickList
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.slide_right_in, R.anim.slide_hold);
+		setContentView(R.layout.add_location_category_screen);
 		init();
 	}
 
@@ -54,46 +67,27 @@ public class AddLocationCategoryList extends Activity implements OnItemClickList
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View View, int position, long id) {
-		try {
-			// check if there are any subcategories
-			//String subCateString = MMCategories.getSubCategoriesWithCategoryName(getApplicationContext(), categories[position]);
-			JSONArray subCateArray = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(AddLocationCategoryList.this, categories[position]));
-			
-			// if there are subcategories, start a new categorylist
-			if(subCateArray.length() > 0) {
-				
-				String[] subCateStringArray = new String[subCateArray.length()];
-				for(int i = 0; i < subCateStringArray.length; i++) {
-					subCateStringArray[i] = subCateArray.getJSONObject(i).getString(Locale.getDefault().getLanguage());
-				}
-				
-				Intent categoryList = new Intent(AddLocationCategoryList.this, AddLocationCategoryList.class);
-				categoryList.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, subCateStringArray);
-				categoryList.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, "Categories");
-				Log.d(TAG, selectedCategories.size()+"");
-				categoryList.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY, selectedCategories);
-				startActivityForResult(categoryList, MMSDKConstants.REQUEST_CODE_ADD_CATEGORY);
+		String category = ((TextView) View.findViewById(R.id.tvlabel)).getText().toString();
+		
+		JSONArray subCategories = MMCategories.getSubCategoriesWithCategoryName(AddLocationCategoryList.this, category, categories);
+		
+		if(subCategories.length() > 1) {
+			Intent categoryListIntent = new Intent(AddLocationCategoryList.this, AddLocationCategoryList.class);
+			categoryListIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES, selectedCategories);
+			categoryListIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY_TITLE, getString(R.string.tv_title_categories));
+			categoryListIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, subCategories.toString());
+			categoryListIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_TOP_LEVEL, false);
+			startActivityForResult(categoryListIntent, MMSDKConstants.REQUEST_CODE_ADD_CATEGORY);
+		} else {
+			if(!selectedCategories.contains(category)) {
+				selectedCategories.add(category);
+				mmSearchCategoriesItems[position].setCatIndicatorIconId(android.R.drawable.checkbox_on_background);
 			} else {
-				if(!selectedCategories.contains(categories[position])) {
-					selectedCategories.add(categories[position]);
-				} else {
-					selectedCategories.remove(categories[position]);
-				}
-				
-				// refresh list
-				refreshList();
-			}
-		} catch (JSONException e) {
-			// if there are no more subcategories, add category name to the selectedCategories
-			e.printStackTrace();
-			if(!selectedCategories.contains(categories[position])) {
-				selectedCategories.add(categories[position]);
-			} else {
-				selectedCategories.remove(categories[position]);
+				selectedCategories.remove(category);
+				mmSearchCategoriesItems[position].setCatIndicatorIconId(android.R.drawable.checkbox_off_background);
 			}
 			
-			// refresh list
-			refreshList();
+			arrayAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -106,7 +100,7 @@ public class AddLocationCategoryList extends Activity implements OnItemClickList
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MMSDKConstants.REQUEST_CODE_ADD_CATEGORY) {
 			if(resultCode == RESULT_OK) {
-				selectedCategories = (ArrayList<String>) data.getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY);
+				selectedCategories = (ArrayList<String>) data.getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES);
 			} else if (resultCode == RESULT_CANCELED) {
 				Log.d(TAG, "Cancel");
 			}
@@ -121,7 +115,7 @@ public class AddLocationCategoryList extends Activity implements OnItemClickList
 		try {
 			Intent data = new Intent();
 			Bundle bundle = new Bundle();
-			bundle.putSerializable(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY, selectedCategories);
+			bundle.putSerializable(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES, selectedCategories);
 			data.putExtras(bundle);
 			
 			if (getParent() == null) {
@@ -139,100 +133,88 @@ public class AddLocationCategoryList extends Activity implements OnItemClickList
 	}
 	
 	private void init() {
-		selectedCategories = getIntent().getStringArrayListExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY);
-		setContentView(R.layout.add_location_select_category_screen);;
-		categoriesList = (ListView) findViewById(R.id.categoryList);
-		navigationbarText = (TextView) findViewById(R.id.navtitle);
-		navigationbarText.setText(getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
+		selectedCategories = getIntent().getStringArrayListExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES);
+		lvCategories = (ListView) findViewById(R.id.lvcategories);
 		
 		try {
-			topLevelCategories = MMCategories.getTopLevelCategories(AddLocationCategoryList.this.getApplicationContext());
-			categories = (String[]) getIntent().getExtras().get(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY);
-			
-			refreshList();
-	        
-	        categoriesList.setOnItemClickListener(AddLocationCategoryList.this);
+			categories = new JSONArray(getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY));
+			setCategoryList();			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void refreshList() {
-		if(categories[0].equals(topLevelCategories[0]))
-			getSearchCategoryIcons();
-		else
-			getSubCategoryIcons(categories);
+//	private void refreshList() {
+//		if(categories[0].equals(topLevelCategories[0]))
+//			getSearchCategoryIcons();
+//		else
+//			getSubCategoryIcons(categories);
 		
-		arrayAdapter = new MMArrayAdapter(AddLocationCategoryList.this, 
-										  R.layout.listview_row, 
-										  categoryIcons, 
-										  categories, 
-										  categoryIndicatorIcons, 
-										  android.R.style.TextAppearance_Medium, 
-										  Typeface.DEFAULT_BOLD, 
-										  null);
-		
-		categoriesList.setAdapter(arrayAdapter);
-	}
+//		arrayAdapter = new MMSearchCategoriesArrayAdapter(AddLocationCategoryList.this, 
+//										  R.layout.listview_row, 
+//										  categoryIcons, 
+//										  categories, 
+//										  categoryIndicatorIcons, 
+//										  android.R.style.TextAppearance_Medium, 
+//										  Typeface.DEFAULT_BOLD, 
+//										  null);
+//		
+//		categoriesList.setAdapter(arrayAdapter);
+//		arrayAdapter.notifyDataSetChanged();
+//	}
 	
-	private void getSearchCategoryIcons() {
-		categoryIcons = new int[] {
-				R.drawable.cat_icon_coffee_shops, 
-				R.drawable.cat_icon_schools, 
-				R.drawable.cat_icon_beaches, 
-				R.drawable.cat_icon_supermarkets, 
-				R.drawable.cat_icon_conferences, 
-				R.drawable.cat_icon_restaurants, 
-				R.drawable.cat_icon_hotels, 
-				R.drawable.cat_icon_night_clubs,
-				R.drawable.cat_icon_dog_parks,
-				R.drawable.cat_icon_pubs, 
-				R.drawable.cat_icon_stadiums,
-				R.drawable.cat_icon_health_clubs,
-				R.drawable.cat_icon_cinemas
-		};
+	private void setCategoryList() throws JSONException {
+		boolean topLevel = getIntent().getBooleanExtra(MMSDKConstants.KEY_INTENT_EXTRA_TOP_LEVEL, true);
+		mmSearchCategoriesItems = new MMSearchCategoriesItem[categories.length()];
 		
-		categoryIndicatorIcons = new int[categories.length];
-		for(int i = 0; i < categories.length; i++) {
-			try {
-				JSONArray newArray = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(AddLocationCategoryList.this, categories[i]));
-				Log.d(TAG, "newArrayLength: " + newArray.length());
-				if(newArray.length() > 0) {
-					categoryIndicatorIcons[i] = R.drawable.listview_accessory_indicator;
+		for(int i = 0; i < categories.length(); i++) {
+			JSONObject category = categories.getJSONObject(i);
+			String categoryName = category.getString(Locale.getDefault().getLanguage());
+			
+			mmSearchCategoriesItems[i] = new MMSearchCategoriesItem();
+			mmSearchCategoriesItems[i].setCatName(categoryName);
+			if(topLevel) {
+				mmSearchCategoriesItems[i].setCatIconId(topLevelCatIcons[i]);
+			} else {
+				mmSearchCategoriesItems[i].setCatIconId(MMSDKConstants.DEFAULT_INT_ZERO);
+			}
+			
+			JSONArray subCategories = MMCategories.getSubCategoriesWithCategoryName(AddLocationCategoryList.this, categoryName, categories);
+			if(subCategories.length() > 1) {
+				mmSearchCategoriesItems[i].setCatIndicatorIconId(R.drawable.listview_accessory_indicator);
+			} else {
+				if(selectedCategories.contains(categoryName)) {
+					mmSearchCategoriesItems[i].setCatIndicatorIconId(android.R.drawable.checkbox_on_background);
 				} else {
-					if(selectedCategories.contains(categories[i])) {
-						categoryIndicatorIcons[i]= android.R.drawable.checkbox_on_background;
-					} else {
-						categoryIndicatorIcons[i]= android.R.drawable.checkbox_off_background;
-					}
+					mmSearchCategoriesItems[i].setCatIndicatorIconId(android.R.drawable.checkbox_off_background);
 				}
-			} catch (JSONException ex) {
-				ex.printStackTrace();
 			}
 		}
+		
+		arrayAdapter = new MMSearchCategoriesArrayAdapter(AddLocationCategoryList.this, R.layout.listview_row_searchcategory, mmSearchCategoriesItems);
+		lvCategories.setAdapter(arrayAdapter);
+        lvCategories.setOnItemClickListener(AddLocationCategoryList.this);
 	}
 	
-	private void getSubCategoryIcons(String[] categories) {
-		categoryIcons = new int[] {};
-		categoryIndicatorIcons = new int[categories.length];
-		for(int i = 0; i < categories.length; i++) {
-			try {
-				JSONArray newArray = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(this, categories[i]));
-				if(!newArray.isNull(0)) {
-					categoryIndicatorIcons[i] = R.drawable.listview_accessory_indicator;
-				}
-			} catch (JSONException ex) {
-				try {
-					// check if category is already selected
-					if(selectedCategories.contains(categories[i])) {
-						categoryIndicatorIcons[i] = android.R.drawable.checkbox_on_background;
-					} else {
-						categoryIndicatorIcons[i] = android.R.drawable.checkbox_off_background;
-					}
-				} catch (NullPointerException e) {
-					categoryIndicatorIcons[i]= android.R.drawable.checkbox_off_background;
-				}
-			}
-		}
-	}
+//	private void getSubCategoryIcons(String[] categories) {
+//		categoryIcons = new int[] {};
+//		categoryIndicatorIcons = new int[categories.length];
+//		for(int i = 0; i < categories.length; i++) {
+//			JSONArray newArray = MMCategories.getSubCategoriesWithCategoryName(this, categories[i]);
+//			if(!newArray.isNull(0)) {
+//				categoryIndicatorIcons[i] = R.drawable.listview_accessory_indicator;
+//			} else {
+//				try {
+//					// check if category is already selected
+//					if(selectedCategories.contains(categories[i])) {
+//						categoryIndicatorIcons[i] = android.R.drawable.checkbox_on_background;
+//					} else {
+//						categoryIndicatorIcons[i] = android.R.drawable.checkbox_off_background;
+//					}
+//				} catch (NullPointerException e) {
+//					categoryIndicatorIcons[i]= android.R.drawable.checkbox_off_background;
+//				}
+//			}
+//		}
+//	}
 }

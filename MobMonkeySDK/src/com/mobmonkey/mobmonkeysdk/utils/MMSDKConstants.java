@@ -123,6 +123,7 @@ public final class MMSDKConstants {
 	
 	// Intent extra/Bundle key values
 	public static final String KEY_INTENT_EXTRA_CATEGORY = "Category";
+	public static final String KEY_INTENT_EXTRA_CATEGORY_TITLE = "Category title";
 	public static final String KEY_INTENT_EXTRA_DISPLAY_MAP = "Display map";
 	public static final String KEY_INTENT_EXTRA_IMAGE_MEDIA = "Image media";
 	public static final String KEY_INTENT_EXTRA_INBOX_REQUESTS = "Inbox requests";
@@ -137,10 +138,11 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
+	public static final String KEY_INTENT_EXTRA_SELECTED_CATEGORIES = "Selected categories";
+	public static final String KEY_INTENT_EXTRA_TOP_LEVEL = "Top level";
 	public static final String KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON = "ToS display button";
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
 	public static final String KEY_INTENT_EXTRA_VIDEO_PATH = "returnedVideo";
-	public static final String KEY_INTENT_EXTRA_ADD_CATEGORY = "add category";
 	public static final String KEY_INTENT_EXTRA_ADD_CATEGORY_IDS = "add categoryIds";
 	
 	// MobMonkey server call key values

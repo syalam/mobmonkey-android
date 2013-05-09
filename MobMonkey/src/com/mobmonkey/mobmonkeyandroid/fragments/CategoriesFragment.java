@@ -29,6 +29,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchCategoriesArrayAdapter;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchCategoriesItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
@@ -49,23 +51,32 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	private static final String TAG = "CategoriesFragment: ";
 	
 	private SharedPreferences userPrefs;
-//	private Location location;
-//	private double longitudeValue;
-//	private double latitudeValue;
 	
 	private TextView tvNavBarTitle;
-	private EditText etSearch;
 	private ListView lvSubCategories;
 	
-	private ArrayList<String> subCategories;
 	private JSONArray categoriesArray;
 	
-	private MMOnSubCategoryFragmentItemClickListener subCategoryItemClickListener;
-	private MMOnNoCategoryFragmentItemClickListener noCategoryItemClickListener;
-	private String searchText;
+	private MMOnCategoryFragmentItemClickListener categoryItemClickListener;
+	private MMOnCategoryResultsFragmentItemClickListener categoryResultsItemClickListener;
+
 	private String searchSubCategory;
 	private boolean hasResults = false;
 	private String results;
+	
+	private int[] topLevelCatIcons = new int[] {R.drawable.cat_icon_coffee_shops,
+												R.drawable.cat_icon_schools,
+												R.drawable.cat_icon_beaches,
+												R.drawable.cat_icon_supermarkets,
+												R.drawable.cat_icon_conferences,
+												R.drawable.cat_icon_restaurants,
+												R.drawable.cat_icon_hotels,
+												R.drawable.cat_icon_pubs,
+												R.drawable.cat_icon_dog_parks,
+												R.drawable.cat_icon_night_clubs,
+												R.drawable.cat_icon_stadiums,
+												R.drawable.cat_icon_health_clubs,
+												R.drawable.cat_icon_cinemas};
 	
 	/*
 	 * (non-Javadoc)
@@ -75,11 +86,9 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreateView");
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
-//		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_categories_screen, container, false);
 		tvNavBarTitle = (TextView) view.findViewById(R.id.tvnavbartitle);
-		etSearch = (EditText) view.findViewById(R.id.etsearch);
 		lvSubCategories = (ListView) view.findViewById(R.id.lvsubcategory);
 		
 		init();
@@ -94,10 +103,10 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof MMOnSubCategoryFragmentItemClickListener) {
-			subCategoryItemClickListener = (MMOnSubCategoryFragmentItemClickListener) activity;
-			if(activity instanceof MMOnNoCategoryFragmentItemClickListener) {
-				noCategoryItemClickListener = (MMOnNoCategoryFragmentItemClickListener) activity;
+		if(activity instanceof MMOnCategoryFragmentItemClickListener) {
+			categoryItemClickListener = (MMOnCategoryFragmentItemClickListener) activity;
+			if(activity instanceof MMOnCategoryResultsFragmentItemClickListener) {
+				categoryResultsItemClickListener = (MMOnCategoryResultsFragmentItemClickListener) activity;
 			}
 		}
 	}
@@ -110,11 +119,11 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
 		try {
 			JSONObject subCategory = categoriesArray.getJSONObject(position);
-			JSONArray subCategoriesArray = new JSONArray(MMCategories.getSubCategoriesWithCategoriId(getActivity(), subCategory.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID)));
+			JSONArray subCategoriesArray = MMCategories.getSubCategoriesWithCategoryName(getActivity(), subCategory.getString(Locale.getDefault().getLanguage()), categoriesArray);
 			String selectedSubCategory = subCategory.getString(Locale.getDefault().getLanguage());
 			
-			if(!subCategoriesArray.isNull(0)) {
-				subCategoryItemClickListener.onSubCategoryFragmentItemClick(subCategoriesArray, selectedSubCategory);
+			if(subCategoriesArray.length() > 1) {
+				categoryItemClickListener.onCategoryFragmentItemClick(selectedSubCategory, subCategoriesArray, false);
 			} else {
 				checkCategorySelected(selectedSubCategory, subCategory);
 			}
@@ -136,20 +145,26 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	 * 
 	 */
 	private void init() {
-		tvNavBarTitle.setText(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
-		setSearchByText();
-//		getCurrentLocation();
+		tvNavBarTitle.setText(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY_TITLE));
+		boolean topLevel = getArguments().getBoolean(MMSDKConstants.KEY_INTENT_EXTRA_TOP_LEVEL);
 		
 		try {
 			categoriesArray = new JSONArray(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY));
-			subCategories = new ArrayList<String>();
+			MMSearchCategoriesItem[] mmSearchCategoriesItems = new MMSearchCategoriesItem[categoriesArray.length()];
 			
 			for(int i = 0; i < categoriesArray.length(); i++) {
 				JSONObject category = categoriesArray.getJSONObject(i);
-				subCategories.add(category.getString(Locale.getDefault().getLanguage()));
+				mmSearchCategoriesItems[i] = new MMSearchCategoriesItem();
+				mmSearchCategoriesItems[i].setCatName(category.getString(Locale.getDefault().getLanguage()));
+				if(topLevel) {
+					mmSearchCategoriesItems[i].setCatIconId(topLevelCatIcons[i]);
+				} else {
+					mmSearchCategoriesItems[i].setCatIconId(MMSDKConstants.DEFAULT_INT_ZERO);
+				}
+				mmSearchCategoriesItems[i].setCatIndicatorIconId(R.drawable.listview_accessory_indicator);
 			}
 			
-	        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.listview_row_simple, R.id.tvlabel, subCategories);
+			ArrayAdapter<MMSearchCategoriesItem> arrayAdapter = new MMSearchCategoriesArrayAdapter(getActivity(), R.layout.listview_row_searchcategory, mmSearchCategoriesItems);
 	        
 	        lvSubCategories.setAdapter(arrayAdapter);
 		} catch (JSONException e) {
@@ -162,19 +177,6 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			lvSubCategories.setOnItemClickListener(CategoriesFragment.this);
 		}
 	}
-	
-//	/**
-//	 * 
-//	 */
-//	private void getCurrentLocation() {
-//		if(location != null) {
-//			longitudeValue = location.getLongitude();
-//			latitudeValue = location.getLatitude();
-//			DecimalFormat decimalFormat = new DecimalFormat("#.######");
-//			latitudeValue = Double.valueOf(decimalFormat.format(latitudeValue));
-//			longitudeValue = Double.valueOf(decimalFormat.format(longitudeValue));
-//		}
-//	}
 	
 	/**
 	 * 
@@ -193,49 +195,8 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			searchSubCategory = selectedSubCategory;
 			searchSubCategory(selectedSubCategory, subCategory);
 		} else {
-			noCategoryItemClickListener.onNoCategoryFragmentItemClick(0, selectedSubCategory, results);
+			categoryResultsItemClickListener.onCategoriesResultsFragmentItemClick(selectedSubCategory, results);
 		}
-	}
-	
-	/**
-	 * 
-	 */
-	private void setSearchByText() {
-		etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				Log.d(TAG, TAG + "actionId: " + actionId);
-				if(actionId == EditorInfo.IME_ACTION_SEARCH) {
-					searchText = etSearch.getText().toString();
-					searchByText();
-				}
-				return true;
-			}
-		});
-		
-		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
-			etSearch.setFocusable(false);
-			etSearch.setFocusableInTouchMode(false);
-			etSearch.setClickable(false);
-		}
-	}
-	
-	/**
-	 * 
-	 */
-	private void searchByText() {
-		MMSearchLocationAdapter.searchLocationWithText(new SearchCallback(),
-													   MMLocationManager.getLocationLatitude(),
-													   MMLocationManager.getLocationLongitude(),
-													   userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE),
-													   searchText,
-													   MMConstants.PARTNER_ID,
-													   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-													   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-		MMProgressDialog.displayDialog(getActivity(),
-									   MMSDKConstants.DEFAULT_STRING_EMPTY,
-									   getString(R.string.pd_search_for) + MMSDKConstants.DEFAULT_STRING_SPACE + searchText + getString(R.string.pd_ellipses));
-    	InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 	}
 	
 	/**
@@ -256,27 +217,6 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 		MMProgressDialog.displayDialog(getActivity(),
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 									   getString(R.string.pd_locating) + MMSDKConstants.DEFAULT_STRING_SPACE + selectedSubCategory + getString(R.string.pd_ellipses));
-	}
-	
-    /**
-     * Custom {@link MMCallback} specifically for {@link SearchScreen} to be processed after receiving response from MobMonkey server.
-     * @author Dezapp, LLC
-     *
-     */
-	private class SearchCallback implements MMCallback {
-		@Override
-		public void processCallback(Object obj) {
-			MMProgressDialog.dismissDialog();
-			
-			if(obj != null) {
-				Log.d(TAG, TAG + "Response: " + ((String) obj));
-				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-				} else {
-					noCategoryItemClickListener.onNoCategoryFragmentItemClick(0, searchText, ((String) obj));
-				}
-			}
-		}
 	}
 	
 	/**

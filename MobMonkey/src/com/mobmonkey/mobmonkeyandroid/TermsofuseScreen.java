@@ -1,5 +1,9 @@
 package com.mobmonkey.mobmonkeyandroid;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -42,6 +46,8 @@ public class TermsofuseScreen extends Activity {
 		
 		tvToS.setMovementMethod(new ScrollingMovementMethod());
 		
+		tvToS.setText(readText());
+		
 		if(getIntent().getBooleanExtra(MMSDKConstants.KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON, false)){
 			requestCode = getIntent().getIntExtra(MMSDKConstants.REQUEST_CODE, MMSDKConstants.DEFAULT_INT);
 			btnReject.setVisibility(View.VISIBLE);
@@ -81,5 +87,23 @@ public class TermsofuseScreen extends Activity {
 		}
 		
 		userPrefsEditor.commit();
+	}
+	
+	private String readText() {
+		InputStream in = getResources().openRawResource(R.raw.mm_terms_of_use);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		int i;
+		try {
+			i = in.read();
+			while(i != -1) {
+				baos.write(i);
+				i = in.read();
+			}
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return baos.toString();
 	}
 }

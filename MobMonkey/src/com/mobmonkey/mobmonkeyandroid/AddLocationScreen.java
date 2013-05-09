@@ -100,7 +100,7 @@ public class AddLocationScreen extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == MMSDKConstants.REQUEST_CODE_ADD_CATEGORY) {
 			if(resultCode == RESULT_OK) {
-				selectedCategories = (ArrayList<String>) data.getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY);
+				selectedCategories = (ArrayList<String>) data.getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES);
 				Log.d("AddLocationScreen", "Size: " + selectedCategories.size());
 				
 				if(selectedCategories.size() > 0) {
@@ -168,22 +168,12 @@ public class AddLocationScreen extends Activity {
 			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				
-				if(event.getAction() == MotionEvent.ACTION_DOWN)
-				{
+				if(event.getAction() == MotionEvent.ACTION_DOWN) {
 					Intent categoryScreenIntent = new Intent(AddLocationScreen.this, AddLocationCategoryList.class);
-					try
-					{
-						topLevelCats = MMCategories.getTopLevelCategories(AddLocationScreen.this.getApplicationContext());
-					}
-					catch(JSONException e)
-					{
-						e.printStackTrace();
-					}
-					
-					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, topLevelCats);
-					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, "Categories");
-					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY, selectedCategories);
+					JSONArray categories = MMCategories.getTopLevelCategories(AddLocationScreen.this);
+					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, categories.toString());
+					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY_TITLE, getString(R.string.tv_title_categories));
+					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES, selectedCategories);
 					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_ADD_CATEGORY_IDS, new ArrayList<Integer>());
 					startActivityForResult(categoryScreenIntent, MMSDKConstants.REQUEST_CODE_ADD_CATEGORY);
 				}
@@ -294,42 +284,39 @@ public class AddLocationScreen extends Activity {
 	private int getCategoriesId(String catsName) throws JSONException {
 		int id = -1;
 		String name = catsName;
-		String[] topCatsName = MMCategories.getTopLevelCategories(this);
-		
-		if(isTopCats(name)) {
-			if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
-				JSONObject cats = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
-				JSONObject jObj = cats.getJSONArray(name).getJSONObject(0);
-				id = Integer.parseInt(jObj.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID));
-			}
-		} else {
-			FindIDs:
-			for(int i = 0; i < topCatsName.length; i++) {
-				JSONArray jArr = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(this, topCatsName[i]));
-				for(int j = 0; j < jArr.length(); j++) {
-					JSONObject jObj = jArr.getJSONObject(j);
-					if(jObj.getString(Locale.getDefault().getLanguage()).equals(name)) {
-						id = Integer.parseInt(jObj.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID));
-						break FindIDs;
-					}
-				}
-			}
-		}
+//		String[] topCatsName = MMCategories.getTopLevelCategories(this);
+//		
+//		if(isTopCats(name)) {
+//			if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
+//				JSONObject cats = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
+//				JSONObject jObj = cats.getJSONArray(name).getJSONObject(0);
+//				id = Integer.parseInt(jObj.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID));
+//			}
+//		} else {
+//			FindIDs:
+//			for(int i = 0; i < topCatsName.length; i++) {
+//				JSONArray jArr = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(this, topCatsName[i]));
+//				for(int j = 0; j < jArr.length(); j++) {
+//					JSONObject jObj = jArr.getJSONObject(j);
+//					if(jObj.getString(Locale.getDefault().getLanguage()).equals(name)) {
+//						id = Integer.parseInt(jObj.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID));
+//						break FindIDs;
+//					}
+//				}
+//			}
+//		}
 		
 		return id;
 	}
 	
 	private boolean isTopCats(String name) throws JSONException {
-		String[] topCatsName = MMCategories.getTopLevelCategories(this);
-		boolean flag = false;
-		isTop:
-		for(String str : topCatsName) {
-			if(str.equals(name)) {
-				flag = true;
-				break isTop;
+		JSONArray topCatsName = MMCategories.getTopLevelCategories(AddLocationScreen.this);
+		for(int i = 0; i < topCatsName.length(); i++) {
+			if(topCatsName.getJSONObject(i).getString(Locale.getDefault().getLanguage()).equals(name)) {
+				return true;
 			}
 		}
-		return flag;
+		return false;
 	}
 	
 	private class AddLocationCallback implements MMCallback {

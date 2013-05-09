@@ -19,15 +19,15 @@ public class MMSearchResultsCallback implements MMCallback {
 	private Activity activity;
 	private String searchCategory;
 	
-	private MMOnNoCategoryFragmentItemClickListener noCategoryFragmentItemClickListener;
+	private MMOnCategoryResultsFragmentItemClickListener categoryResultsFragmentItemClickListener;
 	private MMCallback mmCallback; // To be used in Categories fragment, save the user to making another call to the server if they click the same subcategory
 	
 	public MMSearchResultsCallback(Activity activity, String searchCategory, MMCallback mmCallback) {
 		this.activity = activity;
 		this.searchCategory = searchCategory;
 		
-		if(activity instanceof MMOnNoCategoryFragmentItemClickListener) {
-			noCategoryFragmentItemClickListener = (MMOnNoCategoryFragmentItemClickListener) activity;
+		if(activity instanceof MMOnCategoryResultsFragmentItemClickListener) {
+			categoryResultsFragmentItemClickListener = (MMOnCategoryResultsFragmentItemClickListener) activity;
 		}
 		
 		this.mmCallback = mmCallback;
@@ -49,8 +49,7 @@ public class MMSearchResultsCallback implements MMCallback {
 					if(mmCallback != null) {
 						mmCallback.processCallback(obj);
 					}
-					noCategoryFragmentItemClickListener.onNoCategoryFragmentItemClick(0, searchCategory, (String) obj);
-//					noCategoryFragmentItemClickListener.onNoCategoryFragmentItemClick(0, searchCategory, searchResults.getJSONArray(MMSDKConstants.JSON_KEY_DEFAULT_TEXTS).toString());
+					categoryResultsFragmentItemClickListener.onCategoriesResultsFragmentItemClick(searchCategory, (String) obj);
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();

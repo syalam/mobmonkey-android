@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/backgroundcolor"
+	android:orientation="vertical">
+	    
+	<TextView android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:layout_gravity="center"
+		android:background="@drawable/navigation_bar"
+		android:gravity="center"
+		android:text="@string/tv_title_search_locations"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textColor="@android:color/white"
+		android:textStyle="bold"/>
+	
+	<LinearLayout android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:padding="10dp">
+	    
+	    <LinearLayout android:id="@+id/llcreatehotspot"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        android:background="@drawable/orange_button_background"
+	        android:padding="15dp">
+	        
+	        <ImageView android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"/>
+	        
+	        <TextView android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center"
+	            android:gravity="center"
+	            android:text="@string/tv_create_hot_spot"
+	            android:textAppearance="?android:attr/textAppearanceLarge"
+	            android:textColor="@android:color/white"
+	            android:textStyle="bold"/>
+	        
+	    </LinearLayout>
+	    
+		<FrameLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp">
+		
+			<EditText android:id="@+id/etsearch"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/et_hint_search"
+				android:imeOptions="actionSearch"
+				android:inputType="text"
+				android:paddingLeft="50dp"/>
+				
+			<ImageView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@drawable/icon_search"
+				android:layout_marginLeft="10dp"
+				android:layout_gravity="left|center"/>
+		
+		</FrameLayout>
+	</LinearLayout>
+	
+	<ImageView android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:background="@drawable/location_details_divider_gradient"/>
+	
+	<com.mobmonkey.mobmonkeyandroid.utils.MMScrollView android:id="@+id/svnearbylocations"
+	    android:layout_width="match_parent"
+		android:layout_height="match_parent">
+		
+		<LinearLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="10dp">
+		
+		    <TextView android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="5dp"
+				android:layout_marginBottom="5dp"
+		        android:text="@string/tv_nearby"
+		        android:textColor="@android:color/black"
+		        android:textAppearance="?android:attr/textAppearanceMedium"
+		        android:textStyle="bold"/>
+		        
+			<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedNearbyLocationsListView android:id="@+id/enllvnearbylocations"
+			    android:layout_width="match_parent"
+			    android:layout_height="0dip"
+			    android:layout_margin="0dp"
+			    android:layout_weight="1"
+			    android:background="@drawable/listview_border"
+				android:divider="@drawable/listview_divider"
+				android:dividerHeight="1dp"/>
+			
+			<LinearLayout android:id="@+id/llloadmore"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:padding="10dp"
+			    android:background="@drawable/listview_border">
+			    
+			    <TextView android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:gravity="center"
+			        android:text="@string/tv_load_more"
+			        android:textAppearance="?android:attr/textAppearanceMedium"
+			        android:textStyle="bold"/>
+			    
+			</LinearLayout>
+			
+			<TextView android:id="@+id/tvholdtopanandzoom"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_marginLeft="5dp"
+			    android:layout_marginTop="5dp"
+			    android:layout_marginBottom="5dp"
+			    android:text="@string/tv_hold_to_enable_pan_and_zoom"
+			    android:textColor="@android:color/black"
+			    android:textAppearance="?android:attr/textAppearanceMedium"
+			    android:textStyle="bold"/>
+			    
+   			<fragment android:id="@+id/fragnearbylocationsmap"
+				android:layout_width="match_parent"
+				android:layout_height="300dp"
+				class="com.google.android.gms.maps.SupportMapFragment"/>
+			
+			<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/elvsearch"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:cacheColorHint="@android:color/transparent"
+				android:scrollbars="none"
+				android:background="@drawable/listview_border"
+				android:divider="@drawable/listview_divider"
+				android:dividerHeight="1dp"/>"
+		
+		</LinearLayout>
+	    
+	</com.mobmonkey.mobmonkeyandroid.utils.MMScrollView>
+	
+</LinearLayout>

@@ -95,6 +95,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		Log.d(TAG, TAG + "onCreateView");
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
@@ -104,7 +105,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
 		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
 		btnCancel = (Button) view.findViewById(R.id.btncancel);
-		smfResultLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmap);
+		smfResultLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragsearchresultsmap);
 		lvSearchResults = (ListView) view.findViewById(R.id.lvsearchresults);
 		
 		tvNavBarTitle.setText(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
@@ -142,7 +143,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		
 		return view;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onAttach(android.app.Activity)
@@ -179,7 +180,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	public void onMapClick(LatLng pointClicked) {
 		if(addLocClicked) {
 			MMGeocoderAdapter.getFromLocation(getActivity(), new ReverseGeocodeCallback(), pointClicked.latitude, pointClicked.longitude);
-			MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, "");
+			MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_retrieving_location_information));
 		}
 	}
 	
@@ -207,16 +208,12 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
 	 */
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+	public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
 		try {
 			Log.d(TAG, TAG + "onItemClick");
 			addToHistory(searchResults.getJSONObject(position));
 			
-			try {
-				searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(searchResults.getJSONObject(position));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+			searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(searchResults.getJSONObject(position));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

@@ -43,13 +43,19 @@ public class MMSearchCategoriesArrayAdapter extends ArrayAdapter<MMSearchCategor
 			vHolder = new ViewHolder();
 			vHolder.ivCatIcon = (ImageView) searchCategoryRow.findViewById(R.id.ivicon);
 			vHolder.tvCatName = (TextView) searchCategoryRow.findViewById(R.id.tvlabel);
+			vHolder.ivCatIndicatorIcon = (ImageView) searchCategoryRow.findViewById(R.id.ivindicatoricon);
 			searchCategoryRow.setTag(vHolder);
 		} else {
 			vHolder = (ViewHolder) searchCategoryRow.getTag();
 		}
 		
-		vHolder.ivCatIcon.setImageResource(mmSearchCategoryItems[position].getCatIconId());
+		if(mmSearchCategoryItems[position].getCatIconId() == 0) {
+			vHolder.ivCatIcon.setVisibility(View.GONE);
+		} else {
+			vHolder.ivCatIcon.setImageResource(mmSearchCategoryItems[position].getCatIconId());
+		}
 		vHolder.tvCatName.setText(mmSearchCategoryItems[position].getCatName());
+		vHolder.ivCatIndicatorIcon.setImageResource(mmSearchCategoryItems[position].getCatIndicatorIconId());
 		
         if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
         	vHolder.tvCatName.setTextColor(Color.GRAY);
@@ -62,5 +68,6 @@ public class MMSearchCategoriesArrayAdapter extends ArrayAdapter<MMSearchCategor
 	private class ViewHolder {
 		ImageView ivCatIcon;
 		TextView tvCatName;
+		ImageView ivCatIndicatorIcon;
 	}
 }

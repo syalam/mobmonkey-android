@@ -138,16 +138,27 @@
 	<string name="btn_record">Record</string>
 	<string name="btn_stop">Stop</string>
 	
-	<!-- Search Fragment -->
+	<!-- Search Locations Fragment -->
 	<string name="btn_filter">Filter</string>
 	<string name="btn_add_loc">+</string>
 	<string name="tv_title_search">Search</string>
-	
-	<string name="et_hint_search">Location, Category, Address</string>
+	<string name="tv_title_search_locations">Search Locations</string>
+	<string name="tv_create_hot_spot">Create Hot Spot</string>
+	<string name="tv_nearby">Nearby</string>
+	<string name="tv_load_more">Load More</string>
+	<string name="tv_hold_to_enable_pan_and_zoom">Hold to Enable Pan and Zoom</string>
+	<string name="tv_hold_to_disable_pan_and_zoom">Hold to Disable Pan and Zoom</string>
+		
+	<string name="et_hint_search">Search</string>
 	
 	<string-array name="search_no_category">
 	    <item>Show All Nearby</item>
 	    <item>History</item>
+	</string-array>
+	
+	<string-array name="array_search">
+	    <item>My History</item>
+	    <item>Search by Category</item>
 	</string-array>
 	
 	<string name="ad_message_no_locations_found">No locations found</string>
@@ -295,15 +306,6 @@
 	
 	<!-- Terms of use Screen -->
 	<string name="tv_title_terms_of_use">Terms of use</string>
-	<string name="tv_terms_of_use">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim, mi tristique sollicitudin malesuada, velit nisi cursus magna, et interdum mauris turpis eget leo. Maecenas adipiscing, nunc ac consectetur dictum, risus mi ultrices nulla, sed pellentesque dui elit a diam. Morbi rhoncus ante ut justo tempus tristique eleifend quam rutrum. Nulla pulvinar, sem non ultricies tristique, lectus magna sodales ligula, non dignissim nibh nulla at nunc. Vivamus vestibulum ornare ipsum in mattis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Cras tempus imperdiet leo, ut faucibus risus pulvinar vitae. Donec lobortis odio ut tellus bibendum elementum. Donec pretium varius nisl. Donec nibh ipsum, dictum commodo vestibulum sed, vestibulum sit amet sem. Pellentesque facilisis odio vel nisl scelerisque vitae blandit mi mattis. Vivamus ac mi eget sapien lacinia cursus.
-
-Quisque vel orci enim, a dapibus sem. Etiam nisl diam, tristique quis eleifend quis, rhoncus id leo. Ut nunc urna, semper et auctor ac, porttitor sollicitudin eros. Cras purus libero, tempor ut euismod et, luctus eu urna. Sed ut magna nulla. Mauris cursus vestibulum ante a sollicitudin. Fusce sit amet libero et lorem ultricies iaculis.
-
-Nam ornare consequat leo eget tincidunt. Mauris vulputate molestie congue. Aliquam nec lobortis eros. Quisque nunc ante, iaculis vel ultricies ut, facilisis eu nibh. Nam vitae lorem sed odio faucibus adipiscing at hendrerit nunc. Vivamus gravida dui a ligula hendrerit tincidunt. Nulla sagittis, tellus sit amet feugiat aliquet, augue sem sollicitudin nibh, id placerat libero nisi ac mi. Phasellus eget volutpat sapien. Integer neque sem, porta eu malesuada vitae, ultricies eu ipsum. Fusce faucibus scelerisque sapien, sit amet tincidunt odio hendrerit et. Aliquam erat volutpat.
-
-Duis leo quam, faucibus vitae aliquet vitae, sagittis sed augue. Nunc sit amet magna vitae massa semper consectetur laoreet in justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel quam est, sit amet adipiscing leo. Donec tellus justo, egestas dignissim molestie a, pretium eget nisl. Duis mollis metus eget mauris ullamcorper auctor. In hac habitasse platea dictumst. Mauris interdum dignissim viverra. Suspendisse ac ipsum nisl. Sed sagittis posuere nulla. Mauris id eros nec diam porttitor posuere vitae eget orci.
-
-Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis et auctor diam aliquet. Maecenas ligula tellus, suscipit sed eleifend at, condimentum dictum augue. Aliquam vel urna neque, sit amet malesuada massa. In fringilla facilisis dictum. Aliquam a erat at sem iaculis sollicitudin eu gravida mauris. Mauris eu sapien risus, vel laoreet metus. Pellentesque quis velit lacus. Aliquam sit amet dolor nisi, sed aliquet erat.</string>
 	
 	<string name="btn_reject">Reject</string>
 	<string name="btn_accept">Accept</string>
@@ -326,5 +328,8 @@ Vivamus fermentum ornare adipiscing. Phasellus vulputate metus vitae nisi mattis
 	<string name="ad_no_state">Please enter a state</string>
 	<string name="ad_no_zip">Please enter a zip code</string>
 
-	<string name="pd_retrieving_location_information">Retrieving location information&#8230;</string>	
+	<string name="pd_retrieving_location_information">Retrieving location information&#8230;</string>
+	
+	<!-- Add Location Category List Screen -->
+	<string name="tv_title_categories">Categories</string>
 </resources>

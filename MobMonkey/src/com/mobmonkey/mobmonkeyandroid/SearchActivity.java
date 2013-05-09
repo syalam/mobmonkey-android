@@ -19,13 +19,14 @@ import com.mobmonkey.mobmonkeyandroid.fragments.CategoriesFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.HistoryFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsMapFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.SearchFragment;
+import com.mobmonkey.mobmonkeyandroid.fragments.SearchLocationsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.SearchResultsFragment;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnCategoryFragmentItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnCategoryResultsFragmentItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnHistoryFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnLocationDetailsFragmentItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.listeners.MMOnNoCategoryFragmentItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnSearchResultsFragmentItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.listeners.MMOnSubCategoryFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -33,14 +34,19 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  * @author Dezapp, LLC
  *
  */
-public class SearchActivity extends FragmentActivity implements MMOnNoCategoryFragmentItemClickListener, 
-																MMOnCategoryFragmentItemClickListener, 
-																MMOnSubCategoryFragmentItemClickListener, 
-																MMOnSearchResultsFragmentItemClickListener, 
+public class SearchActivity extends FragmentActivity implements MMOnNearbyLocationsItemClickListener,
+																MMOnHistoryFragmentItemClickListener,
+																MMOnCategoryFragmentItemClickListener,
+																MMOnCategoryResultsFragmentItemClickListener,
+																MMOnSearchResultsFragmentItemClickListener,
 																MMOnLocationDetailsFragmentItemClickListener {
 	FragmentManager fragmentManager;
 	Stack<MMFragment> fragmentStack;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,50 +60,62 @@ public class SearchActivity extends FragmentActivity implements MMOnNoCategoryFr
 				return;
 			}
 			
-			SearchFragment searchFragment = new SearchFragment();
-			fragmentManager.beginTransaction().add(R.id.llfragmentcontainer, fragmentStack.push(searchFragment)).commit();
+			SearchLocationsFragment searchLocationsFragment = new SearchLocationsFragment();
+			fragmentManager.beginTransaction().add(R.id.llfragmentcontainer, fragmentStack.push(searchLocationsFragment)).commit();
 		}
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener#onNearbyLocationsItemClick(org.json.JSONObject)
+	 */
 	@Override
-	public void onNoCategoryFragmentItemClick(int position, String searchCategory, String results) {
-		MMFragment mmFragment = null;
+	public void onNearbyLocationsItemClick(JSONObject jObj) {
+		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
 		Bundle data = new Bundle();
-		switch(position) {
-			case 0:
-				mmFragment = new SearchResultsFragment();
-				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
-				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, results);
-				mmFragment.setArguments(data);
-				break;
-			case 1:
-				mmFragment = new HistoryFragment();
-				break;
-		}
-		
-		performTransaction(mmFragment);
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+		locationDetailsFragment.setArguments(data);
+		performTransaction(locationDetailsFragment);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnHistoryFragmentItemClickListener#onHistoryItemClick()
+	 */
 	@Override
-	public void onCategoryFragmentItemClick(JSONArray subCategories, String selectedCategory) {
+	public void onHistoryItemClick() {
+		performTransaction(new HistoryFragment());
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnCategoryFragmentItemClickListener#onCategoryFragmentItemClick(java.lang.String, org.json.JSONArray, boolean)
+	 */
+	@Override
+	public void onCategoryFragmentItemClick(String selectedCategory, JSONArray subCategories, boolean isTopLevel) {
 		CategoriesFragment categoriesFragment = new CategoriesFragment();
 		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY_TITLE, selectedCategory);
 		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, subCategories.toString());
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
+		data.putBoolean(MMSDKConstants.KEY_INTENT_EXTRA_TOP_LEVEL, isTopLevel);
 		categoriesFragment.setArguments(data);
 		performTransaction(categoriesFragment);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnCategoryResultsFragmentItemClickListener#onCategoriesResultsFragmentItemClick(java.lang.String, java.lang.String)
+	 */
 	@Override
-	public void onSubCategoryFragmentItemClick(JSONArray subCategories, String selectedCategory) {
-		CategoriesFragment categoriesFragment = new CategoriesFragment();
+	public void onCategoriesResultsFragmentItemClick(String searchCategory, String results) {
+		SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
 		Bundle data = new Bundle();
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY, subCategories.toString());
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, selectedCategory);
-		categoriesFragment.setArguments(data);
-		performTransaction(categoriesFragment);
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE, searchCategory);
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, results);
+		searchResultsFragment.setArguments(data);
+		performTransaction(searchResultsFragment);
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnSearchResultsFragmentItemClickListener#onSearchResultsFragmentItemClick(org.json.JSONObject)
+	 */
 	@Override
 	public void onSearchResultsFragmentItemClick(JSONObject jObj) {
 		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
@@ -107,6 +125,10 @@ public class SearchActivity extends FragmentActivity implements MMOnNoCategoryFr
 		performTransaction(locationDetailsFragment);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnLocationDetailsFragmentItemClickListener#onLocationDetailsFragmentItemClick(int, java.lang.Object)
+	 */
 	@Override
 	public void onLocationDetailsFragmentItemClick(int position, Object obj) {
 		MMFragment mmFragment;
@@ -157,6 +179,10 @@ public class SearchActivity extends FragmentActivity implements MMOnNoCategoryFr
 		return;
 	}
 	
+	/**
+	 * 
+	 * @param mmFragment
+	 */
 	private void performTransaction(MMFragment mmFragment) {
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);

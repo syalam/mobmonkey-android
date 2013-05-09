@@ -39,7 +39,7 @@ public class LocationDetailsMapFragment extends MMFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_locationdetails_map, container, false);
-		smfLocation = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmap);
+		smfLocation = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fraglocationdetailsmap);
 		googleMap = smfLocation.getMap();
 		
 		JSONObject jObj;
