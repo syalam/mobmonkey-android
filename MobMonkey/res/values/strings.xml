@@ -187,8 +187,11 @@
 	
 	<string name="ad_title_no_history">No history</string>
 	<string name="ad_title_clear_history">Clear history</string>
+	<string name="ad_title_remove_history">Remove history</string>
 	<string name="ad_message_no_history">No history available</string>
-	<string name="ad_message_clear_history">Are you sure to clear all your history?</string>
+	<string name="ad_message_clear_history">Clear entire history?</string>
+	<string name="ad_message_remove">Remove \'</string>
+	<string name="ad_message_from_history">\' from history?</string>
 	<string name="ad_btn_ok">OK</string>
 	
 	<!-- SearchResultLocationDetails Fragment -->

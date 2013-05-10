@@ -1,5 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -34,7 +37,8 @@ import com.mobmonkey.mobmonkeysdk.utils.*;
  *
  */
 public class HistoryFragment extends MMFragment implements OnClickListener,
-														   OnItemClickListener {
+														   OnItemClickListener,
+														   OnItemLongClickListener {
 	private static final String TAG = "HistoryFragment";
 	
 	private SharedPreferences userPrefs;
@@ -42,10 +46,10 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 	
 	private JSONArray history;
 	private Location location;
-	private MMSearchResultsItem[] historyLocations;
+	private ArrayList<JSONObject> historyLocations;
 	
 	private ListView lvHistory;
-	ArrayAdapter<MMSearchResultsItem> arrayAdapter;
+	ArrayAdapter<JSONObject> arrayAdapter;
 	
 	private MMOnSearchResultsFragmentItemClickListener searchResultsLocationSelectListener;
 	
@@ -67,12 +71,16 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 		try {
 			if(!userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY).equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 				history = new JSONArray(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY));
-				getHistoryLocations();
-				arrayAdapter = new MMHistoryArrayAdapter(getActivity(), R.layout.listview_row_history, historyLocations);
-				lvHistory.setAdapter(arrayAdapter);
-				
-				btnClear.setOnClickListener(HistoryFragment.this);
-				lvHistory.setOnItemClickListener(HistoryFragment.this);
+
+				if(history.length() > 0) {
+					getHistoryLocations();
+					
+					btnClear.setOnClickListener(HistoryFragment.this);
+					lvHistory.setOnItemClickListener(HistoryFragment.this);
+					lvHistory.setOnItemLongClickListener(HistoryFragment.this);
+				} else {
+					displayNoHistoryAlert();
+				}
 			} else {
 				displayNoHistoryAlert();
 			}
@@ -113,20 +121,31 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
 	 */
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+		searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(arrayAdapter.getItem(position));
+	}
+
+	/* (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemLongClickListener#onItemLongClick(android.widget.AdapterView, android.view.View, int, long)
+	 */
+	@Override
+	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
 		try {
-			searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(history.getJSONObject(position));
+			promptRemoveLocationFromHistory(arrayAdapter.getItem(position));
+			return true;
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.mobmonkey.mobmonkeyandroid.utils.MMFragment#onFragmentBackPressed()
 	 */
 	@Override
 	public void onFragmentBackPressed() {
-		
+		userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, history.toString());
+		userPrefsEditor.commit();
 	}
 	
 	/**
@@ -134,16 +153,13 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 	 * @throws JSONException
 	 */
 	private void getHistoryLocations() throws JSONException {
-		historyLocations = new MMSearchResultsItem[history.length()];
-			for(int i = 0; i < history.length(); i++) {
-				JSONObject jObj = history.getJSONObject(i);
-				historyLocations[i] = new MMSearchResultsItem();
-				historyLocations[i].setLocName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
-				historyLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + 
-						getString(R.string.miles));
-				historyLocations[i].setLocAddr(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + 
-										jObj.getString(MMSDKConstants.JSON_KEY_REGION) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_POSTCODE));
-			}
+		historyLocations = new ArrayList<JSONObject>();
+		for(int i = 0; i < history.length(); i++) {
+			historyLocations.add(history.getJSONObject(i));
+		}
+		
+		arrayAdapter = new MMHistoryArrayAdapter(getActivity(), R.layout.listview_row_history, historyLocations);
+		lvHistory.setAdapter(arrayAdapter);
 	}
 	
 	/**
@@ -167,7 +183,7 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 	 * 
 	 */
 	private void promptClearHistory() {
-		if(historyLocations.length > 0) {
+		if(historyLocations.size() > 0) {
 			new AlertDialog.Builder(getActivity())
 				.setTitle(R.string.ad_title_clear_history)
 				.setMessage(R.string.ad_message_clear_history)
@@ -185,16 +201,33 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 		}
 	}
 	
+	private void promptRemoveLocationFromHistory(final JSONObject loc) throws JSONException {
+		new AlertDialog.Builder(getActivity())
+			.setTitle(R.string.ad_title_remove_history)
+			.setMessage(getString(R.string.ad_message_remove) + loc.getString(MMSDKConstants.JSON_KEY_NAME) + getString(R.string.ad_message_from_history))
+			.setCancelable(false)
+			.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					removeFromHistory(loc);
+				}
+			})
+			.setNegativeButton(R.string.ad_btn_no, null)
+			.show();
+	}
+	
 	/**
 	 * 
 	 */
 	private void clearHistory() {
-		historyLocations = new MMSearchResultsItem[0];
-		arrayAdapter = new MMHistoryArrayAdapter(getActivity(), R.layout.listview_row_history, historyLocations);
-		lvHistory.setAdapter(arrayAdapter);
-		lvHistory.invalidate();
-		
-		userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_HISTORY);
-		userPrefsEditor.commit();
+		historyLocations.removeAll(historyLocations);
+		history = new JSONArray(historyLocations);
+		arrayAdapter.notifyDataSetChanged();
+	}
+	
+	private void removeFromHistory(JSONObject loc) {
+		historyLocations.remove(loc);
+		history = new JSONArray(historyLocations);
+		arrayAdapter.notifyDataSetChanged();
 	}
 }

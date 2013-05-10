@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -71,6 +72,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
  *
  */
 public class SearchLocationsFragment extends MMFragment implements OnClickListener,
+																   OnLongClickListener,
 																   OnTouchListener,
 																   OnInfoWindowClickListener,
 																   OnMapLongClickListener {
@@ -113,6 +115,8 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private MMOnCategoryFragmentItemClickListener onCategoryFragmentItemClickListener;
 	
 	private boolean retrieveNearbyLocations = true;
+	private boolean nearbyLocationsSearch = false;
+	private String searchText = MMSDKConstants.DEFAULT_STRING_EMPTY;
 	
 	/*
 	 * (non-Javadoc)
@@ -182,6 +186,8 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 					addToHistory(nearbyLocationsSearchArrayAdapter.getItem(position));
 					onNearbyLocationsFragmentItemClickListener.onNearbyLocationsItemClick(nearbyLocationsSearchArrayAdapter.getItem(position));
 					inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+					nearbyLocationsSearch = true;
+					searchText = etSearch.getText().toString();
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -198,6 +204,12 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			} else {
 				setNearbyLocations();
 				setNearbyLocationsSearch();
+				if(nearbyLocationsSearch) {
+					tvNavBarTitle.setVisibility(View.GONE);
+					btnCancel.setVisibility(View.VISIBLE);
+					llNearbyLocationsSearch.setVisibility(View.VISIBLE);
+					etSearch.setText(searchText);
+				}
 			}
 			getLocationHistory();
 		} catch (JSONException e) {
@@ -237,16 +249,13 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			case R.id.llcreatehotspot:
 				break;
 			case R.id.etsearch:
+				nearbyLocationsSearch = true;
 				tvNavBarTitle.setVisibility(View.GONE);
 				btnCancel.setVisibility(View.VISIBLE);
 				llNearbyLocationsSearch.setVisibility(View.VISIBLE);
 				break;
 			case R.id.btncancel:
-				tvNavBarTitle.setVisibility(View.VISIBLE);
-				btnCancel.setVisibility(View.GONE);
-				llNearbyLocationsSearch.setVisibility(View.GONE);
-				etSearch.setText(MMSDKConstants.DEFAULT_STRING_EMPTY);
-				inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+				cancelNearbyLocationsSearch();
 				break;
 			case R.id.llloadmore:
 				try {
@@ -257,6 +266,22 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 				}
 				break;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see android.view.View.OnLongClickListener#onLongClick(android.view.View)
+	 */
+	@Override
+	public boolean onLongClick(View v) {
+		switch(v.getId()) {
+			case R.id.etsearch:
+				nearbyLocationsSearch = true;
+				tvNavBarTitle.setVisibility(View.GONE);
+				btnCancel.setVisibility(View.VISIBLE);
+				llNearbyLocationsSearch.setVisibility(View.VISIBLE);
+				break;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -342,7 +367,10 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 */
 	@Override
 	public void onFragmentBackPressed() {
-		
+		Log.d(TAG, TAG + "onFragmentBackPressed");
+		if(llNearbyLocationsSearch.getVisibility() == View.VISIBLE) {
+			cancelNearbyLocationsSearch();
+		}
 	}
 	
 	/**
@@ -351,6 +379,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private void setSearchByText() {
 //		etSearch.setOnTouchListener(SearchLocationsFragment.this);
 		etSearch.setOnClickListener(SearchLocationsFragment.this);
+		etSearch.setOnLongClickListener(SearchLocationsFragment.this);
 		etSearch.addTextChangedListener(new NearbyLocationsTextWatcher());
 //		etSearch.setKeyListener(new NearbyLocationsKeyListener());
 		
@@ -553,6 +582,16 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		}
 		
 		return false;
+	}
+	
+	private void cancelNearbyLocationsSearch() {
+		nearbyLocationsSearch = false;
+		searchText = MMSDKConstants.DEFAULT_STRING_EMPTY;
+		tvNavBarTitle.setVisibility(View.VISIBLE);
+		btnCancel.setVisibility(View.GONE);
+		llNearbyLocationsSearch.setVisibility(View.GONE);
+		etSearch.setText(MMSDKConstants.DEFAULT_STRING_EMPTY);
+		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 	}
 	
     /**

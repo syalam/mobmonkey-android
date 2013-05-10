@@ -173,6 +173,8 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnNea
 			fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
 			fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
 			fragmentTransaction.commit();
+		} else {
+			fragmentStack.peek().onFragmentBackPressed();
 		}
 		
 		moveTaskToBack(true);
