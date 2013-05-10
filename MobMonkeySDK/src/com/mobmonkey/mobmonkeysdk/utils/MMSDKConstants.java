@@ -132,11 +132,12 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH = "Media thumbnail width";
 	public static final String KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT = "Media thumbnail height";
 	public static final String KEY_INTENT_EXTRA_MESSAGE = "Message";
-	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
+	public static final String KEY_INTENT_EXTRA_NEARBY_LOCATIONS = "nearby locations";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING = "Repeating";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
-	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
+	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE = "Search result title";
+	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
 	public static final String KEY_INTENT_EXTRA_SELECTED_CATEGORIES = "Selected categories";
 	public static final String KEY_INTENT_EXTRA_SELECTED_CATEGORIES_IDS = "Selected categories IDs";
 	public static final String KEY_INTENT_EXTRA_TOP_LEVEL = "Top level";
@@ -207,6 +208,7 @@ public final class MMSDKConstants {
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER_AUTH = 2002;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2003;
 	public static final int REQUEST_CODE_TURN_ON_GPS_LOCATION = 5000;
+	public static final int REQUEST_CODE_FILTER_NEARBY_LOCATIONS = 8000;
 	public static final int REQUEST_CODE_IMAGE = 10000;
 	public static final int REQUEST_CODE_VIDEO = 10001;
 	public static final int REQUEST_CODE_ADD_MESSAGE = 100000;

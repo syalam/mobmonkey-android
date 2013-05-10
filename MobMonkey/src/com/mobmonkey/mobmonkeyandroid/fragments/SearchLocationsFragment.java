@@ -1,5 +1,6 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,22 +10,28 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -43,6 +50,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.SearchNearbyLocationsFilterScreen;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMNearbyLocationsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchCategoriesArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchCategoriesItem;
@@ -70,7 +79,8 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
  *
  */
 public class SearchLocationsFragment extends MMFragment implements OnClickListener,
-																   OnEditorActionListener,
+//																   OnEditorActionListener,
+																   OnTouchListener,
 																   OnInfoWindowClickListener,
 																   OnMapLongClickListener {
 	private static final String TAG = "SearchLocationsFragment: ";
@@ -82,16 +92,20 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private JSONArray nearbyLocations;
 	private JSONArray locationHistory;
 	
+	private TextView tvNavBarTitle;
 	private LinearLayout llCreateHotSpot;
 	private EditText etSearch;
+	private Button btnCancel;
 	private MMScrollView svNearbyLocations;
 	private MMExpandedNearbyLocationsListView elvNearbyLocations;
 	private LinearLayout llLoadMore;
 	private TextView tvHoldToPanAndZoom;
 	private SupportMapFragment smfNearbyLocations;
 	private MMExpandedListView elvSearch;
-	
 	private GoogleMap googleMap;
+	
+	private MMNearbyLocationsArrayAdapter nearbyLocationsArrayAdapter;
+	private InputMethodManager inputMethodManager;
 	
 	private String searchTerm;
 	private int nearbyLocationsCount = 5;
@@ -117,8 +131,10 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		userPrefsEditor = userPrefs.edit();
 		
 		View view = inflater.inflate(R.layout.fragment_searchlocations_screen, container, false);
+		tvNavBarTitle = (TextView) view.findViewById(R.id.tvnavbartitle);
 		llCreateHotSpot = (LinearLayout) view.findViewById(R.id.llcreatehotspot);
 		etSearch = (EditText) view.findViewById(R.id.etsearch);
+		btnCancel = (Button) view.findViewById(R.id.btncancel);
 		svNearbyLocations = (MMScrollView) view.findViewById(R.id.svnearbylocations);
 		elvNearbyLocations = (MMExpandedNearbyLocationsListView) view.findViewById(R.id.enllvnearbylocations);
 		llLoadMore = (LinearLayout) view.findViewById(R.id.llloadmore);
@@ -127,9 +143,11 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		elvSearch = (MMExpandedListView) view.findViewById(R.id.elvsearch);
 		googleMap = smfNearbyLocations.getMap();
 		
+		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		markerHashMap = new HashMap<Marker, JSONObject>();
 		
 		llCreateHotSpot.setOnClickListener(SearchLocationsFragment.this);
+		btnCancel.setOnClickListener(SearchLocationsFragment.this);
 		elvNearbyLocations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -204,6 +222,19 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 //		}
 	}
 
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch(requestCode) {
+			case MMSDKConstants.REQUEST_CODE_FILTER_NEARBY_LOCATIONS:
+				tvNavBarTitle.setVisibility(View.VISIBLE);
+				break;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
@@ -213,10 +244,23 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		switch(view.getId()) {
 			case R.id.llcreatehotspot:
 				break;
+			case R.id.etsearch:
+				tvNavBarTitle.setVisibility(View.GONE);
+				Intent searchNearbyLocationsIntent = new Intent(getActivity(), SearchNearbyLocationsFilterScreen.class);
+				searchNearbyLocationsIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_NEARBY_LOCATIONS, nearbyLocations.toString());
+				startActivityForResult(searchNearbyLocationsIntent, MMSDKConstants.REQUEST_CODE_FILTER_NEARBY_LOCATIONS);
+				break;
+			case R.id.btncancel:
+				tvNavBarTitle.setVisibility(View.VISIBLE);
+				btnCancel.setVisibility(View.GONE);
+				etSearch.setText(MMSDKConstants.DEFAULT_STRING_EMPTY);
+				inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+				break;
 			case R.id.llloadmore:
 				try {
 					nearbyLocationsCount += 5;
 					setNearbyLocations();
+//					etSearch.setText(etSearch.getText().toString());
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -224,18 +268,33 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see android.widget.TextView.OnEditorActionListener#onEditorAction(android.widget.TextView, int, android.view.KeyEvent)
+//	/*
+//	 * (non-Javadoc)
+//	 * @see android.widget.TextView.OnEditorActionListener#onEditorAction(android.widget.TextView, int, android.view.KeyEvent)
+//	 */
+//	@Override
+//	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//		Log.d(TAG, TAG + "actionId: " + actionId);
+//		if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+//			searchTerm = etSearch.getText().toString();
+//			searchByText();
+//		}
+//		return true;
+//	}
+
+	/* (non-Javadoc)
+	 * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
 	 */
 	@Override
-	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-		Log.d(TAG, TAG + "actionId: " + actionId);
-		if(actionId == EditorInfo.IME_ACTION_SEARCH) {
-			searchTerm = etSearch.getText().toString();
-//			searchByText();
+	public boolean onTouch(View v, MotionEvent event) {
+		switch(v.getId()) {
+			case R.id.etsearch:
+				tvNavBarTitle.setVisibility(View.GONE);
+//				btnCancel.setVisibility(View.VISIBLE);
+				startActivityForResult(new Intent(getActivity(), SearchNearbyLocationsFilterScreen.class), MMSDKConstants.REQUEST_CODE_FILTER_NEARBY_LOCATIONS);
+				return true;
 		}
-		return true;
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -307,14 +366,18 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 */
 	@Override
 	public void onFragmentBackPressed() {
-
+		
 	}
 	
 	/**
 	 * 
 	 */
 	private void setSearchByText() {
-		etSearch.setOnEditorActionListener(SearchLocationsFragment.this);
+//		etSearch.setOnEditorActionListener(SearchLocationsFragment.this);
+//		etSearch.setOnTouchListener(SearchLocationsFragment.this);
+		etSearch.setOnClickListener(SearchLocationsFragment.this);
+//		etSearch.addTextChangedListener(new NearbyLocationsTextWatcher());
+//		etSearch.setKeyListener(new NearbyLocationsKeyListener());
 		
 		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
 			etSearch.setFocusable(false);
@@ -323,6 +386,9 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void setSearch() {
 		String[] searchArray = getActivity().getResources().getStringArray(R.array.array_search);
 		MMSearchCategoriesItem[] searchItems = new MMSearchCategoriesItem[searchArray.length];
@@ -338,24 +404,24 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		elvSearch.setAdapter(arrayAdapter);
 	}
 	
-	/**
-	 * 
-	 */
-	private void searchByText() {
-		MMSearchLocationAdapter.searchLocationWithText(new SearchTextCallback(), 
-													   MMLocationManager.getLocationLatitude(),
-													   MMLocationManager.getLocationLongitude(),
-													   userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE),
-													   searchTerm,
-													   MMConstants.PARTNER_ID,
-													   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-													   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-		MMProgressDialog.displayDialog(getActivity(),
-									   MMSDKConstants.DEFAULT_STRING_EMPTY,
-									   getString(R.string.pd_search_for) + MMSDKConstants.DEFAULT_STRING_SPACE + searchTerm + getString(R.string.pd_ellipses));
-    	InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
-	}
+//	/**
+//	 * 
+//	 */
+//	private void searchByText() {
+//		MMSearchLocationAdapter.searchLocationWithText(new SearchTextCallback(), 
+//													   MMLocationManager.getLocationLatitude(),
+//													   MMLocationManager.getLocationLongitude(),
+//													   userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_FIVE_MILE),
+//													   searchTerm,
+//													   MMConstants.PARTNER_ID,
+//													   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+//													   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+//		MMProgressDialog.displayDialog(getActivity(),
+//									   MMSDKConstants.DEFAULT_STRING_EMPTY,
+//									   getString(R.string.pd_search_for) + MMSDKConstants.DEFAULT_STRING_SPACE + searchTerm + getString(R.string.pd_ellipses));
+//    	InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+//	}
 	
 	/**
 	 * 
@@ -401,32 +467,45 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	}
 	
 	/**
+	 * @throws JSONException 
+	 * 
+	 */
+//	private void updateNearbyLocations() throws JSONException {
+//		if(nearbyLocationsCount >= nearbyLocations.length()) {
+//			nearbyLocationsCount = nearbyLocations.length();
+//			llLoadMore.setVisibility(View.GONE);
+//		}
+//		nearbyLocationsArrayAdapter.setLocationsToDisplay(nearbyLocationsCount);
+//		nearbyLocationsArrayAdapter.notifyDataSetChanged();
+//		addToGoogleMap();
+//	}
+	
+	/**
 	 * 
 	 * @throws JSONException
 	 */
 	private void setNearbyLocations() throws JSONException {
-		int nearbyLocationsToDisplay = 0;
 		if(nearbyLocationsCount >= nearbyLocations.length()) {
-			nearbyLocationsToDisplay = nearbyLocations.length();
+			nearbyLocationsCount = nearbyLocations.length();
 			llLoadMore.setVisibility(View.GONE);
-		} else {
-			nearbyLocationsToDisplay = nearbyLocationsCount;
 		}
 		
-		MMSearchResultsItem[] resultLocations = new MMSearchResultsItem[nearbyLocationsToDisplay];
-		for(int i = 0; i < nearbyLocationsToDisplay; i++) {
+		ArrayList<MMSearchResultsItem> resultLocations = new ArrayList<MMSearchResultsItem>();
+		for(int i = 0; i < nearbyLocationsCount; i++) {
 			JSONObject jObj = nearbyLocations.getJSONObject(i);
-			resultLocations[i] = new MMSearchResultsItem();
-			resultLocations[i].setLocName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
-			resultLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + 
+			MMSearchResultsItem searchResultsItem = new MMSearchResultsItem();
+			searchResultsItem.setLocName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
+			searchResultsItem.setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + 
 					getString(R.string.miles));
-			resultLocations[i].setLocAddr(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + 
+			searchResultsItem.setLocAddr(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + 
 									jObj.getString(MMSDKConstants.JSON_KEY_REGION));
+			resultLocations.add(searchResultsItem);
 			Log.d(TAG, i + " stream: " + jObj.getInt(MMSDKConstants.MEDIA_LIVESTREAMING) + " video: " + jObj.getInt(MMSDKConstants.JSON_KEY_VIDEOS) + " images: " + jObj.getInt(MMSDKConstants.JSON_KEY_IMAGES));
 		}
 		
-		ArrayAdapter<MMSearchResultsItem> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
-		elvNearbyLocations.setAdapter(arrayAdapter);
+		nearbyLocationsArrayAdapter = new MMNearbyLocationsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
+//		nearbyLocationsArrayAdapter.setLocationsToDisplay(nearbyLocationsCount);
+		elvNearbyLocations.setAdapter(nearbyLocationsArrayAdapter);
 		addToGoogleMap();
 	}
 	
@@ -436,16 +515,15 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 */
 	private void addToGoogleMap() throws JSONException {
 		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+		googleMap.clear();
 		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+		markerHashMap.clear();
 		
-		int nearbyLocationsToDisplay = 0;
 		if(nearbyLocationsCount >= nearbyLocations.length()) {
-			nearbyLocationsToDisplay = nearbyLocations.length();
-		} else {
-			nearbyLocationsToDisplay = nearbyLocationsCount;
+			nearbyLocationsCount = nearbyLocations.length();
 		}
 		
-		for(int i = 0; i < nearbyLocationsToDisplay; i++) {
+		for(int i = 0; i < nearbyLocationsCount; i++) {
 			JSONObject jObj = nearbyLocations.getJSONObject(i);
 			
 			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
@@ -565,6 +643,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 					try {
 						retrieveNearbyLocations = false;
 						nearbyLocations = new JSONArray((String) obj);
+						nearbyLocationsCount = 5;
 						setNearbyLocations();
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -625,4 +704,23 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
             }
         }
     }
+	
+//	private class NearbyLocationsTextWatcher implements TextWatcher {
+//		@Override
+//		public void afterTextChanged(Editable s) {
+//			
+//		}
+//
+//		@Override
+//		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//			
+//		}
+//
+//		@Override
+//		public void onTextChanged(CharSequence s, int start, int before, int count) {
+//			if(nearbyLocationsArrayAdapter != null) {
+//				nearbyLocationsArrayAdapter.getFilter().filter(s);
+//			}
+//		}
+//	}
 }

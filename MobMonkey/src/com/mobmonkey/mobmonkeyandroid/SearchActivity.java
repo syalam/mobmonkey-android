@@ -40,8 +40,8 @@ public class SearchActivity extends FragmentActivity implements MMOnNearbyLocati
 																MMOnCategoryResultsFragmentItemClickListener,
 																MMOnSearchResultsFragmentItemClickListener,
 																MMOnLocationDetailsFragmentItemClickListener {
-	FragmentManager fragmentManager;
-	Stack<MMFragment> fragmentStack;
+	private FragmentManager fragmentManager;
+	private Stack<MMFragment> fragmentStack;
 	
 	/*
 	 * (non-Javadoc)
