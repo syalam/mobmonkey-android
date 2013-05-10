@@ -196,14 +196,18 @@
 	
 	<!-- SearchResultLocationDetails Fragment -->
 	<string name="tv_make_request">Make a Request</string>
+	<string name="tv_finding_members">Finding Members&#8230;</string>
+	<string name="tv_no_members_found">No members found</string>
 	<string name="tv_members_found">members found</string>
+	<string name="tv_location_information">Location Information</string>
 	<string name="tv_no_phone_number_available">No Phone Number Available</string>
 	<string name="tv_add_notifications">Add Notifications</string>
 	<string name="tv_favorite">Favorite</string>
 	<string name="tv_remove_favorite">Remove favorite</string>
 	
+	<string name="btn_create_hot_spot">Create Hot Spot</string>
+	
 	<string name="pd_loading_location_information">Loading location information&#8230;</string>
-<!-- 	<string name="pd_retrieving_media">Retrieving available media&#8230;</string> -->
 	<string name="pd_updating_favorites">Updating favorites&#8230;</string>
 	
 	<string name="toast_unable_to_load_location_info">Unable to load location information</string>

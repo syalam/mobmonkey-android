@@ -24,7 +24,8 @@ import android.util.Log;
  */
 public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFragmentClickListener,
 																   MMOnSearchResultsFragmentItemClickListener,
-																   MMOnLocationDetailsFragmentItemClickListener {
+																   MMOnAddressFragmentItemClickListener,
+																   MMOnAddNotificationsFragmentItemClickListener {
 	private static final String TAG = "FavoritesActivity: ";
 	
 	FragmentManager fragmentManager;
@@ -82,31 +83,29 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 		performTransaction(locationDetailsFragment);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnLocationDetailsFragmentItemClickListener#onLocationDetailsFragmentItemClick(int, java.lang.Object)
+	 */
 	@Override
-	public void onLocationDetailsFragmentItemClick(int position, Object obj) {
-		MMFragment mmFragment;
-		Bundle data;
-		switch(position) {
-			case 0:
-				Intent dialerIntent = new Intent(Intent.ACTION_DIAL);
-				dialerIntent.setData(Uri.parse("tel:" + ((String) obj)));
-				startActivity(dialerIntent);
-				break;
-			case 1:
-				mmFragment = new LocationDetailsMapFragment();
-				data = new Bundle();
-				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((String) obj));
-				mmFragment.setArguments(data);
-				performTransaction(mmFragment);
-				break;
-			case 2:
-				mmFragment = new AddNotificationsFragment();
-				data = new Bundle();
-				data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((String) obj));
-				mmFragment.setArguments(data);
-				performTransaction(mmFragment);
-				break;
-		}
+	public void onAddressFragmentItemClick(JSONObject jObj) {
+		LocationDetailsMapFragment locationsDetailsMapFragment = new LocationDetailsMapFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+		locationsDetailsMapFragment.setArguments(data);
+		performTransaction(locationsDetailsMapFragment);
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnAddNotificationsFragmentItemClickListener#onAddNotificationsFragmentItemClick(org.json.JSONObject)
+	 */
+	@Override
+	public void onAddNotificationsFragmentItemClick(JSONObject jObj) {
+		AddNotificationsFragment addNotificationsFragment = new AddNotificationsFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+		addNotificationsFragment.setArguments(data);
+		performTransaction(addNotificationsFragment);
 	}
 	
 	/**
