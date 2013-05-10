@@ -9,7 +9,6 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,7 +35,6 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.TextView.OnEditorActionListener;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,20 +49,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMNearbyLocationsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchCategoriesArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchCategoriesItem;
-import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchResultsItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnCategoryFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnHistoryFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.listeners.MMOnSearchTextFragmentCompleteListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedNearbyLocationsListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMScrollView;
-import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -78,7 +71,6 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
  *
  */
 public class SearchLocationsFragment extends MMFragment implements OnClickListener,
-//																   OnEditorActionListener,
 																   OnTouchListener,
 																   OnInfoWindowClickListener,
 																   OnMapLongClickListener {
@@ -110,14 +102,12 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private MMNearbyLocationsArrayAdapter nearbyLocationsSearchArrayAdapter; 
 	private InputMethodManager inputMethodManager;
 	
-//	private String searchTerm;
 	private int nearbyLocationsCount = 5;
 	private Marker currMarker;
 	private float currZoomLevel = 16;
 	private boolean enablePanAndZoom = false;
 	private HashMap<Marker, JSONObject> markerHashMap;
 	
-//	private MMOnSearchTextFragmentCompleteListener onSearchTextFragmentCompleteListener;
 	private MMOnNearbyLocationsItemClickListener onNearbyLocationsFragmentItemClickListener;
 	private MMOnHistoryFragmentItemClickListener onHistFragmentItemClickListener;
 	private MMOnCategoryFragmentItemClickListener onCategoryFragmentItemClickListener;
@@ -226,30 +216,14 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-//		if(activity instanceof MMOnSearchTextFragmentCompleteListener) {
-//			onSearchTextFragmentCompleteListener = (MMOnSearchTextFragmentCompleteListener) activity;
-			if(activity instanceof MMOnNearbyLocationsItemClickListener) {
-				onNearbyLocationsFragmentItemClickListener = (MMOnNearbyLocationsItemClickListener) activity;
-				if(activity instanceof MMOnHistoryFragmentItemClickListener) {
-					onHistFragmentItemClickListener = (MMOnHistoryFragmentItemClickListener) activity;
-					if(activity instanceof MMOnCategoryFragmentItemClickListener) {
-						onCategoryFragmentItemClickListener = (MMOnCategoryFragmentItemClickListener) activity;
-					}
+		if(activity instanceof MMOnNearbyLocationsItemClickListener) {
+			onNearbyLocationsFragmentItemClickListener = (MMOnNearbyLocationsItemClickListener) activity;
+			if(activity instanceof MMOnHistoryFragmentItemClickListener) {
+				onHistFragmentItemClickListener = (MMOnHistoryFragmentItemClickListener) activity;
+				if(activity instanceof MMOnCategoryFragmentItemClickListener) {
+					onCategoryFragmentItemClickListener = (MMOnCategoryFragmentItemClickListener) activity;
 				}
 			}
-//		}
-	}
-
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onActivityResult(int, int, android.content.Intent)
-	 */
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		switch(requestCode) {
-			case MMSDKConstants.REQUEST_CODE_FILTER_NEARBY_LOCATIONS:
-				tvNavBarTitle.setVisibility(View.VISIBLE);
-				break;
 		}
 	}
 
@@ -278,27 +252,12 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 				try {
 					nearbyLocationsCount += 5;
 					setNearbyLocations();
-//					etSearch.setText(etSearch.getText().toString());
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 				break;
 		}
 	}
-
-//	/*
-//	 * (non-Javadoc)
-//	 * @see android.widget.TextView.OnEditorActionListener#onEditorAction(android.widget.TextView, int, android.view.KeyEvent)
-//	 */
-//	@Override
-//	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//		Log.d(TAG, TAG + "actionId: " + actionId);
-//		if(actionId == EditorInfo.IME_ACTION_SEARCH) {
-//			searchTerm = etSearch.getText().toString();
-//			searchByText();
-//		}
-//		return true;
-//	}
 
 	/* (non-Javadoc)
 	 * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
@@ -390,7 +349,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 * 
 	 */
 	private void setSearchByText() {
-//		etSearch.setOnEditorActionListener(SearchLocationsFragment.this);
 //		etSearch.setOnTouchListener(SearchLocationsFragment.this);
 		etSearch.setOnClickListener(SearchLocationsFragment.this);
 		etSearch.addTextChangedListener(new NearbyLocationsTextWatcher());
@@ -420,25 +378,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		ArrayAdapter<MMSearchCategoriesItem> arrayAdapter = new MMSearchCategoriesArrayAdapter(getActivity(), R.layout.listview_row_searchcategory, searchItems);
 		elvSearch.setAdapter(arrayAdapter);
 	}
-	
-//	/**
-//	 * 
-//	 */
-//	private void searchByText() {
-//		MMSearchLocationAdapter.searchLocationWithText(new SearchTextCallback(), 
-//													   MMLocationManager.getLocationLatitude(),
-//													   MMLocationManager.getLocationLongitude(),
-//													   userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_FIVE_MILE),
-//													   searchTerm,
-//													   MMConstants.PARTNER_ID,
-//													   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-//													   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-//		MMProgressDialog.displayDialog(getActivity(),
-//									   MMSDKConstants.DEFAULT_STRING_EMPTY,
-//									   getString(R.string.pd_search_for) + MMSDKConstants.DEFAULT_STRING_SPACE + searchTerm + getString(R.string.pd_ellipses));
-//    	InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
-//	}
 	
 	/**
 	 * 
@@ -482,20 +421,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			return false;
 		}
 	}
-	
-	/**
-	 * @throws JSONException 
-	 * 
-	 */
-//	private void updateNearbyLocations() throws JSONException {
-//		if(nearbyLocationsCount >= nearbyLocations.length()) {
-//			nearbyLocationsCount = nearbyLocations.length();
-//			llLoadMore.setVisibility(View.GONE);
-//		}
-//		nearbyLocationsArrayAdapter.setLocationsToDisplay(nearbyLocationsCount);
-//		nearbyLocationsArrayAdapter.notifyDataSetChanged();
-//		addToGoogleMap();
-//	}
 	
 	/**
 	 * 
@@ -712,6 +637,11 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
         }
     }
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class NearbyLocationsTextWatcher implements TextWatcher {
 		@Override
 		public void afterTextChanged(Editable s) {

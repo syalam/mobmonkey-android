@@ -34,7 +34,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  * @author Dezapp, LLC
  *
  */
-public class SearchActivity extends FragmentActivity implements MMOnNearbyLocationsItemClickListener,
+public class SearchLocationsActivity extends FragmentActivity implements MMOnNearbyLocationsItemClickListener,
 																MMOnHistoryFragmentItemClickListener,
 																MMOnCategoryFragmentItemClickListener,
 																MMOnCategoryResultsFragmentItemClickListener,

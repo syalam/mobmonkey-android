@@ -203,7 +203,7 @@ public class MainScreen extends TabActivity {
 	private void setTabs() {
 		addTab(MMSDKConstants.TAB_TITLE_TRENDING_NOW, R.drawable.tab_trendingnow, TrendingNowActivity.class);
 		addTab(MMSDKConstants.TAB_TITLE_INBOX, R.drawable.tab_inbox, InboxActivity.class);
-		addTab(MMSDKConstants.TAB_TITLE_SEARCH, R.drawable.tab_search, SearchActivity.class);
+		addTab(MMSDKConstants.TAB_TITLE_SEARCH, R.drawable.tab_search, SearchLocationsActivity.class);
 		addTab(MMSDKConstants.TAB_TITLE_FAVORITES, R.drawable.tab_favorites, FavoritesActivity.class);
 		addTab(MMSDKConstants.TAB_TITLE_SETTINGS, R.drawable.tab_settings, SettingsActivity.class);
 		tabHost.setCurrentTab(userPrefs.getInt(MMSDKConstants.TAB_TITLE_CURRENT_TAG, 0));
