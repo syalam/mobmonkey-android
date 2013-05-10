@@ -121,13 +121,6 @@
 		    
 		</activity>
 		
-		<activity android:name=".SearchNearbyLocationsFilterScreen"
-		    android:theme="@android:style/Theme.Translucent.NoTitleBar"
-		    android:windowSoftInputMode="stateVisible"
-		    android:screenOrientation="portrait">
-		    
-		</activity>
-		
 		<activity android:name=".FilterScreen"
 		    android:screenOrientation="portrait">
 		    

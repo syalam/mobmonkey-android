@@ -41,7 +41,7 @@
 	            android:textStyle="bold"/>
 	        
 	    </LinearLayout>
-	    
+	        
 	    <LinearLayout android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 			android:layout_marginTop="10dp"
@@ -81,77 +81,112 @@
 		android:layout_height="wrap_content"
 		android:background="@drawable/location_details_divider_gradient"/>
 	
-	<com.mobmonkey.mobmonkeyandroid.utils.MMScrollView android:id="@+id/svnearbylocations"
-	    android:layout_width="match_parent"
-		android:layout_height="match_parent">
-		
-		<LinearLayout android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:padding="10dp">
-		
-		    <TextView android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_marginLeft="5dp"
-				android:layout_marginBottom="5dp"
-		        android:text="@string/tv_nearby"
-		        android:textColor="@android:color/black"
-		        android:textAppearance="?android:attr/textAppearanceMedium"
-		        android:textStyle="bold"/>
-		        
-			<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedNearbyLocationsListView android:id="@+id/enllvnearbylocations"
-			    android:layout_width="match_parent"
-			    android:layout_height="0dip"
-			    android:layout_margin="0dp"
-			    android:layout_weight="1"
-			    android:background="@drawable/listview_border"
-				android:divider="@drawable/listview_divider"
-				android:dividerHeight="1dp"/>
+	<FrameLayout android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_weight="1">
+	
+		<com.mobmonkey.mobmonkeyandroid.utils.MMScrollView android:id="@+id/svnearbylocations"
+		    android:layout_width="match_parent"
+			android:layout_height="match_parent">
 			
-			<LinearLayout android:id="@+id/llloadmore"
-			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content"
-			    android:padding="10dp"
-			    android:background="@drawable/listview_border">
-			    
-			    <TextView android:layout_width="match_parent"
+			<LinearLayout android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:padding="10dp">
+			
+			    <TextView android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_gravity="center"
-			        android:gravity="center"
-			        android:text="@string/tv_load_more"
+			        android:layout_marginLeft="5dp"
+					android:layout_marginBottom="5dp"
+			        android:text="@string/tv_nearby"
+			        android:textColor="@android:color/black"
 			        android:textAppearance="?android:attr/textAppearanceMedium"
 			        android:textStyle="bold"/>
-			    
+			        
+				<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedNearbyLocationsListView android:id="@+id/enllvnearbylocations"
+				    android:layout_width="match_parent"
+				    android:layout_height="0dip"
+				    android:layout_margin="0dp"
+				    android:layout_weight="1"
+				    android:background="@drawable/listview_border"
+					android:divider="@drawable/listview_divider"
+					android:dividerHeight="1dp"/>
+				
+				<LinearLayout android:id="@+id/llloadmore"
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:padding="10dp"
+				    android:background="@drawable/listview_border">
+				    
+				    <TextView android:layout_width="match_parent"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:gravity="center"
+				        android:text="@string/tv_load_more"
+				        android:textAppearance="?android:attr/textAppearanceMedium"
+				        android:textStyle="bold"/>
+				    
+				</LinearLayout>
+				
+				<TextView android:id="@+id/tvholdtopanandzoom"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_marginLeft="5dp"
+				    android:layout_marginTop="5dp"
+				    android:layout_marginBottom="5dp"
+				    android:text="@string/tv_hold_to_enable_pan_and_zoom"
+				    android:textColor="@android:color/black"
+				    android:textAppearance="?android:attr/textAppearanceMedium"
+				    android:textStyle="bold"/>
+				    
+	   			<fragment android:id="@+id/fragnearbylocationsmap"
+					android:layout_width="match_parent"
+					android:layout_height="300dp"
+					class="com.google.android.gms.maps.SupportMapFragment"/>
+				
+				<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/elvsearch"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="15dp"
+					android:cacheColorHint="@android:color/transparent"
+					android:scrollbars="none"
+					android:background="@drawable/listview_border"
+					android:divider="@drawable/listview_divider"
+					android:dividerHeight="1dp"/>"
+			
 			</LinearLayout>
-			
-			<TextView android:id="@+id/tvholdtopanandzoom"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:layout_marginLeft="5dp"
-			    android:layout_marginTop="5dp"
-			    android:layout_marginBottom="5dp"
-			    android:text="@string/tv_hold_to_enable_pan_and_zoom"
-			    android:textColor="@android:color/black"
-			    android:textAppearance="?android:attr/textAppearanceMedium"
-			    android:textStyle="bold"/>
-			    
-   			<fragment android:id="@+id/fragnearbylocationsmap"
-				android:layout_width="match_parent"
-				android:layout_height="300dp"
-				class="com.google.android.gms.maps.SupportMapFragment"/>
-			
-			<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/elvsearch"
-				android:layout_width="match_parent"
+		    
+		</com.mobmonkey.mobmonkeyandroid.utils.MMScrollView>
+	
+		<LinearLayout android:id="@+id/llnearbylocationssearch"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:background="@android:color/transparent"
+		    android:orientation="vertical"
+		    android:visibility="gone">
+		    
+	   		<TextView android:id="@+id/tvnearbylocationssearch"
+	   		    android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="15dp"
-				android:cacheColorHint="@android:color/transparent"
-				android:scrollbars="none"
+				android:text="@string/tv_nearby"
+				android:textColor="@android:color/white"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textStyle="bold"
+				style="?android:attr/listSeparatorTextViewStyle"
+				android:visibility="gone"/>
+			    
+			<ListView android:id="@+id/lvnearbylocationssearch"
+				android:layout_width="match_parent"
+				android:layout_height="0dip"
+				android:layout_weight="1"
+				android:layout_margin="0dp"
 				android:background="@drawable/listview_border"
 				android:divider="@drawable/listview_divider"
-				android:dividerHeight="1dp"/>"
-		
+				android:dividerHeight="1dp"
+				android:visibility="gone"/>
+
 		</LinearLayout>
-	    
-	</com.mobmonkey.mobmonkeyandroid.utils.MMScrollView>
+	
+	</FrameLayout>
 	
 </LinearLayout>

@@ -2,11 +2,20 @@ package com.mobmonkey.mobmonkeyandroid.arrayadapters;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchResultsItem;
+import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
+import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
+import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Location;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,16 +28,22 @@ import android.widget.TextView;
  * @author Dezapp, LLC
  *
  */
-public class MMNearbyLocationsArrayAdapter extends ArrayAdapter<MMSearchResultsItem> implements Filterable {
+public class MMNearbyLocationsArrayAdapter extends ArrayAdapter<JSONObject> implements Filterable {
+	private static final String TAG = "MMNearbyLocationsArrayAdapter: ";
+	
+	private Location location;
+	private Context context;
 	private LayoutInflater layoutInflater;
 	private int listRowLayout;
-	private ArrayList<MMSearchResultsItem> locations;
-	private ArrayList<MMSearchResultsItem> filteredLocations;
+	private ArrayList<JSONObject> locations;
+	private ArrayList<JSONObject> filteredLocations;
 	private MMFilter mmFilter;
 	
-	public MMNearbyLocationsArrayAdapter(Context context, int listRowLayout, ArrayList<MMSearchResultsItem> locations) {
+	public MMNearbyLocationsArrayAdapter(Context context, int listRowLayout, ArrayList<JSONObject> locations) {
 		super(context, listRowLayout, locations);
-		layoutInflater = LayoutInflater.from(context);
+		this.location = MMLocationManager.getGPSLocation(new MMLocationListener());
+		this.context = context;
+		this.layoutInflater = LayoutInflater.from(context);
 		this.listRowLayout = listRowLayout;
 		this.locations = locations;
 		this.filteredLocations = locations;
@@ -40,7 +55,7 @@ public class MMNearbyLocationsArrayAdapter extends ArrayAdapter<MMSearchResultsI
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder viewHolder;
-		
+		Log.d(TAG, TAG + "count: " + getCount() + "   position: " + position);
 		if(convertView == null) {
             convertView = layoutInflater.inflate(listRowLayout, null);
             
@@ -54,9 +69,16 @@ public class MMNearbyLocationsArrayAdapter extends ArrayAdapter<MMSearchResultsI
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		
-		viewHolder.tvLocName.setText(filteredLocations.get(position).getLocName());
-        viewHolder.tvLocDist.setText(filteredLocations.get(position).getLocDist());
-        viewHolder.tvLocAddr.setText(filteredLocations.get(position).getLocAddr());
+		try {
+			JSONObject jObj = filteredLocations.get(position);
+			viewHolder.tvLocName.setText(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
+			viewHolder.tvLocDist.setText(MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + 
+					context.getString(R.string.miles));
+			viewHolder.tvLocAddr.setText(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + 
+					jObj.getString(MMSDKConstants.JSON_KEY_REGION));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
         convertView.setBackgroundColor(Color.TRANSPARENT);
         
         return convertView;
@@ -85,7 +107,7 @@ public class MMNearbyLocationsArrayAdapter extends ArrayAdapter<MMSearchResultsI
 	 * @see android.widget.ArrayAdapter#getItem(int)
 	 */
 	@Override
-	public MMSearchResultsItem getItem(int position) {
+	public JSONObject getItem(int position) {
 		return filteredLocations.get(position);
 	}
 
@@ -115,15 +137,19 @@ public class MMNearbyLocationsArrayAdapter extends ArrayAdapter<MMSearchResultsI
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
 			FilterResults results = new FilterResults();
-			filteredLocations = new ArrayList<MMSearchResultsItem>();
+			ArrayList<JSONObject> filteredLocations = new ArrayList<JSONObject>();
 			
 			for(int i = 0; i < locations.size(); i++) {
-				MMSearchResultsItem item = locations.get(i);
+				JSONObject jObj = locations.get(i);
 				if(constraint == null || constraint.length() == 0) {
-					filteredLocations.add(item);
+					filteredLocations.add(jObj);
 				} else {
-					if(item.getLocName().contains(constraint)) {
-						filteredLocations.add(item);
+					try {
+						if(jObj.getString(MMSDKConstants.JSON_KEY_NAME).contains(constraint)) {
+							filteredLocations.add(jObj);
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -133,8 +159,10 @@ public class MMNearbyLocationsArrayAdapter extends ArrayAdapter<MMSearchResultsI
 			return results;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		protected void publishResults(CharSequence constraint, FilterResults results) {
+			filteredLocations = (ArrayList<JSONObject>) results.values;
 			notifyDataSetChanged();
 		}
 	}
