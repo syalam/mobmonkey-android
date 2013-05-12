@@ -223,7 +223,8 @@
 					android:padding="10dp"
 					android:text="@string/btn_create_hot_spot"
 					android:textAppearance="?android:attr/textAppearanceMedium"
-					android:textStyle="bold"/>
+					android:textStyle="bold"
+					android:visibility="gone"/>
 				
 				<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/elvloc"
 					android:layout_width="match_parent"

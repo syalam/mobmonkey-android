@@ -104,6 +104,12 @@
 		    android:screenOrientation="portrait">
 		    
 		</activity>
+		
+		<activity android:name=".ShareMediaActionSheet"
+   		    android:theme="@android:style/Theme.Translucent.NoTitleBar"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
 
 		<activity android:name=".InboxActivity"
 		    android:configChanges="orientation|keyboardHidden"
@@ -121,18 +127,18 @@
 		    
 		</activity>
 		
+		<activity android:name=".HotSpotRangeActionSheet"
+		    android:theme="@android:style/Theme.Translucent.NoTitleBar"
+		    android:screenOrientation="portrait">
+		    
+		</activity>
+		
 		<activity android:name=".FilterScreen"
 		    android:screenOrientation="portrait">
 		    
 		</activity>
 		
 		<activity android:name=".ExpandedThumbnailScreen"
-		    android:theme="@android:style/Theme.Dialog"
-		    android:screenOrientation="portrait">
-		    
-		</activity>
-		
-		<activity android:name=".ShareMediaActionSheet"
 		    android:theme="@android:style/Theme.Dialog"
 		    android:screenOrientation="portrait">
 		    

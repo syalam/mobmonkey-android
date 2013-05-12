@@ -64,7 +64,6 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 	private EditText etBirthdate;
 	private EditText etGender;
 	private CheckBox cbAcceptedToS;
-	private  MotionEvent prevEvent;
 	
 	private Calendar birthdate;
 	
@@ -115,11 +114,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
      */
     @Override
 	public boolean onTouch(View v, MotionEvent event) {
-		if(event.getAction() == MotionEvent.ACTION_DOWN) {
-			prevEvent = event;
-		}
-		
-		if(event.getAction() == MotionEvent.ACTION_UP && prevEvent.getAction() == MotionEvent.ACTION_UP) {
+		if(event.getAction() == MotionEvent.ACTION_UP) {
 			switch(v.getId()) {
 		    	case R.id.etbirthdate:
 		    		inputMethodManager.hideSoftInputFromWindow(etBirthdate.getWindowToken(), 0);

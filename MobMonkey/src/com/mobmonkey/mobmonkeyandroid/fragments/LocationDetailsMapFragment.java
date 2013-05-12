@@ -51,9 +51,9 @@ public class LocationDetailsMapFragment extends MMFragment {
 			LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
 			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
 			
-			googleMap.addMarker(new MarkerOptions().
-				position(resultLocLatLng).
-				title(jObj.getString(MMSDKConstants.JSON_KEY_NAME))
+			googleMap.addMarker(new MarkerOptions()
+				.position(resultLocLatLng)
+				.title(jObj.getString(MMSDKConstants.JSON_KEY_NAME))
 				.snippet(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS)));
 
 			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
@@ -76,7 +76,7 @@ public class LocationDetailsMapFragment extends MMFragment {
 			transaction.remove(smfLocation);
 			transaction.commit();
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 
 		super.onDestroyView();

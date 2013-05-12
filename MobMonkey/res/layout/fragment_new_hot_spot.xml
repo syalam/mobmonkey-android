@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/backgroundcolor"
+	android:orientation="vertical">
+	
+   	<TextView android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:layout_gravity="center"
+		android:background="@drawable/navigation_bar"
+		android:gravity="center"
+		android:text="@string/tv_title_new_hot_spot"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textColor="@android:color/white"
+		android:textStyle="bold"/>
+	
+	<ScrollView android:id="@+id/svhotspotdetails"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent">
+	    
+		<LinearLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="10dp">
+    
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/tv_touch_hot_spot_on_map"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="@android:color/black"/>
+			
+			<fragment android:id="@+id/fragnewhotspotmap"
+					android:layout_width="match_parent"
+					android:layout_height="200dp"
+					class="com.google.android.gms.maps.SupportMapFragment"/>
+			
+			<TextView android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_marginTop="10dp"
+   			    android:layout_marginBottom="5dp"
+			    android:layout_marginLeft="5dp"
+			    android:text="@string/tv_hot_spot_details"
+   			    android:textAppearance="?android:attr/textAppearanceMedium"
+			    android:textColor="@android:color/black"
+			    android:textStyle="bold"/>
+			
+			<EditText android:id="@+id/etname"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:hint="@string/et_hint_name"
+			    android:inputType="text"/>
+			
+			<EditText android:id="@+id/etdescription"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:hint="@string/et_hint_description"
+			    android:inputType="text"/>
+			
+			<EditText android:id="@+id/etrange"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:hint="@string/et_hint_range"
+			    android:editable="false"/>
+			
+			<Button android:id="@+id/btncreatehotspot"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_marginTop="10dp"
+    	        android:background="@drawable/orange_button_background"
+			    android:paddingTop="15dp"
+			    android:paddingBottom="15dp"
+			    android:text="@string/btn_create_hot_spot"
+			    android:textColor="@android:color/white"
+			    android:textStyle="bold"/>
+			
+		</LinearLayout>
+		
+	</ScrollView>
+	
+</LinearLayout>

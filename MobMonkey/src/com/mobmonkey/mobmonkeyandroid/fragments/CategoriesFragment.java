@@ -50,26 +50,12 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	
 	private JSONArray categoriesArray;
 	
-	private MMOnCategoryFragmentItemClickListener categoryItemClickListener;
-	private MMOnCategoryResultsFragmentItemClickListener categoryResultsItemClickListener;
+	private MMOnCategoryFragmentItemClickListener categoryFragmentItemClickListener;
+	private MMOnCategoryResultsFragmentItemClickListener categoryResultsFragmentItemClickListener;
 
 	private String searchSubCategory;
 	private boolean hasResults = false;
 	private String results;
-	
-	private int[] topLevelCatIcons = new int[] {R.drawable.cat_icon_coffee_shops,
-												R.drawable.cat_icon_schools,
-												R.drawable.cat_icon_beaches,
-												R.drawable.cat_icon_supermarkets,
-												R.drawable.cat_icon_conferences,
-												R.drawable.cat_icon_restaurants,
-												R.drawable.cat_icon_hotels,
-												R.drawable.cat_icon_pubs,
-												R.drawable.cat_icon_dog_parks,
-												R.drawable.cat_icon_night_clubs,
-												R.drawable.cat_icon_stadiums,
-												R.drawable.cat_icon_health_clubs,
-												R.drawable.cat_icon_cinemas};
 	
 	/*
 	 * (non-Javadoc)
@@ -97,9 +83,9 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		if(activity instanceof MMOnCategoryFragmentItemClickListener) {
-			categoryItemClickListener = (MMOnCategoryFragmentItemClickListener) activity;
+			categoryFragmentItemClickListener = (MMOnCategoryFragmentItemClickListener) activity;
 			if(activity instanceof MMOnCategoryResultsFragmentItemClickListener) {
-				categoryResultsItemClickListener = (MMOnCategoryResultsFragmentItemClickListener) activity;
+				categoryResultsFragmentItemClickListener = (MMOnCategoryResultsFragmentItemClickListener) activity;
 			}
 		}
 	}
@@ -116,7 +102,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			String selectedSubCategory = subCategory.getString(Locale.getDefault().getLanguage());
 			
 			if(subCategoriesArray.length() > 1) {
-				categoryItemClickListener.onCategoryFragmentItemClick(selectedSubCategory, subCategoriesArray, false);
+				categoryFragmentItemClickListener.onCategoryFragmentItemClick(selectedSubCategory, subCategoriesArray, false);
 			} else {
 				checkCategorySelected(selectedSubCategory, subCategory);
 			}
@@ -150,7 +136,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 				mmSearchCategoriesItems[i] = new MMSearchCategoriesItem();
 				mmSearchCategoriesItems[i].setCatName(category.getString(Locale.getDefault().getLanguage()));
 				if(topLevel) {
-					mmSearchCategoriesItems[i].setCatIconId(topLevelCatIcons[i]);
+					mmSearchCategoriesItems[i].setCatIconId(MMConstants.topLevelCatIcons[i]);
 				} else {
 					mmSearchCategoriesItems[i].setCatIconId(MMSDKConstants.DEFAULT_INT_ZERO);
 				}
@@ -188,7 +174,7 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 			searchSubCategory = selectedSubCategory;
 			searchSubCategory(selectedSubCategory, subCategory);
 		} else {
-			categoryResultsItemClickListener.onCategoriesResultsFragmentItemClick(selectedSubCategory, results);
+			categoryResultsFragmentItemClickListener.onCategoriesResultsFragmentItemClick(selectedSubCategory, results);
 		}
 	}
 	

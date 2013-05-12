@@ -34,10 +34,12 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
@@ -49,7 +51,10 @@ import android.widget.Toast;
  * @author Dezapp, LLC
  *
  */
-public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateChangedListener, OnTouchListener {
+public class MyInfoFragment extends MMFragment implements OnClickListener,
+														  OnKeyListener,
+														  OnTouchListener,
+														  OnDateChangedListener {
 	private static final String TAG = "MyInfoFragment: ";
 
 	private SharedPreferences userPrefs;
@@ -57,8 +62,15 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	private GraphUser facebookUser;
 	
 	private InputMethodManager inputMethodManager;
-	private EditText etFirstName, etLastName, etEmailAddress, etNewPassword, etConfirmPassword, etBirthdate, etGender;
-	private MotionEvent prevEvent;
+	
+	private Button btnSave;
+	private EditText etFirstName;
+	private EditText etLastName;
+	private EditText etEmailAddress;
+	private EditText etNewPassword;
+	private EditText etConfirmPassword;
+	private EditText etBirthdate;
+	private EditText etGender;
 	
 	private Calendar birthdate;
 	
@@ -95,20 +107,24 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 		
     	inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		View view = inflater.inflate(R.layout.fragment_myinfo_screen, container, false);
+		btnSave = (Button) view.findViewById(R.id.btnsave);
+		
     	ScrollView svMyInfo = (ScrollView) view.findViewById(R.id.svmyinfo);
-    	svMyInfo.setOnTouchListener(MyInfoFragment.this);
     	
     	etFirstName = (EditText) view.findViewById(R.id.etfirstname);
     	etLastName = (EditText) view.findViewById(R.id.etlastname);
     	etEmailAddress = (EditText) view.findViewById(R.id.etemailaddress);
-    	etEmailAddress.setFocusable(false);
-		etEmailAddress.setFocusableInTouchMode(false);
-		etEmailAddress.setClickable(false);
 		etNewPassword = (EditText) view.findViewById(R.id.etnewpassword);
 		etConfirmPassword = (EditText) view.findViewById(R.id.etconfirmpassword);
     	etBirthdate = (EditText) view.findViewById(R.id.etbirthdate);
     	etGender = (EditText) view.findViewById(R.id.etgender);
     	birthdate = Calendar.getInstance();
+    	
+    	btnSave.setOnClickListener(MyInfoFragment.this);
+    	svMyInfo.setOnTouchListener(MyInfoFragment.this);
+    	etEmailAddress.setFocusable(false);
+		etEmailAddress.setFocusableInTouchMode(false);
+		etEmailAddress.setClickable(false);
     	
     	Log.d(TAG, "User has login with " + userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY) + " account.");
     	
@@ -173,8 +189,40 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		if(activity instanceof MMOnFragmentFinishListener) {
-			onFragmentFinishListener = (MMOnFragmentFinishListener) activity;
+			fragmentFinishListener = (MMOnFragmentFinishListener) activity;
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see android.view.View.OnClickListener#onClick(android.view.View)
+	 */
+	@Override
+	public void onClick(View view) {
+		switch(view.getId()) {
+			case R.id.btnsave:
+				saveUserInfo();
+				break;
+		}
+	}
+
+    /**
+     * {@link OnKeyListener} handle when user finished entering confirmed password and go to the birthdate {@link EditText}, removes the soft keyboard
+     */
+    /* (non-Javadoc)
+	 * @see android.view.View.OnKeyListener#onKey(android.view.View, int, android.view.KeyEvent)
+	 */
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+			if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_TWITTER)) {
+				inputMethodManager.hideSoftInputFromWindow(etLastName.getWindowToken(), 0);
+				return true;
+			} else {
+				inputMethodManager.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -185,13 +233,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
      * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
      */
     @Override
-	public boolean onTouch(View v, MotionEvent event) {
-    	Log.d(TAG, TAG + "Hank got touched again");
-    	Log.d(TAG, TAG + "view id: " + v.getId() + "  scrollview id: " + R.id.svmyinfo);
-		if(event.getAction() == MotionEvent.ACTION_DOWN) {
-			prevEvent = event;
-		}
-		
+	public boolean onTouch(View v, MotionEvent event) {		
 		if(event.getAction() == MotionEvent.ACTION_UP) {
 			switch(v.getId()) {
 		    	case R.id.etbirthdate:
@@ -216,55 +258,10 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 	public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		
 	}
-
-    /**
-     * {@link OnKeyListener} handle when user finished entering confirmed password and go to the birthdate {@link EditText}, removes the soft keyboard
-     */
-    /* (non-Javadoc)
-	 * @see android.view.View.OnKeyListener#onKey(android.view.View, int, android.view.KeyEvent)
-	 */
-	@Override
-	public boolean onKey(View v, int keyCode, KeyEvent event) {
-		if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-			if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_TWITTER)) {
-				inputMethodManager.hideSoftInputFromWindow(etLastName.getWindowToken(), 0);
-				return true;
-			} else {
-				inputMethodManager.hideSoftInputFromWindow(etConfirmPassword.getWindowToken(), 0);
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	@Override
 	public void onFragmentBackPressed() {
-		Log.d(TAG, response.toString());
-		// check if newPassword is the same as confirm password
-		newPassword = etNewPassword.getText().toString(); 
-//		confirmPassword = etConfirmPassword.getText().toString();
-		if(checkFields()) {
-			try {
-				MMProgressDialog.displayDialog(getActivity(),
-											   MMSDKConstants.DEFAULT_STRING_EMPTY,
-											   getString(R.string.pd_updating_user_info));
-				MMUserAdapter.updateUserInfo(new UserInfoUpdateCallback(),
-										   	 etFirstName.getText().toString(),
-										   	 etLastName.getText().toString(),
-										   	 newPassword,
-										   	 birthdate.getTimeInMillis(),
-										   	 convertGender(),
-										   	 response.getString(MMSDKConstants.KEY_CITY),
-										   	 response.getString(MMSDKConstants.KEY_STATE),
-										   	 response.getString(MMSDKConstants.KEY_ZIP),
-										   	 response.getBoolean(MMSDKConstants.KEY_ACCEPTEDTOS),
-											 MMConstants.PARTNER_ID,
-											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										   	 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
+		fragmentFinishListener.onFragmentFinish();
 	}
 	
     /**
@@ -427,6 +424,37 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
     	}
     }
     
+    private void saveUserInfo() {
+		newPassword = etNewPassword.getText().toString(); 
+		if(checkFields()) {
+			try {
+				MMProgressDialog.displayDialog(getActivity(),
+											   MMSDKConstants.DEFAULT_STRING_EMPTY,
+											   getString(R.string.pd_updating_user_info));
+				MMUserAdapter.updateUserInfo(new UserInfoUpdateCallback(),
+										   	 etFirstName.getText().toString(),
+										   	 etLastName.getText().toString(),
+										   	 newPassword,
+										   	 birthdate.getTimeInMillis(),
+										   	 convertGender(),
+										   	 response.getString(MMSDKConstants.KEY_CITY),
+										   	 response.getString(MMSDKConstants.KEY_STATE),
+										   	 response.getString(MMSDKConstants.KEY_ZIP),
+										   	 response.getBoolean(MMSDKConstants.KEY_ACCEPTEDTOS),
+											 MMConstants.PARTNER_ID,
+											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+										   	 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+    }
+    
+    /**
+     * 
+     * @param messageId
+     */
     private void displayAlert(int messageId) {
 		new AlertDialog.Builder(getActivity())
 			.setTitle(R.string.app_name)
@@ -478,7 +506,7 @@ public class MyInfoFragment extends MMFragment implements OnKeyListener, OnDateC
 						JSONObject jObj = new JSONObject((String) obj);
 						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 							Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
-							onFragmentFinishListener.onFragmentFinish();
+							fragmentFinishListener.onFragmentFinish();
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();

@@ -5,7 +5,11 @@ import org.json.JSONObject;
 
 import com.facebook.Session;
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.SettingsActivity;
+import com.mobmonkey.mobmonkeyandroid.SubscribeScreen;
+import com.mobmonkey.mobmonkeyandroid.TermsofuseScreen;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
+import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMUserAdapter;
@@ -15,6 +19,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,13 +38,16 @@ import android.widget.Toast;
  * @author Dezapp, LLC
  *
  */
-public class SettingsFragment extends MMFragment implements OnClickListener, OnItemClickListener {
+public class SettingsFragment extends MMFragment implements OnClickListener,
+															OnItemClickListener {
 	private final static String TAG = "SettingsFragment: ";
 	
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
 	
-	private MMOnSettingsFragmentItemClickListener listener;
+	private MMOnMyInfoFragmentItemClickListener myInfoFragmentItemClickListener;
+	private MMOnSocialNetworksFragmentItemClickListener socialNetworksFragmentItemClickListener;
+	private MMOnMyInterestsFragmentItemClickListener myInterestsFragmentItemClickListener;
 	private ListView lvSettingsCategory;
 	
 	@Override
@@ -79,14 +87,36 @@ public class SettingsFragment extends MMFragment implements OnClickListener, OnI
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof MMOnSettingsFragmentItemClickListener) {
-			listener = (MMOnSettingsFragmentItemClickListener) activity;
+		if(activity instanceof MMOnMyInfoFragmentItemClickListener) {
+			myInfoFragmentItemClickListener = (MMOnMyInfoFragmentItemClickListener) activity;
+			if(activity instanceof MMOnSocialNetworksFragmentItemClickListener) {
+				socialNetworksFragmentItemClickListener = (MMOnSocialNetworksFragmentItemClickListener) activity;
+				if(activity instanceof MMOnMyInterestsFragmentItemClickListener) {
+					myInterestsFragmentItemClickListener = (MMOnMyInterestsFragmentItemClickListener) activity;
+				}
+			}
 		}
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		listener.onSettingsFragmentItemClick(position);
+		switch(position) {
+			case 0:
+				myInfoFragmentItemClickListener.onMyInfoFragmentItemClick();
+				break;
+			case 1:
+				socialNetworksFragmentItemClickListener.onSocialNetworksItemClick();
+				break;
+			case 2:
+				myInterestsFragmentItemClickListener.onMyInterestsFragmentItemClick(MMCategories.getTopLevelCategories(getActivity()), true);
+				break;
+			case 3:
+				startActivity(new Intent(getActivity(), SubscribeScreen.class));
+				break;
+			case 4:
+				startActivity(new Intent(getActivity(), TermsofuseScreen.class));
+				break;
+		}
 	}
 
 	@Override

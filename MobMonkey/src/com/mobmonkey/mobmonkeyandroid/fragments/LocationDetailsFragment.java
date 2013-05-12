@@ -1,7 +1,5 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
-import java.io.File;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +28,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,7 +51,8 @@ import android.widget.AdapterView.OnItemClickListener;
  * @author Dezapp, LLC
  *
  */
-public class LocationDetailsFragment extends MMFragment implements OnClickListener, OnItemClickListener {
+public class LocationDetailsFragment extends MMFragment implements OnClickListener,
+																   OnItemClickListener {
 	private static final String TAG = "LocationDetailsFragment: ";
 	
 	private SharedPreferences userPrefs;
@@ -91,14 +89,17 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private JSONArray videoMediaUrl;
 	private JSONArray imageMediaUrl;
 	
-	private MMOnAddressFragmentItemClickListener onAddressFragmentItemClicklistener;
-	private MMOnAddNotificationsFragmentItemClickListener onAddNotificationsFragmentItemClickListener;
+	private MMOnAddressFragmentItemClickListener addressFragmentItemClickListener;
+	private MMOnCreateHotSpotFragmentClickListener createHotSpotFragmentClickListener;
+	private MMOnAddNotificationsFragmentItemClickListener addNotificationsFragmentItemClickListener;
 	
 	private String mediaResults;
 	private boolean retrieveLocationDetails = true;
 	private boolean retrieveVideoMedia = true;
 	private boolean retrieveImageMedia = true;
 	private Bitmap imageMedia;
+	private int width = MMSDKConstants.DEFAULT_INT_ZERO;
+	private int height = MMSDKConstants.DEFAULT_INT_ZERO;
 	private View mediaButtonSelected;
 	
 	/*
@@ -179,9 +180,12 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		if(activity instanceof MMOnAddressFragmentItemClickListener) {
-			onAddressFragmentItemClicklistener = (MMOnAddressFragmentItemClickListener) activity;
-			if(activity instanceof MMOnAddNotificationsFragmentItemClickListener) {
-				onAddNotificationsFragmentItemClickListener = (MMOnAddNotificationsFragmentItemClickListener) activity;
+			addressFragmentItemClickListener = (MMOnAddressFragmentItemClickListener) activity;
+			if(activity instanceof MMOnCreateHotSpotFragmentClickListener) {
+				createHotSpotFragmentClickListener = (MMOnCreateHotSpotFragmentClickListener) activity;
+				if(activity instanceof MMOnAddNotificationsFragmentItemClickListener) {
+					addNotificationsFragmentItemClickListener = (MMOnAddNotificationsFragmentItemClickListener) activity;
+				}
 			}
 		}
 	}
@@ -230,6 +234,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				startActivity(intent);
 				break;
 			case R.id.btncreatehotspot:
+				createHotSpotFragmentClickListener.onCreateHotSpotClick(locationInfo);
 				break;
 		}
 	}
@@ -247,12 +252,12 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					dialerIntent.setData(Uri.parse("tel:" +  ((TextView)view.findViewById(R.id.tvlabel)).getText().toString()));
 					startActivity(dialerIntent);
 				} else if(position == 1) {
-					onAddressFragmentItemClicklistener.onAddressFragmentItemClick(location);
+					addressFragmentItemClickListener.onAddressFragmentItemClick(location);
 				}
 				break;
 			case R.id.elvloc:
 				if(position == 0) {
-					onAddNotificationsFragmentItemClickListener.onAddNotificationsFragmentItemClick(location);
+					addNotificationsFragmentItemClickListener.onAddNotificationsFragmentItemClick(location);
 				} else if(position == 1) {
 					TextView tvFavorite = (TextView) view.findViewById(R.id.tvlabel);
 					if(tvFavorite.getText().toString().equals(getString(R.string.tv_favorite))) {
@@ -344,6 +349,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		} else {
 			tvMembersFound.setText(locationInfo.getInt(MMSDKConstants.JSON_KEY_MONKEYS) + MMSDKConstants.DEFAULT_STRING_SPACE + getString(R.string.tv_members_found));
 		}
+		btnCreateHotSpot.setVisibility(View.VISIBLE);
 	}
 	
 	/**
@@ -360,6 +366,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			int imageMediaCount = 0;
 			
 			if(mediaJArr.length() > 0) {
+				pbLoadMedia.setVisibility(View.GONE);
 				llMedia.setVisibility(View.VISIBLE);
 				
 				boolean isFirstMedia = true;
@@ -390,7 +397,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 								MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(),
 															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 							} else {
-								ivtnMedia.setImageBitmap(imageMedia);
+								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, width, height));
 							}
 							tvExpiryDate.setVisibility(View.VISIBLE);
 							tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
@@ -409,7 +416,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 							} else {
 								Log.d(TAG, "width: " + ivtnMedia.getWidth() + " height: " + ivtnMedia.getHeight());
 								Log.d(TAG, "measuredWidth: " + ivtnMedia.getMeasuredWidth() + " measuredHeight: " + ivtnMedia.getMeasuredHeight());
-								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
+								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, width, height));
 								ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
 							}
 							tvExpiryDate.setVisibility(View.VISIBLE);
@@ -621,7 +628,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				} else if(obj instanceof Bitmap){				
 					retrieveImageMedia = false;
 					imageMedia = (Bitmap) obj;
-					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
+					width = ivtnMedia.getMeasuredWidth();
+					height = ivtnMedia.getMeasuredHeight();
+					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, width, height));
 				}
 			}
 		}
@@ -643,7 +652,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				} else if(obj instanceof Bitmap){				
 					retrieveImageMedia = false;
 					imageMedia = (Bitmap) obj;
-					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, ivtnMedia.getMeasuredWidth(), ivtnMedia.getMeasuredHeight()));
+					width = ivtnMedia.getMeasuredWidth();
+					height = ivtnMedia.getMeasuredHeight();
+					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, width, height));
 					ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
 				}
 			}

@@ -2,6 +2,7 @@ package com.mobmonkey.mobmonkeyandroid;
 
 import java.util.Stack;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkeyandroid.R;
@@ -25,6 +26,7 @@ import android.util.Log;
 public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFragmentClickListener,
 																   MMOnSearchResultsFragmentItemClickListener,
 																   MMOnAddressFragmentItemClickListener,
+																   MMOnCreateHotSpotFragmentClickListener,
 																   MMOnAddNotificationsFragmentItemClickListener {
 	private static final String TAG = "FavoritesActivity: ";
 	
@@ -96,6 +98,26 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 		performTransaction(locationsDetailsMapFragment);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnCreateHotSpotFragmentClickListener#onCreateHotSpotClick(org.json.JSONArray)
+	 */
+	@Override
+	public void onCreateHotSpotClick(JSONArray jArr) {
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnCreateHotSpotFragmentClickListener#onCreateHotSpotClick(org.json.JSONObject)
+	 */
+	@Override
+	public void onCreateHotSpotClick(JSONObject jObj) {
+		NewHotSpotFragment newHotSpotFragment = new NewHotSpotFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION, jObj.toString());
+		newHotSpotFragment.setArguments(data);
+		performTransaction(newHotSpotFragment);
+	}
+
 	/* (non-Javadoc)
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnAddNotificationsFragmentItemClickListener#onAddNotificationsFragmentItemClick(org.json.JSONObject)
 	 */

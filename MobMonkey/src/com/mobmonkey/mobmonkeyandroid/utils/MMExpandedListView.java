@@ -42,8 +42,6 @@ public class MMExpandedListView extends ListView {
                 for(int i = 0; i < adapter.getCount(); i++) {
                     View view = adapter.getView(i, null, this);
                     view.measure(desiredWidth, MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.UNSPECIFIED));
-                    TextView textView = (TextView) view.findViewById(R.id.tvlabel);
-                    textView.measure(desiredWidth, MeasureSpec.UNSPECIFIED);
                     height += view.getMeasuredHeight();
                 }
 	        }

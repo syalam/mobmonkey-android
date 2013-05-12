@@ -2,12 +2,13 @@ package com.mobmonkey.mobmonkeyandroid;
 
 import java.util.Stack;
 
-import com.mobmonkey.mobmonkeyandroid.R;
+import org.json.JSONArray;
+
 import com.mobmonkey.mobmonkeyandroid.fragments.*;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +20,9 @@ import android.view.MotionEvent;
  * @author Dezapp, LLC
  *
  */
-public class SettingsActivity extends FragmentActivity implements MMOnSettingsFragmentItemClickListener,
+public class SettingsActivity extends FragmentActivity implements MMOnMyInfoFragmentItemClickListener,
+																  MMOnSocialNetworksFragmentItemClickListener,
+																  MMOnMyInterestsFragmentItemClickListener,
 																  MMOnFragmentFinishListener {
 	private static final String TAG = "SettingsActivtiy: ";
 	private FragmentManager fragmentManager;
@@ -43,28 +46,40 @@ public class SettingsActivity extends FragmentActivity implements MMOnSettingsFr
 			fragmentManager.beginTransaction().add(R.id.llfragmentcontainer, fragmentStack.push(settingsFragment)).commit();
 		}
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnMyInfoFragmentItemClickListener#onMyInfoFragmentItemClick()
+	 */
 	@Override
-	public void onSettingsFragmentItemClick(int position) {		
-		switch(position) {
-			case 0:
-				performTransaction(new MyInfoFragment());
-				break;
-			case 1:
-				performTransaction(new SocialNetworksFragment());
-				break;
-			case 2:
-				performTransaction(new MyInterestsFragment());
-				break;
-			case 3:
-				startActivity(new Intent(SettingsActivity.this, SubscribeScreen.class));
-				break;
-			case 4:
-				startActivity(new Intent(SettingsActivity.this, TermsofuseScreen.class));
-				break;
-		}
+	public void onMyInfoFragmentItemClick() {
+		performTransaction(new MyInfoFragment());
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnSocialNetworksFragmentItemClickListener#onSocialNetworksItemClick()
+	 */
+	@Override
+	public void onSocialNetworksItemClick() {
+		performTransaction(new SocialNetworksFragment());
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnMyInterestsFragmentItemClickListener#onMyInterestsFragmentItemClick(org.json.JSONArray, boolean)
+	 */
+	@Override
+	public void onMyInterestsFragmentItemClick(JSONArray myInterests, boolean isTopLevel) {
+		MyInterestsFragment myInterestsFragment = new MyInterestsFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_INTERESTS, myInterests.toString());
+		data.putBoolean(MMSDKConstants.KEY_INTENT_EXTRA_TOP_LEVEL, isTopLevel);
+		myInterestsFragment.setArguments(data);
+		performTransaction(myInterestsFragment);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnFragmentFinishListener#onFragmentFinish()
+	 */
 	@Override
 	public void onFragmentFinish() {		
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

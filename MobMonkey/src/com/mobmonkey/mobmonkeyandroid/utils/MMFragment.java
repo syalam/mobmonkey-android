@@ -9,7 +9,7 @@ import android.support.v4.app.Fragment;
  *
  */
 public abstract class MMFragment extends Fragment {
-	protected MMOnFragmentFinishListener onFragmentFinishListener;
+	protected MMOnFragmentFinishListener fragmentFinishListener;
 	
 	public abstract void onFragmentBackPressed();
 }

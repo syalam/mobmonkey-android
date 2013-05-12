@@ -13,4 +13,6 @@
 	
 	<color name="backgroundcolor">#E5E5E5</color>
 	
+	<color name="translucent_black">#80000000</color>
+	
 </resources>

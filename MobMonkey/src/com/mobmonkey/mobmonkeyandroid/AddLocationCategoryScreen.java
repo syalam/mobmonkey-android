@@ -12,6 +12,7 @@ import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchCategoriesArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchCategoriesItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
+import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.os.Bundle;
@@ -26,30 +27,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 
-public class AddLocationCategoryScreen extends Activity implements OnItemClickListener {
-	private MMSearchCategoriesItem[] mmSearchCategoriesItems;
-	private ArrayAdapter<MMSearchCategoriesItem> arrayAdapter;
-	
+public class AddLocationCategoryScreen extends Activity implements OnItemClickListener {	
 	protected static final String TAG = "AddLocationCategoryList ";
-	private ListView lvCategories;
 	
 	private JSONArray categories;
 	private ArrayList<String> selectedCategories;
 	private ArrayList<String> selectedCategoriesIds;
 	
-	private int[] topLevelCatIcons = new int[] {R.drawable.cat_icon_coffee_shops,
-												R.drawable.cat_icon_schools,
-												R.drawable.cat_icon_beaches,
-												R.drawable.cat_icon_supermarkets,
-												R.drawable.cat_icon_conferences,
-												R.drawable.cat_icon_restaurants,
-												R.drawable.cat_icon_hotels,
-												R.drawable.cat_icon_pubs,
-												R.drawable.cat_icon_dog_parks,
-												R.drawable.cat_icon_night_clubs,
-												R.drawable.cat_icon_stadiums,
-												R.drawable.cat_icon_health_clubs,
-												R.drawable.cat_icon_cinemas};
+	private ListView lvCategories;
+	
+	private MMSearchCategoriesItem[] mmSearchCategoriesItems;
+	private ArrayAdapter<MMSearchCategoriesItem> arrayAdapter;
 	
 	/*
 	 * (non-Javadoc)
@@ -67,8 +55,8 @@ public class AddLocationCategoryScreen extends Activity implements OnItemClickLi
 	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
 	 */
 	@Override
-	public void onItemClick(AdapterView<?> adapterView, View View, int position, long id) {
-		String category = ((TextView) View.findViewById(R.id.tvlabel)).getText().toString();
+	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+		String category = ((TextView) view.findViewById(R.id.tvlabel)).getText().toString();
 		
 		JSONArray subCategories = MMCategories.getSubCategoriesWithCategoryName(AddLocationCategoryScreen.this, category, categories);
 		
@@ -128,6 +116,9 @@ public class AddLocationCategoryScreen extends Activity implements OnItemClickLi
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void init() {
 		selectedCategories = getIntent().getStringArrayListExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES);
 		selectedCategoriesIds = getIntent().getStringArrayListExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES_IDS);
@@ -141,6 +132,10 @@ public class AddLocationCategoryScreen extends Activity implements OnItemClickLi
 		}
 	}
 	
+	/**
+	 * 
+	 * @throws JSONException
+	 */
 	private void setCategoryList() throws JSONException {
 		boolean topLevel = getIntent().getBooleanExtra(MMSDKConstants.KEY_INTENT_EXTRA_TOP_LEVEL, true);
 		mmSearchCategoriesItems = new MMSearchCategoriesItem[categories.length()];
@@ -152,7 +147,7 @@ public class AddLocationCategoryScreen extends Activity implements OnItemClickLi
 			mmSearchCategoriesItems[i] = new MMSearchCategoriesItem();
 			mmSearchCategoriesItems[i].setCatName(categoryName);
 			if(topLevel) {
-				mmSearchCategoriesItems[i].setCatIconId(topLevelCatIcons[i]);
+				mmSearchCategoriesItems[i].setCatIconId(MMConstants.topLevelCatIcons[i]);
 			} else {
 				mmSearchCategoriesItems[i].setCatIconId(MMSDKConstants.DEFAULT_INT_ZERO);
 			}
@@ -174,6 +169,11 @@ public class AddLocationCategoryScreen extends Activity implements OnItemClickLi
         lvCategories.setOnItemClickListener(AddLocationCategoryScreen.this);
 	}
 	
+	/**
+	 * 
+	 * @param category
+	 * @return
+	 */
 	private String getCategoryId(String category) {
 		String categoryId = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		
@@ -192,6 +192,9 @@ public class AddLocationCategoryScreen extends Activity implements OnItemClickLi
 		return categoryId;
 	}
 	
+	/**
+	 * 
+	 */
 	private void saveSelectedCategories() {
 		Intent intent = new Intent();
 		intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES, selectedCategories);

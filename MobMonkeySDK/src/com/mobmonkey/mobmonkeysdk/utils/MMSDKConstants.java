@@ -112,8 +112,9 @@ public final class MMSDKConstants {
 	// SharePreferences Key
 	public static final String USER_PREFS = "User Preferences";
 	public static final String SHARED_PREFS_KEY_ALL_CATEGORIES = "All categories";
-	public static final String SHARED_PREFS_KEY_FAVORITES = "favorites";
-	public static final String SHARED_PREFS_KEY_HISTORY = "history";
+	public static final String SHARED_PREFS_KEY_FAVORITES = "Favorites";
+	public static final String SHARED_PREFS_KEY_HISTORY = "History";
+	public static final String SHARED_PREFS_KEY_MY_INTERESTS = "My interests";
 	public static final String SHARED_PREFS_KEY_NARROW_BY_LIVE_VIDEO = "Narrow by live video";
 	public static final String SHARED_PREFS_KEY_SEARCH_RADIUS = "Search radius";
 	public static final String SHARED_PREFS_KEY_TOP_LEVEL_CATEGORIES = "Top level categories";
@@ -124,6 +125,7 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_CATEGORIES = "Categories";
 	public static final String KEY_INTENT_EXTRA_CATEGORY_TITLE = "Category title";
 	public static final String KEY_INTENT_EXTRA_DISPLAY_MAP = "Display map";
+	public static final String KEY_INTENT_EXTRA_HOT_SPOT_LOCATION = "Hot Spot Location";
 	public static final String KEY_INTENT_EXTRA_IMAGE_MEDIA = "Image media";
 	public static final String KEY_INTENT_EXTRA_INBOX_REQUESTS = "Inbox requests";
 	public static final String KEY_INTENT_EXTRA_LOCATION = "Location";
@@ -132,7 +134,9 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH = "Media thumbnail width";
 	public static final String KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT = "Media thumbnail height";
 	public static final String KEY_INTENT_EXTRA_MESSAGE = "Message";
-	public static final String KEY_INTENT_EXTRA_NEARBY_LOCATIONS = "nearby locations";
+	public static final String KEY_INTENT_EXTRA_INTERESTS = "Interests";
+	public static final String KEY_INTENT_EXTRA_NEARBY_LOCATIONS = "Nearby locations";
+	public static final String KEY_INTENT_EXTRA_RANGE = "Range";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING = "Repeating";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
@@ -208,7 +212,7 @@ public final class MMSDKConstants {
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER_AUTH = 2002;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2003;
 	public static final int REQUEST_CODE_TURN_ON_GPS_LOCATION = 5000;
-	public static final int REQUEST_CODE_FILTER_NEARBY_LOCATIONS = 8000;
+	public static final int REQUEST_CODE_RANGE = 8000;
 	public static final int REQUEST_CODE_IMAGE = 10000;
 	public static final int REQUEST_CODE_VIDEO = 10001;
 	public static final int REQUEST_CODE_ADD_MESSAGE = 100000;
@@ -282,6 +286,12 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_UPLOADED_DATE = "uploadedDate";
 	public static final String JSON_KEY_VIDEOS = "videos";
 	public static final String JSON_KEY_WEBSITE = "website";
+	
+	public static final int RANGE_FIVE_METERS = 5;
+	public static final int RANGE_TEN_METERS = 10;
+	public static final int RANGE_THIRTY_METERS = 30;
+	public static final int RANGE_FIFTY_METERS = 50;
+	public static final int RANGE_HUNDRED_METERS = 100;
 	
 	// Search Radius (in yards)
 	public static final int SEARCH_RADIUS_HALF_MILE = 880;

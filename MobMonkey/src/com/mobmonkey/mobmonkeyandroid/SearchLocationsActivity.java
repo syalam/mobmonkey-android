@@ -6,28 +6,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
-import com.mobmonkey.mobmonkeyandroid.fragments.AddNotificationsFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.CategoriesFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.HistoryFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsMapFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.SearchLocationsFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.SearchResultsFragment;
-import com.mobmonkey.mobmonkeyandroid.listeners.MMOnAddNotificationsFragmentItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.listeners.MMOnCategoryFragmentItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.listeners.MMOnCategoryResultsFragmentItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.listeners.MMOnHistoryFragmentItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.listeners.MMOnAddressFragmentItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener;
-import com.mobmonkey.mobmonkeyandroid.listeners.MMOnSearchResultsFragmentItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.fragments.*;
+import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -35,13 +21,15 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  * @author Dezapp, LLC
  *
  */
-public class SearchLocationsActivity extends FragmentActivity implements MMOnNearbyLocationsItemClickListener,
-																MMOnHistoryFragmentItemClickListener,
-																MMOnCategoryFragmentItemClickListener,
-																MMOnCategoryResultsFragmentItemClickListener,
-																MMOnSearchResultsFragmentItemClickListener,
-																MMOnAddressFragmentItemClickListener,
-																MMOnAddNotificationsFragmentItemClickListener {
+public class SearchLocationsActivity extends FragmentActivity implements MMOnCreateHotSpotFragmentClickListener,
+																		 MMOnNearbyLocationsItemClickListener,
+																		 MMOnHistoryFragmentItemClickListener,
+																		 MMOnCategoryFragmentItemClickListener,
+																		 MMOnMasterLocationNearbyLocationsFragmentItemClickListener,
+																		 MMOnCategoryResultsFragmentItemClickListener,
+																		 MMOnSearchResultsFragmentItemClickListener,
+																		 MMOnAddressFragmentItemClickListener,
+																		 MMOnAddNotificationsFragmentItemClickListener {
 	private FragmentManager fragmentManager;
 	private Stack<MMFragment> fragmentStack;
 	
@@ -67,6 +55,18 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnNea
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnCreateHotSpotFragmentClickListener#onCreateHotSpotClick(org.json.JSONArray)
+	 */
+	@Override
+	public void onCreateHotSpotClick(JSONArray jArr) {
+		MasterLocationFragment masterLocationFragment = new MasterLocationFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_NEARBY_LOCATIONS, jArr.toString());
+		masterLocationFragment.setArguments(data);
+		performTransaction(masterLocationFragment);
+	}
+
 	/* (non-Javadoc)
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener#onNearbyLocationsItemClick(org.json.JSONObject)
 	 */
@@ -99,6 +99,18 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnNea
 		data.putBoolean(MMSDKConstants.KEY_INTENT_EXTRA_TOP_LEVEL, isTopLevel);
 		categoriesFragment.setArguments(data);
 		performTransaction(categoriesFragment);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnMasterLocationNearbyLocationsFragmentItemClickListener#onMasterLocationNearbyLocationsItemClick(org.json.JSONObject)
+	 */
+	@Override
+	public void onMasterLocationNearbyLocationsItemClick(JSONObject jObj) {
+		NewHotSpotFragment newHotSpotFragment = new NewHotSpotFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION, jObj.toString());
+		newHotSpotFragment.setArguments(data);
+		performTransaction(newHotSpotFragment);
 	}
 
 	/* (non-Javadoc)
@@ -140,6 +152,18 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnNea
 		performTransaction(locationsDetailsMapFragment);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnCreateHotSpotFragmentClickListener#onCreateHotSpotClick(org.json.JSONObject)
+	 */
+	@Override
+	public void onCreateHotSpotClick(JSONObject jObj) {
+		NewHotSpotFragment newHotSpotFragment = new NewHotSpotFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION, jObj.toString());
+		newHotSpotFragment.setArguments(data);
+		performTransaction(newHotSpotFragment);
+	}
+
 	/* (non-Javadoc)
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnAddNotificationsFragmentItemClickListener#onAddNotificationsFragmentItemClick(org.json.JSONObject)
 	 */

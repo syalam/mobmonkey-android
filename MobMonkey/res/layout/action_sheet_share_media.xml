@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/translucent_black"
+	android:orientation="vertical">
+    
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"/>
+    
+    <LinearLayout android:id="@+id/llactionsheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@android:color/background_dark"
+        android:orientation="vertical"
+        android:padding="20dp">
+    
+		<Button android:id="@+id/btnsavetocameraroll"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:text="Save to Camera Roll"
+		    android:textColor="@android:color/black"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
+		    android:textStyle="bold"
+		    android:onClick="viewOnClick"/>
+		
+		<Button android:id="@+id/btnflagforreview"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:text="Flag for Review"
+		    android:textColor="@android:color/black"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
+		    android:textStyle="bold"
+		    android:onClick="viewOnClick"/>
+		
+		<Button android:id="@+id/btncancel"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="15dp"
+		    android:text="@string/ad_btn_cancel"
+		    android:textColor="@android:color/white"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
+		    android:textStyle="bold"
+		    android:onClick="viewOnClick"/>
+	
+	</LinearLayout>
+    
+</LinearLayout>

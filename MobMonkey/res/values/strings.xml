@@ -168,6 +168,28 @@
 	<string name="pd_ellipses">&#8230;</string>
 	<string name="pd_locating">Locating</string>
 	
+	<!-- Master Location Fragment -->
+	<string name="tv_title_master_location">Master Location</string>
+	<string name="tv_choose_hot_spot">Choose the Hot Spot Location</string>
+	
+	<!-- New Hot Spot Fragment -->
+	<string name="tv_title_new_hot_spot">New Hot Spot</string>
+	<string name="tv_touch_hot_spot_on_map">Touch the Hot Spot Location on the map</string>
+	<string name="tv_hot_spot_details">Hot Spot Details</string>
+	<string name="et_hint_name">Name</string>
+	<string name="et_hint_description">Description</string>
+	<string name="et_hint_range">Range</string>
+	<string name="btn_create_hot_spot">Create Hot Spot</string>
+	
+	<!-- Hot Spot Range Screen -->
+	<string name="tv_select_a_range">Select a Range</string>
+	
+	<string name="btn_five_meters">5 meters</string>
+	<string name="btn_ten_meters">10 meters</string>
+	<string name="btn_thirty_meters">30 meters</string>
+	<string name="btn_fifty_meters">50 meters</string>
+	<string name="btn_hundred_meters">100 meters</string>
+	
 	<!-- Filter Screen -->
 	<string name="tv_narrow_by_distance">Narrow by Distance</string>
 	<string name="rb_halfmile">&#189; mi</string>
@@ -216,7 +238,7 @@
 	<string name="toast_remove_favorite_successs">Successfully removed location from favorites</string>
 	<string name="toast_remove_favorite_fail">Failed to successfully remove location from favorites</string>
 	
-	<!-- LocatioDetailsMedia Screen -->
+	<!-- LocationDetailsMedia Screen -->
 	<string name="rb_stream">Live Camera</string>
 	<string name="rb_video">Videos</string>
 	<string name="rb_image">Photos</string>
@@ -289,6 +311,8 @@
 	
 	<!-- My Info Fragment -->
 	<string name="tv_title_my_info">My Info</string>
+	
+	<string name="btn_save">Save</string>
 	
 	<string name="ad_message_first_name_empty">First name cannot be empty.</string>
 	<string name="ad_message_last_name_empty">Last name cannot be empty.</string>

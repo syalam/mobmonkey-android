@@ -119,20 +119,22 @@ public class MMNearbyLocationsArrayAdapter extends ArrayAdapter<JSONObject> impl
 		super.notifyDataSetChanged();
 	}
 
-//	public void setLocationsToDisplay(int num) {
-//		locationsToDisplay = num;
-//		filteredLocations = new ArrayList<MMSearchResultsItem>();
-//		for(int i = 0; i < locationsToDisplay; i++) {
-//			filteredLocations.add(locations.get(i));
-//		}
-//	}
-	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class ViewHolder {
 		TextView tvLocName;
 		TextView tvLocDist;
 		TextView tvLocAddr;
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class MMFilter extends Filter {
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {

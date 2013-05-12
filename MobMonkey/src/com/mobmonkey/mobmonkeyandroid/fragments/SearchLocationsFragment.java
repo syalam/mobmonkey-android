@@ -52,6 +52,7 @@ import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMNearbyLocationsArrayAdapte
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchCategoriesArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchCategoriesItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnCategoryFragmentItemClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnCreateHotSpotFragmentClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnHistoryFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
@@ -90,7 +91,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private EditText etSearch;
 	private Button btnCancel;
 	private MMScrollView svNearbyLocations;
-	private MMExpandedNearbyLocationsListView elvNearbyLocations;
+	private MMExpandedNearbyLocationsListView enllvNearbyLocations;
 	private LinearLayout llLoadMore;
 	private TextView tvHoldToPanAndZoom;
 	private SupportMapFragment smfNearbyLocations;
@@ -110,9 +111,10 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private boolean enablePanAndZoom = false;
 	private HashMap<Marker, JSONObject> markerHashMap;
 	
-	private MMOnNearbyLocationsItemClickListener onNearbyLocationsFragmentItemClickListener;
-	private MMOnHistoryFragmentItemClickListener onHistFragmentItemClickListener;
-	private MMOnCategoryFragmentItemClickListener onCategoryFragmentItemClickListener;
+	private MMOnCreateHotSpotFragmentClickListener createHotSpotFragmentClicKlistener;
+	private MMOnNearbyLocationsItemClickListener nearbyLocationsFragmentItemClickListener;
+	private MMOnHistoryFragmentItemClickListener historyFragmentItemClickListener;
+	private MMOnCategoryFragmentItemClickListener categoryFragmentItemClickListener;
 	
 	private boolean retrieveNearbyLocations = true;
 	private boolean nearbyLocationsSearch = false;
@@ -133,7 +135,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		etSearch = (EditText) view.findViewById(R.id.etsearch);
 		btnCancel = (Button) view.findViewById(R.id.btncancel);
 		svNearbyLocations = (MMScrollView) view.findViewById(R.id.svnearbylocations);
-		elvNearbyLocations = (MMExpandedNearbyLocationsListView) view.findViewById(R.id.enllvnearbylocations);
+		enllvNearbyLocations = (MMExpandedNearbyLocationsListView) view.findViewById(R.id.enllvnearbylocations);
 		llLoadMore = (LinearLayout) view.findViewById(R.id.llloadmore);
 		tvHoldToPanAndZoom = (TextView) view.findViewById(R.id.tvholdtopanandzoom);
 		smfNearbyLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragnearbylocationsmap);
@@ -148,13 +150,13 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		
 		llCreateHotSpot.setOnClickListener(SearchLocationsFragment.this);
 		btnCancel.setOnClickListener(SearchLocationsFragment.this);
-		elvNearbyLocations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		enllvNearbyLocations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 				try {
 					Log.d(TAG, TAG + "onItemClick");
 					addToHistory(nearbyLocationsArrayAdapter.getItem(position));					
-					onNearbyLocationsFragmentItemClickListener.onNearbyLocationsItemClick(nearbyLocationsArrayAdapter.getItem(position));
+					nearbyLocationsFragmentItemClickListener.onNearbyLocationsItemClick(nearbyLocationsArrayAdapter.getItem(position));
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -171,10 +173,10 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 				switch(position) {
 					case 0:
-						onHistFragmentItemClickListener.onHistoryItemClick();
+						historyFragmentItemClickListener.onHistoryItemClick();
 						break;
 					case 1:
-						onCategoryFragmentItemClickListener.onCategoryFragmentItemClick(getActivity().getString(R.string.tv_title_categories), MMCategories.getTopLevelCategories(getActivity()), true);
+						categoryFragmentItemClickListener.onCategoryFragmentItemClick(getActivity().getString(R.string.tv_title_categories), MMCategories.getTopLevelCategories(getActivity()), true);
 						break;
 				}
 			}
@@ -184,7 +186,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 				try {
 					addToHistory(nearbyLocationsSearchArrayAdapter.getItem(position));
-					onNearbyLocationsFragmentItemClickListener.onNearbyLocationsItemClick(nearbyLocationsSearchArrayAdapter.getItem(position));
+					nearbyLocationsFragmentItemClickListener.onNearbyLocationsItemClick(nearbyLocationsSearchArrayAdapter.getItem(position));
 					inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 					nearbyLocationsSearch = true;
 					searchText = etSearch.getText().toString();
@@ -203,7 +205,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 				}
 			} else {
 				setNearbyLocations();
-				setNearbyLocationsSearch();
+				setSearchNearbyLocations();
 				if(nearbyLocationsSearch) {
 					tvNavBarTitle.setVisibility(View.GONE);
 					btnCancel.setVisibility(View.VISIBLE);
@@ -228,12 +230,15 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof MMOnNearbyLocationsItemClickListener) {
-			onNearbyLocationsFragmentItemClickListener = (MMOnNearbyLocationsItemClickListener) activity;
-			if(activity instanceof MMOnHistoryFragmentItemClickListener) {
-				onHistFragmentItemClickListener = (MMOnHistoryFragmentItemClickListener) activity;
-				if(activity instanceof MMOnCategoryFragmentItemClickListener) {
-					onCategoryFragmentItemClickListener = (MMOnCategoryFragmentItemClickListener) activity;
+		if(activity instanceof MMOnCreateHotSpotFragmentClickListener) {
+			createHotSpotFragmentClicKlistener = (MMOnCreateHotSpotFragmentClickListener) activity;
+			if(activity instanceof MMOnNearbyLocationsItemClickListener) {
+				nearbyLocationsFragmentItemClickListener = (MMOnNearbyLocationsItemClickListener) activity;
+				if(activity instanceof MMOnHistoryFragmentItemClickListener) {
+					historyFragmentItemClickListener = (MMOnHistoryFragmentItemClickListener) activity;
+					if(activity instanceof MMOnCategoryFragmentItemClickListener) {
+						categoryFragmentItemClickListener = (MMOnCategoryFragmentItemClickListener) activity;
+					}
 				}
 			}
 		}
@@ -247,12 +252,10 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.llcreatehotspot:
+				createHotSpotFragmentClicKlistener.onCreateHotSpotClick(nearbyLocations);
 				break;
 			case R.id.etsearch:
-				nearbyLocationsSearch = true;
-				tvNavBarTitle.setVisibility(View.GONE);
-				btnCancel.setVisibility(View.VISIBLE);
-				llNearbyLocationsSearch.setVisibility(View.VISIBLE);
+				setNearbyLocationsSearch();
 				break;
 			case R.id.btncancel:
 				cancelNearbyLocationsSearch();
@@ -275,10 +278,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	public boolean onLongClick(View v) {
 		switch(v.getId()) {
 			case R.id.etsearch:
-				nearbyLocationsSearch = true;
-				tvNavBarTitle.setVisibility(View.GONE);
-				btnCancel.setVisibility(View.VISIBLE);
-				llNearbyLocationsSearch.setVisibility(View.VISIBLE);
+				setNearbyLocationsSearch();
 				break;
 		}
 		return false;
@@ -340,7 +340,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			addToHistory(markerHashMap.get((Marker) marker));
 			currMarker = marker;
 			currZoomLevel = googleMap.getCameraPosition().zoom;
-			onNearbyLocationsFragmentItemClickListener.onNearbyLocationsItemClick(markerHashMap.get((Marker) marker));
+			nearbyLocationsFragmentItemClickListener.onNearbyLocationsItemClick(markerHashMap.get((Marker) marker));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -467,7 +467,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		}
 		
 		nearbyLocationsArrayAdapter = new MMNearbyLocationsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
-		elvNearbyLocations.setAdapter(nearbyLocationsArrayAdapter);
+		enllvNearbyLocations.setAdapter(nearbyLocationsArrayAdapter);
 		addToGoogleMap();
 	}
 	
@@ -475,7 +475,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 * 
 	 * @throws JSONException
 	 */
-	private void setNearbyLocationsSearch() throws JSONException {
+	private void setSearchNearbyLocations() throws JSONException {
 		ArrayList<JSONObject> resultLocations = new ArrayList<JSONObject>();
 		for(int i = 0; i < nearbyLocations.length(); i++) {
 			resultLocations.add(nearbyLocations.getJSONObject(i));
@@ -584,12 +584,31 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		return false;
 	}
 	
+	/**
+	 * 
+	 */
+	private void setNearbyLocationsSearch() {
+		nearbyLocationsSearch = true;
+		tvNavBarTitle.setVisibility(View.GONE);
+		btnCancel.setVisibility(View.VISIBLE);
+		llNearbyLocationsSearch.setVisibility(View.VISIBLE);
+		svNearbyLocations.setDisableStatus(true);
+		svNearbyLocations.setClickable(false);
+		enllvNearbyLocations.setEnabled(false);
+	}
+	
+	/**
+	 * 
+	 */
 	private void cancelNearbyLocationsSearch() {
 		nearbyLocationsSearch = false;
 		searchText = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		tvNavBarTitle.setVisibility(View.VISIBLE);
 		btnCancel.setVisibility(View.GONE);
 		llNearbyLocationsSearch.setVisibility(View.GONE);
+		svNearbyLocations.setDisableStatus(false);
+		svNearbyLocations.setClickable(true);
+		enllvNearbyLocations.setEnabled(true);
 		etSearch.setText(MMSDKConstants.DEFAULT_STRING_EMPTY);
 		inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 	}
@@ -615,7 +634,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 						nearbyLocations = new JSONArray((String) obj);
 						nearbyLocationsCount = 5;
 						setNearbyLocations();
-						setNearbyLocationsSearch();
+						setSearchNearbyLocations();
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}

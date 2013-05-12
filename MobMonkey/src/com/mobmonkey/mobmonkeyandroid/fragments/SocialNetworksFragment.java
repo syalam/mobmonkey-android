@@ -60,12 +60,12 @@ public class SocialNetworksFragment extends MMFragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		if(activity instanceof MMOnFragmentFinishListener) {
-			onFragmentFinishListener = (MMOnFragmentFinishListener) activity;
+			fragmentFinishListener = (MMOnFragmentFinishListener) activity;
 		}
 	}
 
 	@Override
 	public void onFragmentBackPressed() {
-		onFragmentFinishListener.onFragmentFinish();
+		fragmentFinishListener.onFragmentFinish();
 	}
 }

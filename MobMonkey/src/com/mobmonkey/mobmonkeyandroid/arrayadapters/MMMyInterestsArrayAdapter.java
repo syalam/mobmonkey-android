@@ -1,7 +1,12 @@
 package com.mobmonkey.mobmonkeyandroid.arrayadapters;
 
+import java.util.ArrayList;
+import java.util.Locale;
+
+import org.json.JSONObject;
+
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchCategoriesItem;
+import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMMyInterestsItem;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 
@@ -19,22 +24,18 @@ import android.widget.TextView;
  * @author Dezapp, LLC
  *
  */
-public class MMSearchCategoriesArrayAdapter extends ArrayAdapter<MMSearchCategoriesItem> {
+public class MMMyInterestsArrayAdapter extends ArrayAdapter<MMMyInterestsItem> {
 	private Context context;
-	private int layoutResourceId;
-	private MMSearchCategoriesItem[] mmSearchCategoryItems;
+	private LayoutInflater layoutInflater;
+	private int listRowLayout;
+	private MMMyInterestsItem[] myInterestsItems;
 	
-	/**
-	 * 
-	 * @param context
-	 * @param layoutResourceId
-	 * @param mmSearchCategoryItems
-	 */
-	public MMSearchCategoriesArrayAdapter(Context context, int layoutResourceId, MMSearchCategoriesItem[] mmSearchCategoryItems) {
-		super(context, layoutResourceId, mmSearchCategoryItems);
+	public MMMyInterestsArrayAdapter(Context context, int listRowLayout, MMMyInterestsItem[] myInterestsItems) {
+		super(context, listRowLayout, myInterestsItems);
 		this.context = context;
-		this.layoutResourceId = layoutResourceId;
-		this.mmSearchCategoryItems = mmSearchCategoryItems;
+		this.layoutInflater = LayoutInflater.from(context);
+		this.listRowLayout = listRowLayout;
+		this.myInterestsItems = myInterestsItems;
 	}
 
 	/*
@@ -48,7 +49,7 @@ public class MMSearchCategoriesArrayAdapter extends ArrayAdapter<MMSearchCategor
 		
 		if(searchCategoryRow == null) {
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-			searchCategoryRow = inflater.inflate(layoutResourceId, parent, false);
+			searchCategoryRow = inflater.inflate(listRowLayout, parent, false);
 			
 			vHolder = new ViewHolder();
 			vHolder.ivCatIcon = (ImageView) searchCategoryRow.findViewById(R.id.ivicon);
@@ -59,22 +60,26 @@ public class MMSearchCategoriesArrayAdapter extends ArrayAdapter<MMSearchCategor
 			vHolder = (ViewHolder) searchCategoryRow.getTag();
 		}
 		
-		if(mmSearchCategoryItems[position].getCatIconId() == 0) {
+		if(myInterestsItems[position].getInterestIconId() == 0) {
 			vHolder.ivCatIcon.setVisibility(View.GONE);
 		} else {
-			vHolder.ivCatIcon.setImageResource(mmSearchCategoryItems[position].getCatIconId());
+			vHolder.ivCatIcon.setImageResource(myInterestsItems[position].getInterestIconId());
 		}
-		vHolder.tvCatName.setText(mmSearchCategoryItems[position].getCatName());
-		vHolder.ivCatIndicatorIcon.setImageResource(mmSearchCategoryItems[position].getCatIndicatorIconId());
-		
-        if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
-        	vHolder.tvCatName.setTextColor(Color.GRAY);
-        }
+		vHolder.tvCatName.setText(myInterestsItems[position].getInterestName());
+		vHolder.ivCatIndicatorIcon.setImageResource(myInterestsItems[position].getInterestIndicatorIconId());
 		
         searchCategoryRow.setBackgroundColor(Color.TRANSPARENT);
 		return searchCategoryRow;
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.widget.ArrayAdapter#getItem(int)
+	 */
+	@Override
+	public MMMyInterestsItem getItem(int position) {
+		return myInterestsItems[position];
+	}
+
 	/**
 	 * 
 	 * @author Dezapp, LLC

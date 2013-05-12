@@ -19,4 +19,14 @@
 	    
 	</RelativeLayout>
 
+	<ListView android:id="@+id/lvinterests"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_margin="10dp"
+	    android:background="@drawable/listview_border"
+	    android:cacheColorHint="@android:color/transparent"
+	    android:divider="@drawable/listview_divider"
+	    android:dividerHeight="1dp"
+	    android:scrollbars="none"/>
+	
 </LinearLayout>

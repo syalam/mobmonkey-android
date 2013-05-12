@@ -18,6 +18,20 @@
 			android:textColor="@android:color/white"
 			android:textStyle="bold"/>
 	    
+		<Button android:id="@+id/btnsave"
+		    android:layout_width="wrap_content"
+		    android:layout_height="33dp"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+		    android:layout_marginRight="5dp"
+		    android:background="@drawable/nav_bar_button_blank"
+		    android:paddingLeft="5dp"
+		    android:paddingRight="5dp"
+		    android:paddingBottom="4dp"
+		    android:text="@string/btn_save"
+		    android:textStyle="bold"
+			android:textColor="@android:color/white"/>
+	    
 	</RelativeLayout>
 	
 	<ScrollView android:id="@+id/svmyinfo"
