@@ -269,6 +269,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onFragmentBackPressed() {
 		Log.d(TAG, "onFragmentBackPressed");
+		MMLocationDetailsAdapter.cancelGetLcoationDetails();
 		MMMediaAdapter.cancelRetrieveAllMediaForLocation();
 	}
 	
