@@ -77,16 +77,14 @@ public class MMAnsweredRequestsArrayAdapter extends ArrayAdapter<MMMediaItem>{
 		vHolder.tvTime.setText(mmMediaItem.getExpiryDate());
 
 //		if(mmMediaItem.getImageMedia() != null) {
+		vHolder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
 			if(mmMediaItem.isImage()) {
 				WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-				
-				vHolder.ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(mmMediaItem.getImageMedia(), wm.getDefaultDisplay().getWidth(), 400));
 				vHolder.ivtnMedia.setOnClickListener(mmMediaItem.getImageOnClickListener());
 				vHolder.ibPlay.setVisibility(View.INVISIBLE);
 			} else if(mmMediaItem.isVideo()) {
 				vHolder.ibPlay.setVisibility(View.VISIBLE);
 				vHolder.ibPlay.setOnClickListener(mmMediaItem.getPlayOnClickListener());
-				vHolder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
 			}
 //		} else {
 			// TODO: handle null media

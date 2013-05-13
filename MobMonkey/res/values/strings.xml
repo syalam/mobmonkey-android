@@ -117,16 +117,24 @@
 	
 	<!-- Answered Requests Fragment -->
 	<string name="tv_title_answeredrequests">Answered Requests</string>
+	
+	<string name="ad_title_no_more_answered_requests">No More Answered Requests</string>
+	<string name="ad_message_no_more_answered_requests">There are no more answered requests.</string>
+	
 	<string name="pd_accepting_answered_request">Accepting answered request&#8230;</string>
 	<string name="pd_rejecting_answered_request">Rejecting answered request&#8230;</string>
 	
 	<!-- Assigned Requests Fragment -->
 	<string name="tv_title_assignedrequests">Assigned Requests</string>
 	
+	<string name="ad_title_no_more_assigned_requests">No More Assigned Requests</string>
+	<string name="ad_message_no_more_assigned_requests">There are no more assigned requests at this location.</string>
+	
 	<string name="pd_uploading_image">Uploading image&#8230;</string>
 	<string name="pd_uploading_video">Uploading video&#8230;</string>
 	
-	<string name="toast_request_successful">Successfully sent request</string>
+	<string name="toast_uploaded_assigned_request">Successfully uploaded assigned request.</string>
+	<string name="toast_failed_upload_assigned_request">Failed to upload assigned request.</string>
 	
 	<!-- Video Recorder Activity -->
 	<string name="ad_title_camera_error">Camera Error</string>
@@ -258,6 +266,7 @@
 	<string name="btn_send_text_request">Send Text Request</string>
 	
 	<string name="toast_no_message_detected">No message detected, please compose a message before making a text request.</string>
+	<string name="toast_request_successful">Successfully made a request</string>
 	
 	<string name="pd_sending_request">Sending request&#8230;</string>
 	

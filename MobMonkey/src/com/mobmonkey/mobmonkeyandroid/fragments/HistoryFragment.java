@@ -79,9 +79,11 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 					lvHistory.setOnItemClickListener(HistoryFragment.this);
 					lvHistory.setOnItemLongClickListener(HistoryFragment.this);
 				} else {
+					history = new JSONArray();
 					displayNoHistoryAlert();
 				}
 			} else {
+				history = new JSONArray();
 				displayNoHistoryAlert();
 			}
 		} catch (JSONException e) {

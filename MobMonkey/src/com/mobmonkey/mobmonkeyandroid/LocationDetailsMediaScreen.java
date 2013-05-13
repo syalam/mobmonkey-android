@@ -47,8 +47,6 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 	private ListView lvImageMedia;
 	
 	private int mediaType;
-	private int mediaWidth;
-	private int mediaHeight;
 	
 	private LinkedList<MMMediaItem> mmStreamMediaItems;
 	private LinkedList<MMMediaItem> mmVideoMediaItems;
@@ -84,8 +82,6 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		lvImageMedia = (ListView) findViewById(R.id.lvimagemedia);
 		
 		mediaType = getIntent().getIntExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE, MMSDKConstants.DEFAULT_INT);
-		mediaWidth = getIntent().getIntExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, MMSDKConstants.DEFAULT_INT);
-		mediaHeight = getIntent().getIntExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, MMSDKConstants.DEFAULT_INT);
 		
 		mmStreamMediaItems = new LinkedList<MMMediaItem>();
 		mmVideoMediaItems = new LinkedList<MMMediaItem>();
@@ -104,6 +100,10 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.RadioGroup.OnCheckedChangeListener#onCheckedChanged(android.widget.RadioGroup, int)
+	 */
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		switch(checkedId) {
@@ -128,6 +128,10 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
 	}
 
+	/**
+	 * 
+	 * @throws JSONException
+	 */
 	private void getMediaUrls() throws JSONException {
 		streamMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_LIVESTREAMING));
 		videoMediaUrls = new JSONArray(getIntent().getStringExtra(MMSDKConstants.MEDIA_VIDEO));
@@ -141,6 +145,9 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void rbStreamChecked() {
 		lvStreamMedia.setVisibility(View.VISIBLE);
 		lvVideoMedia.setVisibility(View.INVISIBLE);
@@ -152,6 +159,9 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void rbVideoChecked() {
 		lvStreamMedia.setVisibility(View.INVISIBLE);
 		lvVideoMedia.setVisibility(View.VISIBLE);
@@ -163,6 +173,9 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void rbImageChecked() {
 		lvStreamMedia.setVisibility(View.INVISIBLE);
 		lvVideoMedia.setVisibility(View.INVISIBLE);
@@ -174,12 +187,16 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		}
 	}
 	
+	/**
+	 * 
+	 * @throws JSONException
+	 */
 	private void getStreamMediaItems() throws JSONException {
 		if(retrieveStreamMedia) {
 			for(int i = 0; i < streamMediaUrls.length(); i++) {
 				JSONObject jObj = streamMediaUrls.getJSONObject(i);
 				MMMediaItem mmMediaItem = new MMMediaItem();
-				MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(i),
+				MMImageLoaderAdapter.loadImage(new LoadStreamThumbnailCallback(i),
 											   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 				if(i == streamMediaUrls.length() - 1) {
 					retrieveStreamMedia = false;
@@ -195,6 +212,10 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		}
 	}
 	
+	/**
+	 * 
+	 * @throws JSONException
+	 */
 	private void getVideoMediaItems() throws JSONException {
 		if(retrieveVideoMedia) {
 			for(int i = 0; i < videoMediaUrls.length(); i++) {
@@ -216,6 +237,10 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		}
 	}
 	
+	/**
+	 * 
+	 * @throws JSONException
+	 */
 	private void getImageMediaItems() throws JSONException {
 		if(retrieveImageMedia) {
 			for(int i = 0; i < imageMediaUrls.length(); i++) {
@@ -255,7 +280,9 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 						Toast.makeText(LocationDetailsMediaScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 				} else if(obj instanceof Bitmap) {
-					mmStreamMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
+					mmStreamMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj,
+																		MMUtility.getImageMediaMeasuredWidth(LocationDetailsMediaScreen.this),
+																		MMUtility.getImageMediaMeasuredHeight(LocationDetailsMediaScreen.this)));
 					mmStreamMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
 					streamAdapter.notifyDataSetChanged();
 				}
@@ -283,7 +310,9 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 						Toast.makeText(LocationDetailsMediaScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 				} else if(obj instanceof Bitmap) {
-					mmVideoMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
+					mmVideoMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj,
+																	   MMUtility.getImageMediaMeasuredWidth(LocationDetailsMediaScreen.this),
+																	   MMUtility.getImageMediaMeasuredHeight(LocationDetailsMediaScreen.this)));
 					mmVideoMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
 					videoAdapter.notifyDataSetChanged();
 				}
@@ -311,7 +340,9 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 						Toast.makeText(LocationDetailsMediaScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 				} else if(obj instanceof Bitmap) {
-					mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, mediaWidth, mediaHeight));
+					mmImageMediaItems.get(mediaPosition).setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj,
+																	   MMUtility.getImageMediaMeasuredWidth(LocationDetailsMediaScreen.this),
+																	   MMUtility.getImageMediaMeasuredHeight(LocationDetailsMediaScreen.this)));
 					mmImageMediaItems.get(mediaPosition).setImageOnClickListener(new MMImageOnClickListener(LocationDetailsMediaScreen.this, (Bitmap) obj));
 					imageAdapter.notifyDataSetChanged();
 				}

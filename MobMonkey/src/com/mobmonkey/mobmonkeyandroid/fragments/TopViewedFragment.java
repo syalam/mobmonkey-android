@@ -98,11 +98,11 @@ public class TopViewedFragment extends MMFragment {
 				
 				JSONObject jObjMedia = jObj.getJSONObject(MMSDKConstants.JSON_KEY_MEDIA);
 				if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_IMAGE)) {
-					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i),
+					MMImageLoaderAdapter.loadImage(new LoadMediaThumbnailCallback(i),
 												   jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 					topViewedItems[i].setIsImage(true);
 				} else if(jObjMedia.getString(MMSDKConstants.JSON_KEY_TYPE).equals(MMSDKConstants.MEDIA_VIDEO)) {
-					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), 
+					MMImageLoaderAdapter.loadImage(new LoadMediaThumbnailCallback(i), 
 												   jObjMedia.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 					topViewedItems[i].setIsVideo(true);
 					topViewedItems[i].setPlayOnClickListener(new MMVideoPlayOnClickListener(getActivity(), jObjMedia.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
@@ -161,10 +161,10 @@ public class TopViewedFragment extends MMFragment {
 	 * @author Dezapp, LLC
 	 *
 	 */
-	private class LoadImageCallback implements MMCallback {
+	private class LoadMediaThumbnailCallback implements MMCallback {
 		int topViewedLocation;
 		
-		public LoadImageCallback(int topViewedLocation) {
+		public LoadMediaThumbnailCallback(int topViewedLocation) {
 			this.topViewedLocation = topViewedLocation;
 		}
 		
@@ -176,8 +176,9 @@ public class TopViewedFragment extends MMFragment {
 						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 				} else if(obj instanceof Bitmap) {
-					Display display = getActivity().getWindowManager().getDefaultDisplay();
-					topViewedItems[topViewedLocation].setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj, 350, 270));
+					topViewedItems[topViewedLocation].setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj,
+																	MMUtility.getImageMediaMeasuredWidth(getActivity()),
+																	MMUtility.getImageMediaMeasuredHeight(getActivity())));
 					topViewedItems[topViewedLocation].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
 					adapter.notifyDataSetChanged();
 				}

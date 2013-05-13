@@ -98,8 +98,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private boolean retrieveVideoMedia = true;
 	private boolean retrieveImageMedia = true;
 	private Bitmap imageMedia;
-	private int width = MMSDKConstants.DEFAULT_INT_ZERO;
-	private int height = MMSDKConstants.DEFAULT_INT_ZERO;
 	private View mediaButtonSelected;
 	
 	/*
@@ -209,8 +207,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				intent.putExtra(MMSDKConstants.MEDIA_LIVESTREAMING, streamMediaUrl.toString());
 				intent.putExtra(MMSDKConstants.MEDIA_VIDEO, videoMediaUrl.toString());
 				intent.putExtra(MMSDKConstants.MEDIA_IMAGE, imageMediaUrl.toString());
-				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
-				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
 				startActivity(intent);
 				break;
 			case R.id.ibvideo:
@@ -219,8 +215,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				intent.putExtra(MMSDKConstants.MEDIA_LIVESTREAMING, streamMediaUrl.toString());
 				intent.putExtra(MMSDKConstants.MEDIA_VIDEO, videoMediaUrl.toString());
 				intent.putExtra(MMSDKConstants.MEDIA_IMAGE, imageMediaUrl.toString());
-				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
-				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
 				startActivity(intent);
 				break;
 			case R.id.ibimage:
@@ -229,8 +223,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				intent.putExtra(MMSDKConstants.MEDIA_LIVESTREAMING, streamMediaUrl.toString());
 				intent.putExtra(MMSDKConstants.MEDIA_VIDEO, videoMediaUrl.toString());
 				intent.putExtra(MMSDKConstants.MEDIA_IMAGE, imageMediaUrl.toString());
-				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_WIDTH, ivtnMedia.getMeasuredWidth());
-				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_THUMBNAIL_HEIGHT, ivtnMedia.getMeasuredHeight());
 				startActivity(intent);
 				break;
 			case R.id.btncreatehotspot:
@@ -360,7 +352,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		if(mediaResults != null) {
 			JSONObject mediaJObj = new JSONObject(mediaResults); 
 			JSONArray mediaJArr = mediaJObj.getJSONArray(MMSDKConstants.JSON_KEY_MEDIA);
-			Log.d(TAG, "mediaResults: " + mediaJObj.toString());
 			int streamMediaCount = 0;
 			int videoMediaCount = 0;
 			int imageMediaCount = 0;
@@ -370,10 +361,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				llMedia.setVisibility(View.VISIBLE);
 				
 				boolean isFirstMedia = true;
-				
 				for(int i = 0; i < mediaJArr.length(); i++) {
 					JSONObject jObj = mediaJArr.getJSONObject(i);
-					
 					String media = jObj.getString(MMSDKConstants.JSON_KEY_TYPE);
 					
 					if(media.equals(MMSDKConstants.MEDIA_LIVESTREAMING)) {
@@ -397,7 +386,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 								MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(),
 															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 							} else {
-								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, width, height));
+								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
 							}
 							tvExpiryDate.setVisibility(View.VISIBLE);
 							tvExpiryDate.setText(MMUtility.getExpiryDate(System.currentTimeMillis() - jObj.getLong(MMSDKConstants.JSON_KEY_UPLOADED_DATE)));
@@ -414,9 +403,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 								MMImageLoaderAdapter.loadImage(new LoadImageCallback(),
 															   jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 							} else {
-								Log.d(TAG, "width: " + ivtnMedia.getWidth() + " height: " + ivtnMedia.getHeight());
-								Log.d(TAG, "measuredWidth: " + ivtnMedia.getMeasuredWidth() + " measuredHeight: " + ivtnMedia.getMeasuredHeight());
-								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, width, height));
+								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
 								ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
 							}
 							tvExpiryDate.setVisibility(View.VISIBLE);
@@ -628,9 +615,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				} else if(obj instanceof Bitmap){				
 					retrieveImageMedia = false;
 					imageMedia = (Bitmap) obj;
-					width = ivtnMedia.getMeasuredWidth();
-					height = ivtnMedia.getMeasuredHeight();
-					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, width, height));
+					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
 				}
 			}
 		}
@@ -652,9 +637,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				} else if(obj instanceof Bitmap){				
 					retrieveImageMedia = false;
 					imageMedia = (Bitmap) obj;
-					width = ivtnMedia.getMeasuredWidth();
-					height = ivtnMedia.getMeasuredHeight();
-					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, width, height));
+					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
 					ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
 				}
 			}

@@ -23,8 +23,9 @@
 		<ListView android:id="@+id/lvtopviewed"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
-		    android:scrollbars="none"
-			android:dividerHeight="0dp"/>
+		    android:divider="@color/backgroundcolor"
+			android:dividerHeight="0dp"
+			android:scrollbars="vertical"/>
         
     </LinearLayout>
     

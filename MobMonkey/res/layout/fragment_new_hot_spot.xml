@@ -31,9 +31,9 @@
 				android:textColor="@android:color/black"/>
 			
 			<fragment android:id="@+id/fragnewhotspotmap"
-					android:layout_width="match_parent"
-					android:layout_height="200dp"
-					class="com.google.android.gms.maps.SupportMapFragment"/>
+				android:layout_width="match_parent"
+				android:layout_height="200dp"
+				class="com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment"/>
 			
 			<TextView android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"

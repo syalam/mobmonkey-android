@@ -1,6 +1,5 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
-import java.io.File;
 import java.text.ParseException;
 
 import org.json.JSONArray;
@@ -8,13 +7,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -24,8 +23,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.mobmonkey.mobmonkeyandroid.MainScreen;
-import com.mobmonkey.mobmonkeyandroid.MakeARequestScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMAnsweredRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMAnsweredRequestItem;
@@ -60,7 +57,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 	MMMediaItem[] answeredRequestItems;
 	private SharedPreferences userPrefs;
 	Location location;
-	private MMAnsweredRequestsArrayAdapter adapter;
+	private MMAnsweredRequestsArrayAdapter answeredRequestsArrayAdapter;
 	private OnLocationNameClickFragmentListener locationNameClickListener;
 	
 	/*
@@ -159,8 +156,26 @@ public class AnsweredRequestsFragment extends MMFragment {
 		
 //		tempItem = answeredRequestItems;
 		
-		adapter = new MMAnsweredRequestsArrayAdapter(getActivity(), R.layout.listview_row_answered_requests, answeredRequestItems);
-		lvAnsweredRequests.setAdapter(adapter);
+		answeredRequestsArrayAdapter = new MMAnsweredRequestsArrayAdapter(getActivity(), R.layout.listview_row_answered_requests, answeredRequestItems);
+		lvAnsweredRequests.setAdapter(answeredRequestsArrayAdapter);
+		
+		if(answeredRequests.length() < 1) {
+			displayAlertNoMoreAnsweredRequests();
+		}
+	}
+	
+	private void displayAlertNoMoreAnsweredRequests() {
+		new AlertDialog.Builder(getActivity())
+			.setTitle(R.string.ad_title_no_more_answered_requests)
+			.setMessage(R.string.ad_message_no_more_answered_requests)
+			.setCancelable(false)
+			.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					getActivity().onBackPressed();
+				}
+			})
+			.show();
 	}
 	
 	/**
@@ -210,9 +225,11 @@ public class AnsweredRequestsFragment extends MMFragment {
 						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 				} else if(obj instanceof Bitmap) {
-					answeredRequestItems[position].setImageMedia((Bitmap) obj);
+					answeredRequestItems[position].setImageMedia(ThumbnailUtils.extractThumbnail((Bitmap) obj,
+																 MMUtility.getImageMediaMeasuredWidth(getActivity()),
+																 MMUtility.getImageMediaMeasuredHeight(getActivity())));
 					answeredRequestItems[position].setImageOnClickListener(new MMImageOnClickListener(getActivity(), (Bitmap) obj));
-					adapter.notifyDataSetChanged();
+					answeredRequestsArrayAdapter.notifyDataSetChanged();
 				}
 			}
 		}

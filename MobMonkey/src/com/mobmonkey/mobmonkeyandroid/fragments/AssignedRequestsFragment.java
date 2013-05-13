@@ -12,7 +12,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -107,7 +109,7 @@ public class AssignedRequestsFragment extends MMFragment {
 	 * @throws ParseException
 	 */
 	
-	private MMAssignedRequestsItem[] getAssignedRequestItems() throws JSONException, NumberFormatException, ParseException {
+	private MMAssignedRequestsItem[] getAssignedRequestItems() throws JSONException, ParseException {
 		MMAssignedRequestsItem[] assginedRequestItems = new MMAssignedRequestsItem[assignedRequests.length()];
 
 		for(int i = 0; i < assignedRequests.length(); i++) {
@@ -125,7 +127,7 @@ public class AssignedRequestsFragment extends MMFragment {
 				item.time = MMSDKConstants.DEFAULT_STRING_EMPTY;
 			}
 			else {
-				item.time = MMUtility.getDate(Long.parseLong(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE)), "MMMM dd hh:mma");
+				item.time = MMUtility.getDate(jObj.getLong(MMSDKConstants.JSON_KEY_REQUEST_DATE), "MMMM dd hh:mma");
 			}
 			
 			item.dis = MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles);
@@ -291,10 +293,26 @@ public class AssignedRequestsFragment extends MMFragment {
 	}
 	
 	/**
+	 * 
+	 */
+	private void displayAlertNoMoreAssignedRequests() {
+		new AlertDialog.Builder(getActivity())
+			.setTitle(R.string.ad_title_no_more_assigned_requests)
+			.setMessage(R.string.ad_message_no_more_assigned_requests)
+			.setCancelable(false)
+			.setNegativeButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					getActivity().onBackPressed();
+				}
+			})
+			.show();
+	}
+	
+	/**
 	 * {@link MMCallback} function. Get call after successfully fulfilled a request.
 	 *
 	 */
-	
 	private class AnswerRequest implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
@@ -309,35 +327,32 @@ public class AssignedRequestsFragment extends MMFragment {
 						JSONObject jObj = new JSONObject((String) obj);
 						
 						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							Toast.makeText(getActivity(), R.string.toast_uploaded_assigned_request, Toast.LENGTH_LONG).show();
+						
+							// remove recorded video file
+							File mmVideoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
+							mmVideoFile.delete();
+							
 							JSONArray newArray = new JSONArray();
 							for(int i = 0; i < assignedRequests.length(); i++) {
 								if(i != clickedPosition) {
 									newArray.put(assignedRequests.getJSONObject(i));
 								}
 							}
+							
 							assignedRequests = newArray;
 							
 							arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
 							lvAssignedRequests.setAdapter(arrayAdapter);
 							lvAssignedRequests.invalidate();
 							
-							Toast.makeText(getActivity().getApplicationContext(),
-										   "You have successfully fulfilled a request.",
-										   Toast.LENGTH_LONG).
-										   show();
-							
-							// remove recorded video file
-							File mmVideoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
-							mmVideoFile.delete();
+							if(newArray.length() < 1) {
+								displayAlertNoMoreAssignedRequests();
+							}
 						} else {
-							Toast.makeText(getActivity().getApplicationContext(), 
-									   	   "An error has occured while uploading media.", 
-									   	   Toast.LENGTH_LONG)
-									   	   .show();
+							Toast.makeText(getActivity(), R.string.toast_failed_upload_assigned_request, Toast.LENGTH_LONG).show();
 						}
 					} catch(JSONException e) {
-						e.printStackTrace();
-					} catch (NumberFormatException e) {
 						e.printStackTrace();
 					} catch (ParseException e) {
 						e.printStackTrace();
@@ -366,8 +381,6 @@ public class AssignedRequestsFragment extends MMFragment {
 						lvAssignedRequests.setAdapter(arrayAdapter);
 						lvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
 					} catch (JSONException e) {
-						e.printStackTrace();
-					} catch (NumberFormatException e) {
 						e.printStackTrace();
 					} catch (ParseException e) {
 						e.printStackTrace();

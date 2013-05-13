@@ -43,33 +43,34 @@ public class MMMediaArrayAdapter extends ArrayAdapter<MMMediaItem> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {		
 		View media = convertView;
-		ViewHolder vholder;
+		ViewHolder vHolder;
 		
 		if(media == null) {
 			LayoutInflater inflater = ((Activity)context).getLayoutInflater();
 			media = inflater.inflate(mediaLayoutId, parent, false);
 			
-			vholder = new ViewHolder();
-			vholder.ivtnMedia = (ImageView) media.findViewById(R.id.ivtnmedia);
-			vholder.tvExpiryDate = (TextView) media.findViewById(R.id.tvexpirydate);
-			vholder.ibPlay = (ImageButton) media.findViewById(R.id.ibplay);
-			vholder.ibShareMedia = (ImageButton) media.findViewById(R.id.ibsharemedia);
+			vHolder = new ViewHolder();
+			vHolder.ivtnMedia = (ImageView) media.findViewById(R.id.ivtnmedia);
+			vHolder.tvExpiryDate = (TextView) media.findViewById(R.id.tvexpirydate);
+			vHolder.ibPlay = (ImageButton) media.findViewById(R.id.ibplay);
+			vHolder.ibShareMedia = (ImageButton) media.findViewById(R.id.ibsharemedia);
 			
-			media.setTag(vholder);
+			media.setTag(vHolder);
 		} else {
-			vholder = (ViewHolder) media.getTag();
+			vHolder = (ViewHolder) media.getTag();
 		}
 		
 		MMMediaItem mmMediaItem = mmMediaItems.get(position);
-		vholder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
-		vholder.tvExpiryDate.setText(mmMediaItem.getExpiryDate());
-		vholder.ibShareMedia.setOnClickListener(mmMediaItem.getShareMediaOnClickListener());
+		vHolder.ivtnMedia.setImageBitmap(mmMediaItem.getImageMedia());
+		vHolder.tvExpiryDate.setText(mmMediaItem.getExpiryDate());
+		vHolder.ibShareMedia.setOnClickListener(mmMediaItem.getShareMediaOnClickListener());
 		
 		if(mmMediaItem.isVideo()) {
-			vholder.ibPlay.setVisibility(View.VISIBLE);
-			vholder.ibPlay.setOnClickListener(mmMediaItem.getPlayOnClickListener());
+			vHolder.ibPlay.setVisibility(View.VISIBLE);
+			vHolder.ibPlay.setOnClickListener(mmMediaItem.getPlayOnClickListener());
 		} else if(mmMediaItem.isImage()) {
-			vholder.ivtnMedia.setOnClickListener(mmMediaItem.getImageOnClickListener());
+			vHolder.ibPlay.setVisibility(View.INVISIBLE);
+			vHolder.ivtnMedia.setOnClickListener(mmMediaItem.getImageOnClickListener());
 		}
 		
 		return media;

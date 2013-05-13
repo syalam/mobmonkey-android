@@ -65,6 +65,7 @@
 	        android:layout_height="match_parent"
 	        android:dividerHeight="0dp"
 	        android:divider="@color/backgroundcolor"
+	        android:scrollbars="vertical"
 	        android:visibility="invisible"/>
 	    
    	    <ListView android:id="@+id/lvvideomedia"
@@ -72,6 +73,7 @@
 	        android:layout_height="match_parent"
 	        android:dividerHeight="0dp"
 			android:divider="@color/backgroundcolor"
+			android:scrollbars="vertical"
 	        android:visibility="invisible"/>
 	    
 		<ListView android:id="@+id/lvimagemedia"
@@ -79,6 +81,7 @@
 			android:layout_height="match_parent"
 			android:dividerHeight="0dp"
 	        android:divider="@color/backgroundcolor"
+	        android:scrollbars="vertical"
 			android:visibility="invisible"/>
 		
    	</FrameLayout>

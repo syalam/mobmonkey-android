@@ -6,8 +6,12 @@ import java.util.Calendar;
 
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
+import android.app.Activity;
+import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 
 /**
  * @author Dezapp, LLC
@@ -58,6 +62,11 @@ public final class MMUtility {
 	    return sdf.format(calendar.getTime());
 	}
 	
+	/**
+	 * 
+	 * @param timeToExpiryDateInMillisecond
+	 * @return
+	 */
 	public static String getExpiryDate(long timeToExpiryDateInMillisecond) {		
 		String expiryDate = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		
@@ -70,5 +79,25 @@ public final class MMUtility {
 		}
 		
 		return expiryDate;
+	}
+	
+	/**
+	 * 
+	 * @param activity
+	 * @return
+	 */
+	public static int getImageMediaMeasuredWidth(Activity activity) {
+		Display display = activity.getWindowManager().getDefaultDisplay();
+		int calculatedWidthPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10.0f, activity.getResources().getDisplayMetrics());
+		return display.getWidth() - calculatedWidthPadding * 2;
+	}
+	
+	/**
+	 * 
+	 * @param activity
+	 * @return
+	 */
+	public static int getImageMediaMeasuredHeight(Activity activity) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260.0f, activity.getResources().getDisplayMetrics());
 	}
 }

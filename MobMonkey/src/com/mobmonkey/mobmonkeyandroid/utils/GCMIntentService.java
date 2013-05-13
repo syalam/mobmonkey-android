@@ -17,12 +17,10 @@ import com.mobmonkey.mobmonkeyandroid.R.string;
 import com.mobmonkey.mobmonkeyandroid.MainScreen;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
-public class GCMIntentService extends GCMBaseIntentService{
-
-
+public class GCMIntentService extends GCMBaseIntentService {
 	// TODO: senderid hardcoded
 	public static final String SENDER_ID = "406893575625";
-	public static final String SERVER_URL = MMSDKConstants.TEST_MOBMONKEY_GCM_URL;
+	public static final String SERVER_URL = MMSDKConstants.MOBMONKEY_URL;
 	
 	public GCMIntentService() {
         super(SENDER_ID);
@@ -92,7 +90,7 @@ public class GCMIntentService extends GCMBaseIntentService{
     }
     
     static void displayMessage(Context context, String message) {
-        Intent intent = new Intent("com.mobmonkey.mobmonkey.DISPLAY_MESSAGE");
+        Intent intent = new Intent(MMSDKConstants.INTENT_FILTER_DISPLAY_MESSAGE);
         intent.putExtra("message", message);
         context.sendBroadcast(intent);
     }
