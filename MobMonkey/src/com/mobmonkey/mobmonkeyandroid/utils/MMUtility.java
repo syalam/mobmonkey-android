@@ -46,8 +46,10 @@ public final class MMUtility {
 	 */
 	public static String convertMetersToMiles(double dist) {
 		dist = dist * 0.000621371f;
+		DecimalFormat decimalFormat = new DecimalFormat(MMSDKConstants.DECIMAL_FORMAT_ZEROES_TWO);
+		decimalFormat.setDecimalSeparatorAlwaysShown(true);
 		
-		return new DecimalFormat("#.##").format(dist);
+		return decimalFormat.format(dist);
 	}
 	
 	/**

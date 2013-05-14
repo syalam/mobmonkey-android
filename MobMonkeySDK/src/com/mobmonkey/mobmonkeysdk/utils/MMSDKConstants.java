@@ -31,6 +31,7 @@ public final class MMSDKConstants {
 	public static final double DEFAULT_DOUBLE = 1.0d;
 
 	public static final String DECIMAL_FORMAT_SIX = "#.######";
+	public static final String DECIMAL_FORMAT_ZEROES_TWO = "0.00";
 	public static final String DATE_FORMAT_MMMM_DD_HH_SEMICOLON_MMA = "MMMM dd hh:mma";
 	public static final String DATE_FORMAT_MMM_DD_COMMA_YYYY = "MMM dd, yyyy";
 	
