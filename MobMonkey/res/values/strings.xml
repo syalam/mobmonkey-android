@@ -184,10 +184,19 @@
 	<string name="tv_title_new_hot_spot">New Hot Spot</string>
 	<string name="tv_touch_hot_spot_on_map">Touch the Hot Spot Location on the map</string>
 	<string name="tv_hot_spot_details">Hot Spot Details</string>
+	<string name="tv_new_hot_spot">NEW HOT SPOT</string>
+	
 	<string name="et_hint_name">Name</string>
 	<string name="et_hint_description">Description</string>
 	<string name="et_hint_range">Range</string>
+	<string name="et_text_meters">meters</string>
+	
 	<string name="btn_create_hot_spot">Create Hot Spot</string>
+	
+	<string name="ad_message_empty_name">Each Hot Spot mush have a name.</string>
+	<string name="ad_message_empty_range">Each Hot Spot mush have a range.</string>
+	
+	<string name="pd_creating_hot_spot">Creating Hot Spot&#8230;</string>
 	
 	<!-- Hot Spot Range Screen -->
 	<string name="tv_select_a_range">Select a Range</string>
@@ -369,6 +378,7 @@
 	<string name="ad_no_zip">Please enter a zip code</string>
 
 	<string name="pd_retrieving_location_information">Retrieving location information&#8230;</string>
+	<string name="pd_adding_location">Adding location&#8230;</string>
 	
 	<!-- Add Location Category List Screen -->
 	<string name="tv_title_categories">Categories</string>

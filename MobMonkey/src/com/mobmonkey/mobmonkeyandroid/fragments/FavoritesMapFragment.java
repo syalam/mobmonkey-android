@@ -55,7 +55,6 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	private static final String TAG = "MMMapsFragment: ";
 	
 	private SharedPreferences userPrefs;
-	private Location location;
 	
 	private ImageButton ibMap;
 	private Button btnAddLoc;
@@ -67,7 +66,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	private HashMap<Marker, JSONObject> markerHashMap;
 	private boolean addLocClicked;
 	private Marker currMarker;
-	private float currZoomLevel = 16;
+	private float currZoomLevel = 17;
 	
 	private MMOnMapIconFragmentClickListener mapIconClickListener;
 	private MMOnSearchResultsFragmentItemClickListener locationSelectListener;
@@ -75,7 +74,6 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStates) {
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_favorites_map, container, false);
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
@@ -145,8 +143,13 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	@Override
 	public void onMapClick(LatLng pointClicked) {
 		if(addLocClicked) {
-			MMGeocoderAdapter.getFromLocation(getActivity(), new ReverseGeocodeCallback(), pointClicked.latitude, pointClicked.longitude);
-			MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, "");
+			MMGeocoderAdapter.getFromLocation(getActivity(),
+											  new ReverseGeocodeCallback(),
+											  pointClicked.latitude,
+											  pointClicked.longitude);
+			MMProgressDialog.displayDialog(getActivity(),
+										   MMSDKConstants.DEFAULT_STRING_EMPTY,
+										   getString(R.string.pd_retrieving_location_information));
 		}
 	}
 	
@@ -202,7 +205,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	private void addToGoogleMap() throws JSONException {
 		markerHashMap.clear();
 		googleMap.clear();
-		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+		LatLng currentLoc = new LatLng(MMLocationManager.getLocationLatitude(), MMLocationManager.getLocationLongitude());
 		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 		
 		for(int i = 0; i < favoritesList.length(); i++) {
@@ -224,10 +227,12 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 			markerHashMap.put(locationResultMarker, jObj);
 		}
 
+		Log.d(TAG, TAG + "lat: " + currentLoc.latitude + " long:  " + currentLoc.longitude);
 		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, currZoomLevel));
 		googleMap.setOnInfoWindowClickListener(FavoritesMapFragment.this);
 		googleMap.setOnMapClickListener(FavoritesMapFragment.this);
 		googleMap.setMyLocationEnabled(true);
+		Log.d(TAG, TAG + "my location: " + googleMap.getMyLocation());
 	}
 	
 	/**
@@ -248,16 +253,23 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 				} else if(obj instanceof Address){
 					Address locationClicked = (Address) obj;
 					
-					Bundle bundle = new Bundle();
-					bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
-					bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
-					bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
-					bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
-					bundle.putDouble(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
-					bundle.putDouble(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
+//					Bundle bundle = new Bundle();
+//					bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
+//					bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+//					bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+//					bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+//					bundle.putDouble(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
+//					bundle.putDouble(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
 					
 					Intent intent = new Intent(getActivity(), AddLocationScreen.class);
-					intent.putExtras(bundle);
+					intent.putExtra(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(MMSDKConstants.DEFAULT_INT_ZERO));
+					intent.putExtra(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+					intent.putExtra(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+					intent.putExtra(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+					intent.putExtra(MMSDKConstants.JSON_KEY_COUNTRY_CODE, locationClicked.getCountryCode());
+					intent.putExtra(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
+					intent.putExtra(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
+//					intent.putExtras(bundle);
 					startActivity(intent);
 				}
 			}

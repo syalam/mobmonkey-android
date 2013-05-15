@@ -29,7 +29,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 public class AddLocationMapScreen extends FragmentActivity implements OnMapClickListener {
 	private Location location;
 	
-	private Button btnAddLoc;
+	private Button btnCancel;
 	private Button btnPlus;
 	private boolean addLocClicked;
 	
@@ -47,8 +47,15 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 	
 	@Override
 	public void onMapClick(LatLng pointClicked) {
-		MMGeocoderAdapter.getFromLocation(AddLocationMapScreen.this, new ReverseGeocodeCallback(), pointClicked.latitude, pointClicked.longitude);
-		MMProgressDialog.displayDialog(AddLocationMapScreen.this, MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_retrieving_location_information));
+		if(addLocClicked) {
+			MMGeocoderAdapter.getFromLocation(AddLocationMapScreen.this,
+											  new ReverseGeocodeCallback(),
+											  pointClicked.latitude,
+											  pointClicked.longitude);
+			MMProgressDialog.displayDialog(AddLocationMapScreen.this,
+										   MMSDKConstants.DEFAULT_STRING_EMPTY,
+										   getString(R.string.pd_retrieving_location_information));
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -62,7 +69,7 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
-			case R.id.btnaddloc:
+			case R.id.btncancel:
 				getLocation();
 				break;
 			case R.id.btnplus:
@@ -73,9 +80,9 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 	
 	private void init() {
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
-		btnAddLoc = (Button) findViewById(R.id.btnaddloc);
+		btnCancel = (Button) findViewById(R.id.btncancel);
 		btnPlus = (Button) findViewById(R.id.btnplus);
-		addLocClicked = true;
+		addLocClicked = false;
 		
 		smfLocation = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragmap);
 		googleMap = smfLocation.getMap();
@@ -85,21 +92,22 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 	
 	private void setUpGoogleMap() {
 		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
-		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
-		googleMap.setMyLocationEnabled(true);
+		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 13));
 		googleMap.setOnMapClickListener(AddLocationMapScreen.this);
+		googleMap.setMyLocationEnabled(true);
+		googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 17));
 	}
 	
 	private void getLocation() {
-		if(addLocClicked) {
+		if(!addLocClicked) {
 			Toast.makeText(AddLocationMapScreen.this, R.string.toast_tap_location_to_add, Toast.LENGTH_LONG).show();
-			btnAddLoc.setVisibility(View.VISIBLE);
+			btnCancel.setVisibility(View.VISIBLE);
 			btnPlus.setVisibility(View.INVISIBLE);
-			addLocClicked = false;
-		} else {
-			btnAddLoc.setVisibility(View.INVISIBLE);
-			btnPlus.setVisibility(View.VISIBLE);
 			addLocClicked = true;
+		} else {
+			btnCancel.setVisibility(View.INVISIBLE);
+			btnPlus.setVisibility(View.VISIBLE);
+			addLocClicked = false;
 		}
 	}
 	
@@ -121,16 +129,17 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 				} else if(obj instanceof Address) {
 					Address locationClicked = (Address) obj;
 					
-					Bundle bundle = new Bundle();
-					bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
-					bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
-					bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
-					bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
-					bundle.putDouble(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
-					bundle.putDouble(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
-					
 					Intent intent = new Intent(AddLocationMapScreen.this, AddLocationScreen.class);
-					intent.putExtras(bundle);
+//					Bundle bundle = new Bundle();
+					intent.putExtra(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(MMSDKConstants.DEFAULT_INT_ZERO));
+					intent.putExtra(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+					intent.putExtra(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+					intent.putExtra(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+					intent.putExtra(MMSDKConstants.JSON_KEY_COUNTRY_CODE, locationClicked.getCountryCode());
+					intent.putExtra(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
+					intent.putExtra(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
+					
+//					intent.putExtras(bundle);
 					startActivity(intent);
 				}
 			}

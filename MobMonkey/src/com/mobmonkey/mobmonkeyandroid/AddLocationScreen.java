@@ -7,13 +7,19 @@ import org.json.JSONException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
+import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -28,11 +34,12 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  * @author Dezapp, LLC
  *
  */
-public class AddLocationScreen extends Activity {
+public class AddLocationScreen extends Activity implements OnTouchListener,
+														   OnKeyListener {
 	private static final String TAG = "AddLocationScreen: ";
 	
 	private SharedPreferences userPrefs;
-	private SharedPreferences.Editor editPrefs;
+	private InputMethodManager inputMethodManager;
 	
 	private EditText etLocName;
 	private EditText etCategories;
@@ -41,8 +48,7 @@ public class AddLocationScreen extends Activity {
 	private EditText etState;
 	private EditText etZip;
 	private EditText etPhone;
-	private String name, categoriesIds, street, city, state, postalCode, phone;
-	private double latitude, longitude;
+	private String categoriesIds;
 	
 	private ArrayList<String> selectedCategories;
 	private ArrayList<String> selectedCategoriesIds;
@@ -57,8 +63,7 @@ public class AddLocationScreen extends Activity {
 		overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_hold);
 		setContentView(R.layout.add_location_screen);
 		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
-		editPrefs = userPrefs.edit();
-		editPrefs.commit();
+		inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		init();
 	}
 	
@@ -69,7 +74,7 @@ public class AddLocationScreen extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d("Test", "categories: " + categoriesIds);
+		Log.d(TAG, TAG + "categories: " + categoriesIds);
 //		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST)) {
 //			String displayCategoriesSelected = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_CATEGORY_LIST, MMSDKConstants.DEFAULT_STRING_EMPTY);
 //			try {
@@ -134,6 +139,36 @@ public class AddLocationScreen extends Activity {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
+	 */
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		if(event.getAction() == MotionEvent.ACTION_DOWN) {
+			Intent categoryScreenIntent = new Intent(AddLocationScreen.this, AddLocationCategoryScreen.class);
+			JSONArray categories = MMCategories.getTopLevelCategories(AddLocationScreen.this);
+			categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY_TITLE, getString(R.string.tv_title_categories));
+			categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORIES, categories.toString());
+			categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES, selectedCategories);
+			categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES_IDS, selectedCategoriesIds);
+			startActivityForResult(categoryScreenIntent, MMSDKConstants.REQUEST_CODE_ADD_CATEGORY);
+			return true;
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see android.view.View.OnKeyListener#onKey(android.view.View, int, android.view.KeyEvent)
+	 */
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+			inputMethodManager.hideSoftInputFromWindow(etPhone.getWindowToken(), 0);
+			return true;
+		}
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onBackPressed()
@@ -159,30 +194,16 @@ public class AddLocationScreen extends Activity {
 		etZip = (EditText)findViewById(R.id.etzip);
 		etPhone = (EditText)findViewById(R.id.etphone);
 		
-		etCategories.setInputType(InputType.TYPE_NULL);
+		etPhone.setOnKeyListener(AddLocationScreen.this);
 		
 		selectedCategories = new ArrayList<String>();
 		selectedCategoriesIds = new ArrayList<String>();
 		
 		// check for bundle (location)
-		checkLocationInfo();
+		setLocationInfo();
 		
 		// open category list from editText touch event
-		etCategories.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if(event.getAction() == MotionEvent.ACTION_DOWN) {
-					Intent categoryScreenIntent = new Intent(AddLocationScreen.this, AddLocationCategoryScreen.class);
-					JSONArray categories = MMCategories.getTopLevelCategories(AddLocationScreen.this);
-					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY_TITLE, getString(R.string.tv_title_categories));
-					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORIES, categories.toString());
-					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES, selectedCategories);
-					categoryScreenIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES_IDS, selectedCategoriesIds);
-					startActivityForResult(categoryScreenIntent, MMSDKConstants.REQUEST_CODE_ADD_CATEGORY);
-				}
-				return false;
-			}
-		});
+		etCategories.setOnTouchListener(AddLocationScreen.this);
 	}
 
 	/**
@@ -204,71 +225,89 @@ public class AddLocationScreen extends Activity {
 	 */
 	private void addLocation() throws JSONException {
 		if(checkValues()) {
-			MMAddLocationAdapter.addLocation(new AddLocationCallback(), 
-											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-											 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-											 MMConstants.PARTNER_ID, 
-											 street, 
+			MMAddLocationAdapter.addLocation(new AddLocationCallback(),
+											 etStreet.getText().toString(),
+											 null,
+											 null,
+											 categoriesIds,
+											 getIntent().getStringExtra(MMSDKConstants.JSON_KEY_COUNTRY_CODE),											 
+											 getIntent().getDoubleExtra(MMSDKConstants.JSON_KEY_LATITUDE, MMSDKConstants.DEFAULT_DOUBLE_ZERO),
+											 etCity.getText().toString(),
+											 getIntent().getDoubleExtra(MMSDKConstants.JSON_KEY_LONGITUDE, MMSDKConstants.DEFAULT_DOUBLE_ZERO),
+											 etLocName.getText().toString(), 
 											 MMSDKConstants.DEFAULT_STRING_EMPTY, 
-											 MMSDKConstants.DEFAULT_STRING_EMPTY, 
-											 categoriesIds, 
-											 "United States", 
-											 latitude, 
-											 city, 
-											 longitude, 
-											 name, 
-											 MMSDKConstants.DEFAULT_STRING_EMPTY, 
-											 phone, 
-											 postalCode, 
-											 MMSDKConstants.DEFAULT_STRING_EMPTY, 
-											 state, 
-											 MMSDKConstants.DEFAULT_STRING_EMPTY);
+											 etPhone.getText().toString(), 
+											 etZip.getText().toString(),
+											 etState.getText().toString(),
+											 MMConstants.PROVIDER_ID, 
+											 "www.dezapp.com", // TODO: hardcoded
+											 MMConstants.PARTNER_ID,
+											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+											 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMProgressDialog.displayDialog(AddLocationScreen.this,
+										   MMSDKConstants.DEFAULT_STRING_EMPTY,
+										   getString(R.string.pd_adding_location));
 		}
 	}
 	
 	private boolean checkValues() {
-		if(etLocName.getText().toString().isEmpty())
-		{
+		if(!TextUtils.isEmpty(etLocName.getText().toString())) {
+			return checkCategories();
+		} else {
 			displayAlert(R.string.ad_no_name);
 			return false;
 		}
-		else if(etCategories.getText().toString().isEmpty())
-		{
+	}
+	
+	private boolean checkCategories() {
+		if(!TextUtils.isEmpty(etCategories.getText().toString())) {
+			return checkStreet();
+		} else {
 			displayAlert(R.string.ad_no_categories);
 			return false;
 		}
-		else if(etStreet.getText().toString().isEmpty())
-		{
-			displayAlert(R.string.ad_no_street);
-			return false;
-		}
-		else if(etCity.getText().toString().isEmpty())
-		{
+	}
+	
+	private boolean checkStreet() {
+		if(!TextUtils.isEmpty(etStreet.getText().toString())) {
+			return checkCity();
+		} else {
 			displayAlert(R.string.ad_no_city);
 			return false;
 		}
-		if(etState.getText().toString().isEmpty())
-		{
-			displayAlert(R.string.ad_no_state);
+	}
+	
+	private boolean checkCity() {
+		if(!TextUtils.isEmpty(etCity.getText().toString())) {
+			return checkState();
+		} else {
+			displayAlert(R.string.ad_no_city);
 			return false;
 		}
-		if(etZip.getText().toString().isEmpty())
-		{
+	}
+	
+	private boolean checkState() {
+		if(!TextUtils.isEmpty(etState.getText().toString())) {
+			return checkZip();
+		} else {
 			displayAlert(R.string.ad_no_zip);
 			return false;
 		}
-		name = etLocName.getText().toString();
-		street = etStreet.getText().toString();
-		city = etCity.getText().toString();
-		state = etState.getText().toString();
-		postalCode = etZip.getText().toString();
-		if(!etPhone.getText().toString().isEmpty())
-			phone =  etPhone.getText().toString();
-		else
-			phone = MMSDKConstants.DEFAULT_STRING_EMPTY;
-		return true;
 	}
 	
+	private boolean checkZip() {
+		if(!TextUtils.isEmpty(etZip.getText().toString())) {
+			return true;
+		} else {
+			displayAlert(R.string.ad_no_zip);
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param messageId
+	 */
 	private void displayAlert(int messageId) {
     	new AlertDialog.Builder(AddLocationScreen.this)
     		.setTitle(R.string.app_name)
@@ -277,61 +316,28 @@ public class AddLocationScreen extends Activity {
     		.show();
     }
 	
-	private void checkLocationInfo() {
-		if(this.getIntent().getExtras() != null) {
-			Bundle bundle = getIntent().getExtras();
-			etStreet.setText(bundle.getString(MMSDKConstants.JSON_KEY_ADDRESS));
-			etCity.setText(bundle.getString(MMSDKConstants.JSON_KEY_LOCALITY));
-			etState.setText(bundle.getString(MMSDKConstants.JSON_KEY_REGION));
-			etZip.setText(bundle.getString(MMSDKConstants.JSON_KEY_POSTCODE));
-			latitude = bundle.getDouble(MMSDKConstants.JSON_KEY_LATITUDE);
-			longitude = bundle.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE);
-		}
+	/**
+	 * 
+	 */
+	private void setLocationInfo() {
+		etStreet.setText(getIntent().getStringExtra(MMSDKConstants.JSON_KEY_ADDRESS));
+		etCity.setText(getIntent().getStringExtra(MMSDKConstants.JSON_KEY_LOCALITY));
+		etState.setText(getIntent().getStringExtra(MMSDKConstants.JSON_KEY_REGION));
+		etZip.setText(getIntent().getStringExtra(MMSDKConstants.JSON_KEY_POSTCODE));
 	}
 	
-//	private int getCategoryId(String categoryName) throws JSONException {
-//		int id = -1;
-//		String name = catsName;
-//		JSONArray topLevelCategories = MMCategories.getTopLevelCategories(AddLocationScreen.this);
-//		if(isTopCats(name)) {
-//			if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
-//				JSONObject cats = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
-//				JSONObject jObj = cats.getJSONArray(name).getJSONObject(0);
-//				id = Integer.parseInt(jObj.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID));
-//			}
-//		} else {
-//			FindIDs:
-//			for(int i = 0; i < topCatsName.length; i++) {
-//				JSONArray jArr = new JSONArray(MMCategories.getSubCategoriesWithCategoryName(this, topCatsName[i]));
-//				for(int j = 0; j < jArr.length(); j++) {
-//					JSONObject jObj = jArr.getJSONObject(j);
-//					if(jObj.getString(Locale.getDefault().getLanguage()).equals(name)) {
-//						id = Integer.parseInt(jObj.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID));
-//						break FindIDs;
-//					}
-//				}
-//			}
-//		}
-//		
-//		return id;
-//	}
-	
-//	private boolean isTopCats(String name) throws JSONException {
-//		JSONArray topCatsName = MMCategories.getTopLevelCategories(AddLocationScreen.this);
-//		for(int i = 0; i < topCatsName.length(); i++) {
-//			if(topCatsName.getJSONObject(i).getString(Locale.getDefault().getLanguage()).equals(name)) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class AddLocationCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
 			MMProgressDialog.dismissDialog();
 			
 			if(obj != null) {
+				Log.d(TAG, TAG + "add location: " + (String) obj);
 				try {
 //					Intent locationDetailsScreenIntent = new Intent(AddLocationScreen.this, SearchResultDetailsScreen.class);				
 //					locationDetailsScreenIntent.putExtra(MMAPIConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, (String) obj);
@@ -352,6 +358,5 @@ public class AddLocationScreen extends Activity {
 			}
 			
 		}
-		
 	}
 }

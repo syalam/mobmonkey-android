@@ -323,6 +323,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		googleMap.setOnInfoWindowClickListener(SearchResultsFragment.this);
 		googleMap.setOnMapClickListener(SearchResultsFragment.this);
 		googleMap.setMyLocationEnabled(true);
+		Log.d(TAG, TAG + "my location: " + googleMap.getMyLocation());
 	}
 	
 	/**
@@ -442,16 +443,23 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 				} else if(obj instanceof Address) {
 					Address locationClicked = (Address) obj;
 				
-					Bundle bundle = new Bundle();
-					bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
-					bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
-					bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
-					bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
-					bundle.putDouble(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
-					bundle.putDouble(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
+//					Bundle bundle = new Bundle();
+//					bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
+//					bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+//					bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+//					bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+//					bundle.putDouble(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
+//					bundle.putDouble(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
 					
 					Intent intent = new Intent(getActivity(), AddLocationScreen.class);
-					intent.putExtras(bundle);
+					intent.putExtra(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(MMSDKConstants.DEFAULT_INT_ZERO));
+					intent.putExtra(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
+					intent.putExtra(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
+					intent.putExtra(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
+					intent.putExtra(MMSDKConstants.JSON_KEY_COUNTRY_CODE, locationClicked.getCountryCode());
+					intent.putExtra(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
+					intent.putExtra(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
+//					intent.putExtras(bundle);
 					startActivity(intent);
 				}
 			}

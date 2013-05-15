@@ -63,6 +63,7 @@ public class AddLocationCategoryScreen extends Activity implements OnItemClickLi
 		if(subCategories.length() > 1) {
 			Intent categoryListIntent = new Intent(AddLocationCategoryScreen.this, AddLocationCategoryScreen.class);
 			categoryListIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES, selectedCategories);
+			categoryListIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES_IDS, selectedCategoriesIds);
 			categoryListIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORY_TITLE, getString(R.string.tv_title_categories));
 			categoryListIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORIES, subCategories.toString());
 			categoryListIntent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_TOP_LEVEL, false);
@@ -92,6 +93,7 @@ public class AddLocationCategoryScreen extends Activity implements OnItemClickLi
 		if(requestCode == MMSDKConstants.REQUEST_CODE_ADD_CATEGORY) {
 			if(resultCode == RESULT_OK) {
 				selectedCategories = (ArrayList<String>) data.getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES);
+				selectedCategoriesIds = (ArrayList<String>) data.getSerializableExtra(MMSDKConstants.KEY_INTENT_EXTRA_SELECTED_CATEGORIES_IDS);
 			} else if (resultCode == RESULT_CANCELED) {
 				Log.d(TAG, "Cancel");
 			}
@@ -126,6 +128,7 @@ public class AddLocationCategoryScreen extends Activity implements OnItemClickLi
 		
 		try {
 			categories = new JSONArray(getIntent().getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_CATEGORIES));
+			Log.d(TAG, TAG + "categories: " + categories.toString());
 			setCategoryList();			
 		} catch(Exception e) {
 			e.printStackTrace();

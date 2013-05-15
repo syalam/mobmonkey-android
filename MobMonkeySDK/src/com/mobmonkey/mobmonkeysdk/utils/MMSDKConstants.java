@@ -29,6 +29,7 @@ public final class MMSDKConstants {
 	public static final int DEFAULT_INT = -1;
 	public static final int DEFAULT_INT_ZERO = 0;
 	public static final double DEFAULT_DOUBLE = 1.0d;
+	public static final double DEFAULT_DOUBLE_ZERO = 0.0d;
 
 	public static final String DECIMAL_FORMAT_SIX = "#.######";
 	public static final String DECIMAL_FORMAT_ZEROES_TWO = "0.00";
@@ -267,6 +268,8 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_NEIGHBORHOOD = "neighborhood";
 	public static final String JSON_KEY_OPEN_REQUESTS = "OpenRequests";
 	public static final String JSON_KEY_OPEN_REQUESTS_COUNT = "openrequests";
+	public static final String JSON_KEY_PARENT_LOCATION_ID = "parentLocationId";
+	public static final String JSON_KEY_PARENT_PROVIDER_ID = "parentProviderId";
 	public static final String JSON_KEY_PARENTS = "parents";
 	public static final String JSON_KEY_PHONE_NUMBER = "phoneNumber";
 	public static final String JSON_KEY_POSTCODE = "postcode";
@@ -286,7 +289,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_TYPE = "type";
 	public static final String JSON_KEY_UPLOADED_DATE = "uploadedDate";
 	public static final String JSON_KEY_VIDEOS = "videos";
-	public static final String JSON_KEY_WEBSITE = "website";
+	public static final String JSON_KEY_WEBSITE = "webSite";
 	
 	public static final int RANGE_FIVE_METERS = 5;
 	public static final int RANGE_TEN_METERS = 10;

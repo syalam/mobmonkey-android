@@ -8,19 +8,23 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mobmonkey.mobmonkeyandroid.AddLocationMapScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchCategoriesArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchCategoriesItem;
@@ -40,12 +44,14 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
  * @author Dezapp, LLC
  *
  */
-public class CategoriesFragment extends MMFragment implements OnItemClickListener {
+public class CategoriesFragment extends MMFragment implements OnClickListener,
+															  OnItemClickListener {
 	private static final String TAG = "CategoriesFragment: ";
 	
 	private SharedPreferences userPrefs;
 	
 	private TextView tvNavBarTitle;
+	private Button btnAddLoc;
 	private ListView lvSubCategories;
 	
 	private JSONArray categoriesArray;
@@ -68,8 +74,10 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 		
 		View view = inflater.inflate(R.layout.fragment_categories_screen, container, false);
 		tvNavBarTitle = (TextView) view.findViewById(R.id.tvnavbartitle);
+		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
 		lvSubCategories = (ListView) view.findViewById(R.id.lvsubcategory);
 		
+		btnAddLoc.setOnClickListener(CategoriesFragment.this);
 		init();
 		
 		return view;
@@ -90,12 +98,24 @@ public class CategoriesFragment extends MMFragment implements OnItemClickListene
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.view.View.OnClickListener#onClick(android.view.View)
+	 */
+	@Override
+	public void onClick(View view) {
+		switch(view.getId()) {
+			case R.id.btnaddloc:
+				startActivity(new Intent(getActivity(), AddLocationMapScreen.class));
+				break;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
 	 */
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
+	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 		try {
 			JSONObject subCategory = categoriesArray.getJSONObject(position);
 			JSONArray subCategoriesArray = MMCategories.getSubCategoriesWithCategoryName(getActivity(), subCategory.getString(Locale.getDefault().getLanguage()), categoriesArray);

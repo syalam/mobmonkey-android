@@ -292,7 +292,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		switch(v.getId()) {
 			case R.id.etsearch:
 				tvNavBarTitle.setVisibility(View.GONE);
-//				btnCancel.setVisibility(View.VISIBLE);
 				return true;
 		}
 		return false;
@@ -344,6 +343,44 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
+	 */
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		Log.d(TAG, TAG + "onActivityCreated");
+		super.onActivityCreated(savedInstanceState);
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onResume()
+	 */
+	@Override
+	public void onResume() {
+		Log.d(TAG, TAG + "onResume");
+		smfNearbyLocations.getView().setVisibility(View.VISIBLE);
+		super.onResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onStart()
+	 */
+	@Override
+	public void onStart() {
+		Log.d(TAG, TAG + "onStart");
+		super.onStart();
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onPause()
+	 */
+	@Override
+	public void onPause() {
+		Log.d(TAG, TAG + "onPause");
+		smfNearbyLocations.getView().setVisibility(View.GONE);
+		super.onPause();
 	}
 
 	/* (non-Javadoc)

@@ -43,13 +43,13 @@
 		<Button android:id="@+id/btnaddloc"
 		    android:layout_width="33dp"
 		    android:layout_height="33dp"
-		    android:layout_marginRight="4dp"
+		    android:layout_marginRight="10dp"
 		    android:layout_gravity="center_vertical"
    		    android:background="@drawable/nav_bar_button_blank"
 		    android:paddingBottom="4dp"
 		    android:text="@string/btn_add_loc"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
 		    android:textStyle="bold"
-		    android:textSize="22sp"
 			android:textColor="@android:color/white"/>
 		
 		<Button android:id="@+id/btncancel"
@@ -57,7 +57,7 @@
 		    android:layout_height="33dp"
 		    android:layout_gravity="center_vertical"
 		    android:background="@drawable/nav_bar_button_blank"
-		    android:layout_marginRight="4dp"
+		    android:layout_marginRight="10dp"
 		    android:paddingLeft="3dp"
 		    android:paddingRight="5dp"
 		    android:paddingBottom="4dp"
@@ -79,7 +79,7 @@
 		<ListView android:id="@+id/lvsearchresults"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
-		    android:layout_margin="0dp"
+		    android:layout_margin="10dp"
 		    android:background="@drawable/listview_border"
 			android:divider="@drawable/listview_divider"
 			android:dividerHeight="1dp"/>
