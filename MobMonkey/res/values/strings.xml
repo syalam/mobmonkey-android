@@ -147,7 +147,6 @@
 	<string name="btn_stop">Stop</string>
 	
 	<!-- Search Locations Fragment -->
-	<string name="btn_filter">Filter</string>
 	<string name="btn_add_loc">+</string>
 	<string name="tv_title_search">Search</string>
 	<string name="tv_title_search_locations">Search Locations</string>
@@ -179,6 +178,12 @@
 	<!-- Master Location Fragment -->
 	<string name="tv_title_master_location">Master Location</string>
 	<string name="tv_choose_hot_spot">Choose the Hot Spot Location</string>
+	
+	<!-- Existing Hot Spots Fragment -->
+	<string name="tv_title_existing_hot_spots">Existing Hot Spots</string>
+	<string name="tv_existing_hot_spots">Existing Hot Spots</string>
+	
+	<string name="btn_create_hot_hyphen_spot">Create Hot&#8211;Spot</string>
 	
 	<!-- New Hot Spot Fragment -->
 	<string name="tv_title_new_hot_spot">New Hot Spot</string>
@@ -234,12 +239,14 @@
 	<string name="ad_btn_ok">OK</string>
 	
 	<!-- SearchResultLocationDetails Fragment -->
+	<string name="tv_title_hot_spot">HOT SPOT:</string>
 	<string name="tv_make_request">Make a Request</string>
 	<string name="tv_finding_members">Finding Members&#8230;</string>
 	<string name="tv_no_members_found">No members found</string>
 	<string name="tv_members_found">members found</string>
 	<string name="tv_location_information">Location Information</string>
 	<string name="tv_no_phone_number_available">No Phone Number Available</string>
+	<string name="tv_hot_spots">Hot Spots</string>
 	<string name="tv_add_notifications">Add Notifications</string>
 	<string name="tv_favorite">Favorite</string>
 	<string name="tv_remove_favorite">Remove favorite</string>

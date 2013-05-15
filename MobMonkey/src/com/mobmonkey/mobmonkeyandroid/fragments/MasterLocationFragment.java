@@ -30,7 +30,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  */
 public class MasterLocationFragment extends MMFragment implements OnItemClickListener,
 																  OnClickListener {
-	
+	private static final String TAG = "MasterLocationFragment: ";
 	private JSONArray nearbyLocations;
 	
 	private MMExpandedListView elvNearbyLocations;

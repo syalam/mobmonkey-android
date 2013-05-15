@@ -98,6 +98,9 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 		etRange.setOnTouchListener(NewHotSpotFragment.this);
 		btnCreateHotSpot.setOnClickListener(NewHotSpotFragment.this);
 		
+		etName.setText("Wilson Hot Spot");
+		etRange.setText("50 meters");
+		
 		try {
 			locationInfo = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION));
 			LatLng locLatLng = new LatLng(locationInfo.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), locationInfo.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
@@ -228,14 +231,11 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 															   getLatitude(),
 															   getLongitude(),
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_CATEGORY_IDS),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_COUNTRY_CODE),
+															   locationInfo.getString(MMSDKConstants.JSON_KEY_COUNTRY_CODE).toLowerCase(),
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_LOCALITY),
-															   "480-555-0123",
-//															   locationInfo.getString(MMSDKConstants.JSON_KEY_PHONE_NUMBER),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_POSTCODE),
+															   locationInfo.getString(MMSDKConstants.JSON_KEY_PHONE_NUMBER),
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_REGION),
-															   "www.dezapp.com",
-//															   locationInfo.getString(MMSDKConstants.JSON_KEY_WEBSITE),
+															   locationInfo.getString(MMSDKConstants.JSON_KEY_WEBSITE),
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
 															   MMConstants.PARTNER_ID,
@@ -278,11 +278,11 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	 * @return
 	 * @throws JSONException
 	 */
-	private double getLatitude() throws JSONException {
+	private String getLatitude() throws JSONException {
 		if(locationClicked != null) {
-			return locationClicked.getLatitude();
+			return Double.toString(locationClicked.getLatitude());
 		} else {
-			return locationInfo.getDouble(MMSDKConstants.JSON_KEY_LATITUDE);
+			return locationInfo.getString(MMSDKConstants.JSON_KEY_LATITUDE);
 		}
 	}
 	
@@ -291,11 +291,11 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	 * @return
 	 * @throws JSONException
 	 */
-	private double getLongitude() throws JSONException {
+	private String getLongitude() throws JSONException {
 		if(locationClicked != null) {
-			return locationClicked.getLongitude();
+			return Double.toString(locationClicked.getLongitude());
 		} else {
-			return locationInfo.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE);
+			return locationInfo.getString(MMSDKConstants.JSON_KEY_LONGITUDE);
 		}
 	}
 	
@@ -376,7 +376,7 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 					try {
 						JSONObject jObj = new JSONObject((String) obj);
 						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
-							
+							getActivity().onBackPressed();
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();

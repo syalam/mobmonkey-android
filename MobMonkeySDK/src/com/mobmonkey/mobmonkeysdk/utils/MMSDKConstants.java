@@ -127,6 +127,7 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_CATEGORIES = "Categories";
 	public static final String KEY_INTENT_EXTRA_CATEGORY_TITLE = "Category title";
 	public static final String KEY_INTENT_EXTRA_DISPLAY_MAP = "Display map";
+	public static final String KEY_INTENT_EXTRA_EXISTING_HOT_SPOTS = "Existing Hot Spots";
 	public static final String KEY_INTENT_EXTRA_HOT_SPOT_LOCATION = "Hot Spot Location";
 	public static final String KEY_INTENT_EXTRA_IMAGE_MEDIA = "Image media";
 	public static final String KEY_INTENT_EXTRA_INBOX_REQUESTS = "Inbox requests";
@@ -283,6 +284,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_REQUEST_TYPE = "requestType";
 	public static final String JSON_KEY_SCHEDULE_DATE = "scheduleDate";
 	public static final String JSON_KEY_STATUS = "status";
+	public static final String JSON_KEY_SUB_LOCATIONS = "subLocations";
 	public static final String JSON_KEY_THUMB_URL = "thumbURL";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
 	public static final String JSON_KEY_TOTAL_ITEMS = "totalItems";

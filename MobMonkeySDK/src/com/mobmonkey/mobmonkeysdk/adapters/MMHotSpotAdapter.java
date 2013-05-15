@@ -29,13 +29,12 @@ public class MMHotSpotAdapter extends MMAdapter {
 														 String description,
 														 String range,
 														 String locationId,
-														 double latitude,
-														 double longitude,
+														 String latitude,
+														 String longitude,
 														 String categoryIds,
 														 String countryCode,
 														 String locality,
 														 String phoneNumber,
-														 String postCode,
 														 String region,
 														 String webSite,
 														 String parentLocationId,
@@ -46,6 +45,8 @@ public class MMHotSpotAdapter extends MMAdapter {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		
+		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder.toString());
+		
 		try {
 			params.put(MMSDKConstants.JSON_KEY_LATITUDE, latitude);
 			params.put(MMSDKConstants.JSON_KEY_LONGITUDE, longitude);
@@ -53,7 +54,6 @@ public class MMHotSpotAdapter extends MMAdapter {
 			params.put(MMSDKConstants.JSON_KEY_COUNTRY_CODE, countryCode);
 			params.put(MMSDKConstants.JSON_KEY_LOCALITY, locality);
 			params.put(MMSDKConstants.JSON_KEY_PHONE_NUMBER, phoneNumber);
-			params.put(MMSDKConstants.JSON_KEY_POSTCODE, postCode);
 			params.put(MMSDKConstants.JSON_KEY_PROVIDER_ID, "e048acf0-9e91-4794-b901-6a4bb49c3181");
 			params.put(MMSDKConstants.JSON_KEY_REGION, region);
 			params.put(MMSDKConstants.JSON_KEY_WEBSITE, webSite);
@@ -61,9 +61,12 @@ public class MMHotSpotAdapter extends MMAdapter {
 			params.put(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID, parentLocationId);
 			params.put(MMSDKConstants.JSON_KEY_PARENT_PROVIDER_ID, parentProviderId);
 			
+			Log.d(TAG, TAG + "params size: " + params.names().length());
+			
 			Log.d(TAG, TAG + "params: " + params.toString());
 			
 			HttpPut httpPut = new HttpPut(uriBuilder.toString());
+			Log.d(TAG, TAG + "uri: " + httpPut.getURI().toString());
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPut.setEntity(stringEntity);
 			httpPut.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);

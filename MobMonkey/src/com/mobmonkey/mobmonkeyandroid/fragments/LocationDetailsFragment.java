@@ -1,5 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,6 +9,7 @@ import org.json.JSONObject;
 import com.mobmonkey.mobmonkeyandroid.LocationDetailsMediaScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.MakeARequestScreen;
+import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMExistingHotSpotsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMLocationDetailsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMLocationDetailsItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
@@ -32,6 +35,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,6 +46,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,12 +65,18 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private JSONArray favoritesList;
 	private JSONObject location;
 	private JSONObject locationInfo;
+	private JSONArray subLocations;
 	
 	private TextView tvNavBarTitle;
 	private TextView tvLocName;
+	private ImageView ivHotSpotsBadge;
+	private TextView tvHotSpotsCounter;
 	private LinearLayout llMakeRequest;
 	private TextView tvMembersFound;
 	private MMExpandedListView elvLocInfo;
+	private LinearLayout llHotSpots;
+	private TextView tvHotSpots;
+	private MMExpandedListView elvHotSpots;
 	private Button btnCreateHotSpot;
 	private MMExpandedListView elvLoc;
 	
@@ -83,6 +94,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private TextView tvImageMediaCount;
 	
 	private MMLocationDetailsArrayAdapter locArrayAdapter;
+	private MMExistingHotSpotsArrayAdapter existingHotSpotsArrayAdapter;
 	private MMLocationDetailsItem[] locItems;
 	
 	private JSONArray streamMediaUrl;
@@ -90,6 +102,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private JSONArray imageMediaUrl;
 	
 	private MMOnAddressFragmentItemClickListener addressFragmentItemClickListener;
+	private MMOnNearbyLocationsItemClickListener nearbyLocationsItemClickListener;
 	private MMOnCreateHotSpotFragmentClickListener createHotSpotFragmentClickListener;
 	private MMOnAddNotificationsFragmentItemClickListener addNotificationsFragmentItemClickListener;
 	
@@ -113,9 +126,14 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		
 		tvNavBarTitle = (TextView) view.findViewById(R.id.tvnavbartitle);
 		tvLocName = (TextView) view.findViewById(R.id.tvlocname);
+		ivHotSpotsBadge = (ImageView) view.findViewById(R.id.ivhotspotsbadge);
+		tvHotSpotsCounter = (TextView) view.findViewById(R.id.tvhotspotscounter);
 		llMakeRequest = (LinearLayout) view.findViewById(R.id.llmakerequest);
 		tvMembersFound = (TextView) view.findViewById(R.id.tvmembersfound);
 		elvLocInfo = (MMExpandedListView) view.findViewById(R.id.elvlocinfo);
+		llHotSpots = (LinearLayout) view.findViewById(R.id.llhotspots);
+		tvHotSpots = (TextView) view.findViewById(R.id.tvhotspots);
+		elvHotSpots = (MMExpandedListView) view.findViewById(R.id.elvhotspots);
 		btnCreateHotSpot = (Button) view.findViewById(R.id.btncreatehotspot);
 		elvLoc = (MMExpandedListView) view.findViewById(R.id.elvloc);
 		
@@ -144,6 +162,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			}
 			location = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
 			setLocationDetails();
+			checkForHotSpots();
 			if(retrieveLocationDetails) {
 				MMLocationDetailsAdapter.getLocationDetails(new LocationCallback(),
 															location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
@@ -179,10 +198,13 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		super.onAttach(activity);
 		if(activity instanceof MMOnAddressFragmentItemClickListener) {
 			addressFragmentItemClickListener = (MMOnAddressFragmentItemClickListener) activity;
-			if(activity instanceof MMOnCreateHotSpotFragmentClickListener) {
-				createHotSpotFragmentClickListener = (MMOnCreateHotSpotFragmentClickListener) activity;
-				if(activity instanceof MMOnAddNotificationsFragmentItemClickListener) {
-					addNotificationsFragmentItemClickListener = (MMOnAddNotificationsFragmentItemClickListener) activity;
+			if(activity instanceof MMOnNearbyLocationsItemClickListener) {
+				nearbyLocationsItemClickListener = (MMOnNearbyLocationsItemClickListener) activity;
+				if(activity instanceof MMOnCreateHotSpotFragmentClickListener) {
+					createHotSpotFragmentClickListener = (MMOnCreateHotSpotFragmentClickListener) activity;
+					if(activity instanceof MMOnAddNotificationsFragmentItemClickListener) {
+						addNotificationsFragmentItemClickListener = (MMOnAddNotificationsFragmentItemClickListener) activity;
+					}
 				}
 			}
 		}
@@ -247,6 +269,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					addressFragmentItemClickListener.onAddressFragmentItemClick(location);
 				}
 				break;
+			case R.id.elvhotspots:
+				nearbyLocationsItemClickListener.onNearbyLocationsItemClick(existingHotSpotsArrayAdapter.getItem(position));
+				break;
 			case R.id.elvloc:
 				if(position == 0) {
 					addNotificationsFragmentItemClickListener.onAddNotificationsFragmentItemClick(location);
@@ -277,10 +302,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * Function that set all the details of the current location
 	 * @throws JSONException
 	 */
-	private void setLocationDetails() throws JSONException {
-		tvNavBarTitle.setText(location.getString(MMSDKConstants.JSON_KEY_NAME));
-		tvLocName.setText(location.getString(MMSDKConstants.JSON_KEY_NAME));
-		
+	private void setLocationDetails() throws JSONException {		
 		MMLocationDetailsItem[] mmLocationDetailsItems = new MMLocationDetailsItem[2];
 		for(int i = 0; i < mmLocationDetailsItems.length; i++) {
 			mmLocationDetailsItems[i] = new MMLocationDetailsItem();
@@ -328,8 +350,53 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		
 		llMakeRequest.setOnClickListener(LocationDetailsFragment.this);
 		elvLocInfo.setOnItemClickListener(LocationDetailsFragment.this);
-		btnCreateHotSpot.setOnClickListener(LocationDetailsFragment.this);
 		elvLoc.setOnItemClickListener(LocationDetailsFragment.this);
+	}
+	
+	/**
+	 * @throws JSONException 
+	 * 
+	 */
+	private void checkForHotSpots() throws JSONException {
+		if(location.isNull(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID)) {
+			tvNavBarTitle.setText(location.getString(MMSDKConstants.JSON_KEY_NAME));
+			tvLocName.setText(location.getString(MMSDKConstants.JSON_KEY_NAME));
+			if(!location.isNull(MMSDKConstants.JSON_KEY_SUB_LOCATIONS)) {
+				subLocations = location.getJSONArray(MMSDKConstants.JSON_KEY_SUB_LOCATIONS);
+				setHotSpots();
+			} else {
+				LinearLayout.LayoutParams params = (LayoutParams) llHotSpots.getLayoutParams();
+				params.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, getActivity().getResources().getDisplayMetrics());
+				btnCreateHotSpot.setLayoutParams(params);
+			}
+			btnCreateHotSpot.setOnClickListener(LocationDetailsFragment.this);
+			btnCreateHotSpot.setVisibility(View.VISIBLE);
+		} else {
+			tvNavBarTitle.setText(getString(R.string.tv_title_hot_spot) + MMSDKConstants.DEFAULT_STRING_SPACE + location.getString(MMSDKConstants.JSON_KEY_NAME));
+			tvLocName.setText(getString(R.string.tv_title_hot_spot) + MMSDKConstants.DEFAULT_STRING_SPACE + location.getString(MMSDKConstants.JSON_KEY_NAME));
+		}
+	}
+	
+	/**
+	 * @throws JSONException 
+	 * 
+	 */
+	private void setHotSpots() throws JSONException {
+		ArrayList<JSONObject> hotSpots = new ArrayList<JSONObject>();
+		for(int i = 0; i < subLocations.length(); i++) {
+			hotSpots.add(subLocations.getJSONObject(i));
+		}
+		
+		tvHotSpotsCounter.setText(Integer.toString(subLocations.length()));		
+		existingHotSpotsArrayAdapter = new MMExistingHotSpotsArrayAdapter(getActivity(), R.layout.listview_row_location_details_hot_spots, hotSpots);
+		elvHotSpots.setAdapter(existingHotSpotsArrayAdapter);
+		
+		elvHotSpots.setOnItemClickListener(LocationDetailsFragment.this);
+		
+		ivHotSpotsBadge.setVisibility(View.VISIBLE);
+		tvHotSpotsCounter.setVisibility(View.VISIBLE);
+		tvHotSpots.setVisibility(View.VISIBLE);
+		elvHotSpots.setVisibility(View.VISIBLE);
 	}
 	
 	/**
@@ -342,7 +409,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		} else {
 			tvMembersFound.setText(locationInfo.getInt(MMSDKConstants.JSON_KEY_MONKEYS) + MMSDKConstants.DEFAULT_STRING_SPACE + getString(R.string.tv_members_found));
 		}
-		btnCreateHotSpot.setVisibility(View.VISIBLE);
 	}
 	
 	/**
@@ -357,8 +423,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			int videoMediaCount = 0;
 			int imageMediaCount = 0;
 			
+			pbLoadMedia.setVisibility(View.GONE);
+			
 			if(mediaJArr.length() > 0) {
-				pbLoadMedia.setVisibility(View.GONE);
 				llMedia.setVisibility(View.VISIBLE);
 				
 				boolean isFirstMedia = true;

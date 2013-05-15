@@ -27,6 +27,8 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 																		 MMOnCategoryFragmentItemClickListener,
 																		 MMOnMasterLocationNearbyLocationsFragmentItemClickListener,
 																		 MMOnCategoryResultsFragmentItemClickListener,
+																		 MMOnExistingHotSpotsFragmentItemClickListener,
+																		 MMOnExistingHotSpotsFragmentCreateHotSpotClickListener,
 																		 MMOnSearchResultsFragmentItemClickListener,
 																		 MMOnAddressFragmentItemClickListener,
 																		 MMOnAddNotificationsFragmentItemClickListener {
@@ -106,11 +108,18 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 	 */
 	@Override
 	public void onMasterLocationNearbyLocationsItemClick(JSONObject jObj) {
-		NewHotSpotFragment newHotSpotFragment = new NewHotSpotFragment();
+		MMFragment mmFragment = null;
 		Bundle data = new Bundle();
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION, jObj.toString());
-		newHotSpotFragment.setArguments(data);
-		performTransaction(newHotSpotFragment);
+		if(jObj.isNull(MMSDKConstants.JSON_KEY_SUB_LOCATIONS)) {
+			mmFragment = new NewHotSpotFragment();
+			data.putString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION, jObj.toString());
+		} else {
+			mmFragment = new ExistingHotSpotsFragment();
+			data.putString(MMSDKConstants.KEY_INTENT_EXTRA_EXISTING_HOT_SPOTS, jObj.toString());
+		}
+		
+		mmFragment.setArguments(data);
+		performTransaction(mmFragment);
 	}
 
 	/* (non-Javadoc)
@@ -124,6 +133,26 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULTS, results);
 		searchResultsFragment.setArguments(data);
 		performTransaction(searchResultsFragment);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnExistingHotSpotsFragmentItemClickListener#onExistingHotSpotsItemClick(org.json.JSONObject)
+	 */
+	@Override
+	public void onExistingHotSpotsItemClick(JSONObject jObj) {
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnExistingHotSpotsFragmentCreateHotSpotClickListener#onExistingHotSpotsCreateHotSpotClick(org.json.JSONObject)
+	 */
+	@Override
+	public void onExistingHotSpotsCreateHotSpotClick(JSONObject jObj) {
+		NewHotSpotFragment newHotSpotFragment = new NewHotSpotFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION, jObj.toString());
+		newHotSpotFragment.setArguments(data);
+		performTransaction(newHotSpotFragment);
 	}
 
 	/*
