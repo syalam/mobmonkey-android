@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
@@ -39,20 +40,24 @@ public class MMSearchResultsCallback implements MMCallback {
 		
 		if(obj != null) {
 			Log.d(TAG, TAG + "response: " + ((String) obj));
-			try {
-//				JSONObject searchResults = new JSONObject((String) obj);
-//				if(searchResults.getInt(MMSDKConstants.JSON_KEY_TOTAL_ITEMS) == 0) {
-				JSONArray searchResults = new JSONArray((String) obj);
-				if(searchResults.isNull(0)) {
-					displayAlertDialog();
-				} else {
-					if(mmCallback != null) {
-						mmCallback.processCallback(obj);
+			if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+				Toast.makeText(activity, activity.getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+			} else {
+				try {
+					JSONArray searchResults = new JSONArray((String) obj);
+					if(searchResults.isNull(0)) {
+						displayAlertDialog();
+					} else {
+						JSONArray jArr = MMUtility.filterSubLocations((String) obj);
+						
+						if(mmCallback != null) {
+							mmCallback.processCallback(jArr.toString());
+						}
+						categoryResultsFragmentItemClickListener.onCategoriesResultsFragmentItemClick(searchCategory, jArr.toString());
 					}
-					categoryResultsFragmentItemClickListener.onCategoriesResultsFragmentItemClick(searchCategory, (String) obj);
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 		}
 	}

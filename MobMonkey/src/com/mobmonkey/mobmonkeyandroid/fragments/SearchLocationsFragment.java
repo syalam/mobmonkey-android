@@ -62,6 +62,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedNearbyLocationsListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMScrollView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSubLocations;
+import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -199,18 +200,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		panAndZoom();
 		
 		try {
-//			if(retrieveNearbyLocations) {
-
-//			} else {
-//				setNearbyLocations();
-//				setSearchNearbyLocations();
-//				if(nearbyLocationsSearch) {
-//					tvNavBarTitle.setVisibility(View.GONE);
-//					btnCancel.setVisibility(View.VISIBLE);
-//					llNearbyLocationsSearch.setVisibility(View.VISIBLE);
-//					etSearch.setText(searchText);
-//				}
-//			}
 			getLocationHistory();
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -379,7 +368,8 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onPause() {
 		Log.d(TAG, TAG + "onPause");
-		smfNearbyLocations.getView().setVisibility(View.GONE);
+		smfNearbyLocations = null;
+//		smfNearbyLocations.getView().setVisibility(View.GONE);
 		super.onPause();
 	}
 
@@ -486,50 +476,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			locationHistory = new JSONArray();
 			return false;
 		}
-	}
-	
-	private void filterSubLocations(String result) throws JSONException {
-		JSONArray jArr = new JSONArray(result);
-		ArrayList<JSONObject> locations = new ArrayList<JSONObject>();
-		ArrayList<MMSubLocations> subLocations = new ArrayList<MMSubLocations>();
-//		JSONArray locations = new JSONArray();
-//		JSONArray subLocations = new JSONArray();
-		
-		for(int i = 0; i < jArr.length(); i++) {
-			JSONObject jObj = jArr.getJSONObject(i);
-			if(jObj.isNull(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID)) {
-				locations.add(jObj);
-			} else {
-				String parentLocationId = jObj.getString(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID);
-				boolean sameParentLocationId = false;
-				for(int j = 0; j < subLocations.size(); j++) {
-					if(subLocations.get(j).parentLocationId.equals(parentLocationId)) {
-						subLocations.get(j).subLocations.put(jObj);
-//						Log.d(TAG, TAG + "parentLocationId: " + parentLocationId);
-						sameParentLocationId = true;
-						break;
-					}
-				}
-				if(!sameParentLocationId) {
-					MMSubLocations mmSubLocations = new MMSubLocations();
-					mmSubLocations.parentLocationId = parentLocationId;
-					mmSubLocations.subLocations.put(jObj);
-					subLocations.add(mmSubLocations);
-				}
-			}
-		}
-		
-		for(int i = 0; i < subLocations.size(); i++) {
-			String parentLocationId = subLocations.get(i).parentLocationId;
-			for(int j = 0; j < locations.size(); j++) {
-				if(locations.get(j).getString(MMSDKConstants.JSON_KEY_LOCATION_ID).equals(parentLocationId)) {
-					locations.get(j).put(MMSDKConstants.JSON_KEY_SUB_LOCATIONS, subLocations.get(i).subLocations);
-					break;
-				}
-			}
-		}
-		
-		nearbyLocations = new JSONArray(locations);
 	}
 	
 	/**
@@ -711,7 +657,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
 					try {
-						filterSubLocations((String) obj);
+						nearbyLocations = MMUtility.filterSubLocations((String) obj);
 						nearbyLocationsCount = 5;
 						setNearbyLocations();
 						setSearchNearbyLocations();

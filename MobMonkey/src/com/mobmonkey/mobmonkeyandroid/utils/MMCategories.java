@@ -1,6 +1,5 @@
 package com.mobmonkey.mobmonkeyandroid.utils;
 
-import java.util.Iterator;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -18,45 +17,6 @@ public class MMCategories extends Activity {
 	private static final String TAG = "MMCategories: ";
 	
 	private static SharedPreferences userPrefs;
-	
-//	public static String[] getTopLevelCategories(Context context) throws JSONException {
-//		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
-//		
-//		String[] topLevelCategoriesList;
-//		
-//		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
-//			JSONObject cats = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
-//			topLevelCategoriesList = getKeys(cats);
-////			JSONArray allCategories = cats.toJSONArray(cats.names());
-////			JSONObject category = null;
-////			for(int i=0; i < allCategories.length(); i++)
-////			{
-////				category = allCategories.getJSONArray(i).getJSONObject(0);
-////				Log.d("Cat Parents:", category.getString("parents"));
-////				if(category.getString("parents").compareTo("1") == 0)
-////					topLevelCategoriesList.put(category);
-////			}
-//		}
-//		else
-//			return new String[0];
-//		
-//		return topLevelCategoriesList;
-//	}
-	
-//	private static String[] getKeys(JSONObject cats) {
-//		int length = cats.length();
-//	    if (length == 0) {
-//	        return new String[0];
-//	    }
-//	    Iterator iterator = cats.keys();
-//	    String[] names = new String[length];
-//	    int i = 0;
-//	    while (iterator.hasNext()) {
-//	        names[i] = (String)iterator.next();
-//	        i += 1;
-//	    }
-//	    return names;
-//	}
 	
 	public static JSONArray getTopLevelCategories(Context context) {
 		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
@@ -88,30 +48,6 @@ public class MMCategories extends Activity {
 		
 		return topLevelCategories;
 	}
-	
-//	public static JSONArray getSubCategoriesWithCategoriId(Context context, JSONArray categoryArray) throws JSONException {
-////		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, 0);
-//		care
-//		JSONArray subCategories = null;
-//
-////		if(userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES)) {
-//		subCategories = new JSONArray();
-//		JSONObject cats = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
-//		JSONArray allCategories = cats.toJSONArray(cats.names());
-//		JSONObject subCat = null;
-//		for(int i=0; i < allCategories.length(); i++) {
-//			//subCat = new JSONObject(allCategories.getString(i));
-//			subCat = allCategories.getJSONArray(i).getJSONObject(0);
-//
-//			if(subCat.getString("parents").compareTo(categoryId) == 0)
-//				subCategories.put(subCat);
-//		}
-////		}
-////		else
-////			return null;
-//
-//		return subCategories;
-//	}
 	
 	public static JSONArray getSubCategoriesWithCategoryName(Context context, String categoryName, JSONArray category){
 		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);

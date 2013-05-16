@@ -2,7 +2,12 @@ package com.mobmonkey.mobmonkeyandroid.utils;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -22,6 +27,53 @@ public final class MMUtility {
 	
 	private MMUtility () {
 		throw new AssertionError();
+	}
+	
+	/**
+	 * Filter the result into locations and subLocations and add the subLocations into the respective location
+	 * @param result
+	 * @return
+	 * @throws JSONException
+	 */
+	public static JSONArray filterSubLocations(String result) throws JSONException {
+		JSONArray jArr = new JSONArray(result);
+		ArrayList<JSONObject> locations = new ArrayList<JSONObject>();
+		ArrayList<MMSubLocations> subLocations = new ArrayList<MMSubLocations>();
+		
+		for(int i = 0; i < jArr.length(); i++) {
+			JSONObject jObj = jArr.getJSONObject(i);
+			if(jObj.isNull(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID)) {
+				locations.add(jObj);
+			} else {
+				String parentLocationId = jObj.getString(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID);
+				boolean sameParentLocationId = false;
+				for(int j = 0; j < subLocations.size(); j++) {
+					if(subLocations.get(j).parentLocationId.equals(parentLocationId)) {
+						subLocations.get(j).subLocations.put(jObj);
+						sameParentLocationId = true;
+						break;
+					}
+				}
+				if(!sameParentLocationId) {
+					MMSubLocations mmSubLocations = new MMSubLocations();
+					mmSubLocations.parentLocationId = parentLocationId;
+					mmSubLocations.subLocations.put(jObj);
+					subLocations.add(mmSubLocations);
+				}
+			}
+		}
+		
+		for(int i = 0; i < subLocations.size(); i++) {
+			String parentLocationId = subLocations.get(i).parentLocationId;
+			for(int j = 0; j < locations.size(); j++) {
+				if(locations.get(j).getString(MMSDKConstants.JSON_KEY_LOCATION_ID).equals(parentLocationId)) {
+					locations.get(j).put(MMSDKConstants.JSON_KEY_SUB_LOCATIONS, subLocations.get(i).subLocations);
+					break;
+				}
+			}
+		}
+		
+		return new JSONArray(locations);
 	}
 	
 	/**

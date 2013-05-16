@@ -26,6 +26,7 @@ import android.util.Log;
 public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFragmentClickListener,
 																   MMOnSearchResultsFragmentItemClickListener,
 																   MMOnAddressFragmentItemClickListener,
+																   MMOnNearbyLocationsItemClickListener,
 																   MMOnCreateHotSpotFragmentClickListener,
 																   MMOnAddNotificationsFragmentItemClickListener {
 	private static final String TAG = "FavoritesActivity: ";
@@ -96,6 +97,18 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
 		locationsDetailsMapFragment.setArguments(data);
 		performTransaction(locationsDetailsMapFragment);
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener#onNearbyLocationsItemClick(org.json.JSONObject)
+	 */
+	@Override
+	public void onNearbyLocationsItemClick(JSONObject jObj) {
+		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+		locationDetailsFragment.setArguments(data);
+		performTransaction(locationDetailsFragment);
 	}
 	
 	/* (non-Javadoc)
