@@ -48,6 +48,7 @@ public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
 			ConnManagerParams.setTimeout(httpParams, MMSDKConstants.TIMEOUT_CONNECTION);
 			
 			HttpResponse httpResponse = httpClient.execute(params[0]);
+//			Log.d(TAG, TAG + "httpResponse: " + httpResponse.)
 			HttpEntity httpEntity = httpResponse.getEntity();
 			InputStream inStream = httpEntity.getContent();
 			

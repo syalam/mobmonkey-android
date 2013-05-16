@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mobmonkey.mobmonkeyandroid.HotSpotRangeActionSheet;
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnFragmentMultipleBackListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMGeocoderAdapter;
@@ -74,6 +75,8 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	private Marker newHotSpotMarker;
 	
 	private Address locationClicked;
+	
+	private MMOnFragmentMultipleBackListener fragmentMultipleBackListener;
 	
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
@@ -120,6 +123,17 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 		}
 		
 		return view;
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onAttach(android.app.Activity)
+	 */
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if(activity instanceof MMOnFragmentMultipleBackListener) {
+			fragmentMultipleBackListener = (MMOnFragmentMultipleBackListener) activity;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -234,6 +248,7 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_COUNTRY_CODE).toLowerCase(),
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_LOCALITY),
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_PHONE_NUMBER),
+															   MMConstants.PROVIDER_ID,
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_REGION),
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_WEBSITE),
 															   locationInfo.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
@@ -278,11 +293,11 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	 * @return
 	 * @throws JSONException
 	 */
-	private String getLatitude() throws JSONException {
+	private double getLatitude() throws JSONException {
 		if(locationClicked != null) {
-			return Double.toString(locationClicked.getLatitude());
+			return locationClicked.getLatitude();
 		} else {
-			return locationInfo.getString(MMSDKConstants.JSON_KEY_LATITUDE);
+			return locationInfo.getDouble(MMSDKConstants.JSON_KEY_LATITUDE);
 		}
 	}
 	
@@ -291,11 +306,11 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	 * @return
 	 * @throws JSONException
 	 */
-	private String getLongitude() throws JSONException {
+	private double getLongitude() throws JSONException {
 		if(locationClicked != null) {
-			return Double.toString(locationClicked.getLongitude());
+			return locationClicked.getLongitude();
 		} else {
-			return locationInfo.getString(MMSDKConstants.JSON_KEY_LONGITUDE);
+			return locationInfo.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE);
 		}
 	}
 	
@@ -373,14 +388,7 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
-					try {
-						JSONObject jObj = new JSONObject((String) obj);
-						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
-							getActivity().onBackPressed();
-						}
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
+					fragmentMultipleBackListener.onFragmentMultipleBack();
 				}
 			}
 		}

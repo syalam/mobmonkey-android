@@ -316,13 +316,15 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			mmLocationDetailsItems[0].setLocationDetail(phoneNumber);
 		}
 		mmLocationDetailsItems[1].setLocationDetailIconId(R.drawable.cat_icon_address);
-		mmLocationDetailsItems[1].setLocationDetail(location.getString(MMSDKConstants.JSON_KEY_ADDRESS) +
+		String address = MMSDKConstants.DEFAULT_STRING_EMPTY;
+		if(!location.isNull(MMSDKConstants.JSON_KEY_ADDRESS)) {
+			address = location.getString(MMSDKConstants.JSON_KEY_ADDRESS);
+		}
+		mmLocationDetailsItems[1].setLocationDetail(address +
 				MMSDKConstants.DEFAULT_STRING_NEWLINE +
 				location.getString(MMSDKConstants.JSON_KEY_LOCALITY) +
 				MMSDKConstants.DEFAULT_STRING_COMMA_SPACE +
-				location.getString(MMSDKConstants.JSON_KEY_REGION) +
-				MMSDKConstants.DEFAULT_STRING_COMMA_SPACE +
-				location.getString(MMSDKConstants.JSON_KEY_POSTCODE));
+				location.getString(MMSDKConstants.JSON_KEY_REGION));
 		
 		ArrayAdapter<MMLocationDetailsItem> arrayAdapter = new MMLocationDetailsArrayAdapter(getActivity(), R.layout.listview_row_locationdetails, mmLocationDetailsItems);
 		arrayAdapter.isEnabled(0);

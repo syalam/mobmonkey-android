@@ -117,7 +117,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private MMOnHistoryFragmentItemClickListener historyFragmentItemClickListener;
 	private MMOnCategoryFragmentItemClickListener categoryFragmentItemClickListener;
 	
-	private boolean retrieveNearbyLocations = true;
 	private boolean nearbyLocationsSearch = false;
 	private String searchText = MMSDKConstants.DEFAULT_STRING_EMPTY;
 	
@@ -200,20 +199,18 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		panAndZoom();
 		
 		try {
-			if(retrieveNearbyLocations) {
-				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
-					searchAllNearbyLocations();
-				}
-			} else {
-				setNearbyLocations();
-				setSearchNearbyLocations();
-				if(nearbyLocationsSearch) {
-					tvNavBarTitle.setVisibility(View.GONE);
-					btnCancel.setVisibility(View.VISIBLE);
-					llNearbyLocationsSearch.setVisibility(View.VISIBLE);
-					etSearch.setText(searchText);
-				}
-			}
+//			if(retrieveNearbyLocations) {
+
+//			} else {
+//				setNearbyLocations();
+//				setSearchNearbyLocations();
+//				if(nearbyLocationsSearch) {
+//					tvNavBarTitle.setVisibility(View.GONE);
+//					btnCancel.setVisibility(View.VISIBLE);
+//					llNearbyLocationsSearch.setVisibility(View.VISIBLE);
+//					etSearch.setText(searchText);
+//				}
+//			}
 			getLocationHistory();
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -361,7 +358,9 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onResume() {
 		Log.d(TAG, TAG + "onResume");
-		smfNearbyLocations.getView().setVisibility(View.VISIBLE);
+		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+			searchAllNearbyLocations();
+		}
 		super.onResume();
 	}
 
@@ -712,7 +711,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
 					try {
-						retrieveNearbyLocations = false;
 						filterSubLocations((String) obj);
 						nearbyLocationsCount = 5;
 						setNearbyLocations();

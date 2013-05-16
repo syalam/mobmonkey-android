@@ -31,7 +31,8 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 																		 MMOnExistingHotSpotsFragmentCreateHotSpotClickListener,
 																		 MMOnSearchResultsFragmentItemClickListener,
 																		 MMOnAddressFragmentItemClickListener,
-																		 MMOnAddNotificationsFragmentItemClickListener {
+																		 MMOnAddNotificationsFragmentItemClickListener,
+																		 MMOnFragmentMultipleBackListener {
 	private FragmentManager fragmentManager;
 	private Stack<MMFragment> fragmentStack;
 	
@@ -203,6 +204,22 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
 		addNotificationsFragment.setArguments(data);
 		performTransaction(addNotificationsFragment);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnFragmentMultipleBackListener#onFragmentMultipleBack()
+	 */
+	@Override
+	public void onFragmentMultipleBack() {
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		while(fragmentStack.size() > 1) {
+			fragmentTransaction.remove(fragmentStack.pop());
+			if(fragmentStack.peek() instanceof SearchLocationsFragment) {
+				fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
+				fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
+				fragmentTransaction.commit();
+			}
+		}
 	}
 
 	/**

@@ -67,7 +67,7 @@ public class MMAddLocationAdapter extends MMAdapter {
 		
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
-		Log.d(TAG, TAG + "signInURL: " + uriBuilder.toString());
+		Log.d(TAG, TAG + "addLocation: " + uriBuilder.toString());
 
 		try {			
 			params.put(MMSDKConstants.JSON_KEY_ADDRESS, address);
