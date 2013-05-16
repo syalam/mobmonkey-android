@@ -165,12 +165,14 @@ public class AssignedRequestsFragment extends MMFragment {
 							mmDir.mkdirs();
 						}
 //						Log.d(TAG, TAG + "video file: " + new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.mp4").getAbsolutePath());
-						Intent takeVideoIntent = new Intent(getActivity(), VideoRecorderActivity.class);
-						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
-//						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-//						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
-//						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.mp4")));
+//						Intent takeVideoIntent = new Intent(getActivity(), VideoRecorderActivity.class);
 //						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
+						
+						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.3gp")));
+						takeVideoIntent.putExtra("android.intent.extra.durationLimit", 10);
+						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
 						break;
 					default:
 						break;
@@ -226,9 +228,12 @@ public class AssignedRequestsFragment extends MMFragment {
 		} 
 		// video 
 		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {		    
-		    try {		    	  
+		    try {
 		    	// encode to base64
 		    	File videoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
+		    	if(!videoFile.exists()) {
+		    		videoFile.mkdir();
+		    	}
 		    	String videoEncoded = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		    	BufferedInputStream in = new BufferedInputStream(new FileInputStream(videoFile));
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
