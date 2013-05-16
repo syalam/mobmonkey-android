@@ -77,6 +77,9 @@ public final class MMSDKConstants {
 	public static final String URI_QUERY_PARAM_KEY_RADIUS = "radius";
 	public static final String URI_QUERY_PARAM_KEY_TIME_SPAN = "timeSpan";
 	
+	public static final String MMSUPPORT_MAP_FRAGMENT_TAG = "MMSupportMapFragment tag";
+	public static final String GOOGLE_MAP_OPTIONS = "Google map options";
+	
 	// Tab tags
 	public static final String TAB_TITLE_CURRENT_TAG = "Current tab tag";
 	public static final String TAB_TITLE_TRENDING_NOW = "Trending Now";
@@ -215,6 +218,7 @@ public final class MMSDKConstants {
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER_AUTH = 2002;
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2003;
 	public static final int REQUEST_CODE_TURN_ON_GPS_LOCATION = 5000;
+	public static final int REQUEST_CODE_ADD_LOCATION = 6000;
 	public static final int REQUEST_CODE_RANGE = 8000;
 	public static final int REQUEST_CODE_IMAGE = 10000;
 	public static final int REQUEST_CODE_VIDEO = 10001;

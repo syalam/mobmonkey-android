@@ -56,9 +56,13 @@
 		
 	</RelativeLayout>
 	
-	<fragment android:id="@+id/fragfavoritesmap"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		class="com.google.android.gms.maps.SupportMapFragment"/>
+	<LinearLayout android:id="@+id/llfavoritesmap"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"/>
+	
+<!-- 	<fragment android:id="@+id/fragfavoritesmap" -->
+<!-- 		android:layout_width="match_parent" -->
+<!-- 		android:layout_height="match_parent" -->
+<!-- 		class="com.google.android.gms.maps.SupportMapFragment"/> -->
 	
 </LinearLayout>

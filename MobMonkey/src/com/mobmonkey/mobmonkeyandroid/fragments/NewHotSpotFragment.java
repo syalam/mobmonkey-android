@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,6 +42,7 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnFragmentMultipleBackListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
+import com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMGeocoderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMHotSpotAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -60,13 +62,13 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	private static final String TAG = "NewHotSpotFragment: ";
 	
 	private SharedPreferences userPrefs;
+	private FragmentManager fragmentManager;
 	private InputMethodManager inputMethodManager;
 	
 	private JSONObject locationInfo;
-	private Location location;
 	
 	private ScrollView svHotSpotDetails;
-	private SupportMapFragment smfNewHotSpot;
+	private MMSupportMapFragment smfNewHotSpot;
 	private EditText etName;
 	private EditText etDescription;
 	private EditText etRange;
@@ -84,17 +86,15 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
+    	fragmentManager = getFragmentManager();
 		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_new_hot_spot, container, false);
 		svHotSpotDetails = (ScrollView) view.findViewById(R.id.svhotspotdetails);
-		smfNewHotSpot = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragnewhotspotmap);
 		etName = (EditText) view.findViewById(R.id.etname);
 		etDescription = (EditText) view.findViewById(R.id.etdescription);
 		etRange = (EditText) view.findViewById(R.id.etrange);
 		btnCreateHotSpot = (Button) view.findViewById(R.id.btncreatehotspot);
-		googleMap = smfNewHotSpot.getMap();
 		
 		etName.setOnClickListener(NewHotSpotFragment.this);
 		etDescription.setOnKeyListener(NewHotSpotFragment.this);
@@ -103,24 +103,6 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 		
 		etName.setText("Wilson Hot Spot");
 		etRange.setText("50 meters");
-		
-		try {
-			locationInfo = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION));
-			LatLng locLatLng = new LatLng(locationInfo.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), locationInfo.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
-			location.setLatitude(locLatLng.latitude);
-			location.setLongitude(locLatLng.longitude);
-			
-			googleMap.addMarker(new MarkerOptions()
-				.position(locLatLng)
-				.title(locationInfo.getString(MMSDKConstants.JSON_KEY_NAME))
-				.snippet(locationInfo.getString(MMSDKConstants.JSON_KEY_ADDRESS))
-				.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locLatLng, 17));
-			googleMap.setMyLocationEnabled(true);
-			googleMap.setOnMapClickListener(NewHotSpotFragment.this);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 		
 		return view;
 	}
@@ -209,17 +191,34 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	}
 
 	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onResume()
+	 */
+	@Override
+	public void onResume() {
+		super.onResume();
+		getMMSupportMapFragment();
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onPause()
+	 */
+	@Override
+	public void onPause() {
+		super.onPause();
+		try {
+			FragmentTransaction transaction = fragmentManager.beginTransaction();
+			transaction.remove(smfNewHotSpot);
+			transaction.commitAllowingStateLoss();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onDestroyView()
 	 */
 	@Override
 	public void onDestroyView() {
-		try {
-			FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-			transaction.remove(smfNewHotSpot);
-			transaction.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		super.onDestroyView();
 	}
 
@@ -229,6 +228,53 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	@Override
 	public void onFragmentBackPressed() {
 
+	}
+	
+	/**
+	 * @throws JSONException 
+	 * 
+	 */
+	private void getMMSupportMapFragment() {
+		smfNewHotSpot = (MMSupportMapFragment) fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
+		if(smfNewHotSpot == null) {
+			smfNewHotSpot = new MMSupportMapFragment() {
+				/* (non-Javadoc)
+				 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
+				 */
+				@Override
+				public void onActivityCreated(Bundle savedInstanceState) {
+					super.onActivityCreated(savedInstanceState);
+					googleMap = smfNewHotSpot.getMap();
+					if(googleMap != null) {
+						addToGoogleMap();
+					}
+				}
+			};
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.add(R.id.flnewhotspotmap, smfNewHotSpot, MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
+			fragmentTransaction.commit();
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void addToGoogleMap() {
+		try {
+			locationInfo = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION));
+			LatLng locLatLng = new LatLng(locationInfo.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), locationInfo.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
+			
+			googleMap.addMarker(new MarkerOptions()
+				.position(locLatLng)
+				.title(locationInfo.getString(MMSDKConstants.JSON_KEY_NAME))
+				.snippet(locationInfo.getString(MMSDKConstants.JSON_KEY_ADDRESS))
+				.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locLatLng, 17));
+			googleMap.setMyLocationEnabled(true);
+			googleMap.setOnMapClickListener(NewHotSpotFragment.this);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -334,12 +380,6 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 		if(newHotSpotMarker != null) {
 			newHotSpotMarker.remove();
 		}
-		
-		Location newLoc = new Location(location);
-		newLoc.setLatitude(newLocLatLng.latitude);
-		newLoc.setLongitude(newLocLatLng.longitude);
-		
-		Log.d(TAG, TAG + "distance: " + newLoc.distanceTo(location));
 		
 		newHotSpotMarker = googleMap.addMarker(new MarkerOptions()
 			.position(newLocLatLng)

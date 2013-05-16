@@ -1,10 +1,7 @@
 package com.mobmonkey.mobmonkeyandroid.fragments;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,9 +12,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,7 +35,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -48,6 +44,7 @@ import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchResultsItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
+import com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMGeocoderAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -68,6 +65,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
+	private FragmentManager fragmentManager;
 	
 	private JSONArray searchResults;
 	private Location location;
@@ -79,8 +77,10 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	private Button btnAddLoc;
 	private Button btnCancel;
 	private ListView lvSearchResults;
-	private SupportMapFragment smfResultLocations;
+	
+	private MMSupportMapFragment smfResultLocations;
 	private GoogleMap googleMap;
+	
 	private boolean displayMap = false;
 	private boolean addLocClicked;
 	private Marker currMarker;
@@ -98,6 +98,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		Log.d(TAG, TAG + "onCreateView");
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
+		fragmentManager = getFragmentManager();
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		View view = inflater.inflate(R.layout.fragment_searchresults_screen, container, false);
@@ -105,7 +106,6 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
 		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
 		btnCancel = (Button) view.findViewById(R.id.btncancel);
-		smfResultLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragsearchresultsmap);
 		lvSearchResults = (ListView) view.findViewById(R.id.lvsearchresults);
 		
 		tvNavBarTitle.setText(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
@@ -117,7 +117,6 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 				searchResults = new JSONArray();
 			}
 			getLocations();
-			displayMap();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -219,19 +218,36 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onResume()
+	 */
+	@Override
+	public void onResume() {
+		super.onResume();
+		getMMSupportMapFragment();
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onPause()
+	 */
+	@Override
+	public void onPause() {
+		super.onPause();
+		try {
+			FragmentTransaction transaction = fragmentManager.beginTransaction();
+			transaction.remove(smfResultLocations);
+			transaction.commitAllowingStateLoss();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onDestroyView()
 	 */
 	@Override
 	public void onDestroyView() {
-		try {
-			FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-			transaction.remove(smfResultLocations);
-			transaction.commit();
-		} catch (Exception e) {
-			
-		}
 		super.onDestroyView();
 	}
 
@@ -262,14 +278,35 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	}
 	
 	/**
+	 * @throws JSONException 
 	 * 
-	 * @throws JSONException
 	 */
-	private void displayMap() throws JSONException {
-		googleMap = smfResultLocations.getMap();
-		markerHashMap = new HashMap<Marker, JSONObject>();
-		addToGoogleMap();
-		getLocationHistory();
+	private void getMMSupportMapFragment() {
+		smfResultLocations = (MMSupportMapFragment) fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
+		if(smfResultLocations == null) {
+			smfResultLocations = new MMSupportMapFragment() {
+				
+				/* (non-Javadoc)
+				 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
+				 */
+				@Override
+				public void onActivityCreated(Bundle savedInstanceState) {
+					super.onActivityCreated(savedInstanceState);
+					googleMap = smfResultLocations.getMap();
+					if(googleMap != null) {
+						try {
+							addToGoogleMap();
+							getLocationHistory();
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			};
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.add(R.id.llsearchresultsmap, smfResultLocations, MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
+			fragmentTransaction.commit();
+		}
 	}
 	
 	/**
@@ -294,6 +331,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 */
 	private void addToGoogleMap() throws JSONException {
 		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+		markerHashMap = new HashMap<Marker, JSONObject>();
 		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 		
 		for(int i = 0; i < searchResults.length(); i++) {
@@ -442,14 +480,6 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 					}
 				} else if(obj instanceof Address) {
 					Address locationClicked = (Address) obj;
-				
-//					Bundle bundle = new Bundle();
-//					bundle.putString(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(0));
-//					bundle.putString(MMSDKConstants.JSON_KEY_LOCALITY, locationClicked.getLocality());
-//					bundle.putString(MMSDKConstants.JSON_KEY_REGION, locationClicked.getAdminArea());
-//					bundle.putString(MMSDKConstants.JSON_KEY_POSTCODE, locationClicked.getPostalCode());
-//					bundle.putDouble(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
-//					bundle.putDouble(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
 					
 					Intent intent = new Intent(getActivity(), AddLocationScreen.class);
 					intent.putExtra(MMSDKConstants.JSON_KEY_ADDRESS, locationClicked.getAddressLine(MMSDKConstants.DEFAULT_INT_ZERO));
@@ -459,7 +489,6 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 					intent.putExtra(MMSDKConstants.JSON_KEY_COUNTRY_CODE, locationClicked.getCountryCode());
 					intent.putExtra(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
 					intent.putExtra(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
-//					intent.putExtras(bundle);
 					startActivity(intent);
 				}
 			}

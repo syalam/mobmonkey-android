@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -62,6 +64,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedNearbyLocationsListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMScrollView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSubLocations;
+import com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMSearchLocationAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
@@ -83,6 +86,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
+	private FragmentManager fragmentManager;
 	
 	private Location location;
 	private JSONArray nearbyLocations;
@@ -96,11 +100,12 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private MMExpandedNearbyLocationsListView enllvNearbyLocations;
 	private LinearLayout llLoadMore;
 	private TextView tvHoldToPanAndZoom;
-	private SupportMapFragment smfNearbyLocations;
 	private MMExpandedListView elvSearch;
 	private LinearLayout llNearbyLocationsSearch;
 	private TextView tvNearbyLocationsSearch;
 	private ListView lvNearbyLocationsSearch;
+	
+	private MMSupportMapFragment smfNearbyLocations;
 	private GoogleMap googleMap;
 	
 	private MMNearbyLocationsArrayAdapter nearbyLocationsArrayAdapter;
@@ -129,6 +134,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
+		fragmentManager = getFragmentManager();
 		
 		View view = inflater.inflate(R.layout.fragment_searchlocations_screen, container, false);
 		tvNavBarTitle = (TextView) view.findViewById(R.id.tvnavbartitle);
@@ -139,12 +145,12 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		enllvNearbyLocations = (MMExpandedNearbyLocationsListView) view.findViewById(R.id.enllvnearbylocations);
 		llLoadMore = (LinearLayout) view.findViewById(R.id.llloadmore);
 		tvHoldToPanAndZoom = (TextView) view.findViewById(R.id.tvholdtopanandzoom);
-		smfNearbyLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragnearbylocationsmap);
+//		smfNearbyLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragnearbylocationsmap);
 		elvSearch = (MMExpandedListView) view.findViewById(R.id.elvsearch);
 		llNearbyLocationsSearch = (LinearLayout) view.findViewById(R.id.llnearbylocationssearch);
 		tvNearbyLocationsSearch = (TextView) view.findViewById(R.id.tvnearbylocationssearch);
 		lvNearbyLocationsSearch = (ListView) view.findViewById(R.id.lvnearbylocationssearch);
-		googleMap = smfNearbyLocations.getMap();
+//		googleMap = smfNearbyLocations.getMap();
 		
 		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		markerHashMap = new HashMap<Marker, JSONObject>();
@@ -197,7 +203,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			}
 		});
 		
-		panAndZoom();
+//		panAndZoom();
 		
 		try {
 			getLocationHistory();
@@ -347,10 +353,11 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onResume() {
 		Log.d(TAG, TAG + "onResume");
+		super.onResume();
 		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
 			searchAllNearbyLocations();
+			getMMSupportMapFragment();
 		}
-		super.onResume();
 	}
 
 	/* (non-Javadoc)
@@ -368,9 +375,14 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onPause() {
 		Log.d(TAG, TAG + "onPause");
-		smfNearbyLocations = null;
-//		smfNearbyLocations.getView().setVisibility(View.GONE);
 		super.onPause();
+		try {
+			FragmentTransaction transaction = fragmentManager.beginTransaction();
+			transaction.remove(smfNearbyLocations);
+			transaction.commitAllowingStateLoss();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -380,13 +392,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	public void onDestroyView() {
 		Log.d(TAG, "onDestroyView");
 		super.onDestroyView();
-		try {
-			FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-			transaction.remove(smfNearbyLocations);
-			transaction.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/* (non-Javadoc)
@@ -451,6 +456,28 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 									   getString(R.string.pd_search_all_nearby));
 	}
 	
+	/**
+	 * 
+	 */
+	private void getMMSupportMapFragment() {
+		smfNearbyLocations = (MMSupportMapFragment) fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
+		if(smfNearbyLocations == null) {
+			smfNearbyLocations = MMSupportMapFragment.newInstance();
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.add(R.id.flnearbylocationsmap, smfNearbyLocations, MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
+			fragmentTransaction.commit();
+		}
+		if(googleMap == null) {
+			googleMap = smfNearbyLocations.getMap();
+			if(googleMap != null) {
+				panAndZoom();
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 */
 	private void panAndZoom() {
 		UiSettings uiSettings = googleMap.getUiSettings();
 		uiSettings.setCompassEnabled(enablePanAndZoom);

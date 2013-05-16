@@ -30,10 +30,9 @@
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="@android:color/black"/>
 			
-			<fragment android:id="@+id/fragnewhotspotmap"
+			<FrameLayout android:id="@+id/flnewhotspotmap"
 				android:layout_width="match_parent"
-				android:layout_height="200dp"
-				class="com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment"/>
+				android:layout_height="200dp"/>
 			
 			<TextView android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"

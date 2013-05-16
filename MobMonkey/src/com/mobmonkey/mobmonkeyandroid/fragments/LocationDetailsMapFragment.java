@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
+import com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
@@ -29,7 +31,9 @@ import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 public class LocationDetailsMapFragment extends MMFragment {
 	private static final String TAG = "LocationResultMapFragment: ";
 	
-	private SupportMapFragment smfLocation;
+	private FragmentManager fragmentManager;
+	
+	private MMSupportMapFragment smfLocation;
 	private GoogleMap googleMap;
 	
 	/*
@@ -38,31 +42,35 @@ public class LocationDetailsMapFragment extends MMFragment {
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_locationdetails_map, container, false);
-		smfLocation = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fraglocationdetailsmap);
-		googleMap = smfLocation.getMap();
+		fragmentManager = getFragmentManager();
 		
-		JSONObject jObj;
-		try {
-			jObj = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));			
-			
-			Location location = MMLocationManager.getGPSLocation(new MMLocationListener());
-			
-			LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
-			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
-			
-			googleMap.addMarker(new MarkerOptions()
-				.position(resultLocLatLng)
-				.title(jObj.getString(MMSDKConstants.JSON_KEY_NAME))
-				.snippet(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS)));
-
-			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
-			googleMap.setMyLocationEnabled(true);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		View view = inflater.inflate(R.layout.fragment_locationdetails_map, container, false);
 		
 		return view;
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onResume()
+	 */
+	@Override
+	public void onResume() {
+		super.onResume();
+		getMMSupportMapFragment();
+	}
+	
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onPause()
+	 */
+	@Override
+	public void onPause() {
+		super.onPause();
+		try {
+			FragmentTransaction transaction = fragmentManager.beginTransaction();
+			transaction.remove(smfLocation);
+			transaction.commitAllowingStateLoss();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -71,14 +79,6 @@ public class LocationDetailsMapFragment extends MMFragment {
 	 */
 	@Override
 	public void onDestroyView() {
-		try {
-			FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-			transaction.remove(smfLocation);
-			transaction.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 		super.onDestroyView();
 	}
 
@@ -90,4 +90,52 @@ public class LocationDetailsMapFragment extends MMFragment {
 
 	}
 
+	/**
+	 * @throws JSONException 
+	 * 
+	 */
+	private void getMMSupportMapFragment() {
+		smfLocation = (MMSupportMapFragment) fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
+		if(smfLocation == null) {
+			smfLocation = new MMSupportMapFragment() {
+				/* (non-Javadoc)
+				 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
+				 */
+				@Override
+				public void onActivityCreated(Bundle savedInstanceState) {
+					super.onActivityCreated(savedInstanceState);
+					googleMap = smfLocation.getMap();
+					if(googleMap != null) {
+						try {
+							addToGoogleMap();
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			};
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.add(R.id.lllocationdetailsmap, smfLocation, MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
+			fragmentTransaction.commit();
+		}
+	}
+	
+	/**
+	 * 
+	 * @throws JSONException
+	 */
+	private void addToGoogleMap() throws JSONException {
+		JSONObject jObj = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));			
+		
+		LatLng currentLoc = new LatLng(MMLocationManager.getLocationLatitude(), MMLocationManager.getLocationLongitude());
+		LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
+		
+		googleMap.addMarker(new MarkerOptions()
+			.position(resultLocLatLng)
+			.title(jObj.getString(MMSDKConstants.JSON_KEY_NAME))
+			.snippet(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS)));
+
+		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 16));
+		googleMap.setMyLocationEnabled(true);
+	}
 }

@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -348,6 +347,7 @@ public class AddLocationScreen extends Activity implements OnTouchListener,
 					if(response.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 						Toast.makeText(AddLocationScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					} else {
+						setResult(RESULT_OK);
 						finish();
 						overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
 					}

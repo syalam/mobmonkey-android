@@ -71,10 +71,9 @@
 	<FrameLayout android:layout_width="match_parent"
 	    android:layout_height="match_parent">
 	
-   		<fragment android:id="@+id/fragsearchresultsmap"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			class="com.google.android.gms.maps.SupportMapFragment"/>
+   		<LinearLayout android:id="@+id/llsearchresultsmap"
+   		    android:layout_width="match_parent"
+   		    android:layout_height="match_parent"/>
 	    
 		<ListView android:id="@+id/lvsearchresults"
 		    android:layout_width="match_parent"

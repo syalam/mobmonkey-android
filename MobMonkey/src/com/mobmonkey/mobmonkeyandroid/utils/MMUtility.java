@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
-import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 import android.util.TypedValue;
@@ -23,9 +22,10 @@ import android.view.Display;
  *
  */
 public final class MMUtility {
-	private static final String TAG = "MMUtility";
+	private static final String TAG = "MMUtility: ";
 	
 	private MMUtility () {
+		Log.d(TAG, TAG + "private constructor, cannot initialize");
 		throw new AssertionError();
 	}
 	
