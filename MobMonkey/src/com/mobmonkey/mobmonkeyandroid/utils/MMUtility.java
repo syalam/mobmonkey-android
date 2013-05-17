@@ -35,42 +35,46 @@ public final class MMUtility {
 	 * @return
 	 * @throws JSONException
 	 */
-	public static JSONArray filterSubLocations(String result) throws JSONException {
-		JSONArray jArr = new JSONArray(result);
+	public static JSONArray filterSubLocations(String result) {
 		ArrayList<JSONObject> locations = new ArrayList<JSONObject>();
-		ArrayList<MMSubLocations> subLocations = new ArrayList<MMSubLocations>();
-		
-		for(int i = 0; i < jArr.length(); i++) {
-			JSONObject jObj = jArr.getJSONObject(i);
-			if(jObj.isNull(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID)) {
-				locations.add(jObj);
-			} else {
-				String parentLocationId = jObj.getString(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID);
-				boolean sameParentLocationId = false;
-				for(int j = 0; j < subLocations.size(); j++) {
-					if(subLocations.get(j).parentLocationId.equals(parentLocationId)) {
-						subLocations.get(j).subLocations.put(jObj);
-						sameParentLocationId = true;
+		try {
+			JSONArray jArr = new JSONArray(result);
+			ArrayList<MMSubLocations> subLocations = new ArrayList<MMSubLocations>();
+			
+			for(int i = 0; i < jArr.length(); i++) {
+				JSONObject jObj = jArr.getJSONObject(i);
+				if(jObj.isNull(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID)) {
+					locations.add(jObj);
+				} else {
+					String parentLocationId = jObj.getString(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID);
+					boolean sameParentLocationId = false;
+					for(int j = 0; j < subLocations.size(); j++) {
+						if(subLocations.get(j).parentLocationId.equals(parentLocationId)) {
+							subLocations.get(j).subLocations.put(jObj);
+							sameParentLocationId = true;
+							break;
+						}
+					}
+					if(!sameParentLocationId) {
+						MMSubLocations mmSubLocations = new MMSubLocations();
+						mmSubLocations.parentLocationId = parentLocationId;
+						mmSubLocations.subLocations.put(jObj);
+						subLocations.add(mmSubLocations);
+					}
+				}
+			}
+			
+			for(int i = 0; i < subLocations.size(); i++) {
+				String parentLocationId = subLocations.get(i).parentLocationId;
+				for(int j = 0; j < locations.size(); j++) {
+					if(locations.get(j).getString(MMSDKConstants.JSON_KEY_LOCATION_ID).equals(parentLocationId)) {
+						locations.get(j).put(MMSDKConstants.JSON_KEY_SUB_LOCATIONS, subLocations.get(i).subLocations);
 						break;
 					}
 				}
-				if(!sameParentLocationId) {
-					MMSubLocations mmSubLocations = new MMSubLocations();
-					mmSubLocations.parentLocationId = parentLocationId;
-					mmSubLocations.subLocations.put(jObj);
-					subLocations.add(mmSubLocations);
-				}
 			}
-		}
-		
-		for(int i = 0; i < subLocations.size(); i++) {
-			String parentLocationId = subLocations.get(i).parentLocationId;
-			for(int j = 0; j < locations.size(); j++) {
-				if(locations.get(j).getString(MMSDKConstants.JSON_KEY_LOCATION_ID).equals(parentLocationId)) {
-					locations.get(j).put(MMSDKConstants.JSON_KEY_SUB_LOCATIONS, subLocations.get(i).subLocations);
-					break;
-				}
-			}
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 		
 		return new JSONArray(locations);

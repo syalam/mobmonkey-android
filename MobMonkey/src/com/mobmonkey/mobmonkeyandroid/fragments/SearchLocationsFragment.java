@@ -145,12 +145,10 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		enllvNearbyLocations = (MMExpandedNearbyLocationsListView) view.findViewById(R.id.enllvnearbylocations);
 		llLoadMore = (LinearLayout) view.findViewById(R.id.llloadmore);
 		tvHoldToPanAndZoom = (TextView) view.findViewById(R.id.tvholdtopanandzoom);
-//		smfNearbyLocations = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.fragnearbylocationsmap);
 		elvSearch = (MMExpandedListView) view.findViewById(R.id.elvsearch);
 		llNearbyLocationsSearch = (LinearLayout) view.findViewById(R.id.llnearbylocationssearch);
 		tvNearbyLocationsSearch = (TextView) view.findViewById(R.id.tvnearbylocationssearch);
 		lvNearbyLocationsSearch = (ListView) view.findViewById(R.id.lvnearbylocationssearch);
-//		googleMap = smfNearbyLocations.getMap();
 		
 		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		markerHashMap = new HashMap<Marker, JSONObject>();
@@ -254,12 +252,8 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 				cancelNearbyLocationsSearch();
 				break;
 			case R.id.llloadmore:
-				try {
-					nearbyLocationsCount += 5;
-					setNearbyLocations();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+			nearbyLocationsCount += 5;
+			setNearbyLocations();
 				break;
 		}
 	}
@@ -462,16 +456,22 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private void getMMSupportMapFragment() {
 		smfNearbyLocations = (MMSupportMapFragment) fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
 		if(smfNearbyLocations == null) {
-			smfNearbyLocations = MMSupportMapFragment.newInstance();
+			smfNearbyLocations = new MMSupportMapFragment() {
+				/* (non-Javadoc)
+				 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
+				 */
+				@Override
+				public void onActivityCreated(Bundle savedInstanceState) {
+					super.onActivityCreated(savedInstanceState);
+					googleMap = smfNearbyLocations.getMap();
+					if(googleMap != null) {
+						panAndZoom();
+					}
+				}
+			};
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			fragmentTransaction.add(R.id.flnearbylocationsmap, smfNearbyLocations, MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
 			fragmentTransaction.commit();
-		}
-		if(googleMap == null) {
-			googleMap = smfNearbyLocations.getMap();
-			if(googleMap != null) {
-				panAndZoom();
-			}
 		}
 	}
 	
@@ -509,40 +509,58 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 * 
 	 * @throws JSONException
 	 */
-	private void setNearbyLocations() throws JSONException {
+	private void setNearbyLocations() {
 		if(nearbyLocationsCount >= nearbyLocations.length()) {
 			nearbyLocationsCount = nearbyLocations.length();
 			llLoadMore.setVisibility(View.GONE);
 		}
 		
 		ArrayList<JSONObject> resultLocations = new ArrayList<JSONObject>();
-		for(int i = 0; i < nearbyLocationsCount; i++) {
-			resultLocations.add(nearbyLocations.getJSONObject(i));
-		}
 		
-		nearbyLocationsArrayAdapter = new MMNearbyLocationsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
-		enllvNearbyLocations.setAdapter(nearbyLocationsArrayAdapter);
-		addToGoogleMap();
-	}
-	
-	/**
-	 * 
-	 * @throws JSONException
-	 */
-	private void setSearchNearbyLocations() throws JSONException {
-		ArrayList<JSONObject> resultLocations = new ArrayList<JSONObject>();
-		for(int i = 0; i < nearbyLocations.length(); i++) {
-			resultLocations.add(nearbyLocations.getJSONObject(i));
+		try {
+			for(int i = 0; i < nearbyLocationsCount; i++) {
+				resultLocations.add(nearbyLocations.getJSONObject(i));
+			}
+			
+			if(resultLocations.size() > 0) {
+				enllvNearbyLocations.setVisibility(View.VISIBLE);
+				llLoadMore.setVisibility(View.VISIBLE);
+				nearbyLocationsArrayAdapter = new MMNearbyLocationsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
+				enllvNearbyLocations.setAdapter(nearbyLocationsArrayAdapter);
+			}
+			addToGoogleMap();
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
-		nearbyLocationsSearchArrayAdapter = new MMNearbyLocationsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
-		lvNearbyLocationsSearch.setAdapter(nearbyLocationsSearchArrayAdapter);
 	}
 	
 	/**
 	 * 
 	 * @throws JSONException
 	 */
-	private void addToGoogleMap() throws JSONException {
+	private void setSearchNearbyLocations() {
+		ArrayList<JSONObject> resultLocations = new ArrayList<JSONObject>();
+		
+		try {
+			for(int i = 0; i < nearbyLocations.length(); i++) {
+				resultLocations.add(nearbyLocations.getJSONObject(i));
+			}
+			
+			if(resultLocations.size() > 0) {
+				lvNearbyLocationsSearch.setVisibility(View.VISIBLE);
+				nearbyLocationsSearchArrayAdapter = new MMNearbyLocationsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
+				lvNearbyLocationsSearch.setAdapter(nearbyLocationsSearchArrayAdapter);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 
+	 * @throws JSONException
+	 */
+	private void addToGoogleMap() {
 		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
 		googleMap.clear();
 		googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
@@ -552,23 +570,27 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			nearbyLocationsCount = nearbyLocations.length();
 		}
 		
-		for(int i = 0; i < nearbyLocationsCount; i++) {
-			JSONObject jObj = nearbyLocations.getJSONObject(i);
-			
-			LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
-			
-			Marker locationResultMarker = googleMap.addMarker(new MarkerOptions().
-					position(resultLocLatLng).
-					title(jObj.getString(MMSDKConstants.JSON_KEY_NAME))
-					.snippet(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS)));
-			
-			if(currMarker != null && currMarker.getTitle().equals(locationResultMarker.getTitle())) {
-				Log.d(TAG, TAG + "marker equal");
-				locationResultMarker.showInfoWindow();
-				currentLoc = currMarker.getPosition();
+		try {
+			for(int i = 0; i < nearbyLocationsCount; i++) {
+				JSONObject jObj = nearbyLocations.getJSONObject(i);
+				
+				LatLng resultLocLatLng = new LatLng(jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE));
+				
+				Marker locationResultMarker = googleMap.addMarker(new MarkerOptions().
+						position(resultLocLatLng).
+						title(jObj.getString(MMSDKConstants.JSON_KEY_NAME))
+						.snippet(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS)));
+				
+				if(currMarker != null && currMarker.getTitle().equals(locationResultMarker.getTitle())) {
+					Log.d(TAG, TAG + "marker equal");
+					locationResultMarker.showInfoWindow();
+					currentLoc = currMarker.getPosition();
+				}
+				
+				markerHashMap.put(locationResultMarker, jObj);
 			}
-			
-			markerHashMap.put(locationResultMarker, jObj);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 		
 		if(currMarker != null) {
@@ -683,14 +705,11 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
-					try {
-						nearbyLocations = MMUtility.filterSubLocations((String) obj);
-						nearbyLocationsCount = 5;
-						setNearbyLocations();
-						setSearchNearbyLocations();
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
+					nearbyLocations = MMUtility.filterSubLocations((String) obj);
+					Log.d(TAG, TAG + "nearbyLocations: " + nearbyLocations.toString());
+					nearbyLocationsCount = 5;
+					setNearbyLocations();
+					setSearchNearbyLocations();
 				}
 //				try {
 //					JSONObject jObj = new JSONObject((String) obj);

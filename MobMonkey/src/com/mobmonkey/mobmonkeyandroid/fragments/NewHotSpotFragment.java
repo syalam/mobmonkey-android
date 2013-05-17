@@ -64,8 +64,9 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	private SharedPreferences userPrefs;
 	private FragmentManager fragmentManager;
 	private InputMethodManager inputMethodManager;
-	
+		
 	private JSONObject locationInfo;
+	private int requestCode;
 	
 	private ScrollView svHotSpotDetails;
 	private MMSupportMapFragment smfNewHotSpot;
@@ -88,6 +89,8 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
     	userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
     	fragmentManager = getFragmentManager();
 		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		
+		requestCode = getArguments().getInt(MMSDKConstants.REQUEST_CODE);
 		
 		View view = inflater.inflate(R.layout.fragment_new_hot_spot, container, false);
 		svHotSpotDetails = (ScrollView) view.findViewById(R.id.svhotspotdetails);
@@ -389,6 +392,27 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 		newHotSpotMarker.showInfoWindow();
     }
     
+    /**
+     * 
+     * @param result
+     */
+    private void handleCreateHotSpotCallback(String result) {
+    	try {
+	    	JSONObject jObj = new JSONObject(result);
+	    	if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+				if(requestCode == MMSDKConstants.REQUEST_CODE_MASTER_LOCATION || requestCode == MMSDKConstants.REQUEST_CODE_EXISTING_HOT_SPOTS) {
+					fragmentMultipleBackListener.onFragmentMultipleBack();
+				} else if(requestCode == MMSDKConstants.REQUEST_CODE_LOCATION_DETAILS){
+					getActivity().onBackPressed();
+				}
+	    	} else {
+	    		Toast.makeText(getActivity(), R.string.toast_error_create_hot_spot, Toast.LENGTH_SHORT).show();
+	    	}
+    	} catch (JSONException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
 	/**
 	 * 
 	 * @author Dezapp, LLC
@@ -428,7 +452,7 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
-					fragmentMultipleBackListener.onFragmentMultipleBack();
+					handleCreateHotSpotCallback((String) obj);
 				}
 			}
 		}

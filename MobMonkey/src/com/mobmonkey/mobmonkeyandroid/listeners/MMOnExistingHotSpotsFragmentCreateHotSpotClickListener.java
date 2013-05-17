@@ -8,5 +8,5 @@ import org.json.JSONObject;
  *
  */
 public interface MMOnExistingHotSpotsFragmentCreateHotSpotClickListener {
-	public void onExistingHotSpotsCreateHotSpotClick(JSONObject jObj);
+	public void onExistingHotSpotsCreateHotSpotClick(JSONObject jObj, int requestCode);
 }

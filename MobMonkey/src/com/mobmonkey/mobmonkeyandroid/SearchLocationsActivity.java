@@ -148,10 +148,11 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnExistingHotSpotsFragmentCreateHotSpotClickListener#onExistingHotSpotsCreateHotSpotClick(org.json.JSONObject)
 	 */
 	@Override
-	public void onExistingHotSpotsCreateHotSpotClick(JSONObject jObj) {
+	public void onExistingHotSpotsCreateHotSpotClick(JSONObject jObj, int requestCode) {
 		NewHotSpotFragment newHotSpotFragment = new NewHotSpotFragment();
 		Bundle data = new Bundle();
 		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION, jObj.toString());
+		data.putInt(MMSDKConstants.KEY_INTENT_EXTRA_REQUEST_CODE, requestCode);
 		newHotSpotFragment.setArguments(data);
 		performTransaction(newHotSpotFragment);
 	}
@@ -186,10 +187,11 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnCreateHotSpotFragmentClickListener#onCreateHotSpotClick(org.json.JSONObject)
 	 */
 	@Override
-	public void onCreateHotSpotClick(JSONObject jObj) {
+	public void onCreateHotSpotClick(JSONObject jObj, int requestCode) {
 		NewHotSpotFragment newHotSpotFragment = new NewHotSpotFragment();
 		Bundle data = new Bundle();
 		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION, jObj.toString());
+		data.putInt(MMSDKConstants.KEY_INTENT_EXTRA_REQUEST_CODE, requestCode);
 		newHotSpotFragment.setArguments(data);
 		performTransaction(newHotSpotFragment);
 	}

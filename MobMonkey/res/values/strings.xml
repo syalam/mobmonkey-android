@@ -201,6 +201,8 @@
 	<string name="ad_message_empty_name">Each Hot Spot mush have a name.</string>
 	<string name="ad_message_empty_range">Each Hot Spot mush have a range.</string>
 	
+	<string name="toast_error_create_hot_spot">An error has occurred while creating hot spot, please try again later.</string>
+	
 	<string name="pd_creating_hot_spot">Creating Hot Spot&#8230;</string>
 	
 	<!-- Hot Spot Range Screen -->

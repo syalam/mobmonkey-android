@@ -96,7 +96,7 @@ public class ExistingHotSpotsFragment extends MMFragment implements OnItemClickL
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.btncreatehotspot:
-				existingHotSpotsCreateHotSpotClickListener.onExistingHotSpotsCreateHotSpotClick(parentLocation);
+				existingHotSpotsCreateHotSpotClickListener.onExistingHotSpotsCreateHotSpotClick(parentLocation, MMSDKConstants.REQUEST_CODE_EXISTING_HOT_SPOTS);
 				break;
 		}
 	}

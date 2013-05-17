@@ -85,6 +85,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private ImageView ivtnMedia;
 	private ImageButton ibPlay;
 	private TextView tvExpiryDate;
+	private TextView tvMediaMessage;
 	private ImageButton ibShareMedia;
 	private ImageButton ibStream;
 	private ImageButton ibVideo;
@@ -142,6 +143,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		ivtnMedia = (ImageView) view.findViewById(R.id.ivtnmedia);
 		ibPlay = (ImageButton) view.findViewById(R.id.ibplay);
 		tvExpiryDate = (TextView) view.findViewById(R.id.tvexpirydate);
+		tvMediaMessage = (TextView) view.findViewById(R.id.tvmediamessage);
 		ibShareMedia = (ImageButton) view.findViewById(R.id.ibsharemedia);
 		ibStream = (ImageButton) view.findViewById(R.id.ibstream);
 		ibVideo = (ImageButton) view.findViewById(R.id.ibvideo);
@@ -161,6 +163,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				favoritesList = new JSONArray();
 			}
 			location = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			Log.d(TAG, TAG + "location: " + location.toString());
 			setLocationDetails();
 			checkForHotSpots();
 			if(retrieveLocationDetails) {
@@ -223,6 +226,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, location.toString());
 				startActivity(intent);
 				break;
+			case R.id.tvmediamessage:
+				Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.mobmonkey.com")); // TODO: hardcoded, to be removed
+//				Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(locationInfo.getString(MMSDKConstants.JSON_KEY_MESSAGE_URL)));
+				startActivity(urlIntent);
+				break;
 			case R.id.ibstream:
 				intent = new Intent(getActivity(), LocationDetailsMediaScreen.class);
 				intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MEDIA_TYPE, MMSDKConstants.MEDIA_TYPE_LIVESTREAMING);
@@ -248,7 +256,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				startActivity(intent);
 				break;
 			case R.id.btncreatehotspot:
-				createHotSpotFragmentClickListener.onCreateHotSpotClick(locationInfo);
+				createHotSpotFragmentClickListener.onCreateHotSpotClick(locationInfo, MMSDKConstants.REQUEST_CODE_LOCATION_DETAILS);
 				break;
 		}
 	}
@@ -321,10 +329,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			address = location.getString(MMSDKConstants.JSON_KEY_ADDRESS);
 		}
 		mmLocationDetailsItems[1].setLocationDetail(address +
-				MMSDKConstants.DEFAULT_STRING_NEWLINE +
-				location.getString(MMSDKConstants.JSON_KEY_LOCALITY) +
-				MMSDKConstants.DEFAULT_STRING_COMMA_SPACE +
-				location.getString(MMSDKConstants.JSON_KEY_REGION));
+													MMSDKConstants.DEFAULT_STRING_NEWLINE +
+													location.getString(MMSDKConstants.JSON_KEY_LOCALITY) +
+													MMSDKConstants.DEFAULT_STRING_COMMA_SPACE +
+													location.getString(MMSDKConstants.JSON_KEY_REGION));
 		
 		ArrayAdapter<MMLocationDetailsItem> arrayAdapter = new MMLocationDetailsArrayAdapter(getActivity(), R.layout.listview_row_locationdetails, mmLocationDetailsItems);
 		arrayAdapter.isEnabled(0);
@@ -372,7 +380,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				btnCreateHotSpot.setLayoutParams(params);
 			}
 			btnCreateHotSpot.setOnClickListener(LocationDetailsFragment.this);
-			btnCreateHotSpot.setVisibility(View.VISIBLE);
 		} else {
 			tvNavBarTitle.setText(getString(R.string.tv_title_hot_spot) + MMSDKConstants.DEFAULT_STRING_SPACE + location.getString(MMSDKConstants.JSON_KEY_NAME));
 			tvLocName.setText(getString(R.string.tv_title_hot_spot) + MMSDKConstants.DEFAULT_STRING_SPACE + location.getString(MMSDKConstants.JSON_KEY_NAME));
@@ -409,8 +416,12 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		if(locationInfo.getInt(MMSDKConstants.JSON_KEY_MONKEYS) == MMSDKConstants.DEFAULT_INT_ZERO) {
 			tvMembersFound.setText(R.string.tv_no_members_found);
 		} else {
+			getString(R.string.tv_members_found);
 			tvMembersFound.setText(locationInfo.getInt(MMSDKConstants.JSON_KEY_MONKEYS) + MMSDKConstants.DEFAULT_STRING_SPACE + getString(R.string.tv_members_found));
 		}
+		tvMediaMessage.setText("See what's happening now on MobMonkey!"); // TODO: hardcoded, to be removed later
+		tvMediaMessage.setOnClickListener(LocationDetailsFragment.this);
+//		tvMediaMessage.setText(locationInfo.getString(MMSDKConstants.JSON_KEY_MESSAGE));
 	}
 	
 	/**
@@ -426,6 +437,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			int imageMediaCount = 0;
 			
 			pbLoadMedia.setVisibility(View.GONE);
+			btnCreateHotSpot.setVisibility(View.VISIBLE);
 			
 			if(mediaJArr.length() > 0) {
 				llMedia.setVisibility(View.VISIBLE);
@@ -656,19 +668,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
-//	/**
-//	 * Callback to handle the result from a Share Media request
-//	 * @author Dezapp, LLC
-//	 *
-//	 */
-//	private class ShareMediaCallback implements MMCallback {
-//		@Override
-//		public void processCallback(Object obj) {			
-//			// TODO: Implement callback to handle Share Media functionality
-//
-//		}
-//	}	
-	
 	/**
 	 * 
 	 * @author Dezapp, LLC
@@ -683,7 +682,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					}
 				} else if(obj instanceof Bitmap){				
-					retrieveImageMedia = false;
+					retrieveVideoMedia = false;
 					imageMedia = (Bitmap) obj;
 					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
 				}

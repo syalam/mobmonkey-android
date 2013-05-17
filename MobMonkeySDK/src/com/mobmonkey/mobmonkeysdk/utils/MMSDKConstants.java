@@ -143,6 +143,7 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_INTERESTS = "Interests";
 	public static final String KEY_INTENT_EXTRA_NEARBY_LOCATIONS = "Nearby locations";
 	public static final String KEY_INTENT_EXTRA_RANGE = "Range";
+	public static final String KEY_INTENT_EXTRA_REQUEST_CODE = "Request code";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING = "Repeating";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
@@ -219,7 +220,10 @@ public final class MMSDKConstants {
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2003;
 	public static final int REQUEST_CODE_TURN_ON_GPS_LOCATION = 5000;
 	public static final int REQUEST_CODE_ADD_LOCATION = 6000;
-	public static final int REQUEST_CODE_RANGE = 8000;
+	public static final int REQUEST_CODE_MASTER_LOCATION = 8000;
+	public static final int REQUEST_CODE_EXISTING_HOT_SPOTS = 8001;
+	public static final int REQUEST_CODE_LOCATION_DETAILS = 8002;
+	public static final int REQUEST_CODE_RANGE = 8500;
 	public static final int REQUEST_CODE_IMAGE = 10000;
 	public static final int REQUEST_CODE_VIDEO = 10001;
 	public static final int REQUEST_CODE_ADD_MESSAGE = 100000;
@@ -266,6 +270,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_MEDIA_TYPE = "mediaType";
 	public static final String JSON_KEY_MEDIA_URL = "mediaURL";
 	public static final String JSON_KEY_MESSAGE = "message";
+	public static final String JSON_KEY_MESSAGE_URL = "messageUrl";
 	public static final String JSON_KEY_MONKEYS = "monkeys";	
 	public static final String JSON_KEY_NAME = "name";
 	public static final String JSON_KEY_NAME_OF_LOCATION = "nameOfLocation";
