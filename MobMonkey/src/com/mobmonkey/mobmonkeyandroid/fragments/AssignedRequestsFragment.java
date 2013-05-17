@@ -18,7 +18,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -155,6 +157,7 @@ public class AssignedRequestsFragment extends MMFragment {
 						userPrefsEditor.commit();
 						Log.d(TAG, "current tab tag: " + userPrefs.getInt(MMSDKConstants.TAB_TITLE_CURRENT_TAG, 0));
 						Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+						takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmpic.jpg")));
 						startActivityForResult(takePictureIntent, MMSDKConstants.REQUEST_CODE_IMAGE);
 						break;
 					// Video request
@@ -165,12 +168,14 @@ public class AssignedRequestsFragment extends MMFragment {
 							mmDir.mkdirs();
 						}
 //						Log.d(TAG, TAG + "video file: " + new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.mp4").getAbsolutePath());
-						Intent takeVideoIntent = new Intent(getActivity(), VideoRecorderActivity.class);
-						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
-//						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-//						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
-//						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.mp4")));
+//						Intent takeVideoIntent = new Intent(getActivity(), VideoRecorderActivity.class);
 //						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
+						
+						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.3gp")));
+						takeVideoIntent.putExtra("android.intent.extra.durationLimit", 10);
+						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
 						break;
 					default:
 						break;
@@ -198,12 +203,16 @@ public class AssignedRequestsFragment extends MMFragment {
 		// picture data
 		if(requestCode == MMSDKConstants.REQUEST_CODE_IMAGE) {
 			Log.d(TAG, "return from taking picture with camera");
-			Bundle extras = data.getExtras();
-			Bitmap mImageBitmap = (Bitmap) extras.get("data");
+//			Bundle extras = data.getExtras();
+//			Bitmap mImageBitmap = (Bitmap) extras.get("data");
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inSampleSize = 2;
+			Bitmap mImageBitmap = BitmapFactory.decodeFile(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.jpg", options);
+			mImageBitmap = scaleDownBitmap(mImageBitmap, 200, getActivity());
 			
 			// encode image to Base64 String
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			mImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+			mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
 			byte[] b = baos.toByteArray();
 			String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
 			
@@ -226,9 +235,12 @@ public class AssignedRequestsFragment extends MMFragment {
 		} 
 		// video 
 		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {		    
-		    try {		    	  
+		    try {
 		    	// encode to base64
 		    	File videoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
+		    	if(!videoFile.exists()) {
+		    		videoFile.mkdir();
+		    	}
 		    	String videoEncoded = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		    	BufferedInputStream in = new BufferedInputStream(new FileInputStream(videoFile));
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -328,7 +340,12 @@ public class AssignedRequestsFragment extends MMFragment {
 						
 							// remove recorded video file
 							File mmVideoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
-							mmVideoFile.delete();
+							if(mmVideoFile.exists()) {
+								mmVideoFile.delete();
+							} else {
+								File mmImageFile = new File(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.jpg");
+								mmImageFile.delete();
+							}
 							
 							JSONArray newArray = new JSONArray();
 							for(int i = 0; i < assignedRequests.length(); i++) {
@@ -385,5 +402,17 @@ public class AssignedRequestsFragment extends MMFragment {
 				}
 			}
 		}
+	}
+	
+	public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
+
+		final float densityMultiplier = context.getResources().getDisplayMetrics().density;        
+
+		int h= (int) (newHeight*densityMultiplier);
+		int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
+
+		photo = Bitmap.createScaledBitmap(photo, w, h, true);
+
+		return photo;
 	}
 }
