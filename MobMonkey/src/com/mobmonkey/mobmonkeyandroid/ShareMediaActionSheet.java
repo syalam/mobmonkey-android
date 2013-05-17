@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -20,10 +21,12 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  */
 @SuppressLint("ResourceAsColor")
 public class ShareMediaActionSheet extends Activity implements AnimationListener {
-	Animation slideBottomIn;
-	Animation slideBottomOut;
+	private static final String TAG = "ShareMediaActionSheet: ";
 	
-	LinearLayout llActionSheet;
+	private Animation slideBottomIn;
+	private Animation slideBottomOut;
+	
+	private LinearLayout llActionSheet;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -38,7 +41,7 @@ public class ShareMediaActionSheet extends Activity implements AnimationListener
 		slideBottomOut.setAnimationListener(ShareMediaActionSheet.this);		
 		
 		llActionSheet = (LinearLayout) findViewById(R.id.llactionsheet);
-		llActionSheet.setAnimation(slideBottomIn);
+		llActionSheet.startAnimation(slideBottomIn);
 	}
 	
 	@Override
@@ -62,7 +65,8 @@ public class ShareMediaActionSheet extends Activity implements AnimationListener
 	@Override
 	public void onBackPressed() {
 		llActionSheet.clearAnimation();
-		llActionSheet.setAnimation(slideBottomOut);
+		llActionSheet.startAnimation(slideBottomOut);
+		Log.d(TAG, TAG + "started animation");
 	}
 
 	/**
@@ -81,6 +85,6 @@ public class ShareMediaActionSheet extends Activity implements AnimationListener
 		}
 		
 		llActionSheet.clearAnimation();
-		llActionSheet.setAnimation(slideBottomOut);
+		llActionSheet.startAnimation(slideBottomOut);
 	}
 }
