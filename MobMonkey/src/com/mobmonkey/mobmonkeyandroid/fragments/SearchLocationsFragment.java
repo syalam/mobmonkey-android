@@ -281,6 +281,8 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 				tvNavBarTitle.setVisibility(View.GONE);
 				return true;
 		}
+		
+		
 		return false;
 	}
 
