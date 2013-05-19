@@ -56,6 +56,7 @@ public class CategoriesFragment extends MMFragment implements OnClickListener,
 	
 	private JSONArray categoriesArray;
 	
+	private MMOnSearchResultsFragmentItemClickListener locationSelectListener;
 	private MMOnCategoryFragmentItemClickListener categoryFragmentItemClickListener;
 	private MMOnCategoryResultsFragmentItemClickListener categoryResultsFragmentItemClickListener;
 
@@ -90,14 +91,30 @@ public class CategoriesFragment extends MMFragment implements OnClickListener,
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof MMOnCategoryFragmentItemClickListener) {
-			categoryFragmentItemClickListener = (MMOnCategoryFragmentItemClickListener) activity;
-			if(activity instanceof MMOnCategoryResultsFragmentItemClickListener) {
-				categoryResultsFragmentItemClickListener = (MMOnCategoryResultsFragmentItemClickListener) activity;
+		if(activity instanceof MMOnSearchResultsFragmentItemClickListener) {
+			locationSelectListener = (MMOnSearchResultsFragmentItemClickListener) activity;
+			if(activity instanceof MMOnCategoryFragmentItemClickListener) {
+				categoryFragmentItemClickListener = (MMOnCategoryFragmentItemClickListener) activity;
+				if(activity instanceof MMOnCategoryResultsFragmentItemClickListener) {
+					categoryResultsFragmentItemClickListener = (MMOnCategoryResultsFragmentItemClickListener) activity;
+				}
 			}
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == MMSDKConstants.REQUEST_CODE_ADD_LOCATION) {
+			if(resultCode == Activity.RESULT_OK) {
+				locationSelectListener.onSearchResultsFragmentItemClick(data.getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			}
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
 	 */
@@ -105,7 +122,7 @@ public class CategoriesFragment extends MMFragment implements OnClickListener,
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnaddloc:
-				startActivity(new Intent(getActivity(), AddLocationMapScreen.class));
+				startActivityForResult(new Intent(getActivity(), AddLocationMapScreen.class), MMSDKConstants.REQUEST_CODE_ADD_LOCATION);
 				break;
 		}
 	}

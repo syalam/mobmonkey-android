@@ -78,10 +78,10 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 	 * @see com.mobmonkey.mobmonkey.fragments.FavoritesFragment.OnMMLocationSelectedListener#onLocationSelected(java.lang.Object)
 	 */
 	@Override
-	public void onSearchResultsFragmentItemClick(JSONObject jObj) {
+	public void onSearchResultsFragmentItemClick(String locationInfo) {
 		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
 		Bundle data = new Bundle();
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((JSONObject) jObj).toString());
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, locationInfo);
 		locationDetailsFragment.setArguments(data);
 		performTransaction(locationDetailsFragment);
 	}
@@ -176,6 +176,6 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
 		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.push(mmFragment));
-		fragmentTransaction.commit();		
+		fragmentTransaction.commitAllowingStateLoss();
 	}
 }

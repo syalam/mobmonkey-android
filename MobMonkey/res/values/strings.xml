@@ -214,15 +214,6 @@
 	<string name="btn_fifty_meters">50 meters</string>
 	<string name="btn_hundred_meters">100 meters</string>
 	
-	<!-- Filter Screen -->
-	<string name="tv_narrow_by_distance">Narrow by Distance</string>
-	<string name="rb_halfmile">&#189; mi</string>
-	<string name="rb_onemile">1 mi</string>
-	<string name="rb_fivemile">5 mi</string>
-	<string name="rb_tenmile">10 mi</string>
-	<string name="rb_twentymile">20 mi</string>
-	<string name="tv_narrow_by_live_video">Narrow by Live Video</string>
-	
 	<!-- SearchResults Fragment -->
 	<string name="tv_title_all_nearby">All Nearby</string>
 	<string name="miles">miles</string>
@@ -240,7 +231,7 @@
 	<string name="ad_message_from_history">\' from history?</string>
 	<string name="ad_btn_ok">OK</string>
 	
-	<!-- SearchResultLocationDetails Fragment -->
+	<!-- LocationDetails Fragment -->
 	<string name="tv_title_hot_spot">HOT SPOT:</string>
 	<string name="tv_make_request">Make a Request</string>
 	<string name="tv_finding_members">Finding Members&#8230;</string>
@@ -250,13 +241,25 @@
 	<string name="tv_no_phone_number_available">No Phone Number Available</string>
 	<string name="tv_hot_spots">Hot Spots</string>
 	<string name="tv_add_notifications">Add Notifications</string>
-	<string name="tv_favorite">Favorite</string>
-	<string name="tv_remove_favorite">Remove favorite</string>
+	<string name="tv_add_to_favorites">Add to Favorites</string>
+	<string name="tv_remove_from_favorites">Remove from Favorites</string>
+	
+	<string name="ad_title_delete_hot_spot">Delete Hot Spot</string>
+	<string name="ad_title_delete_location">Delete Location</string>
+	<string name="ad_message_delete_hot_spot">Delete the Hot Spot \'</string>
+	<string name="ad_message_delete_hot_spot_question_mark">\'?</string>
+	<string name="ad_message_delete_location">Delete the location \'</string>
+	<string name="ad_message_delete_location_question_mark">\'?</string>
 	
 	<string name="btn_create_hot_spot">Create Hot Spot</string>
+	<string name="btn_delete_location">Delete Location</string>
+	<string name="btn_delete_hot_spot">Delete Hot Spot</string>
 	
+	<string name="pd_adding_to_favorites">Adding to favorites&#8230;</string>
+	<string name="pd_deleting_hot_spot">Deleting Hot Spot&#8230;</string>
+	<string name="pd_deleting_location">Deleting location&#8230;</string>
 	<string name="pd_loading_location_information">Loading location information&#8230;</string>
-	<string name="pd_updating_favorites">Updating favorites&#8230;</string>
+	<string name="pd_removing_from_favorites">Removing from favorites&#8230;</string>
 	
 	<string name="toast_unable_to_load_location_info">Unable to load location information</string>
 	<string name="toast_add_favorite_success">Successfully added location to favorites</string>
@@ -314,6 +317,7 @@
 	
 	<!-- Favorites Fragment -->
 	<string name="tv_title_favorites">Favorites</string>
+	<string name="pd_updating_favorites">Updating favorites&#8230;</string>
 	
 	<!-- Settings Fragment -->
 	<string name="tv_title_settings">Settings</string>

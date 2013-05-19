@@ -112,6 +112,20 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == MMSDKConstants.REQUEST_CODE_ADD_LOCATION) {
+			if(resultCode == Activity.RESULT_OK) {
+				cancelButtonClicked();
+				locationSelectListener.onSearchResultsFragmentItemClick(data.getStringExtra(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS));
+			}
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
@@ -136,12 +150,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 				}
 				break;
 			case R.id.btncancel:
-				addLocClicked = false;
-				btnAddLoc.setVisibility(View.VISIBLE);
-				btnCancel.setVisibility(View.INVISIBLE);
-				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ibMap.getLayoutParams();
-				params.addRule(RelativeLayout.LEFT_OF, R.id.btnaddloc);
-				ibMap.setLayoutParams(params);
+				cancelButtonClicked();
 				break;
 		}
 	}
@@ -154,7 +163,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 	public void onInfoWindowClick(Marker marker) {
 		currMarker = marker;
 		currZoomLevel = googleMap.getCameraPosition().zoom;
-		locationSelectListener.onSearchResultsFragmentItemClick(markerHashMap.get((Marker) marker));
+		locationSelectListener.onSearchResultsFragmentItemClick(markerHashMap.get((Marker) marker).toString());
 	}
 
 	@Override
@@ -233,6 +242,18 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 		} else {
 			favoritesList = new JSONArray();
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void cancelButtonClicked() {
+		addLocClicked = false;
+		btnAddLoc.setVisibility(View.VISIBLE);
+		btnCancel.setVisibility(View.INVISIBLE);
+		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) ibMap.getLayoutParams();
+		params.addRule(RelativeLayout.LEFT_OF, R.id.btnaddloc);
+		ibMap.setLayoutParams(params);
 	}
 	
 	/**
@@ -329,7 +350,7 @@ public class FavoritesMapFragment extends MMFragment implements OnClickListener,
 					intent.putExtra(MMSDKConstants.JSON_KEY_COUNTRY_CODE, locationClicked.getCountryCode());
 					intent.putExtra(MMSDKConstants.JSON_KEY_LATITUDE, locationClicked.getLatitude());
 					intent.putExtra(MMSDKConstants.JSON_KEY_LONGITUDE, locationClicked.getLongitude());
-					startActivity(intent);
+					startActivityForResult(intent, MMSDKConstants.REQUEST_CODE_ADD_LOCATION);
 				}
 			}
 		}

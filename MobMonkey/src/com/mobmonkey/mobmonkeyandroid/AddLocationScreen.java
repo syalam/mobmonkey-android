@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,8 +25,9 @@ import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
-import com.mobmonkey.mobmonkeysdk.adapters.MMAddLocationAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMLocationAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
+import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -224,25 +226,25 @@ public class AddLocationScreen extends Activity implements OnTouchListener,
 	 */
 	private void addLocation() throws JSONException {
 		if(checkValues()) {
-			MMAddLocationAdapter.addLocation(new AddLocationCallback(),
-											 etStreet.getText().toString(),
-											 null,
-											 null,
-											 categoriesIds,
-											 getIntent().getStringExtra(MMSDKConstants.JSON_KEY_COUNTRY_CODE),											 
-											 getIntent().getDoubleExtra(MMSDKConstants.JSON_KEY_LATITUDE, MMSDKConstants.DEFAULT_DOUBLE_ZERO),
-											 etCity.getText().toString(),
-											 getIntent().getDoubleExtra(MMSDKConstants.JSON_KEY_LONGITUDE, MMSDKConstants.DEFAULT_DOUBLE_ZERO),
-											 etLocName.getText().toString(), 
-											 MMSDKConstants.DEFAULT_STRING_EMPTY, 
-											 etPhone.getText().toString(), 
-											 etZip.getText().toString(),
-											 etState.getText().toString(),
-											 MMConstants.PROVIDER_ID, 
-											 "www.dezapp.com", // TODO: hardcoded
-											 MMConstants.PARTNER_ID,
-											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMLocationAdapter.addLocation(new AddLocationCallback(),
+										  etStreet.getText().toString(),
+										  null,
+										  null,
+										  categoriesIds,
+										  getIntent().getStringExtra(MMSDKConstants.JSON_KEY_COUNTRY_CODE),
+										  getLatitude(),
+										  etCity.getText().toString(),
+										  getLongitude(),
+										  etLocName.getText().toString(),
+										  MMSDKConstants.DEFAULT_STRING_EMPTY,
+										  etPhone.getText().toString(),
+										  etZip.getText().toString(),
+										  etState.getText().toString(),
+										  MMConstants.PROVIDER_ID,
+										  "www.mobmonkey.com", // TODO: hardcoded
+										  MMConstants.PARTNER_ID,
+										  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+										  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			MMProgressDialog.displayDialog(AddLocationScreen.this,
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_adding_location));
@@ -271,7 +273,7 @@ public class AddLocationScreen extends Activity implements OnTouchListener,
 		if(!TextUtils.isEmpty(etStreet.getText().toString())) {
 			return checkCity();
 		} else {
-			displayAlert(R.string.ad_no_city);
+			displayAlert(R.string.ad_no_street);
 			return false;
 		}
 	}
@@ -289,7 +291,7 @@ public class AddLocationScreen extends Activity implements OnTouchListener,
 		if(!TextUtils.isEmpty(etState.getText().toString())) {
 			return checkZip();
 		} else {
-			displayAlert(R.string.ad_no_zip);
+			displayAlert(R.string.ad_no_state);
 			return false;
 		}
 	}
@@ -325,6 +327,32 @@ public class AddLocationScreen extends Activity implements OnTouchListener,
 		etZip.setText(getIntent().getStringExtra(MMSDKConstants.JSON_KEY_POSTCODE));
 	}
 	
+	private double getLatitude() {
+		if(getIntent().hasExtra(MMSDKConstants.JSON_KEY_LATITUDE)) {
+			double latitude = getIntent().getDoubleExtra(MMSDKConstants.JSON_KEY_LATITUDE, MMSDKConstants.DEFAULT_DOUBLE); 
+			if(latitude >= MMSDKConstants.DEFAULT_DOUBLE_ZERO) {
+				return latitude;
+			} else {
+				return MMLocationManager.getLocationLatitude();
+			}
+		} else {
+			return MMLocationManager.getLocationLatitude();
+		}
+	}
+	
+	private double getLongitude() {
+		if(getIntent().hasExtra(MMSDKConstants.JSON_KEY_LONGITUDE)) {
+			double longitude = getIntent().getDoubleExtra(MMSDKConstants.JSON_KEY_LONGITUDE, MMSDKConstants.DEFAULT_DOUBLE); 
+			if(longitude >= MMSDKConstants.DEFAULT_DOUBLE_ZERO) {
+				return longitude;
+			} else {
+				return MMLocationManager.getLocationLongitude();
+			}
+		} else {
+			return MMLocationManager.getLocationLongitude();
+		}
+	}
+	
 	/**
 	 * 
 	 * @author Dezapp, LLC
@@ -347,7 +375,11 @@ public class AddLocationScreen extends Activity implements OnTouchListener,
 					if(response.equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 						Toast.makeText(AddLocationScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 					} else {
-						setResult(RESULT_OK);
+						JSONObject jObj = new JSONObject((String) obj);
+						Intent intent = new Intent();
+						Log.d(TAG, TAG + "requestCode: " + getIntent().getIntExtra(MMSDKConstants.REQUEST_CODE, MMSDKConstants.DEFAULT_INT));
+						intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+						setResult(RESULT_OK, intent);
 						finish();
 						overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
 					}

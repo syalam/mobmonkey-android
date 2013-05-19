@@ -98,6 +98,17 @@ public class SettingsFragment extends MMFragment implements OnClickListener,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == 0) {
+			Log.d(TAG, TAG + "resultCode: " + resultCode);
+		}
+	}
+
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 		switch(position) {

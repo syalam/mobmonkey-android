@@ -162,10 +162,10 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnSearchResultsFragmentItemClickListener#onSearchResultsFragmentItemClick(org.json.JSONObject)
 	 */
 	@Override
-	public void onSearchResultsFragmentItemClick(JSONObject jObj) {
+	public void onSearchResultsFragmentItemClick(String locationInfo) {
 		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
 		Bundle data = new Bundle();
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, locationInfo);
 		locationDetailsFragment.setArguments(data);
 		performTransaction(locationDetailsFragment);
 	}
@@ -257,6 +257,6 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
 		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.push(mmFragment));
-		fragmentTransaction.commit();		
+		fragmentTransaction.commitAllowingStateLoss();		
 	}
 }

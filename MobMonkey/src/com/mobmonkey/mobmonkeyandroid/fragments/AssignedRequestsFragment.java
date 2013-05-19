@@ -121,14 +121,7 @@ public class AssignedRequestsFragment extends MMFragment {
 				item.message = jObj.getString(MMSDKConstants.JSON_KEY_MESSAGE);
 			}
 			
-			//date can be null. leave time as a blank string if its null
-			if(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE).compareTo(MMSDKConstants.DEFAULT_STRING_NULL) == 0) {
-				item.time = MMSDKConstants.DEFAULT_STRING_EMPTY;
-			}
-			else {
-				item.time = MMUtility.getDate(jObj.getLong(MMSDKConstants.JSON_KEY_REQUEST_DATE), "MMMM dd hh:mma");
-			}
-			
+			item.time = jObj.isNull(MMSDKConstants.JSON_KEY_ASSIGNED_DATE) ? item.time = MMSDKConstants.DEFAULT_STRING_EMPTY : MMUtility.getDate(jObj.getLong(MMSDKConstants.JSON_KEY_ASSIGNED_DATE), MMSDKConstants.DATE_FORMAT_MMMM_DD_HH_SEMICOLON_MMA);
 			item.dis = MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + getString(R.string.miles);
 			item.mediaType = jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
 			
@@ -173,8 +166,8 @@ public class AssignedRequestsFragment extends MMFragment {
 						
 						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
-						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.3gp")));
-						takeVideoIntent.putExtra("android.intent.extra.durationLimit", 10);
+						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME)));
+						takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);
 						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
 						break;
 					default:

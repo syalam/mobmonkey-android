@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -32,7 +31,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -44,10 +42,8 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMGeocoderAdapter;
-import com.mobmonkey.mobmonkeysdk.adapters.MMHotSpotAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMLocationAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
-import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -286,25 +282,25 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	 */
 	private void checkFields() throws JSONException {
 		if(checkName()) {
-			MMHotSpotAdapter.createSubLocationWithLocationInfo(new CreateHotSpotCallback(),
-															   etName.getText().toString(),
-															   etDescription.getText().toString(),
-															   etRange.getText().toString(),
-															   MMSDKConstants.DEFAULT_STRING_EMPTY,
-															   getLatitude(),
-															   getLongitude(),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_CATEGORY_IDS),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_COUNTRY_CODE).toLowerCase(),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_LOCALITY),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_PHONE_NUMBER),
-															   MMConstants.PROVIDER_ID,
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_REGION),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_WEBSITE),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
-															   MMConstants.PARTNER_ID,
-															   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-															   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMLocationAdapter.createHotSpot(new CreateHotSpotCallback(),
+											etName.getText().toString(),
+											etDescription.getText().toString(),
+											etRange.getText().toString(),
+											MMSDKConstants.DEFAULT_STRING_EMPTY,
+											getLatitude(),
+											getLongitude(),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_CATEGORY_IDS),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_COUNTRY_CODE).toLowerCase(),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_LOCALITY),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_PHONE_NUMBER),
+											MMConstants.PROVIDER_ID,
+											locationInfo.getString(MMSDKConstants.JSON_KEY_REGION),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_WEBSITE),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
+											MMConstants.PARTNER_ID,
+											userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+											userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_creating_hot_spot));

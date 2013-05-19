@@ -31,6 +31,7 @@
 	        
 	            <RelativeLayout android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
+	                android:layout_marginBottom="20dp"
 	                android:orientation="horizontal">
 			        
 			        <TextView android:id="@+id/tvlocname"
@@ -308,7 +309,18 @@
 					android:background="@drawable/listview_border"
 					android:divider="@drawable/listview_divider"
 					android:dividerHeight="1dp"/>
-				
+			
+				<Button android:id="@+id/btndeletelocationhotspot"
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_marginTop="10dp"
+				    android:background="@drawable/orange_button_background"
+				    android:padding="10dp"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:textColor="@android:color/white"
+					android:textStyle="bold"
+					android:visibility="gone"/>
+					
 			</LinearLayout>
 	        
 	    </LinearLayout>

@@ -45,7 +45,6 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 	private SharedPreferences.Editor userPrefsEditor;
 	
 	private JSONArray history;
-	private Location location;
 	private ArrayList<JSONObject> historyLocations;
 	
 	private ListView lvHistory;
@@ -65,8 +64,6 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 		View view = inflater.inflate(R.layout.fragment_history_screen, container, false);
 		Button btnClear = (Button) view.findViewById(R.id.btnclear);
 		lvHistory = (ListView) view.findViewById(R.id.lvhistory);
-		
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		try {
 			if(!userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY).equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
@@ -124,7 +121,7 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(arrayAdapter.getItem(position));
+		searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(arrayAdapter.getItem(position).toString());
 	}
 
 	/* (non-Javadoc)

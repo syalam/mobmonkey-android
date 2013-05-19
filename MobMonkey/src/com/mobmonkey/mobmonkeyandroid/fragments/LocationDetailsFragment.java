@@ -19,7 +19,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
-import com.mobmonkey.mobmonkeysdk.adapters.MMLocationDetailsAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMLocationAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMMediaAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -27,7 +27,9 @@ import com.mobmonkey.mobmonkeysdk.utils.MMDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -79,6 +81,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private MMExpandedListView elvHotSpots;
 	private Button btnCreateHotSpot;
 	private MMExpandedListView elvLoc;
+	private Button btnDeleteLocationHotSpot;
 	
 	private ProgressBar pbLoadMedia;
 	private LinearLayout llMedia;
@@ -113,6 +116,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private boolean retrieveImageMedia = true;
 	private Bitmap imageMedia;
 	private View mediaButtonSelected;
+	private boolean isLocation;
+	private boolean isFavorite;
 	
 	/*
 	 * (non-Javadoc)
@@ -137,6 +142,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		elvHotSpots = (MMExpandedListView) view.findViewById(R.id.elvhotspots);
 		btnCreateHotSpot = (Button) view.findViewById(R.id.btncreatehotspot);
 		elvLoc = (MMExpandedListView) view.findViewById(R.id.elvloc);
+		btnDeleteLocationHotSpot = (Button) view.findViewById(R.id.btndeletelocationhotspot);
 		
 		pbLoadMedia = (ProgressBar) view.findViewById(R.id.pbloadmedia);
 		llMedia = (LinearLayout) view.findViewById(R.id.llmedia);
@@ -167,12 +173,12 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			setLocationDetails();
 			checkForHotSpots();
 			if(retrieveLocationDetails) {
-				MMLocationDetailsAdapter.getLocationDetails(new LocationCallback(),
-															location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
-															location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
-															MMConstants.PARTNER_ID,
-															userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-															userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+				MMLocationAdapter.getLocationInfo(new LocationCallback(),
+												  location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
+												  location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
+												  MMConstants.PARTNER_ID,
+												  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+												  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 				MMMediaAdapter.retrieveAllMediaForLocation(new MediaCallback(),
 														   location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
 														   location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
@@ -196,6 +202,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		return view;		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onAttach(android.app.Activity)
+	 */
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -258,6 +268,13 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			case R.id.btncreatehotspot:
 				createHotSpotFragmentClickListener.onCreateHotSpotClick(locationInfo, MMSDKConstants.REQUEST_CODE_LOCATION_DETAILS);
 				break;
+			case R.id.btndeletelocationhotspot:
+				try {
+					promptDeleteLocationHotSpot();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				break;
 		}
 	}
 	
@@ -285,9 +302,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					addNotificationsFragmentItemClickListener.onAddNotificationsFragmentItemClick(location);
 				} else if(position == 1) {
 					TextView tvFavorite = (TextView) view.findViewById(R.id.tvlabel);
-					if(tvFavorite.getText().toString().equals(getString(R.string.tv_favorite))) {
+					if(tvFavorite.getText().toString().equals(getString(R.string.tv_add_to_favorites))) {
 						addFavorite();
-					} else if(tvFavorite.getText().toString().equals(getString(R.string.tv_remove_favorite))) {
+					} else if(tvFavorite.getText().toString().equals(getString(R.string.tv_remove_from_favorites))) {
 						removeFavorite();
 					}
 				}
@@ -302,7 +319,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onFragmentBackPressed() {
 		Log.d(TAG, "onFragmentBackPressed");
-		MMLocationDetailsAdapter.cancelGetLcoationDetails();
+		MMLocationAdapter.cancelGetLocationInfo();
 		MMMediaAdapter.cancelRetrieveAllMediaForLocation();
 	}
 	
@@ -310,7 +327,17 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * Function that set all the details of the current location
 	 * @throws JSONException
 	 */
-	private void setLocationDetails() throws JSONException {		
+	private void setLocationDetails() throws JSONException {
+		if(!location.isNull(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL)) {
+			if(location.getString(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL).equals(userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY))) {
+				btnDeleteLocationHotSpot.setOnClickListener(LocationDetailsFragment.this);
+				btnDeleteLocationHotSpot.setVisibility(View.VISIBLE);
+				
+				Log.d(TAG, TAG + "submitter email is same as login email!!!!!");
+				//TODO: implement display update/delete location button
+			}
+		}
+		
 		MMLocationDetailsItem[] mmLocationDetailsItems = new MMLocationDetailsItem[2];
 		for(int i = 0; i < mmLocationDetailsItems.length; i++) {
 			mmLocationDetailsItems[i] = new MMLocationDetailsItem();
@@ -325,14 +352,15 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 		mmLocationDetailsItems[1].setLocationDetailIconId(R.drawable.cat_icon_address);
 		String address = MMSDKConstants.DEFAULT_STRING_EMPTY;
-		if(!location.isNull(MMSDKConstants.JSON_KEY_ADDRESS)) {
-			address = location.getString(MMSDKConstants.JSON_KEY_ADDRESS);
-		}
-		mmLocationDetailsItems[1].setLocationDetail(address +
-													MMSDKConstants.DEFAULT_STRING_NEWLINE +
-													location.getString(MMSDKConstants.JSON_KEY_LOCALITY) +
-													MMSDKConstants.DEFAULT_STRING_COMMA_SPACE +
-													location.getString(MMSDKConstants.JSON_KEY_REGION));
+		address = location.isNull(MMSDKConstants.JSON_KEY_ADDRESS) ? MMSDKConstants.DEFAULT_STRING_EMPTY : location.getString(MMSDKConstants.JSON_KEY_ADDRESS);
+		address += MMSDKConstants.DEFAULT_STRING_NEWLINE;
+		
+		String localityRegion = MMSDKConstants.DEFAULT_STRING_EMPTY;
+		localityRegion += location.isNull(MMSDKConstants.JSON_KEY_LOCALITY) ? MMSDKConstants.DEFAULT_STRING_EMPTY : location.getString(MMSDKConstants.JSON_KEY_LOCALITY);
+		localityRegion += location.isNull(MMSDKConstants.JSON_KEY_LOCALITY) || location.isNull(MMSDKConstants.JSON_KEY_REGION) ? MMSDKConstants.DEFAULT_STRING_EMPTY : MMSDKConstants.DEFAULT_STRING_COMMA_SPACE;
+		localityRegion += location.isNull(MMSDKConstants.JSON_KEY_REGION) ? MMSDKConstants.DEFAULT_STRING_EMPTY : location.getString(MMSDKConstants.JSON_KEY_REGION); 
+
+		mmLocationDetailsItems[1].setLocationDetail(address + localityRegion);
 		
 		ArrayAdapter<MMLocationDetailsItem> arrayAdapter = new MMLocationDetailsArrayAdapter(getActivity(), R.layout.listview_row_locationdetails, mmLocationDetailsItems);
 		arrayAdapter.isEnabled(0);
@@ -346,11 +374,12 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		locItems[0].setLocationDetailIconId(R.drawable.cat_icon_alarm_clock);
 		locItems[0].setLocationDetail(getString(R.string.tv_add_notifications));
 		locItems[1].setLocationDetailIconId(R.drawable.cat_icon_favorite);
-		locItems[1].setLocationDetail(getString(R.string.tv_favorite));
+		locItems[1].setLocationDetail(getString(R.string.tv_add_to_favorites));
 		
 		for(int i = 0; i < favoritesList.length(); i++) {
 			if(favoritesList.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_LOCATION_ID).equals(location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID))) {
-				locItems[1].setLocationDetail(getString(R.string.tv_remove_favorite));
+				locItems[1].setLocationDetail(getString(R.string.tv_remove_from_favorites));
+				isFavorite = true;
 				break;
 			}
 		}
@@ -373,16 +402,21 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			tvLocName.setText(location.getString(MMSDKConstants.JSON_KEY_NAME));
 			if(!location.isNull(MMSDKConstants.JSON_KEY_SUB_LOCATIONS)) {
 				subLocations = location.getJSONArray(MMSDKConstants.JSON_KEY_SUB_LOCATIONS);
-				setHotSpots();
+				tvHotSpots.setVisibility(View.VISIBLE);
+//				setHotSpots();
 			} else {
 				LinearLayout.LayoutParams params = (LayoutParams) llHotSpots.getLayoutParams();
 				params.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, getActivity().getResources().getDisplayMetrics());
 				btnCreateHotSpot.setLayoutParams(params);
 			}
 			btnCreateHotSpot.setOnClickListener(LocationDetailsFragment.this);
+			btnDeleteLocationHotSpot.setText(R.string.btn_delete_location);
+			isLocation = true;
 		} else {
 			tvNavBarTitle.setText(getString(R.string.tv_title_hot_spot) + MMSDKConstants.DEFAULT_STRING_SPACE + location.getString(MMSDKConstants.JSON_KEY_NAME));
 			tvLocName.setText(getString(R.string.tv_title_hot_spot) + MMSDKConstants.DEFAULT_STRING_SPACE + location.getString(MMSDKConstants.JSON_KEY_NAME));
+			btnDeleteLocationHotSpot.setText(R.string.btn_delete_hot_spot);
+			isLocation = false;
 		}
 	}
 	
@@ -391,21 +425,27 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * 
 	 */
 	private void setHotSpots() throws JSONException {
-		ArrayList<JSONObject> hotSpots = new ArrayList<JSONObject>();
-		for(int i = 0; i < subLocations.length(); i++) {
-			hotSpots.add(subLocations.getJSONObject(i));
+		if(location.isNull(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID)) {
+			if(subLocations != null && subLocations.length() > 0) {
+				ArrayList<JSONObject> hotSpots = new ArrayList<JSONObject>();
+				for(int i = 0; i < subLocations.length(); i++) {
+					hotSpots.add(subLocations.getJSONObject(i));
+				}
+				
+				tvHotSpotsCounter.setText(Integer.toString(subLocations.length()));
+				existingHotSpotsArrayAdapter = new MMExistingHotSpotsArrayAdapter(getActivity(), R.layout.listview_row_location_details_hot_spots, hotSpots);
+				elvHotSpots.setAdapter(existingHotSpotsArrayAdapter);
+			
+				elvHotSpots.setOnItemClickListener(LocationDetailsFragment.this);
+				
+				ivHotSpotsBadge.setVisibility(View.VISIBLE);
+				tvHotSpotsCounter.setVisibility(View.VISIBLE);
+				elvHotSpots.setVisibility(View.VISIBLE);
+			} else {
+				tvHotSpots.setVisibility(View.GONE);
+			}
+			btnCreateHotSpot.setVisibility(View.VISIBLE);
 		}
-		
-		tvHotSpotsCounter.setText(Integer.toString(subLocations.length()));		
-		existingHotSpotsArrayAdapter = new MMExistingHotSpotsArrayAdapter(getActivity(), R.layout.listview_row_location_details_hot_spots, hotSpots);
-		elvHotSpots.setAdapter(existingHotSpotsArrayAdapter);
-		
-		elvHotSpots.setOnItemClickListener(LocationDetailsFragment.this);
-		
-		ivHotSpotsBadge.setVisibility(View.VISIBLE);
-		tvHotSpotsCounter.setVisibility(View.VISIBLE);
-		tvHotSpots.setVisibility(View.VISIBLE);
-		elvHotSpots.setVisibility(View.VISIBLE);
 	}
 	
 	/**
@@ -437,7 +477,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			int imageMediaCount = 0;
 			
 			pbLoadMedia.setVisibility(View.GONE);
-			btnCreateHotSpot.setVisibility(View.VISIBLE);
+			setHotSpots();
 			
 			if(mediaJArr.length() > 0) {
 				llMedia.setVisibility(View.VISIBLE);
@@ -555,7 +595,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 										   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
-										   getString(R.string.pd_updating_favorites));
+										   getString(R.string.pd_adding_to_favorites));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -574,20 +614,62 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 											  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
-										   getString(R.string.pd_updating_favorites));
+										   getString(R.string.pd_removing_from_favorites));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * Function that makes a call to the server to request the updated favorites list after user either add/remove favorite for the current location
+	 * @throws JSONException 
+	 * 
 	 */
-	private void updateFavoritesList() {
-		MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
-										MMConstants.PARTNER_ID,
-										userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+	private void promptDeleteLocationHotSpot() throws JSONException {
+		int title = MMSDKConstants.DEFAULT_INT;
+		String message = MMSDKConstants.DEFAULT_STRING_EMPTY;
+		
+		if(isLocation) {
+			title = R.string.ad_title_delete_location;
+			message = getString(R.string.ad_message_delete_location) + location.getString(MMSDKConstants.JSON_KEY_NAME) + getString(R.string.ad_message_delete_location_question_mark);
+		} else {
+			title = R.string.ad_title_delete_hot_spot;
+			message = getString(R.string.ad_message_delete_hot_spot) + location.getString(MMSDKConstants.JSON_KEY_NAME) + getString(R.string.ad_message_delete_hot_spot_question_mark);
+		}
+		
+		new AlertDialog.Builder(getActivity())
+			.setTitle(title)
+			.setMessage(message)
+			.setCancelable(false)
+			.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					try {
+						if(isLocation) {
+							MMLocationAdapter.deleteLocation(new DeleteLocationCallback(),
+															 location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
+															 location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
+															 MMConstants.PARTNER_ID,
+															 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+															 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+						} else {
+							MMLocationAdapter.deleteHotSpot(new DeleteHotSpotCallback(),
+															location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
+															location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
+															MMConstants.PARTNER_ID,
+															userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+															userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+						}
+						MMProgressDialog.displayDialog(getActivity(),
+													   MMSDKConstants.DEFAULT_STRING_EMPTY,
+													   getString(R.string.pd_deleting_location));
+						Log.d(TAG, TAG + "user sign email: " + userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY) + " submitter email: " + location.getString(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL));
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			})
+			.setNegativeButton(R.string.ad_btn_no, null)
+			.show();
 	}
 	
 	/**
@@ -721,6 +803,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private class AddFavoriteCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
 			if(obj != null) {
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
@@ -729,9 +813,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						JSONObject response = new JSONObject(((String) obj));
 						if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 							Toast.makeText(getActivity(), R.string.toast_add_favorite_success, Toast.LENGTH_SHORT).show();
-							locItems[1].setLocationDetail(getString(R.string.tv_remove_favorite));
+							locItems[1].setLocationDetail(getString(R.string.tv_remove_from_favorites));
 							locArrayAdapter.notifyDataSetChanged();
-							updateFavoritesList();
+							isFavorite = true;
 						} else {
 							MMDialog.dismissDialog();
 							Toast.makeText(getActivity(), R.string.toast_add_favorite_fail, Toast.LENGTH_SHORT).show();
@@ -752,6 +836,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private class RemoveFavoriteCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
 			if(obj != null) {
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
@@ -760,9 +846,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						JSONObject response = new JSONObject(((String) obj));
 						if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 							Toast.makeText(getActivity(), R.string.toast_remove_favorite_successs, Toast.LENGTH_SHORT).show();
-							locItems[1].setLocationDetail(getString(R.string.tv_favorite));
+							locItems[1].setLocationDetail(getString(R.string.tv_add_to_favorites));
 							locArrayAdapter.notifyDataSetChanged();
-							updateFavoritesList();
+							isFavorite = false;
 						} else {
 							MMProgressDialog.dismissDialog();
 							Toast.makeText(getActivity(), R.string.toast_remove_favorite_fail, Toast.LENGTH_SHORT).show();
@@ -776,11 +862,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	}
 	
 	/**
-	 * Callback to update the user's favorites list in app data after making get favorites call to the server
+	 * 
 	 * @author Dezapp, LLC
 	 *
 	 */
-	private class FavoritesCallback implements MMCallback {
+	private class DeleteLocationCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
 			MMProgressDialog.dismissDialog();
@@ -790,11 +876,52 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
 					Log.d(TAG, TAG + "response: " + ((String) obj));
-					userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
-					userPrefsEditor.commit();
+					
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							getActivity().onBackPressed();
+						} else {
+							
+						}
+						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
-				
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class DeleteHotSpotCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
+			if(obj != null) {
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					Log.d(TAG, TAG + "response: " + ((String) obj));
+					
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
+							getActivity().onBackPressed();
+						} else {
+							
+						}
+						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}		
 	}
 }

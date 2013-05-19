@@ -65,6 +65,7 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == MMSDKConstants.REQUEST_CODE_ADD_LOCATION) {
 			if(resultCode == RESULT_OK) {
+				setResult(RESULT_OK, data);
 				finish();
 				overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
 			}

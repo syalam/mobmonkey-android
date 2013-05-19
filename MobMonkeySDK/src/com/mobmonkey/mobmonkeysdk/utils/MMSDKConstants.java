@@ -28,7 +28,7 @@ public final class MMSDKConstants {
 	public static final String DEFAULT_STRING_SPACE = " ";
 	public static final int DEFAULT_INT = -1;
 	public static final int DEFAULT_INT_ZERO = 0;
-	public static final double DEFAULT_DOUBLE = 1.0d;
+	public static final double DEFAULT_DOUBLE = -1.0d;
 	public static final double DEFAULT_DOUBLE_ZERO = 0.0d;
 
 	public static final String DECIMAL_FORMAT_SIX = "#.######";
@@ -238,6 +238,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_ACCEPTED = "accepted";
 	public static final String JSON_KEY_ADDRESS = "address";
 	public static final String JSON_KEY_ADDRESS_EXT = "address_ext";
+	public static final String JSON_KEY_ASSIGNED_DATE = "assignedDate";
 	public static final String JSON_KEY_ASSIGNED_REQUESTS = "assignedrequests";
 	public static final String JSON_KEY_ASSIGNED_READ_REQUESTS = "assignedReadRequests";
 	public static final String JSON_KEY_ASSIGNED_UNREAD_REQUESTS = "assignedUnreadRequests";
@@ -294,6 +295,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_SCHEDULE_DATE = "scheduleDate";
 	public static final String JSON_KEY_STATUS = "status";
 	public static final String JSON_KEY_SUB_LOCATIONS = "subLocations";
+	public static final String JSON_KEY_SUBMITTER_EMAIL = "submitterEmail";
 	public static final String JSON_KEY_THUMB_URL = "thumbURL";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
 	public static final String JSON_KEY_TOTAL_ITEMS = "totalItems";

@@ -132,14 +132,6 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		
 		addLocClicked = false;
 		
-		if(displayMap) {
-			lvSearchResults.setVisibility(View.INVISIBLE);
-			smfResultLocations.getView().setVisibility(View.VISIBLE);
-		} else {
-			lvSearchResults.setVisibility(View.VISIBLE);
-			smfResultLocations.getView().setVisibility(View.INVISIBLE);
-		}
-		
 		return view;
 	}
 
@@ -165,7 +157,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 			addToHistory(markerHashMap.get((Marker) marker));
 			currMarker = marker;
 			currZoomLevel = googleMap.getCameraPosition().zoom;
-			searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(markerHashMap.get((Marker) marker));
+			searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(markerHashMap.get((Marker) marker).toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -212,7 +204,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 			Log.d(TAG, TAG + "onItemClick");
 			addToHistory(searchResults.getJSONObject(position));
 			
-			searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(searchResults.getJSONObject(position));
+			searchResultsLocationSelectListener.onSearchResultsFragmentItemClick(searchResults.getJSONObject(position).toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -271,8 +263,16 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 				resultLocations[i].setLocName(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
 				resultLocations[i].setLocDist(MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + 
 						getString(R.string.miles));
-				resultLocations[i].setLocAddr(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + 
-										jObj.getString(MMSDKConstants.JSON_KEY_REGION) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_POSTCODE));
+				String address = MMSDKConstants.DEFAULT_STRING_EMPTY;
+				address += jObj.isNull(MMSDKConstants.JSON_KEY_ADDRESS) ? MMSDKConstants.DEFAULT_STRING_EMPTY : jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS);
+				address += MMSDKConstants.DEFAULT_STRING_NEWLINE;
+				
+				String localityRegion = MMSDKConstants.DEFAULT_STRING_EMPTY;
+				localityRegion += jObj.isNull(MMSDKConstants.JSON_KEY_LOCALITY) ? MMSDKConstants.DEFAULT_STRING_EMPTY : jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY);
+				localityRegion += jObj.isNull(MMSDKConstants.JSON_KEY_LOCALITY) || jObj.isNull(MMSDKConstants.JSON_KEY_REGION) ? MMSDKConstants.DEFAULT_STRING_EMPTY : MMSDKConstants.DEFAULT_STRING_COMMA_SPACE;
+				localityRegion += jObj.isNull(MMSDKConstants.JSON_KEY_REGION) ? MMSDKConstants.DEFAULT_STRING_EMPTY : jObj.getString(MMSDKConstants.JSON_KEY_REGION);
+				
+				resultLocations[i].setLocAddr(address + localityRegion);
 				Log.d(TAG, i + " stream: " + jObj.getInt(MMSDKConstants.MEDIA_LIVESTREAMING) + " video: " + jObj.getInt(MMSDKConstants.JSON_KEY_VIDEOS) + " images: " + jObj.getInt(MMSDKConstants.JSON_KEY_IMAGES));
 			}
 	}
@@ -295,6 +295,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 					googleMap = smfResultLocations.getMap();
 					if(googleMap != null) {
 						try {
+							smfResultLocations.getView().setVisibility(View.INVISIBLE);
 							addToGoogleMap();
 							getLocationHistory();
 						} catch (JSONException e) {
