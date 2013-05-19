@@ -150,7 +150,7 @@ public class AssignedRequestsFragment extends MMFragment {
 						userPrefsEditor.commit();
 						Log.d(TAG, "current tab tag: " + userPrefs.getInt(MMSDKConstants.TAB_TITLE_CURRENT_TAG, 0));
 						Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-						takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmpic.jpg")));
+						takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmpic.png")));
 						startActivityForResult(takePictureIntent, MMSDKConstants.REQUEST_CODE_IMAGE);
 						break;
 					// Video request
@@ -200,12 +200,12 @@ public class AssignedRequestsFragment extends MMFragment {
 //			Bitmap mImageBitmap = (Bitmap) extras.get("data");
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 2;
-			Bitmap mImageBitmap = BitmapFactory.decodeFile(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.jpg", options);
+			Bitmap mImageBitmap = BitmapFactory.decodeFile(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.png", options);
 			mImageBitmap = scaleDownBitmap(mImageBitmap, 200, getActivity());
 			
 			// encode image to Base64 String
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+			mImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 			byte[] b = baos.toByteArray();
 			String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
 			
@@ -214,7 +214,7 @@ public class AssignedRequestsFragment extends MMFragment {
 											   MMSDKConstants.MEDIA_IMAGE,
 											   assignedRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
 											   assignedRequests.getJSONObject(clickedPosition).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
-											   MMSDKConstants.MEDIA_CONTENT_JPEG,
+											   MMSDKConstants.MEDIA_CONTENT_PNG,
 											   imageEncoded,
 											   MMConstants.PARTNER_ID,
 											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
@@ -336,7 +336,7 @@ public class AssignedRequestsFragment extends MMFragment {
 							if(mmVideoFile.exists()) {
 								mmVideoFile.delete();
 							} else {
-								File mmImageFile = new File(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.jpg");
+								File mmImageFile = new File(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.png");
 								mmImageFile.delete();
 							}
 							
@@ -397,12 +397,19 @@ public class AssignedRequestsFragment extends MMFragment {
 		}
 	}
 	
-	public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
+	public static Bitmap scaleDownBitmap(Bitmap photo, int newMax, Context context) {
 
 		final float densityMultiplier = context.getResources().getDisplayMetrics().density;        
 
-		int h= (int) (newHeight*densityMultiplier);
-		int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
+		int w, h;
+		
+		if(photo.getHeight() > photo.getWidth()) {
+			h = (int) (newMax*densityMultiplier);
+			w = (int) (h * photo.getWidth()/((double) photo.getHeight()));
+		} else {
+			w = (int) (newMax*densityMultiplier);
+			h = (int) (w * photo.getHeight()/((double) photo.getWidth()));
+		}
 
 		photo = Bitmap.createScaledBitmap(photo, w, h, true);
 
