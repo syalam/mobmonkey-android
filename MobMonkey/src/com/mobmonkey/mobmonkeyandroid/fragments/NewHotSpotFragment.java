@@ -440,6 +440,8 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 				} else if(requestCode == MMSDKConstants.REQUEST_CODE_LOCATION_DETAILS) {
 					getActivity().onBackPressed();
 				}
+	    	} else if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_UNAUTHORIZED_EMAIL)){
+	    		Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 	    	} else {
 	    		Toast.makeText(getActivity(), R.string.toast_error_create_hot_spot, Toast.LENGTH_SHORT).show();
 	    	}

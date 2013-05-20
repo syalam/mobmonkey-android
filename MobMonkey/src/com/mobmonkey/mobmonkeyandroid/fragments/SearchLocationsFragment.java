@@ -441,13 +441,13 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 * 
 	 */
 	private void searchAllNearbyLocations() {
-		MMSearchLocationAdapter.searchAllNearby(new SearchCallback(),
-												MMLocationManager.getLocationLatitude(),
-												MMLocationManager.getLocationLongitude(),
-												userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE),
-												MMConstants.PARTNER_ID,
-												userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-												userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		MMSearchLocationAdapter.searchAllNearbyLocations(new SearchCallback(),
+														 MMLocationManager.getLocationLatitude(),
+														 MMLocationManager.getLocationLongitude(),
+														 userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE),
+														 MMConstants.PARTNER_ID,
+														 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+														 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		MMProgressDialog.displayDialog(getActivity(),
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 									   getString(R.string.pd_search_all_nearby));

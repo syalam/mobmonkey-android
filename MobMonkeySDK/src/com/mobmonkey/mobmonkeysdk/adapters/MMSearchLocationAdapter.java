@@ -34,15 +34,15 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 	 * @param user
 	 * @param auth
 	 */
-	private static void searchLocation(MMCallback mmCallback,
-									   double latitude,
-									   double longitude,
-									   int searchRadius,
-									   String name,
-									   String categoryID,
-									   String partnerId,
-									   String user,
-									   String auth) {
+	private static void searchLocations(MMCallback mmCallback,
+										double latitude,
+										double longitude,
+										int searchRadius,
+										String name,
+										String categoryIds,
+										String partnerId,
+										String user,
+										String auth) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_SEARCH, MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
@@ -54,8 +54,8 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 			if(!name.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 				params.put(MMSDKConstants.KEY_NAME, name);
 			}
-			if(!categoryID.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
-				params.put(MMSDKConstants.KEY_CATEGORY_IDS, categoryID);
+			if(!categoryIds.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
+				params.put(MMSDKConstants.KEY_CATEGORY_IDS, categoryIds);
 			}
 			
 			StringEntity stringEntity = new StringEntity(params.toString());
@@ -86,15 +86,15 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 	 * @param user The email of the user if signed in normally with email or the provider username if signed in through social networks
 	 * @param auth The password of the user if signed in normally with email or the provider OAuth token if signed in through social networks
 	 */
-	public static void searchLocationWithText(MMCallback mmCallback,
-											  double latitude,
-											  double longitude,
-											  int searchRadius,
-											  String name,
-											  String partnerId,
-											  String user,
-											  String auth) {
-		searchLocation(mmCallback, latitude, longitude, searchRadius, name, MMSDKConstants.DEFAULT_STRING_EMPTY, partnerId, user, auth);
+	public static void searchLocationsWithText(MMCallback mmCallback,
+											   double latitude,
+											   double longitude,
+											   int searchRadius,
+											   String name,
+											   String partnerId,
+											   String user,
+											   String auth) {
+		searchLocations(mmCallback, latitude, longitude, searchRadius, name, MMSDKConstants.DEFAULT_STRING_EMPTY, partnerId, user, auth);
 	}
 
 	/**
@@ -108,14 +108,14 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 	 * @param user
 	 * @param auth
 	 */
-	public static void searchLocationByAddress(MMCallback mmCallback,
-											   String streetAddress,
-											   String locality,
-											   String region,
-											   String postcode,
-											   String partnerId,
-											   String user,
-											   String auth) {
+	public static void searchLocationsByAddress(MMCallback mmCallback,
+												String streetAddress,
+												String locality,
+												String region,
+												String postcode,
+												String partnerId,
+												String user,
+												String auth) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_SEARCH, MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
@@ -154,15 +154,15 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 	 * @param auth
 	 * @param partnerId
 	 */
-	public static void searchLocationWithCategoryId(MMCallback mmCallback,
-													double latitude,
-													double longitude,
-													int searchRadius,
-													String categoryID,
-													String partnerId,
-													String user,
-													String auth) {
-		searchLocation(mmCallback, latitude, longitude, searchRadius, MMSDKConstants.DEFAULT_STRING_EMPTY, categoryID, partnerId, user, auth);
+	public static void searchLocationsWithCategoryIds(MMCallback mmCallback,
+													  double latitude,
+													  double longitude,
+													  int searchRadius,
+													  String categoryIds,
+													  String partnerId,
+													  String user,
+													  String auth) {
+		searchLocations(mmCallback, latitude, longitude, searchRadius, MMSDKConstants.DEFAULT_STRING_EMPTY, categoryIds, partnerId, user, auth);
 	}
 	
 	/**
@@ -175,13 +175,13 @@ public final class MMSearchLocationAdapter extends MMAdapter {
 	 * @param user The email of the user if signed in normally with email or the provider username if signed in through social networks
 	 * @param auth The password of the user if signed in normally with email or the provider OAuth token if signed in through social networks
 	 */
-	public static void searchAllNearby(MMCallback mmCallback,
-									   double latitude,
-									   double longitude,
-									   int searchRadius,
-									   String partnerId,
-									   String user,
-									   String auth) {
-		searchLocation(mmCallback, latitude, longitude, searchRadius, MMSDKConstants.DEFAULT_STRING_EMPTY, MMSDKConstants.DEFAULT_STRING_EMPTY, partnerId, user, auth);
+	public static void searchAllNearbyLocations(MMCallback mmCallback,
+												double latitude,
+												double longitude,
+												int searchRadius,
+												String partnerId,
+												String user,
+												String auth) {
+		searchLocations(mmCallback, latitude, longitude, searchRadius, MMSDKConstants.DEFAULT_STRING_EMPTY, MMSDKConstants.DEFAULT_STRING_EMPTY, partnerId, user, auth);
 	}
 }

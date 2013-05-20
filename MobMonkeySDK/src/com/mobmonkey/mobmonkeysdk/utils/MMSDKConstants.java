@@ -205,8 +205,9 @@ public final class MMSDKConstants {
 	public static final String TWITTER_OAUTH_VERIFIER = "oauth_verifier";
 	
 	// MobMonkey server response status values
-	public static final String RESPONSE_STATUS_SUCCESS = "Success";
 	public static final String RESPONSE_STATUS_FAILURE = "Failure";
+	public static final String RESPONSE_STATUS_SUCCESS = "Success";
+	public static final String RESPONSE_STATUS_UNAUTHORIZED_EMAIL = "Unauthorized or need to confirm email";
 	public static final String RESPONSE_ID_SUCCESS = "200";
 	public static final String RESPONSE_ID_NOT_FOUND = "404";
 	public static final String RESPONSE_ID_BAD_REQUEST = "500";	

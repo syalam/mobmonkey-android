@@ -12,9 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.location.Location;
-import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -33,7 +30,6 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.ServerUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCheckinAdapter;
-import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
@@ -46,7 +42,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
  *
  */
 public class MainScreen extends TabActivity {
-	protected static final String TAG = "MainScreen";
+	protected static final String TAG = "MainScreen: ";
 
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
@@ -175,7 +171,6 @@ public class MainScreen extends TabActivity {
 		tabHost = getTabHost();
 		
 		getAllCategories();
-		getAllFavorites();
 		checkUserIn();
 	}
 	
@@ -248,23 +243,8 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * Function to get all the user's favorites from the server
+	 * 
 	 */
-	private void getAllFavorites() {		
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-			MMFavoritesAdapter.cancelGetFavorites();
-			MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
-											MMConstants.PARTNER_ID, 
-											userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-											userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
-				MMProgressDialog.displayDialog(MainScreen.this,
-											   MMSDKConstants.DEFAULT_STRING_EMPTY,
-											   getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
-			}
-		}
-	}
-	
 	private void checkUserIn() {		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMCheckinAdapter.checkInUser(new CheckUserInCallback(),
@@ -344,52 +324,29 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * Callback to update the user's favorites list in app data after making get favorites call to the server
-	 * @author Dezapp, LLC
-	 *
-	 */
-	private class FavoritesCallback implements MMCallback {
-		@Override
-		public void processCallback(Object obj) {
-			if(obj != null) {
-				Log.d(TAG, TAG + "FavoritesCallback: " + ((String) obj));
-				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-					Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-				} else {
-					try {
-						userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
-						userPrefsEditor.commit();
-						
-						JSONObject jObj = new JSONObject((String) obj);
-						if(jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
-							Toast.makeText(MainScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
-							userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
-							userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES);
-							userPrefsEditor.commit();
-						}
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			setTabs();
-		}
-	}
-	
-	/**
 	 * 
 	 * @author Dezapp, LLC
 	 *
 	 */
 	private class CheckUserInCallback implements MMCallback {
 		@Override
-		public void processCallback(Object obj) {			
+		public void processCallback(Object obj) {
 			if(obj != null) {
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
 					Log.d(TAG, TAG + "checkinuser response: " + (String) obj);
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						if(jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+							userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
+							userPrefsEditor.commit();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					
+					setTabs();
 				}
 			}
 		}

@@ -706,6 +706,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 							ivToastText.setText(R.string.toast_unable_to_load_location_info);
 							MMDialog.displayCustomDialog(getActivity(), customDialog);
 							
+							Toast.makeText(getActivity(), locationInfo.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+							
 	//						MMToast.makeToastWithImage(getActivity().getApplicationContext(), 
 	//								getActivity().getResources().getDrawable(android.R.drawable.ic_menu_close_clear_cancel), 
 	//								getString(R.string.toast_unable_to_load_location_info)).show();

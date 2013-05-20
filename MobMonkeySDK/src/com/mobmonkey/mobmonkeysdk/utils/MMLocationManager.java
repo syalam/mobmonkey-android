@@ -31,12 +31,16 @@ public final class MMLocationManager {
 	}
 	
 	public static double getLocationLatitude() {
-		return Double.valueOf(decimalFormat.format(location.getLatitude()));
-//		return 37.787205;
+//		return Double.valueOf(decimalFormat.format(location.getLatitude()));
+//		return 37.787205; // test (near iOS simulator location);
+//		return 33.42358; // Brickyard
+		return 33.414883; // Domain
 	}
 	
 	public static double getLocationLongitude() {
-		return Double.valueOf(decimalFormat.format(location.getLongitude()));
+//		return Double.valueOf(decimalFormat.format(location.getLongitude()));
 //		return -122.410973;
+//		return -111.93929; // Brickyard
+		return -111.904784; // Domain
 	}
 }

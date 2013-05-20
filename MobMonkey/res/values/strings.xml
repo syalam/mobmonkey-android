@@ -215,10 +215,6 @@
 	<string name="btn_fifty_meters">50 meters</string>
 	<string name="btn_hundred_meters">100 meters</string>
 	
-	<!-- SearchResults Fragment -->
-	<string name="tv_title_all_nearby">All Nearby</string>
-	<string name="miles">miles</string>
-	
 	<!-- History Fragment -->
 	<string name="btn_clear">Clear</string>
 	<string name="tv_title_history">History</string>
@@ -231,6 +227,15 @@
 	<string name="ad_message_remove">Remove \'</string>
 	<string name="ad_message_from_history">\' from history?</string>
 	<string name="ad_btn_ok">OK</string>
+	
+	<!-- Categories Fragment -->
+	<string name="tv_title_categories">Categories</string>
+	
+	<string name="toast_unable_to_load_categories">Unable to load categories</string>
+	
+	<!-- SearchResults Fragment -->
+	<string name="tv_title_all_nearby">All Nearby</string>
+	<string name="miles">miles</string>
 	
 	<!-- LocationDetails Fragment -->
 	<string name="tv_title_hot_spot">HOT SPOT:</string>
