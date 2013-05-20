@@ -216,7 +216,7 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnDeleteHotSpotFinishFragmentListener#onFinishDeleteHotSpot(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void onFinishDeleteHotSpot(String locationId, String providerId) {
+	public void onDeleteHotSpotFinish(String locationId, String providerId) {
 		if(fragmentStack.size() > 1) {
 			MMFragment mmFragment = fragmentStack.pop();
 			
