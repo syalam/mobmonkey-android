@@ -187,7 +187,8 @@
 	
 	<!-- New Hot Spot Fragment -->
 	<string name="tv_title_new_hot_spot">New Hot Spot</string>
-	<string name="tv_touch_hot_spot_on_map">Touch the Hot Spot Location on the map</string>
+	<string name="tv_use_current_location">Use Current Location</string>
+	<string name="tv_tap_on_the_map">Tap on the map to select a manual location.</string>
 	<string name="tv_hot_spot_details">Hot Spot Details</string>
 	<string name="tv_new_hot_spot">NEW HOT SPOT</string>
 	
@@ -293,9 +294,12 @@
 	
 	<!-- Add Message Screen -->
 	<string name="tv_message">Message</string>
+	
+	<string name="btn_clear_message">Clear message</string>
+	
 	<string-array name="tv_default_message">
-		<item>Do they serve Coke or Pepsi here?</item>
-		<item>I want to see a picture of the wings.</item>
+		<item>How many people are there?</item>
+		<item>What is there to do there?</item>
 	</string-array>
 	
 	<!-- Schedule Request Screen -->

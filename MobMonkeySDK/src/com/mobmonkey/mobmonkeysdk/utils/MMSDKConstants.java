@@ -40,7 +40,8 @@ public final class MMSDKConstants {
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
 	
 	public static final String MOBMONKEY_DIRECTORY = Environment.getExternalStorageDirectory() + File.separator + "MobMonkey";
-	public static final String MOBMONKEY_RECORDED_VIDEO_FILENAME = Environment.getExternalStorageDirectory() + File.separator + "MobMonkey" + File.separator + "mmvideo.3gp";
+	public static final String MOBMONKEY_RECORDED_VIDEO_FILENAME = "mmvideo.3gp";
+	public static final String MOBMONKEY_RECORDED_VIDEO_FILEPATH = Environment.getExternalStorageDirectory() + File.separator + "MobMonkey" + File.separator + "mmvideo.3gp";
 	
 	// Uri path values
 	public static final String URI_PATH_ASSIGNEDREQUESTS = "assignedrequests";

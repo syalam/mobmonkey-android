@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +34,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  */
 public class ExistingHotSpotsFragment extends MMFragment implements OnItemClickListener,
 																	 OnClickListener {
+	private static final String TAG = "ExistingHotSpotsFragment: ";
 	private JSONObject parentLocation;
 	private JSONArray subLocations;
 	
@@ -55,7 +57,7 @@ public class ExistingHotSpotsFragment extends MMFragment implements OnItemClickL
 		
 		elvExistingHotSpots.setOnItemClickListener(ExistingHotSpotsFragment.this);
 		btnCreateHotSpot.setOnClickListener(ExistingHotSpotsFragment.this);
-		
+		Log.d(TAG, TAG + "fragmentManager: " + getFragmentManager().findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG));
 		try {
 			parentLocation = new JSONObject(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_EXISTING_HOT_SPOTS));
 			subLocations = parentLocation.getJSONArray(MMSDKConstants.JSON_KEY_SUB_LOCATIONS);

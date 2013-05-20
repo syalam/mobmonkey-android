@@ -37,11 +37,11 @@ public class MMAssignedRequestsArrayAdapter extends ArrayAdapter<MMAssignedReque
 			
 			vholder = new ViewHolder();
 			try {
-				vholder.tvTitle = (TextView) row.findViewById(R.id.tvassignedrequests_title);
-				vholder.tvDis = (TextView) row.findViewById(R.id.tvassignedrequests_dist);
-				vholder.tvMessage = (TextView) row.findViewById(R.id.tvassignedrequests_message);
-				vholder.tvTime = (TextView) row.findViewById(R.id.tvassignedrequests_time);
-				vholder.ivIcon = (ImageView) row.findViewById(R.id.ivassignedrequests_icon);
+				vholder.tvTitle = (TextView) row.findViewById(R.id.tvassignedrequesttitle);
+				vholder.tvDis = (TextView) row.findViewById(R.id.tvassignedrequestdist);
+				vholder.tvMessage = (TextView) row.findViewById(R.id.tvassignedrequestmessage);
+				vholder.tvTime = (TextView) row.findViewById(R.id.tvassignedrequesttime);
+				vholder.ivIcon = (ImageView) row.findViewById(R.id.ivassignedrequesticon);
 			} catch (NullPointerException ex) {
 				
 			}

@@ -376,6 +376,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			FragmentTransaction transaction = fragmentManager.beginTransaction();
 			transaction.remove(smfNearbyLocations);
 			transaction.commitAllowingStateLoss();
+			Log.d(TAG, TAG + "fragmentManager: " + fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -456,25 +457,23 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 * 
 	 */
 	private void getMMSupportMapFragment() {
-		smfNearbyLocations = (MMSupportMapFragment) fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
-		if(smfNearbyLocations == null) {
-			smfNearbyLocations = new MMSupportMapFragment() {
-				/* (non-Javadoc)
-				 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
-				 */
-				@Override
-				public void onActivityCreated(Bundle savedInstanceState) {
-					super.onActivityCreated(savedInstanceState);
-					googleMap = smfNearbyLocations.getMap();
-					if(googleMap != null) {
-						panAndZoom();
-					}
+		Log.d(TAG, TAG + "getMMSupportMapFragment");
+		smfNearbyLocations = new MMSupportMapFragment() {
+			/* (non-Javadoc)
+			 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
+			 */
+			@Override
+			public void onActivityCreated(Bundle savedInstanceState) {
+				super.onActivityCreated(savedInstanceState);
+				googleMap = smfNearbyLocations.getMap();
+				if(googleMap != null) {
+					panAndZoom();
 				}
-			};
-			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-			fragmentTransaction.add(R.id.flnearbylocationsmap, smfNearbyLocations, MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
-			fragmentTransaction.commit();
-		}
+			}
+		};
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.add(R.id.flnearbylocationsmap, smfNearbyLocations, MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
+		fragmentTransaction.commit();
 	}
 	
 	/**

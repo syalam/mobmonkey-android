@@ -7,5 +7,5 @@ import org.json.JSONObject;
  *
  */
 public interface MMOnMasterLocationNearbyLocationsFragmentItemClickListener {
-	public void onMasterLocationNearbyLocationsItemClick(JSONObject jObj);
+	public void onMasterLocationNearbyLocationsItemClick(JSONObject jObj, int requestCode);
 }

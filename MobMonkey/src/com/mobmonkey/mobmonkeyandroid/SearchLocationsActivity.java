@@ -32,7 +32,10 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 																		 MMOnSearchResultsFragmentItemClickListener,
 																		 MMOnAddressFragmentItemClickListener,
 																		 MMOnAddNotificationsFragmentItemClickListener,
-																		 MMOnFragmentMultipleBackListener {
+																		 MMOnFragmentMultipleBackListener,
+																		 MMOnDeleteHotSpotFragmentFinishListener {
+	private static final String TAG = "SearchLocationsActivity: ";
+	
 	private FragmentManager fragmentManager;
 	private Stack<MMFragment> fragmentStack;
 	
@@ -108,12 +111,13 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnMasterLocationNearbyLocationsFragmentItemClickListener#onMasterLocationNearbyLocationsItemClick(org.json.JSONObject)
 	 */
 	@Override
-	public void onMasterLocationNearbyLocationsItemClick(JSONObject jObj) {
+	public void onMasterLocationNearbyLocationsItemClick(JSONObject jObj, int requestCode) {
 		MMFragment mmFragment = null;
 		Bundle data = new Bundle();
 		if(jObj.isNull(MMSDKConstants.JSON_KEY_SUB_LOCATIONS)) {
 			mmFragment = new NewHotSpotFragment();
 			data.putString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION, jObj.toString());
+			data.putInt(MMSDKConstants.REQUEST_CODE, requestCode);
 		} else {
 			mmFragment = new ExistingHotSpotsFragment();
 			data.putString(MMSDKConstants.KEY_INTENT_EXTRA_EXISTING_HOT_SPOTS, jObj.toString());
@@ -209,12 +213,34 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 	}
 
 	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnDeleteHotSpotFinishFragmentListener#onFinishDeleteHotSpot(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void onFinishDeleteHotSpot(String locationId, String providerId) {
+		if(fragmentStack.size() > 1) {
+			MMFragment mmFragment = fragmentStack.pop();
+			
+			mmFragment.onFragmentBackPressed();
+			
+			mmFragment = fragmentStack.peek();
+			Bundle data = new Bundle();
+			
+			
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);			
+			fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
+			fragmentTransaction.commit();
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnFragmentMultipleBackListener#onFragmentMultipleBack()
 	 */
 	@Override
 	public void onFragmentMultipleBack() {
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		while(fragmentStack.size() > 1) {
+			Log.d(TAG, TAG + "fragment: " + fragmentStack.peek());
 			fragmentTransaction.remove(fragmentStack.pop());
 			if(fragmentStack.peek() instanceof SearchLocationsFragment) {
 				fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);

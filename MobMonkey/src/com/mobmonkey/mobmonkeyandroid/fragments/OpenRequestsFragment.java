@@ -136,7 +136,7 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 			
 			item.dis = MMUtility.calcDist(location,
 										  jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE),
-										  jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + getString(R.string.miles);
+										  jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + getString(R.string.miles);
 			item.mediaType = jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
 			
 			openedRequestItems[i] = item;

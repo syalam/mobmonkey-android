@@ -23,16 +23,36 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical"
 			android:padding="10dp">
-    
-			<TextView android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/tv_touch_hot_spot_on_map"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textColor="@android:color/black"/>
+    		
+		    <LinearLayout android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal">
+		        
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:layout_weight="1"
+					android:text="@string/tv_use_current_location"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:textColor="@android:color/black"/>
+				
+				<ToggleButton android:id="@+id/tbusecurrentlocation"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:checked="true"
+				    android:clickable="false"/>
+				
+			</LinearLayout>
 			
 			<FrameLayout android:id="@+id/flnewhotspotmap"
 				android:layout_width="match_parent"
 				android:layout_height="200dp"/>
+			
+			<TextView android:id="@+id/tvtaponthemap"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:layout_marginTop="5dp"
+			    android:text="@string/tv_tap_on_the_map"/>
 			
 			<TextView android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"

@@ -166,7 +166,7 @@ public class AssignedRequestsFragment extends MMFragment {
 						
 						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
-						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME)));
+						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.3gp")));
 						takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);
 						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
 						break;
@@ -230,7 +230,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {		    
 		    try {
 		    	// encode to base64
-		    	File videoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
+		    	File videoFile = new File(MMSDKConstants.MOBMONKEY_DIRECTORY, MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
 		    	if(!videoFile.exists()) {
 		    		videoFile.mkdir();
 		    	}
@@ -332,7 +332,7 @@ public class AssignedRequestsFragment extends MMFragment {
 							Toast.makeText(getActivity(), R.string.toast_uploaded_assigned_request, Toast.LENGTH_LONG).show();
 						
 							// remove recorded video file
-							File mmVideoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
+							File mmVideoFile = new File(MMSDKConstants.MOBMONKEY_DIRECTORY, MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
 							if(mmVideoFile.exists()) {
 								mmVideoFile.delete();
 							} else {

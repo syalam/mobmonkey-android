@@ -79,8 +79,7 @@
 						android:hint="@string/et_hint_location_phone"
 						android:inputType="phone"/>
 		    
-		    <Button
-		        android:id="@+id/btnaddlocation"
+		    <Button android:id="@+id/btnaddlocation"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:layout_marginLeft="20dp"
