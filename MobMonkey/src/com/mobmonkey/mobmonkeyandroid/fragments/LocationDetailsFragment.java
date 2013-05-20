@@ -918,7 +918,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						JSONObject jObj = new JSONObject((String) obj);
 						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
 //							getActivity().onBackPressed();
-							deleteHotSpotFinishFragmentListener.onFinishDeleteHotSpot(location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID), location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
+							deleteHotSpotFinishFragmentListener.onDeleteHotSpotFinish(location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID), location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
 						} else {
 							
 						}
