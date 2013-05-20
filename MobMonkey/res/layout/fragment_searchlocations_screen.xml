@@ -99,8 +99,8 @@
 			        android:layout_marginLeft="5dp"
 					android:layout_marginBottom="5dp"
 			        android:text="@string/tv_nearby"
-			        android:textColor="@android:color/black"
 			        android:textAppearance="?android:attr/textAppearanceMedium"
+			        android:textColor="@color/dark_gray"
 			        android:textStyle="bold"/>
 			        
 				<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedNearbyLocationsListView android:id="@+id/enllvnearbylocations"
@@ -126,6 +126,7 @@
 				        android:gravity="center"
 				        android:text="@string/tv_load_more"
 				        android:textAppearance="?android:attr/textAppearanceMedium"
+				        android:textColor="@color/dark_gray"
 				        android:textStyle="bold"/>
 				    
 				</LinearLayout>
@@ -136,10 +137,9 @@
 				    android:layout_marginLeft="5dp"
 				    android:layout_marginTop="5dp"
 				    android:layout_marginBottom="5dp"
-				    android:text="@string/tv_hold_to_enable_pan_and_zoom"
-				    android:textColor="@android:color/black"
-				    android:textAppearance="?android:attr/textAppearanceMedium"
-				    android:textStyle="bold"/>
+				    android:textColor="@color/dark_gray"
+				    android:textStyle="bold"
+				    android:visibility="invisible"/>
 				
 				<FrameLayout android:id="@+id/flnearbylocationsmap"
 				    android:layout_width="match_parent"

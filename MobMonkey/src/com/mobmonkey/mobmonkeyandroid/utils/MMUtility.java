@@ -12,7 +12,10 @@ import org.json.JSONObject;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.location.Location;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -137,6 +140,18 @@ public final class MMUtility {
 		}
 		
 		return expiryDate;
+	}
+	
+	/**
+	 * Set text with the stle italic. Samsung Galaxy devices does not have the italic font pre-installed, need this method to set text italic.
+	 * @param text
+	 * @return
+	 */
+	public static CharSequence setTextStyleItalic(String text) {
+		StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
+		SpannableString spannableString = new SpannableString(text);
+		spannableString.setSpan(styleSpan, 0, text.length(), 0);
+		return spannableString;
 	}
 	
 	/**

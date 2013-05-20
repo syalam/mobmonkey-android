@@ -48,6 +48,7 @@ import com.mobmonkey.mobmonkeyandroid.listeners.MMOnFragmentMultipleBackListener
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment;
+import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMGeocoderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMLocationAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -106,7 +107,7 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 		etRange = (EditText) view.findViewById(R.id.etrange);
 		btnCreateHotSpot = (Button) view.findViewById(R.id.btncreatehotspot);
 		
-		tvTapOnTheMap.setText(setTextStyleItalic(tvTapOnTheMap.getText()));
+		tvTapOnTheMap.setText(MMUtility.setTextStyleItalic(tvTapOnTheMap.getText().toString()));
 		
 		tbUseCurrentLocation.setOnClickListener(NewHotSpotFragment.this);
 		etName.setOnClickListener(NewHotSpotFragment.this);
@@ -300,18 +301,6 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * 
-	 * @param text
-	 * @return
-	 */
-	private CharSequence setTextStyleItalic(CharSequence text) {
-		StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
-		SpannableString spannableString = new SpannableString(text);
-		spannableString.setSpan(styleSpan, 0, text.length(), 0);
-		return spannableString;
 	}
 	
 	/**

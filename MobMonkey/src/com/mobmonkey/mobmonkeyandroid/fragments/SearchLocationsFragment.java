@@ -123,7 +123,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private MMOnHistoryFragmentItemClickListener historyFragmentItemClickListener;
 	private MMOnCategoryFragmentItemClickListener categoryFragmentItemClickListener;
 	
-	private boolean nearbyLocationsSearch = false;
 	private String searchText = MMSDKConstants.DEFAULT_STRING_EMPTY;
 	
 	/*
@@ -153,6 +152,15 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		markerHashMap = new HashMap<Marker, JSONObject>();
 		
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+			if(!enablePanAndZoom) {
+				tvHoldToPanAndZoom.setText(MMUtility.setTextStyleItalic(getString(R.string.tv_hold_to_enable_pan_and_zoom)));
+			} else {
+				tvHoldToPanAndZoom.setText(MMUtility.setTextStyleItalic(getString(R.string.tv_hold_to_disable_pan_and_zoom)));
+			}
+			tvHoldToPanAndZoom.setVisibility(View.VISIBLE);
+		}
+		
 		llCreateHotSpot.setOnClickListener(SearchLocationsFragment.this);
 		btnCancel.setOnClickListener(SearchLocationsFragment.this);
 		enllvNearbyLocations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -168,11 +176,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 			}
 		});
 		llLoadMore.setOnClickListener(SearchLocationsFragment.this);
-		if(!enablePanAndZoom) {
-			tvHoldToPanAndZoom.setText(R.string.tv_hold_to_enable_pan_and_zoom);
-		} else {
-			tvHoldToPanAndZoom.setText(R.string.tv_hold_to_disable_pan_and_zoom);
-		}
 		elvSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -193,7 +196,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 					addToHistory(nearbyLocationsSearchArrayAdapter.getItem(position));
 					nearbyLocationsFragmentItemClickListener.onNearbyLocationsItemClick(nearbyLocationsSearchArrayAdapter.getItem(position));
 					inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
-					nearbyLocationsSearch = true;
+//					nearbyLocationsSearch = true;
 					searchText = etSearch.getText().toString();
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -243,17 +246,21 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.llcreatehotspot:
-				createHotSpotFragmentClicKlistener.onCreateHotSpotClick(nearbyLocations);
+				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+					createHotSpotFragmentClicKlistener.onCreateHotSpotClick(nearbyLocations);
+				}
 				break;
 			case R.id.etsearch:
-				setNearbyLocationsSearch();
+				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+					setNearbyLocationsSearch();
+				}
 				break;
 			case R.id.btncancel:
 				cancelNearbyLocationsSearch();
 				break;
 			case R.id.llloadmore:
-			nearbyLocationsCount += 5;
-			setNearbyLocations();
+				nearbyLocationsCount += 5;
+				setNearbyLocations();
 				break;
 		}
 	}
@@ -292,7 +299,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	@Override
 	public void onMapLongClick(LatLng latLng) {
 		if(!enablePanAndZoom) {
-			tvHoldToPanAndZoom.setText(R.string.tv_hold_to_disable_pan_and_zoom);
+			tvHoldToPanAndZoom.setText(MMUtility.setTextStyleItalic(getString(R.string.tv_hold_to_disable_pan_and_zoom)));
 			enablePanAndZoom = true;
 			svNearbyLocations.requestDisallowInterceptTouchEvent(true);
 			svNearbyLocations.setDisableStatus(true);
@@ -308,7 +315,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 //			});
 			panAndZoom();
 		} else {
-			tvHoldToPanAndZoom.setText(R.string.tv_hold_to_enable_pan_and_zoom);
+			tvHoldToPanAndZoom.setText(MMUtility.setTextStyleItalic(getString(R.string.tv_hold_to_enable_pan_and_zoom)));
 			enablePanAndZoom = false;
 			svNearbyLocations.setDisableStatus(false);
 //			svNearbyLocations.requestDisallowInterceptTouchEvent(false);
@@ -372,13 +379,15 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	public void onPause() {
 		Log.d(TAG, TAG + "onPause");
 		super.onPause();
-		try {
-			FragmentTransaction transaction = fragmentManager.beginTransaction();
-			transaction.remove(smfNearbyLocations);
-			transaction.commitAllowingStateLoss();
-			Log.d(TAG, TAG + "fragmentManager: " + fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG));
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+			try {
+				FragmentTransaction transaction = fragmentManager.beginTransaction();
+				transaction.remove(smfNearbyLocations);
+				transaction.commitAllowingStateLoss();
+				Log.d(TAG, TAG + "fragmentManager: " + fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -435,6 +444,10 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		
 		ArrayAdapter<MMSearchCategoriesItem> arrayAdapter = new MMSearchCategoriesArrayAdapter(getActivity(), R.layout.listview_row_searchcategory, searchItems);
 		elvSearch.setAdapter(arrayAdapter);
+		
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+			elvSearch.setEnabled(false);
+		}
 	}
 	
 	/**
@@ -665,7 +678,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 * 
 	 */
 	private void setNearbyLocationsSearch() {
-		nearbyLocationsSearch = true;
 		tvNavBarTitle.setVisibility(View.GONE);
 		btnCancel.setVisibility(View.VISIBLE);
 		llNearbyLocationsSearch.setVisibility(View.VISIBLE);
@@ -678,7 +690,6 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 * 
 	 */
 	private void cancelNearbyLocationsSearch() {
-		nearbyLocationsSearch = false;
 		searchText = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		tvNavBarTitle.setVisibility(View.VISIBLE);
 		btnCancel.setVisibility(View.GONE);
