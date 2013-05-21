@@ -25,7 +25,7 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
-	        android:background="@drawable/btn_create_hot_spot"
+	        android:background="@drawable/orange_button_background"
 	        android:padding="15dp">
 	        
 	        <ImageView android:layout_width="wrap_content"

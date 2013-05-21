@@ -44,6 +44,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	private static final String TAG = "FavoritesFragment: ";
 	
 	private SharedPreferences userPrefs;
+	private SharedPreferences.Editor userPrefsEditor;
 	
 	private ImageButton ibMap;
 	private Button btnAddLoc;
@@ -63,6 +64,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		Log.d(TAG, TAG + "onCreateView");
 		
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
 		
 		View view = inflater.inflate(R.layout.fragment_favorites_screen, container, false);
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
@@ -179,6 +181,8 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	 */
 	private void getFavorites(String result) throws JSONException {
 		JSONArray favorites = new JSONArray(result);
+		userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, result);
+		userPrefsEditor.apply();
 		
 		ArrayList<JSONObject> favoriteLocations = new ArrayList<JSONObject>();
 		
