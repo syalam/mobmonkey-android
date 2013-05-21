@@ -14,7 +14,6 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.view.Display;
 
@@ -45,6 +44,7 @@ public class MMLoadImageAsyncTask extends AsyncTask<String, Void, Object> {
 			if(conn.getContentLength() > 0) {
 				InputStream is = conn.getInputStream();
 				image = BitmapFactory.decodeStream(is);
+				
 				is.close();
 			}
 			conn.disconnect();

@@ -1,6 +1,5 @@
 package com.mobmonkey.mobmonkeysdk.adapters;
 
-import android.content.Context;
 import android.view.Display;
 
 import com.mobmonkey.mobmonkeysdk.asynctasks.MMLoadImageAsyncTask;

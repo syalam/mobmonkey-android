@@ -498,8 +498,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					if(media.equals(MMSDKConstants.MEDIA_LIVESTREAMING)) {
 						if(isFirstMedia) {
 							if(retrieveVideoMedia) {
-//								MMImageLoaderAdapter.loadImage(new LoadImageCallback(),
-//															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
+								MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(),
+															   getActivity().getWindowManager().getDefaultDisplay(),
+															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 							} else {
 								ivtnMedia.setImageBitmap(imageMedia);
 							}
@@ -513,8 +514,9 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					} else if(media.equals(MMSDKConstants.MEDIA_VIDEO)) {
 						if(isFirstMedia) {
 							if(retrieveVideoMedia) {
-//								MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(),
-//															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
+								MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(),
+															   getActivity().getWindowManager().getDefaultDisplay(),
+															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 							} else {
 								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
 							}
@@ -771,27 +773,27 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
-//	/**
-//	 * 
-//	 * @author Dezapp, LLC
-//	 *
-//	 */
-//	private class LoadVideoThumbnailCallback implements MMCallback {
-//		@Override
-//		public void processCallback(Object obj) {
-//			if(obj != null) {
-//				if(obj instanceof String) {
-//					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-//						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-//					}
-//				} else if(obj instanceof Bitmap){				
-//					retrieveVideoMedia = false;
-//					imageMedia = (Bitmap) obj;
-//					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
-//				}
-//			}
-//		}
-//	}
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class LoadVideoThumbnailCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				if(obj instanceof String) {
+					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					}
+				} else if(obj instanceof Bitmap){				
+					retrieveVideoMedia = false;
+					imageMedia = (Bitmap) obj;
+					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Callback to display the image it retrieve from the mediaurl
