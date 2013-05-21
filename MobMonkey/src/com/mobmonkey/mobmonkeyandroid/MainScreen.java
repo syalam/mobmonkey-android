@@ -338,7 +338,7 @@ public class MainScreen extends TabActivity {
 					Log.d(TAG, TAG + "checkinuser response: " + (String) obj);
 					try {
 						JSONObject jObj = new JSONObject((String) obj);
-						if(jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_UNAUTHORIZED_EMAIL)) {
 							userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
 							userPrefsEditor.commit();
 						}

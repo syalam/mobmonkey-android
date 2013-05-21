@@ -19,6 +19,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -197,6 +198,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				JSONObject jObj = streamMediaUrls.getJSONObject(i);
 				MMMediaItem mmMediaItem = new MMMediaItem();
 				MMImageLoaderAdapter.loadImage(new LoadStreamThumbnailCallback(i),
+											   getWindowManager().getDefaultDisplay(),
 											   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 				if(i == streamMediaUrls.length() - 1) {
 					retrieveStreamMedia = false;
@@ -222,6 +224,7 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 				JSONObject jObj = videoMediaUrls.getJSONObject(i);
 				MMMediaItem mmMediaItem = new MMMediaItem();
 				MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(i),
+											   getWindowManager().getDefaultDisplay(),
 											   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 				if(i == videoMediaUrls.length() - 1) {
 					retrieveVideoMedia = false;
@@ -245,7 +248,9 @@ public class LocationDetailsMediaScreen extends Activity implements OnCheckedCha
 		if(retrieveImageMedia) {
 			for(int i = 0; i < imageMediaUrls.length(); i++) {
 				JSONObject jObj = imageMediaUrls.getJSONObject(i);
-				MMImageLoaderAdapter.loadImage(new LoadImageCallback(i), jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+				MMImageLoaderAdapter.loadImage(new LoadImageCallback(i),
+											   getWindowManager().getDefaultDisplay(),
+											   jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 				MMMediaItem mmMediaItem = new MMMediaItem();
 				if(i == imageMediaUrls.length() - 1) {
 					retrieveImageMedia = false;

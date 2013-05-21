@@ -310,16 +310,31 @@
 					android:divider="@drawable/listview_divider"
 					android:dividerHeight="1dp"/>
 			
-				<Button android:id="@+id/btndeletelocationhotspot"
+				<LinearLayout android:id="@+id/lldeletelocationhotspot"
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
 				    android:layout_marginTop="10dp"
-				    android:background="@drawable/orange_button_background"
+				    android:background="@drawable/button_delete_location"
+				    android:orientation="horizontal"
 				    android:padding="10dp"
-					android:textAppearance="?android:attr/textAppearanceMedium"
-					android:textColor="@android:color/white"
-					android:textStyle="bold"
-					android:visibility="gone"/>
+					android:visibility="gone">
+				
+				    <ImageView android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_margin="5dp"
+				        android:src="@drawable/icon_delete"/>
+				    	
+				    <TextView android:id="@+id/tvdeletelocationhotspot"
+				        android:layout_width="match_parent"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:layout_weight="1"
+				        android:gravity="center"
+       					android:textAppearance="?android:attr/textAppearanceMedium"
+						android:textColor="@android:color/white"
+						android:textStyle="bold"/>
+				    
+		    	</LinearLayout>
 					
 			</LinearLayout>
 	        

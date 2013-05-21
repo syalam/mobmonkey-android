@@ -18,6 +18,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMImageDownloaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMLocationAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMMediaAdapter;
@@ -33,11 +34,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -80,7 +84,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private MMExpandedListView elvHotSpots;
 	private Button btnCreateHotSpot;
 	private MMExpandedListView elvLoc;
-	private Button btnDeleteLocationHotSpot;
+	private LinearLayout llDeleteLocationHotSpot;
+	private TextView tvDeleteLocationHotSpot;
 	
 	private ProgressBar pbLoadMedia;
 	private LinearLayout llMedia;
@@ -141,7 +146,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		elvHotSpots = (MMExpandedListView) view.findViewById(R.id.elvhotspots);
 		btnCreateHotSpot = (Button) view.findViewById(R.id.btncreatehotspot);
 		elvLoc = (MMExpandedListView) view.findViewById(R.id.elvloc);
-		btnDeleteLocationHotSpot = (Button) view.findViewById(R.id.btndeletelocationhotspot);
+		llDeleteLocationHotSpot = (LinearLayout) view.findViewById(R.id.lldeletelocationhotspot);
+		tvDeleteLocationHotSpot = (TextView) view.findViewById(R.id.tvdeletelocationhotspot);
 		
 		pbLoadMedia = (ProgressBar) view.findViewById(R.id.pbloadmedia);
 		llMedia = (LinearLayout) view.findViewById(R.id.llmedia);
@@ -270,7 +276,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			case R.id.btncreatehotspot:
 				createHotSpotFragmentClickListener.onCreateHotSpotClick(locationInfo, MMSDKConstants.REQUEST_CODE_LOCATION_DETAILS);
 				break;
-			case R.id.btndeletelocationhotspot:
+			case R.id.lldeletelocationhotspot:
 				try {
 					promptDeleteLocationHotSpot();
 				} catch (JSONException e) {
@@ -329,17 +335,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * Function that set all the details of the current location
 	 * @throws JSONException
 	 */
-	private void setLocationDetails() throws JSONException {
-		if(!location.isNull(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL)) {
-			if(location.getString(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL).equals(userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY))) {
-				btnDeleteLocationHotSpot.setOnClickListener(LocationDetailsFragment.this);
-				btnDeleteLocationHotSpot.setVisibility(View.VISIBLE);
-				
-				Log.d(TAG, TAG + "submitter email is same as login email!!!!!");
-				//TODO: implement display update/delete location button
-			}
-		}
-		
+	private void setLocationDetails() throws JSONException {		
 		MMLocationDetailsItem[] mmLocationDetailsItems = new MMLocationDetailsItem[2];
 		for(int i = 0; i < mmLocationDetailsItems.length; i++) {
 			mmLocationDetailsItems[i] = new MMLocationDetailsItem();
@@ -398,7 +394,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * @throws JSONException 
 	 * 
 	 */
-	private void checkForHotSpots() throws JSONException {
+	private void checkForHotSpots() throws JSONException {		
 		if(location.isNull(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID)) {
 			tvNavBarTitle.setText(location.getString(MMSDKConstants.JSON_KEY_NAME));
 			tvLocName.setText(location.getString(MMSDKConstants.JSON_KEY_NAME));
@@ -412,12 +408,12 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				btnCreateHotSpot.setLayoutParams(params);
 			}
 			btnCreateHotSpot.setOnClickListener(LocationDetailsFragment.this);
-			btnDeleteLocationHotSpot.setText(R.string.btn_delete_location);
+			tvDeleteLocationHotSpot.setText(R.string.btn_delete_location);
 			isLocation = true;
 		} else {
 			tvNavBarTitle.setText(getString(R.string.tv_title_hot_spot) + MMSDKConstants.DEFAULT_STRING_SPACE + location.getString(MMSDKConstants.JSON_KEY_NAME));
 			tvLocName.setText(getString(R.string.tv_title_hot_spot) + MMSDKConstants.DEFAULT_STRING_SPACE + location.getString(MMSDKConstants.JSON_KEY_NAME));
-			btnDeleteLocationHotSpot.setText(R.string.btn_delete_hot_spot);
+			tvDeleteLocationHotSpot.setText(R.string.btn_delete_hot_spot);
 			isLocation = false;
 		}
 	}
@@ -447,6 +443,16 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				tvHotSpots.setVisibility(View.GONE);
 			}
 			btnCreateHotSpot.setVisibility(View.VISIBLE);
+		}
+		
+		if(!location.isNull(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL)) {
+			if(location.getString(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL).equals(userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY))) {
+				llDeleteLocationHotSpot.setOnClickListener(LocationDetailsFragment.this);
+				llDeleteLocationHotSpot.setVisibility(View.VISIBLE);
+				
+				Log.d(TAG, TAG + "submitter email is same as login email!!!!!");
+				//TODO: implement display update/delete location button
+			}
 		}
 	}
 	
@@ -492,8 +498,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					if(media.equals(MMSDKConstants.MEDIA_LIVESTREAMING)) {
 						if(isFirstMedia) {
 							if(retrieveVideoMedia) {
-								MMImageLoaderAdapter.loadImage(new LoadImageCallback(),
-															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
+//								MMImageLoaderAdapter.loadImage(new LoadImageCallback(),
+//															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 							} else {
 								ivtnMedia.setImageBitmap(imageMedia);
 							}
@@ -507,8 +513,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					} else if(media.equals(MMSDKConstants.MEDIA_VIDEO)) {
 						if(isFirstMedia) {
 							if(retrieveVideoMedia) {
-								MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(),
-															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
+//								MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(),
+//															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 							} else {
 								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
 							}
@@ -524,9 +530,14 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						if(isFirstMedia) {
 							ivtnMedia.setClickable(true);
 							if(retrieveImageMedia) {
+//								MMImageDownloaderAdapter.download(jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL), ivtnMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity()), imageMedia);
+//								retrieveImageMedia = false;
+//								ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
 								MMImageLoaderAdapter.loadImage(new LoadImageCallback(),
+															   getActivity().getWindowManager().getDefaultDisplay(),
 															   jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 							} else {
+								imageMedia = MMImageDownloaderAdapter.getBitmapFromCache(MMSDKConstants.JSON_KEY_MEDIA_URL);
 								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
 								ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
 							}
@@ -627,22 +638,19 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	 * 
 	 */
 	private void promptDeleteLocationHotSpot() throws JSONException {
-		int title = MMSDKConstants.DEFAULT_INT;
 		String message = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		
 		if(isLocation) {
-			title = R.string.ad_title_delete_location;
 			message = getString(R.string.ad_message_delete_location) + location.getString(MMSDKConstants.JSON_KEY_NAME) + getString(R.string.ad_message_delete_location_question_mark);
 		} else {
-			title = R.string.ad_title_delete_hot_spot;
 			message = getString(R.string.ad_message_delete_hot_spot) + location.getString(MMSDKConstants.JSON_KEY_NAME) + getString(R.string.ad_message_delete_hot_spot_question_mark);
 		}
 		
-		new AlertDialog.Builder(getActivity())
-			.setTitle(title)
+		AlertDialog confirmDeleteAlert = new AlertDialog.Builder(getActivity())
+			.setTitle(R.string.ad_title_confirm_delete)
 			.setMessage(message)
 			.setCancelable(false)
-			.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
+			.setPositiveButton(R.string.ad_btn_delete, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					try {
@@ -673,8 +681,14 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 					}
 				}
 			})
-			.setNegativeButton(R.string.ad_btn_no, null)
+			.setNegativeButton(R.string.ad_btn_cancel, null)
 			.show();
+//		TextView tvTitle = (TextView) confirmDeleteAlert.findViewById(android.R.id.title);
+//		tvTitle.setGravity(Gravity.CENTER);
+		TextView tvMessage = (TextView) confirmDeleteAlert.findViewById(android.R.id.message);
+		tvMessage.setGravity(Gravity.CENTER);
+		
+		confirmDeleteAlert.show();
 	}
 	
 	/**
@@ -757,27 +771,27 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 	}
 	
-	/**
-	 * 
-	 * @author Dezapp, LLC
-	 *
-	 */
-	private class LoadVideoThumbnailCallback implements MMCallback {
-		@Override
-		public void processCallback(Object obj) {
-			if(obj != null) {
-				if(obj instanceof String) {
-					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
-						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
-					}
-				} else if(obj instanceof Bitmap){				
-					retrieveVideoMedia = false;
-					imageMedia = (Bitmap) obj;
-					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
-				}
-			}
-		}
-	}
+//	/**
+//	 * 
+//	 * @author Dezapp, LLC
+//	 *
+//	 */
+//	private class LoadVideoThumbnailCallback implements MMCallback {
+//		@Override
+//		public void processCallback(Object obj) {
+//			if(obj != null) {
+//				if(obj instanceof String) {
+//					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+//						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+//					}
+//				} else if(obj instanceof Bitmap){				
+//					retrieveVideoMedia = false;
+//					imageMedia = (Bitmap) obj;
+//					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
+//				}
+//			}
+//		}
+//	}
 	
 	/**
 	 * Callback to display the image it retrieve from the mediaurl
@@ -795,8 +809,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				} else if(obj instanceof Bitmap){				
 					retrieveImageMedia = false;
 					imageMedia = (Bitmap) obj;
+					Display display = getActivity().getWindowManager().getDefaultDisplay();
+					Log.d(TAG, TAG + "display width: " + display.getWidth());
 					ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
-					ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
+					ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), Bitmap.createScaledBitmap(imageMedia, display.getWidth(), display.getHeight(), true)));
 				}
 			}
 		}

@@ -14,7 +14,9 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.view.Display;
 
 /**
  * @author Dezapp, LLC
@@ -22,9 +24,11 @@ import android.os.AsyncTask;
  */
 public class MMLoadImageAsyncTask extends AsyncTask<String, Void, Object> {
 	private MMCallback callback;
+	private Display display;
 	
-	public MMLoadImageAsyncTask(MMCallback callback) {
+	public MMLoadImageAsyncTask(MMCallback callback, Display display) {
 		this.callback = callback;
+		this.display = display;
 	}
 	
 	@Override
@@ -58,7 +62,7 @@ public class MMLoadImageAsyncTask extends AsyncTask<String, Void, Object> {
 			e.printStackTrace();
 		}
 		
-		return image;
+		return Bitmap.createScaledBitmap(image, display.getWidth(), display.getHeight(), true);
 	}
 
 	@Override
