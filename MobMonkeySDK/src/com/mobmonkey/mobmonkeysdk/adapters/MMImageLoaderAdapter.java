@@ -17,7 +17,7 @@ public final class MMImageLoaderAdapter {
 	/**
 	 * Private class to prevent the instantiation of this class outside the scope of this class
 	 */
-	private MMImageLoaderAdapter() {
+	private MMImageLoaderAdapter(Context context) {
 		throw new AssertionError();
 	}
 	
@@ -27,8 +27,9 @@ public final class MMImageLoaderAdapter {
 	 * @param imageUrl
 	 */
 	public static void loadImage(MMCallback mmCallback,
-								 String imageUrl) {
-		new MMLoadImageAsyncTask(mmCallback).execute(imageUrl);
+								 String imageUrl,
+								 Context context) {
+		new MMLoadImageAsyncTask(mmCallback, context).execute(imageUrl);
 	}
 	
 //	/**

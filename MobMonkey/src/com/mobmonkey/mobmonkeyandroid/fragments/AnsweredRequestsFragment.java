@@ -122,11 +122,13 @@ public class AnsweredRequestsFragment extends MMFragment {
 				Log.d(TAG, TAG + "mediaType: " + mediaType);
 				if(mediaType == MMSDKConstants.MEDIA_TYPE_IMAGE) {
 					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i),
-												   media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+												   media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL),
+												   this.getActivity());
 					answeredRequestItem.setIsImage(true);
 				} else if(mediaType == MMSDKConstants.MEDIA_TYPE_VIDEO) {
 					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i),
-												   media.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
+												   media.getString(MMSDKConstants.JSON_KEY_THUMB_URL),
+												   this.getActivity());
 					answeredRequestItem.setIsVideo(true);
 					answeredRequestItem.setPlayOnClickListener(new MMVideoPlayOnClickListener(getActivity(), media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
 				}

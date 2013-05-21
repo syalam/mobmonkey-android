@@ -493,7 +493,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						if(isFirstMedia) {
 							if(retrieveVideoMedia) {
 								MMImageLoaderAdapter.loadImage(new LoadImageCallback(),
-															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
+															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL),
+															   this.getActivity());
 							} else {
 								ivtnMedia.setImageBitmap(imageMedia);
 							}
@@ -508,7 +509,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						if(isFirstMedia) {
 							if(retrieveVideoMedia) {
 								MMImageLoaderAdapter.loadImage(new LoadVideoThumbnailCallback(),
-															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
+															   jObj.getString(MMSDKConstants.JSON_KEY_THUMB_URL),
+															   this.getActivity());
 							} else {
 								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
 							}
@@ -525,7 +527,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 							ivtnMedia.setClickable(true);
 							if(retrieveImageMedia) {
 								MMImageLoaderAdapter.loadImage(new LoadImageCallback(),
-															   jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
+															   jObj.getString(MMSDKConstants.JSON_KEY_MEDIA_URL),
+															   this.getActivity());
 							} else {
 								ivtnMedia.setImageBitmap(ThumbnailUtils.extractThumbnail(imageMedia, MMUtility.getImageMediaMeasuredWidth(getActivity()), MMUtility.getImageMediaMeasuredHeight(getActivity())));
 								ivtnMedia.setOnClickListener(new MMImageOnClickListener(getActivity(), imageMedia));
