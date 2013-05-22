@@ -26,7 +26,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +42,7 @@ import com.mobmonkey.mobmonkeyandroid.AddLocationScreen;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMSearchResultsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchResultsItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
+import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
@@ -76,7 +76,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	private ImageButton ibMap;
 	private Button btnAddLoc;
 	private Button btnCancel;
-	private ListView lvSearchResults;
+	private MMExpandedListView elvSearchResults;
 	
 	private MMSupportMapFragment smfResultLocations;
 	private GoogleMap googleMap;
@@ -106,7 +106,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
 		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
 		btnCancel = (Button) view.findViewById(R.id.btncancel);
-		lvSearchResults = (ListView) view.findViewById(R.id.lvsearchresults);
+		elvSearchResults = (MMExpandedListView) view.findViewById(R.id.elvsearchresults);
 		
 		tvNavBarTitle.setText(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_SEARCH_RESULT_TITLE));
 		
@@ -125,10 +125,10 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		ibMap.setOnClickListener(SearchResultsFragment.this);
 		btnAddLoc.setOnClickListener(SearchResultsFragment.this);
 		btnCancel.setOnClickListener(SearchResultsFragment.this);
-		lvSearchResults.setOnItemClickListener(SearchResultsFragment.this);
+		elvSearchResults.setOnItemClickListener(SearchResultsFragment.this);
 		
 		ArrayAdapter<MMSearchResultsItem> arrayAdapter = new MMSearchResultsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
-		lvSearchResults.setAdapter(arrayAdapter);
+		elvSearchResults.setAdapter(arrayAdapter);
 		
 		addLocClicked = false;
 		
@@ -426,13 +426,13 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 * 
 	 */
 	private void ibMapClick() {
-		if(lvSearchResults.getVisibility() == View.VISIBLE) {
+		if(elvSearchResults.getVisibility() == View.VISIBLE) {
 			displayMap = true;
-			lvSearchResults.setVisibility(View.INVISIBLE);
+			elvSearchResults.setVisibility(View.INVISIBLE);
 			smfResultLocations.getView().setVisibility(View.VISIBLE);
-		} else if(lvSearchResults.getVisibility() == View.INVISIBLE) {
+		} else if(elvSearchResults.getVisibility() == View.INVISIBLE) {
 			displayMap = false;
-			lvSearchResults.setVisibility(View.VISIBLE);
+			elvSearchResults.setVisibility(View.VISIBLE);
 			smfResultLocations.getView().setVisibility(View.INVISIBLE);
 			btnAddLoc.setVisibility(View.VISIBLE);
 			btnCancel.setVisibility(View.GONE);

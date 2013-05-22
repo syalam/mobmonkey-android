@@ -130,6 +130,7 @@
 	<string name="ad_title_no_more_assigned_requests">No More Assigned Requests</string>
 	<string name="ad_message_no_more_assigned_requests">There are no more assigned requests at this location.</string>
 	
+	<string name="pd_retrieving_assigned_requests">Retrieving assigned requests&#8230;</string>
 	<string name="pd_uploading_image">Uploading image&#8230;</string>
 	<string name="pd_uploading_video">Uploading video&#8230;</string>
 	

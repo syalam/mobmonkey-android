@@ -21,14 +21,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMOpenRequestsArrayAdapter;
-import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMAssignedRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMOpenRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
+import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMRequestAdapter;
@@ -46,11 +45,10 @@ import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 public class OpenRequestsFragment extends MMFragment implements OnItemClickListener {
 	private static final String TAG = "OpenRequestsScreen: ";
 	
-	private ListView lvOpenedRequests;
+	private MMExpandedListView elvOpenedRequests;
 	private Location location;
 	private JSONArray openRequests;
 	private MMOpenRequestsArrayAdapter arrayAdapter;
-//	private int clickedPosition;
 	private SharedPreferences userPrefs;
 	
 	/*
@@ -69,7 +67,7 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 									   getString(R.string.pd_retrieving_all_open_requests));
 
 		View view = inflater.inflate(R.layout.fragment_openrequests_screen, container, false);
-		lvOpenedRequests = (ListView) view.findViewById(R.id.lvopenrequests);
+		elvOpenedRequests = (MMExpandedListView) view.findViewById(R.id.elvopenrequests);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 				
 		return view;
@@ -199,8 +197,8 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 							openRequests = new JSONArray(temp);
 							
 							arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.listview_row_openrequests, getOpenedRequestItems());
-							lvOpenedRequests.setAdapter(arrayAdapter);
-							lvOpenedRequests.invalidate();
+							elvOpenedRequests.setAdapter(arrayAdapter);
+							elvOpenedRequests.invalidate();
 							
 							Toast.makeText(getActivity().getApplicationContext(), 
 									getString(R.string.toast_request) + MMSDKConstants.DEFAULT_STRING_SPACE + jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), 
@@ -230,6 +228,7 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 		@Override
 		public void processCallback(Object obj) {
 			MMProgressDialog.dismissDialog();
+			
 			if(obj != null) {
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
@@ -238,8 +237,9 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 						Log.d(TAG, "OpenRequestCallback: " + (String) obj);
 						openRequests = new JSONArray((String) obj);
 						arrayAdapter = new MMOpenRequestsArrayAdapter(getActivity(), R.layout.listview_row_openrequests, getOpenedRequestItems());
-						lvOpenedRequests.setAdapter(arrayAdapter);
-						lvOpenedRequests.setOnItemClickListener(OpenRequestsFragment.this);				
+						elvOpenedRequests.setAdapter(arrayAdapter);
+						elvOpenedRequests.setVisibility(View.VISIBLE);
+						elvOpenedRequests.setOnItemClickListener(OpenRequestsFragment.this);				
 					} catch (JSONException ex) {
 						ex.printStackTrace();
 					} catch (NumberFormatException e) {

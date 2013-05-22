@@ -109,9 +109,7 @@
 			        
 				<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedNearbyLocationsListView android:id="@+id/enllvnearbylocations"
 				    android:layout_width="match_parent"
-				    android:layout_height="0dip"
-				    android:layout_margin="0dp"
-				    android:layout_weight="1"
+				    android:layout_height="wrap_content"
 				    android:background="@drawable/listview_border_top_corners_round"
 					android:divider="@drawable/listview_divider"
 					android:dividerHeight="1dp"
@@ -153,7 +151,6 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="15dp"
-					android:cacheColorHint="@android:color/transparent"
 					android:scrollbars="none"
 					android:background="@drawable/listview_border_four_corners_round"
 					android:divider="@drawable/listview_divider"

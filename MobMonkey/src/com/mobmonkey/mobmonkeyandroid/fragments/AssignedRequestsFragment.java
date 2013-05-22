@@ -20,7 +20,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -36,11 +35,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.mobmonkey.mobmonkeyandroid.VideoRecorderActivity;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMAssignedRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
+import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMRequestAdapter;
@@ -62,7 +61,7 @@ public class AssignedRequestsFragment extends MMFragment {
 	private SharedPreferences.Editor userPrefsEditor;
 	
 	private Location location;
-	private ListView lvAssignedRequests;
+	private MMExpandedListView elvAssignedRequests;
 	private JSONArray assignedRequests;
 	private MMAssignedRequestsArrayAdapter arrayAdapter;
 	private int clickedPosition;
@@ -77,7 +76,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		userPrefsEditor = userPrefs.edit();
 		
 		View view = inflater.inflate(R.layout.fragment_assignedrequests_screen, container, false);
-		lvAssignedRequests = (ListView) view.findViewById(R.id.lvassignedrequests);
+		elvAssignedRequests = (MMExpandedListView) view.findViewById(R.id.elvassignedrequests);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		try {
@@ -85,6 +84,9 @@ public class AssignedRequestsFragment extends MMFragment {
 												 MMConstants.PARTNER_ID,
 												 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
 												 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMProgressDialog.displayDialog(getActivity(),
+										   MMSDKConstants.DEFAULT_STRING_EMPTY,
+										   getString(R.string.pd_retrieving_assigned_requests));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -350,8 +352,8 @@ public class AssignedRequestsFragment extends MMFragment {
 							assignedRequests = newArray;
 							
 							arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
-							lvAssignedRequests.setAdapter(arrayAdapter);
-							lvAssignedRequests.invalidate();
+							elvAssignedRequests.setAdapter(arrayAdapter);
+							elvAssignedRequests.invalidate();
 							
 							if(newArray.length() < 1) {
 								displayAlertNoMoreAssignedRequests();
@@ -377,6 +379,8 @@ public class AssignedRequestsFragment extends MMFragment {
 	private class AssignedRequestCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
 			if(obj != null) {
 				Log.d(TAG, "AssignedRequest: " + (String) obj);
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
@@ -385,8 +389,9 @@ public class AssignedRequestsFragment extends MMFragment {
 					try {
 						assignedRequests = new JSONArray((String) obj);
 						arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
-						lvAssignedRequests.setAdapter(arrayAdapter);
-						lvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
+						elvAssignedRequests.setAdapter(arrayAdapter);
+						elvAssignedRequests.setVisibility(View.VISIBLE);
+						elvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
 					} catch (JSONException e) {
 						e.printStackTrace();
 					} catch (ParseException e) {

@@ -48,7 +48,7 @@ public class SettingsFragment extends MMFragment implements OnClickListener,
 	private MMOnMyInfoFragmentItemClickListener myInfoFragmentItemClickListener;
 	private MMOnSocialNetworksFragmentItemClickListener socialNetworksFragmentItemClickListener;
 	private MMOnMyInterestsFragmentItemClickListener myInterestsFragmentItemClickListener;
-	private ListView lvSettingsCategory;
+	private ListView lvSettings;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,10 +58,10 @@ public class SettingsFragment extends MMFragment implements OnClickListener,
 		
 		View view = inflater.inflate(R.layout.fragment_settings_screen, container, false);
 		
-		lvSettingsCategory = (ListView) view.findViewById(R.id.lvsettingscategory);
+		lvSettings = (ListView) view.findViewById(R.id.lvsettings);
 		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.listview_row_settings, R.id.tvsettingscategory, getResources().getStringArray(R.array.settings_category));
-		lvSettingsCategory.setAdapter(arrayAdapter);
-		lvSettingsCategory.setOnItemClickListener(this);
+		lvSettings.setAdapter(arrayAdapter);
+		lvSettings.setOnItemClickListener(this);
 		
 		Button btnSignOut = (Button) view.findViewById(R.id.btnsignout);
 		btnSignOut.setOnClickListener(this);

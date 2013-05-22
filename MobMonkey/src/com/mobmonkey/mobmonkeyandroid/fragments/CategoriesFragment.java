@@ -33,6 +33,7 @@ import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMSearchCategoriesItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
+import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMSearchLocationAdapter;
@@ -55,7 +56,7 @@ public class CategoriesFragment extends MMFragment implements OnClickListener,
 	
 	private TextView tvNavBarTitle;
 	private Button btnAddLoc;
-	private ListView lvSubCategories;
+	private MMExpandedListView elvCategories;
 	
 	private JSONArray categoriesArray;
 	
@@ -79,7 +80,7 @@ public class CategoriesFragment extends MMFragment implements OnClickListener,
 		View view = inflater.inflate(R.layout.fragment_categories_screen, container, false);
 		tvNavBarTitle = (TextView) view.findViewById(R.id.tvnavbartitle);
 		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
-		lvSubCategories = (ListView) view.findViewById(R.id.lvsubcategory);
+		elvCategories = (MMExpandedListView) view.findViewById(R.id.elvcategories);
 		
 		btnAddLoc.setOnClickListener(CategoriesFragment.this);
 		init();
@@ -179,9 +180,9 @@ public class CategoriesFragment extends MMFragment implements OnClickListener,
 		}		
 		
 		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
-			lvSubCategories.setEnabled(false);
+			elvCategories.setEnabled(false);
 		} else {
-			lvSubCategories.setOnItemClickListener(CategoriesFragment.this);
+			elvCategories.setOnItemClickListener(CategoriesFragment.this);
 		}
 	}
 	
@@ -206,7 +207,7 @@ public class CategoriesFragment extends MMFragment implements OnClickListener,
 		}
 		
 		ArrayAdapter<MMSearchCategoriesItem> arrayAdapter = new MMSearchCategoriesArrayAdapter(getActivity(), R.layout.listview_row_searchcategory, mmSearchCategoriesItems);
-        lvSubCategories.setAdapter(arrayAdapter);
+		elvCategories.setAdapter(arrayAdapter);
 	}
 	
 	/**

@@ -552,6 +552,9 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 			if(resultLocations.size() > 0) {
 				enllvNearbyLocations.setVisibility(View.VISIBLE);
 				llLoadMore.setVisibility(View.VISIBLE);
+				
+				
+				
 				nearbyLocationsArrayAdapter = new MMNearbyLocationsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
 				enllvNearbyLocations.setAdapter(nearbyLocationsArrayAdapter);
 			}

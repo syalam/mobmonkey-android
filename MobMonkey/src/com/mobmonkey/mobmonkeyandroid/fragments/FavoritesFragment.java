@@ -28,6 +28,7 @@ import com.mobmonkey.mobmonkeyandroid.AddLocationScreen;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMFavoritesArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
+import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -48,7 +49,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 	
 	private ImageButton ibMap;
 	private Button btnAddLoc;
-	private ListView lvFavorites;
+	private MMExpandedListView elvFavorites;
 	
 	private MMFavoritesArrayAdapter favoritesArrayAdapter;
 	
@@ -69,11 +70,11 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		View view = inflater.inflate(R.layout.fragment_favorites_screen, container, false);
 		ibMap = (ImageButton) view.findViewById(R.id.ibmap);
 		btnAddLoc = (Button) view.findViewById(R.id.btnaddloc);
-		lvFavorites = (ListView) view.findViewById(R.id.lvbookmarks);
+		elvFavorites = (MMExpandedListView) view.findViewById(R.id.elvfavorites);
 
 		ibMap.setOnClickListener(FavoritesFragment.this);
 		btnAddLoc.setOnClickListener(FavoritesFragment.this);
-		lvFavorites.setOnItemClickListener(FavoritesFragment.this);
+		elvFavorites.setOnItemClickListener(FavoritesFragment.this);
 		
 		return view;
 	}
@@ -184,14 +185,17 @@ public class FavoritesFragment extends MMFragment implements OnClickListener, On
 		userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, result);
 		userPrefsEditor.apply();
 		
-		ArrayList<JSONObject> favoriteLocations = new ArrayList<JSONObject>();
-		
-		for(int i = 0; i < favorites.length(); i++) {
-			favoriteLocations.add(favorites.getJSONObject(i));
+		if(favorites.length() > 0) {
+			ArrayList<JSONObject> favoriteLocations = new ArrayList<JSONObject>();
+			
+			for(int i = 0; i < favorites.length(); i++) {
+				favoriteLocations.add(favorites.getJSONObject(i));
+			}
+
+			favoritesArrayAdapter = new MMFavoritesArrayAdapter(getActivity(), R.layout.listview_row_favorites, favoriteLocations);
+			elvFavorites.setAdapter(favoritesArrayAdapter);
+			elvFavorites.setVisibility(View.VISIBLE);
 		}
-		
-		favoritesArrayAdapter = new MMFavoritesArrayAdapter(getActivity(), R.layout.listview_row_favorites, favoriteLocations);
-		lvFavorites.setAdapter(favoritesArrayAdapter);
 	}
 	
 	/**

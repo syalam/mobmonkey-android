@@ -34,16 +34,15 @@
 			<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/elvnearbylocations"
 			    android:layout_width="match_parent"
 			    android:layout_height="match_parent"
-			    android:layout_margin="0dp"
-			    android:background="@drawable/listview_border_four_corners_round"
+			    android:background="@drawable/listview_border_top_corners_round"
 				android:divider="@drawable/listview_divider"
 				android:dividerHeight="1dp"/>
 			
 			<LinearLayout android:id="@+id/llloadmore"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:padding="10dp"
-				android:background="@drawable/listview_border_four_corners_round">
+				android:padding="20dp"
+				android:background="@drawable/listview_border_bottom_corners_round_no_top">
 			
 				<TextView android:layout_width="match_parent"
 					android:layout_height="wrap_content"

@@ -13,6 +13,7 @@ import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMMyInterestsItem;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMCategories;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
+import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -26,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -42,7 +42,7 @@ public class MyInterestsFragment extends MMFragment implements OnItemClickListen
 	private JSONArray interests;
 	private JSONArray selectedInterests;
 	
-	private ListView lvInterests;
+	private MMExpandedListView elvInterests;
 	
 	private MMMyInterestsItem[] mmMyInterestsItems;
 	private MMMyInterestsArrayAdapter mmMyInterestsArrayAdapter;
@@ -55,7 +55,7 @@ public class MyInterestsFragment extends MMFragment implements OnItemClickListen
 		userPrefsEditor = userPrefs.edit();
 		
 		View view = inflater.inflate(R.layout.fragment_myinterests_screen, container, false);
-		lvInterests = (ListView) view.findViewById(R.id.lvinterests);
+		elvInterests = (MMExpandedListView) view.findViewById(R.id.elvinterests);
 		
 		try {
 			interests = new JSONArray(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_INTERESTS));
@@ -146,8 +146,8 @@ public class MyInterestsFragment extends MMFragment implements OnItemClickListen
 		}
 		
 		mmMyInterestsArrayAdapter = new MMMyInterestsArrayAdapter(getActivity(), R.layout.listview_row_searchcategory, mmMyInterestsItems);
-		lvInterests.setAdapter(mmMyInterestsArrayAdapter);
-        lvInterests.setOnItemClickListener(MyInterestsFragment.this);
+		elvInterests.setAdapter(mmMyInterestsArrayAdapter);
+        elvInterests.setOnItemClickListener(MyInterestsFragment.this);
 	}
 	
 	/**
