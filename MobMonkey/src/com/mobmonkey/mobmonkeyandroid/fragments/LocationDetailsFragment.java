@@ -439,8 +439,11 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				ivHotSpotsBadge.setVisibility(View.VISIBLE);
 				tvHotSpotsCounter.setVisibility(View.VISIBLE);
 				elvHotSpots.setVisibility(View.VISIBLE);
+				btnCreateHotSpot.setBackgroundResource(R.drawable.listview_border_bottom_corners_round_no_top);
+				btnCreateHotSpot.setPadding(20, 20, 20, 20);
 			} else {
 				tvHotSpots.setVisibility(View.GONE);
+				btnCreateHotSpot.setBackgroundResource(R.drawable.listview_border_four_corners_round);
 			}
 			btnCreateHotSpot.setVisibility(View.VISIBLE);
 		}

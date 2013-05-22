@@ -44,6 +44,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
@@ -63,6 +64,7 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedNearbyLocationsListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMScrollView;
+import com.mobmonkey.mobmonkeyandroid.utils.MMScrollViewListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSubLocations;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
@@ -77,7 +79,8 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
  * @author Dezapp, LLC
  *
  */
-public class SearchLocationsFragment extends MMFragment implements OnClickListener,
+public class SearchLocationsFragment extends MMFragment implements MMScrollViewListener,
+																   OnClickListener,
 																   OnLongClickListener,
 																   OnTouchListener,
 																   OnInfoWindowClickListener,
@@ -95,7 +98,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private TextView tvNavBarTitle;
 	private LinearLayout llCreateHotSpot;
 	private EditText etSearch;
-	private Button btnCancel;
+//	private Button btnCancel;
 	private MMScrollView svNearbyLocations;
 	private MMExpandedNearbyLocationsListView enllvNearbyLocations;
 	private LinearLayout llLoadMore;
@@ -139,7 +142,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		tvNavBarTitle = (TextView) view.findViewById(R.id.tvnavbartitle);
 		llCreateHotSpot = (LinearLayout) view.findViewById(R.id.llcreatehotspot);
 		etSearch = (EditText) view.findViewById(R.id.etsearch);
-		btnCancel = (Button) view.findViewById(R.id.btncancel);
+//		btnCancel = (Button) view.findViewById(R.id.btncancel);
 		svNearbyLocations = (MMScrollView) view.findViewById(R.id.svnearbylocations);
 		enllvNearbyLocations = (MMExpandedNearbyLocationsListView) view.findViewById(R.id.enllvnearbylocations);
 		llLoadMore = (LinearLayout) view.findViewById(R.id.llloadmore);
@@ -162,7 +165,8 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		}
 		
 		llCreateHotSpot.setOnClickListener(SearchLocationsFragment.this);
-		btnCancel.setOnClickListener(SearchLocationsFragment.this);
+//		btnCancel.setOnClickListener(SearchLocationsFragment.this);
+		svNearbyLocations.setScrollViewListener(SearchLocationsFragment.this);
 		enllvNearbyLocations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -238,6 +242,15 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.mobmonkey.mobmonkeyandroid.utils.MMScrollViewListener#onScrollChanged(com.mobmonkey.mobmonkeyandroid.utils.MMScrollView, int, int, int, int)
+	 */
+	@Override
+	public void onScrollChanged(MMScrollView mmScrollView, int x, int y, int oldx, int oldy) {
+		mmScrollView.setVisibility(View.GONE);
+		mmScrollView.setVisibility(View.VISIBLE);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
@@ -255,9 +268,9 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 					setNearbyLocationsSearch();
 				}
 				break;
-			case R.id.btncancel:
-				cancelNearbyLocationsSearch();
-				break;
+//			case R.id.btncancel:
+//				cancelNearbyLocationsSearch();
+//				break;
 			case R.id.llloadmore:
 				nearbyLocationsCount += 5;
 				setNearbyLocations();
@@ -471,7 +484,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 */
 	private void getMMSupportMapFragment() {
 		Log.d(TAG, TAG + "getMMSupportMapFragment");
-		smfNearbyLocations = new MMSupportMapFragment() {
+		smfNearbyLocations = new MMSupportMapFragment(new GoogleMapOptions().zOrderOnTop(true)) {
 			/* (non-Javadoc)
 			 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
 			 */
@@ -679,7 +692,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	 */
 	private void setNearbyLocationsSearch() {
 		tvNavBarTitle.setVisibility(View.GONE);
-		btnCancel.setVisibility(View.VISIBLE);
+//		btnCancel.setVisibility(View.VISIBLE);
 		llNearbyLocationsSearch.setVisibility(View.VISIBLE);
 		svNearbyLocations.setDisableStatus(true);
 		svNearbyLocations.setClickable(false);
@@ -692,7 +705,7 @@ public class SearchLocationsFragment extends MMFragment implements OnClickListen
 	private void cancelNearbyLocationsSearch() {
 		searchText = MMSDKConstants.DEFAULT_STRING_EMPTY;
 		tvNavBarTitle.setVisibility(View.VISIBLE);
-		btnCancel.setVisibility(View.GONE);
+//		btnCancel.setVisibility(View.GONE);
 		llNearbyLocationsSearch.setVisibility(View.GONE);
 		svNearbyLocations.setDisableStatus(false);
 		svNearbyLocations.setClickable(true);

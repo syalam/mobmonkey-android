@@ -143,6 +143,11 @@ public class AssignedRequestsFragment extends MMFragment {
 			try {
 				JSONObject data = assignedRequests.getJSONObject(position);
 				
+				File mmDir = new File(MMSDKConstants.MOBMONKEY_DIRECTORY);
+//				Log.d(TAG, TAG + "mmDir exists: " + mmDir.exists());
+				if(!mmDir.exists()) {
+					mmDir.mkdirs();
+				}
 				switch(data.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE)) {
 					// Image request
 					case 1:
@@ -155,11 +160,6 @@ public class AssignedRequestsFragment extends MMFragment {
 						break;
 					// Video request
 					case 2:
-						File mmDir = new File(MMSDKConstants.MOBMONKEY_DIRECTORY);
-//						Log.d(TAG, TAG + "mmDir exists: " + mmDir.exists());
-						if(!mmDir.exists()) {
-							mmDir.mkdirs();
-						}
 //						Log.d(TAG, TAG + "video file: " + new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.mp4").getAbsolutePath());
 //						Intent takeVideoIntent = new Intent(getActivity(), VideoRecorderActivity.class);
 //						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);

@@ -35,7 +35,7 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_margin="10dp"
-	    android:background="@drawable/listview_border"
+	    android:background="@drawable/listview_border_four_corners_round"
 	    android:cacheColorHint="@android:color/transparent"
 	    android:divider="@drawable/listview_divider"
 	    android:dividerHeight="1dp"

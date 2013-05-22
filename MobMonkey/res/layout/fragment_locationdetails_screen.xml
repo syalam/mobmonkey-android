@@ -78,7 +78,7 @@
 		        
 			        <FrameLayout android:layout_width="match_parent"
 			            android:layout_height="wrap_content"
-			            android:background="@drawable/listview_border">
+			            android:background="@drawable/listview_border_four_corners_round">
 			            
 			            <ImageView android:id="@+id/ivtnmedia"
 			                android:layout_width="match_parent"
@@ -258,7 +258,7 @@
 		            android:layout_height="wrap_content"
 		            android:cacheColorHint="@android:color/transparent"
 					android:scrollbars="none"
-					android:background="@drawable/listview_border"
+					android:background="@drawable/listview_border_four_corners_round"
 					android:divider="@drawable/listview_divider"
 					android:dividerHeight="1dp"/>
 		        
@@ -283,7 +283,7 @@
 		   	            android:layout_height="wrap_content"
 		   	            android:cacheColorHint="@android:color/transparent"
 						android:scrollbars="none"
-						android:background="@drawable/listview_border"
+						android:background="@drawable/listview_border_top_corners_round"
 						android:divider="@drawable/listview_divider"
 						android:dividerHeight="1dp"
 						android:visibility="gone"/>
@@ -291,7 +291,6 @@
 					<Button android:id="@+id/btncreatehotspot"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:background="@drawable/listview_border"
 						android:padding="10dp"
 						android:text="@string/btn_create_hot_spot"
 						android:textAppearance="?android:attr/textAppearanceMedium"
@@ -306,7 +305,7 @@
 					android:layout_marginTop="10dp"
 					android:cacheColorHint="@android:color/transparent"
 					android:scrollbars="none"
-					android:background="@drawable/listview_border"
+					android:background="@drawable/listview_border_four_corners_round"
 					android:divider="@drawable/listview_divider"
 					android:dividerHeight="1dp"/>
 			

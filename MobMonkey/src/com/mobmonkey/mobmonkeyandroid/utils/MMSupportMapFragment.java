@@ -19,6 +19,17 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 public class MMSupportMapFragment extends SupportMapFragment {
 	private static final String TAG = "MMSupportMapFragment: ";
 	
+	public MMSupportMapFragment() {
+		
+	}
+	
+	public MMSupportMapFragment(GoogleMapOptions googleMapOptions) {
+		MMSupportMapFragment mmSupportMapFragment = new MMSupportMapFragment();
+		Bundle args = new Bundle();
+		args.putParcelable(MMSDKConstants.GOOGLE_MAP_OPTIONS, googleMapOptions);
+		mmSupportMapFragment.setArguments(args);
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.google.android.gms.maps.SupportMapFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
 	 */

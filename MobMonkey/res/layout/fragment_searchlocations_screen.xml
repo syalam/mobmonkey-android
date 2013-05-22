@@ -47,6 +47,10 @@
 			android:layout_marginTop="10dp"
 			android:orientation="horizontal">
 	        
+	        <ImageButton android:layout_width="60dp"
+	            android:layout_height="match_parent"
+	            android:src="@drawable/icon_tags"/>
+	        
        		<FrameLayout android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1">
@@ -67,11 +71,11 @@
 			
 			</FrameLayout>
 			
-			<Button android:id="@+id/btncancel"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/ad_btn_cancel"
-				android:visibility="gone"/>
+<!-- 			<Button android:id="@+id/btncancel" -->
+<!-- 				android:layout_width="wrap_content" -->
+<!-- 				android:layout_height="wrap_content" -->
+<!-- 				android:text="@string/ad_btn_cancel" -->
+<!-- 				android:visibility="gone"/> -->
 			
 	    </LinearLayout>
 		
@@ -108,7 +112,7 @@
 				    android:layout_height="0dip"
 				    android:layout_margin="0dp"
 				    android:layout_weight="1"
-				    android:background="@drawable/listview_border"
+				    android:background="@drawable/listview_border_top_corners_round"
 					android:divider="@drawable/listview_divider"
 					android:dividerHeight="1dp"
 					android:visibility="gone"/>
@@ -116,8 +120,8 @@
 				<LinearLayout android:id="@+id/llloadmore"
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
-				    android:padding="10dp"
-				    android:background="@drawable/listview_border"
+				    android:padding="20dp"
+				    android:background="@drawable/listview_border_bottom_corners_round_no_top"
 				    android:visibility="gone">
 				    
 				    <TextView android:layout_width="match_parent"
@@ -151,7 +155,7 @@
 					android:layout_marginTop="15dp"
 					android:cacheColorHint="@android:color/transparent"
 					android:scrollbars="none"
-					android:background="@drawable/listview_border"
+					android:background="@drawable/listview_border_four_corners_round"
 					android:divider="@drawable/listview_divider"
 					android:dividerHeight="1dp"/>"
 			
