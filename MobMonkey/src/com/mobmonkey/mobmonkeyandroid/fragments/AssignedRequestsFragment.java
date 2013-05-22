@@ -165,9 +165,9 @@ public class AssignedRequestsFragment extends MMFragment {
 //						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
 						
 						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+						takeVideoIntent.putExtra("EXTRA_VIDEO_QUALITY", 1);
 						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.3gp")));
-						takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);
+						takeVideoIntent.putExtra("android.intent.extra.durationLimit", 10);
 						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
 						break;
 					default:
