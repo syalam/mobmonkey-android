@@ -63,7 +63,7 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 		if(which == MMSDKConstants.FAVORITES_FRAGMENT_MAP) {
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-			fragmentTransaction.replace(R.id.llfragmentcontainer,fragmentStack.push(new FavoritesMapFragment()));
+//			fragmentTransaction.replace(R.id.llfragmentcontainer,fragmentStack.push(new FavoritesMapFragment()));
 			fragmentTransaction.commit();
 		} else if(which == MMSDKConstants.FAVORITES_FRAGMENT_LIST) {		
 			fragmentManager.beginTransaction().remove(fragmentStack.pop());
@@ -154,18 +154,18 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 	public void onBackPressed() {
 		Log.d(TAG, TAG + "onBackPressed");
 		if(fragmentStack.size() > 1) {
-			if(fragmentStack.peek() instanceof FavoritesMapFragment) {
+//			if(fragmentStack.peek() instanceof FavoritesMapFragment) {
 				// Do nothing?
-			} else {
-				MMFragment mmFragment = fragmentStack.pop();
-				
-				mmFragment.onFragmentBackPressed();
-				
-				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-				fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
-				fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
-				fragmentTransaction.commit();
-			}
+//			} else {
+			MMFragment mmFragment = fragmentStack.pop();
+			
+			mmFragment.onFragmentBackPressed();
+			
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
+			fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
+			fragmentTransaction.commit();
+//			}
 		}
 		
 		moveTaskToBack(true);

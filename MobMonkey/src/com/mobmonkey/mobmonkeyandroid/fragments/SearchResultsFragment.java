@@ -478,6 +478,8 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 				if(obj instanceof String) {
 					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else if(((String) obj).equals(MMSDKConstants.SERVICE_NOT_AVAILABLE)) {
+						Toast.makeText(getActivity(), R.string.toast_service_not_available, Toast.LENGTH_LONG).show();
 					}
 				} else if(obj instanceof Address) {
 					Address locationClicked = (Address) obj;

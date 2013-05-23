@@ -341,8 +341,12 @@ public final class MMSDKConstants {
 	public static final int TIMEOUT_CONNECTION = 10 * 1000;
 	public static final int TIMEOUT_SOCKET = 30 * 1000;
 	
+	// Exception message
 	public static final String CONNECTION_TIMED_OUT = "Connection timed out";
 	public static final String OPERATION_TIMED_OUT = "The operation timed out";
+	public static final String SERVICE_NOT_AVAILABLE = "Service not Available";
+	
+	public static final String NO_GEOCODER_PRESENT = "No Geocoder present";
 	
 	public static final String INTENT_FILTER_DISPLAY_MESSAGE = "com.mobmonkey.mobmonkeyandroid.DISPLAY_MESSAGE";
 }
