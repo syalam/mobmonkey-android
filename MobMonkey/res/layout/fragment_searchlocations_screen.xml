@@ -15,71 +15,76 @@
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:textColor="@android:color/white"
 		android:textStyle="bold"/>
-	
-	<LinearLayout android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical"
-	    android:padding="10dp">
 	    
-	    <LinearLayout android:id="@+id/llcreatehotspot"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:background="@drawable/orange_button_background"
-	        android:padding="15dp">
-	        
-	        <ImageView android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"/>
-	        
-	        <TextView android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_gravity="center"
-	            android:gravity="center"
-	            android:text="@string/tv_create_hot_spot"
-	            android:textAppearance="?android:attr/textAppearanceLarge"
-	            android:textColor="@android:color/white"
-	            android:textStyle="bold"/>
-	        
-	    </LinearLayout>
-	        
-	    <LinearLayout android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-			android:layout_marginTop="10dp"
-			android:orientation="horizontal">
-	        
-	        <ImageButton android:layout_width="60dp"
-	            android:layout_height="match_parent"
-	            android:src="@drawable/icon_tags"/>
-	        
-       		<FrameLayout android:layout_width="match_parent"
+    <LinearLayout android:id="@+id/llcreatehotspot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:background="@drawable/orange_button_background"
+        android:padding="15dp">
+        
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/tv_create_hot_spot"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
+        
+    </LinearLayout>
+    
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/divider"/>
+	    
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+		android:orientation="horizontal"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp">
+        
+        <ImageButton android:id="@+id/ibtags"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/icon_tags"/>
+        
+      		<FrameLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1">
+	
+			<EditText android:id="@+id/etsearch"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_weight="1">
+				android:hint="@string/et_hint_search"
+				android:imeOptions="actionSearch"
+				android:inputType="text"
+				android:paddingLeft="50dp"
+				android:paddingRight="40dp"/>
+				
+			<ImageView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@drawable/icon_search"
+				android:layout_gravity="left|center"
+				android:layout_marginLeft="10dp"/>
+			
+			<ImageButton android:id="@+id/ibclearsearch"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:background="@drawable/et_clear"
+			    android:layout_gravity="right|center"
+			    android:layout_marginRight="10dp"
+			    android:visibility="invisible"/>
 		
-				<EditText android:id="@+id/etsearch"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:hint="@string/et_hint_search"
-					android:imeOptions="actionSearch"
-					android:inputType="text"
-					android:paddingLeft="50dp"/>
-					
-				<ImageView android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:background="@drawable/icon_search"
-					android:layout_marginLeft="10dp"
-					android:layout_gravity="left|center"/>
-			
-			</FrameLayout>
-			
-<!-- 			<Button android:id="@+id/btncancel" -->
-<!-- 				android:layout_width="wrap_content" -->
-<!-- 				android:layout_height="wrap_content" -->
-<!-- 				android:text="@string/ad_btn_cancel" -->
-<!-- 				android:visibility="gone"/> -->
-			
-	    </LinearLayout>
+		</FrameLayout>
 		
-	</LinearLayout>
+    </LinearLayout>
 	
 	<ImageView android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -118,7 +123,7 @@
 				<LinearLayout android:id="@+id/llloadmore"
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
-				    android:padding="20dp"
+				    android:padding="10dp"
 				    android:background="@drawable/listview_border_bottom_corners_round_no_top"
 				    android:visibility="gone">
 				    
@@ -127,11 +132,21 @@
 				        android:layout_gravity="center"
 				        android:gravity="center"
 				        android:text="@string/tv_load_more"
-				        android:textAppearance="?android:attr/textAppearanceMedium"
+				        android:textAppearance="?android:attr/textAppearanceLarge"
 				        android:textColor="@color/dark_gray"
 				        android:textStyle="bold"/>
 				    
 				</LinearLayout>
+				
+				<Button android:id="@+id/btnaddloc"
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_marginTop="10dp"
+    				android:background="@drawable/orange_button_background"
+				    android:text="@string/btn_add_a_location"
+				    android:textAppearance="?android:attr/textAppearanceMedium"
+				    android:textColor="@android:color/white"
+				    android:textStyle="bold"/>
 				
 				<TextView android:id="@+id/tvholdtopanandzoom"
 				    android:layout_width="wrap_content"

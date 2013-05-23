@@ -303,7 +303,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 				}
 				break;
 			case R.id.elvhotspots:
-				nearbyLocationsItemClickListener.onNearbyLocationsItemClick(existingHotSpotsArrayAdapter.getItem(position));
+				nearbyLocationsItemClickListener.onNearbyLocationsItemClick(existingHotSpotsArrayAdapter.getItem(position).toString());
 				break;
 			case R.id.elvloc:
 				if(position == 0) {

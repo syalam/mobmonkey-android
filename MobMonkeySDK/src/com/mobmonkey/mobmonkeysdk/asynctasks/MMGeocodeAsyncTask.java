@@ -20,9 +20,9 @@ import android.os.AsyncTask;
  * @author Dezapp, LLC
  *
  */
-public class MMGeocodeAsyncTask extends AsyncTask<Object, Void, Object> {
-	Context context;
-	MMCallback mmCallback;
+public class MMGeocodeAsyncTask extends AsyncTask<Object, Void, Object> {	
+	private Context context;
+	private MMCallback mmCallback;
 	
 	public MMGeocodeAsyncTask(Context context, MMCallback mmCallback) {
 		this.context = context;

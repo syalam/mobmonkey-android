@@ -36,6 +36,7 @@ public class MMGetAsyncTask extends AsyncTask<HttpGet, Void, String>{
 	
 	@Override
 	protected String doInBackground(HttpGet... params) {
+		stringBuilder = new StringBuilder();
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpParams httpParams = httpClient.getParams();
@@ -49,7 +50,6 @@ public class MMGetAsyncTask extends AsyncTask<HttpGet, Void, String>{
 			
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inStream, "iso-8859-1"), 8);
 			String line = MMSDKConstants.DEFAULT_STRING_EMPTY;
-			stringBuilder = new StringBuilder();
 			while((line = bufferedReader.readLine()) != null) {
 				stringBuilder.append(line + MMSDKConstants.DEFAULT_STRING_NEWLINE);
 			}

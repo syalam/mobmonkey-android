@@ -77,10 +77,10 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener#onNearbyLocationsItemClick(org.json.JSONObject)
 	 */
 	@Override
-	public void onNearbyLocationsItemClick(JSONObject jObj) {
+	public void onNearbyLocationsItemClick(String location) {
 		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
 		Bundle data = new Bundle();
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, location);
 		locationDetailsFragment.setArguments(data);
 		performTransaction(locationDetailsFragment);
 	}
@@ -145,7 +145,11 @@ public class SearchLocationsActivity extends FragmentActivity implements MMOnCre
 	 */
 	@Override
 	public void onExistingHotSpotsItemClick(JSONObject jObj) {
-		
+		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
+		Bundle data = new Bundle();
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+		locationDetailsFragment.setArguments(data);
+		performTransaction(locationDetailsFragment);
 	}
 
 	/* (non-Javadoc)

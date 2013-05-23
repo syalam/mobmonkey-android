@@ -42,7 +42,6 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 	
 	private SupportMapFragment smfLocation;
 	private GoogleMap googleMap;
-	private MapView mapView;
 	
 	/*
 	 * (non-Javadoc)

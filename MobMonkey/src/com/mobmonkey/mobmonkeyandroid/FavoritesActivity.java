@@ -103,10 +103,10 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener#onNearbyLocationsItemClick(org.json.JSONObject)
 	 */
 	@Override
-	public void onNearbyLocationsItemClick(JSONObject jObj) {
+	public void onNearbyLocationsItemClick(String location) {
 		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
 		Bundle data = new Bundle();
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, location);
 		locationDetailsFragment.setArguments(data);
 		performTransaction(locationDetailsFragment);
 	}

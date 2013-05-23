@@ -21,6 +21,7 @@ import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMExistingHotSpotsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMNearbyLocationsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnExistingHotSpotsFragmentCreateHotSpotClickListener;
+import com.mobmonkey.mobmonkeyandroid.listeners.MMOnExistingHotSpotsFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnMasterLocationNearbyLocationsFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
@@ -43,7 +44,7 @@ public class ExistingHotSpotsFragment extends MMFragment implements OnItemClickL
 	
 	private MMExistingHotSpotsArrayAdapter existingHotSpotsArrayAdapter;
 	
-	private MMOnNearbyLocationsItemClickListener nearbyLocationsItemClickListener;
+	private MMOnExistingHotSpotsFragmentItemClickListener existingHotSpotItemClickListener;
 	private MMOnExistingHotSpotsFragmentCreateHotSpotClickListener existingHotSpotsCreateHotSpotClickListener;
 	
 	/* (non-Javadoc)
@@ -75,8 +76,8 @@ public class ExistingHotSpotsFragment extends MMFragment implements OnItemClickL
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof MMOnNearbyLocationsItemClickListener) {
-			nearbyLocationsItemClickListener = (MMOnNearbyLocationsItemClickListener) activity;
+		if(activity instanceof MMOnExistingHotSpotsFragmentItemClickListener) {
+			existingHotSpotItemClickListener = (MMOnExistingHotSpotsFragmentItemClickListener) activity;
 			if(activity instanceof MMOnExistingHotSpotsFragmentCreateHotSpotClickListener) {
 				existingHotSpotsCreateHotSpotClickListener = (MMOnExistingHotSpotsFragmentCreateHotSpotClickListener) activity;
 			}
@@ -88,7 +89,7 @@ public class ExistingHotSpotsFragment extends MMFragment implements OnItemClickL
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		nearbyLocationsItemClickListener.onNearbyLocationsItemClick(existingHotSpotsArrayAdapter.getItem(position));
+		existingHotSpotItemClickListener.onExistingHotSpotsItemClick(existingHotSpotsArrayAdapter.getItem(position));
 	}
 	
 	/* (non-Javadoc)

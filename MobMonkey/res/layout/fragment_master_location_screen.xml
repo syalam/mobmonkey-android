@@ -41,7 +41,7 @@
 			<LinearLayout android:id="@+id/llloadmore"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:padding="20dp"
+				android:padding="10dp"
 				android:background="@drawable/listview_border_bottom_corners_round_no_top">
 			
 				<TextView android:layout_width="match_parent"
@@ -49,7 +49,7 @@
 					android:layout_gravity="center"
 					android:gravity="center"
 					android:text="@string/tv_load_more"
-					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:textAppearance="?android:attr/textAppearanceLarge"
 					android:textStyle="bold"/>
 				    
 			</LinearLayout>

@@ -39,7 +39,19 @@ public class MMScrollView extends ScrollView {
         return super.onTouchEvent(ev);
     }
     
-    /*
+    /* (non-Javadoc)
+	 * @see android.widget.ScrollView#onInterceptTouchEvent(android.view.MotionEvent)
+	 */
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		if(mIsDisable) {
+			return false;
+		} else {
+			return super.onInterceptTouchEvent(ev);
+		}
+	}
+
+	/*
      * (non-Javadoc)
      * @see android.view.View#onScrollChanged(int, int, int, int)
      */

@@ -40,6 +40,7 @@ public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
 	 */
 	@Override
 	protected String doInBackground(HttpPut... params) {
+		stringBuilder = new StringBuilder();
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpParams httpParams = httpClient.getParams();
@@ -48,13 +49,11 @@ public class MMPutAsyncTask  extends AsyncTask<HttpPut, Void, String>{
 			ConnManagerParams.setTimeout(httpParams, MMSDKConstants.TIMEOUT_CONNECTION);
 			
 			HttpResponse httpResponse = httpClient.execute(params[0]);
-//			Log.d(TAG, TAG + "httpResponse: " + httpResponse.)
 			HttpEntity httpEntity = httpResponse.getEntity();
 			InputStream inStream = httpEntity.getContent();
 			
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inStream, "iso-8859-1"), 8);
 			String line = MMSDKConstants.DEFAULT_STRING_EMPTY;
-			stringBuilder = new StringBuilder();
 			while((line = bufferedReader.readLine()) != null) {
 				stringBuilder.append(line + MMSDKConstants.DEFAULT_STRING_NEWLINE);
 			}

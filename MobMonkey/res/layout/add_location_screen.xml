@@ -20,70 +20,98 @@
 		
 		<LinearLayout android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:orientation="vertical">
+			android:orientation="vertical"
+			android:padding="10dp">
 			
 		    <EditText android:id="@+id/etlocationname"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="15dp"
-						android:layout_marginLeft="20dp"
-						android:layout_marginRight="20dp"
-						android:hint="@string/et_hint_location_name"
-						android:inputType="text"/>
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:hint="@string/et_hint_location_name"
+				android:inputType="text"
+				android:maxLines="1"/>
+		    
 		    <EditText android:id="@+id/etcategories"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:layout_marginLeft="20dp"
-						android:layout_marginRight="20dp"
-						android:hint="@string/et_hint_location_categories"
-						android:inputType="text"/>
-		    <EditText android:id="@+id/etstreet"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:layout_marginLeft="20dp"
-						android:layout_marginRight="20dp"
-						android:hint="@string/et_hint_location_street"
-						android:inputType="text"/>
-		    <EditText android:id="@+id/etcity"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:layout_marginLeft="20dp"
-						android:layout_marginRight="20dp"
-						android:hint="@string/et_hint_location_city"
-						android:inputType="text"/>
-		    <EditText android:id="@+id/etstate"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:layout_marginLeft="20dp"
-						android:layout_marginRight="20dp"
-						android:hint="@string/et_hint_location_state"
-						android:inputType="text"/>
-		    <EditText android:id="@+id/etzip"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:layout_marginLeft="20dp"
-						android:layout_marginRight="20dp"
-						android:hint="@string/et_hint_location_zip"
-						android:inputType="text"/>
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:hint="@string/et_hint_location_categories"
+				android:inputType="text"
+				android:maxLines="1"/>
+		    
+		    <LinearLayout android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="10dp"
+		        android:background="@drawable/button_border"
+		        android:orientation="horizontal"
+		        android:padding="10dp">
+		    
+		        <TextView android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_gravity="center_vertical"
+		            android:layout_weight="1"
+		            android:text="Add Address"
+		            android:textAppearance="?android:attr/textAppearanceMedium"/>
+		        
+		        <ToggleButton android:id="@+id/tbaddaddress"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_gravity="center_vertical"
+		            android:checked="false"/>
+		        
+	        </LinearLayout>
+	        
+		    <LinearLayout android:id="@+id/lladdress"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical"
+		        android:visibility="gone">
+		    
+		    	<EditText android:id="@+id/etstreet"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="10dp"
+					android:hint="@string/et_hint_location_street"
+					android:inputType="text"
+					android:maxLines="1"/>
+		    
+		    	<EditText android:id="@+id/etcity"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="10dp"
+					android:hint="@string/et_hint_location_city"
+					android:inputType="text"
+					android:maxLines="1"/>
+		    
+		    	<EditText android:id="@+id/etstate"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="10dp"
+					android:hint="@string/et_hint_location_state"
+					android:inputType="text"
+					android:maxLines="1"/>
+		    
+			    <EditText android:id="@+id/etzip"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="10dp"
+					android:hint="@string/et_hint_location_zip"
+					android:inputType="text"
+					android:maxLines="1"/>
+		    
+		    </LinearLayout>
+		    
 		    <EditText android:id="@+id/etphone"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:layout_marginLeft="20dp"
-						android:layout_marginRight="20dp"
-						android:hint="@string/et_hint_location_phone"
-						android:inputType="phone"/>
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:hint="@string/et_hint_location_phone"
+				android:inputType="phone"
+				android:maxLines="1"/>
 		    
 		    <Button android:id="@+id/btnaddlocation"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:layout_marginLeft="20dp"
-		        android:layout_marginRight="20dp"
 		        android:layout_marginTop="10dp"
 		        android:background="@drawable/orange_button_background"
 		        android:onClick="viewOnClick"

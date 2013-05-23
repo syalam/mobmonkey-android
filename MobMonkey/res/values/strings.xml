@@ -148,21 +148,19 @@
 	<string name="btn_stop">Stop</string>
 	
 	<!-- Search Locations Fragment -->
-	<string name="btn_add_loc">+</string>
-	<string name="tv_title_search">Search</string>
 	<string name="tv_title_search_locations">Search Locations</string>
 	<string name="tv_create_hot_spot">Create Hot Spot</string>
 	<string name="tv_nearby">Nearby</string>
 	<string name="tv_load_more">Load More</string>
 	<string name="tv_hold_to_enable_pan_and_zoom">Hold to Enable Pan and Zoom</string>
 	<string name="tv_hold_to_disable_pan_and_zoom">Hold to Disable Pan and Zoom</string>
-		
-	<string name="et_hint_search">Search</string>
+	<string name="tv_or">OR</string>
 	
-	<string-array name="search_no_category">
-	    <item>Show All Nearby</item>
-	    <item>History</item>
-	</string-array>
+	<string name="btn_add_a_location">Add a Location</string>
+	
+	<string name="et_hint_search">Search</string>
+	<string name="et_hint_city_state">City, State</string>
+	<string name="et_hint_zip_code">Zip Code</string>
 	
 	<string-array name="array_search">
 	    <item>My History</item>
@@ -231,6 +229,7 @@
 	
 	<!-- Categories Fragment -->
 	<string name="tv_title_categories">Categories</string>
+	<string name="btn_add_loc">+</string>
 	
 	<string name="toast_unable_to_load_categories">Unable to load categories</string>
 	
@@ -393,12 +392,14 @@
 	<string name="et_hint_location_zip">Zip</string>
 	<string name="et_hint_location_phone">Phone Number (optional)</string>
 	<string name="btn_add_location">Add Location</string>
-	<string name="ad_no_name">Please enter a name</string>
-	<string name="ad_no_categories">Please select categories</string>
-	<string name="ad_no_street">Please enter an address</string>
-	<string name="ad_no_city">Please enter a city</string>
-	<string name="ad_no_state">Please enter a state</string>
-	<string name="ad_no_zip">Please enter a zip code</string>
+	
+	<string name="ad_title_no_address">No Address</string>
+	<string name="ad_title_no_location_found">No Location Found</string>
+	<string name="ad_message_no_address">You didn\'t enter an address for this location, you you like to use your current position?</string>
+	<string name="ad_message_no_location_found">Could not geocode this address, please fix the address</string>
+	<string name="ad_message_no_name">Please enter a name</string>
+	<string name="ad_message_no_categories">Please select the categories to which this location belongs</string>
+	<string name="ad_btn_current_location">Current Location</string>
 
 	<string name="pd_retrieving_location_information">Retrieving location information&#8230;</string>
 	<string name="pd_adding_location">Adding location&#8230;</string>
