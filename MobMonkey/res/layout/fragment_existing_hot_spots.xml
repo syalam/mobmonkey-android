@@ -18,7 +18,7 @@
    	    android:layout_height="match_parent">
    	
    	    <LinearLayout android:layout_width="match_parent"
-   	        android:layout_height="match_parent"
+   	        android:layout_height="wrap_content"
    	        android:orientation="vertical"
    	        android:padding="10dp">
    	    
@@ -34,9 +34,7 @@
    	        <com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/elvexistinghotspots"
    	            android:layout_width="match_parent"
    	            android:layout_height="wrap_content"
-   	            android:cacheColorHint="@android:color/transparent"
-				android:scrollbars="none"
-				android:background="@drawable/listview_border"
+				android:background="@drawable/listview_border_four_corners_round"
 				android:divider="@drawable/listview_divider"
 				android:dividerHeight="1dp"/>
    	        
@@ -44,7 +42,7 @@
 		   	    android:layout_width="match_parent"
 		   	    android:layout_height="wrap_content"
 				android:layout_marginTop="10dp"
-				android:background="@drawable/listview_border"
+				android:background="@drawable/listview_border_four_corners_round"
 				android:padding="10dp"
 		   	    android:text="@string/btn_create_hot_hyphen_spot"
 		   	    android:textAppearance="?android:attr/textAppearanceMedium"

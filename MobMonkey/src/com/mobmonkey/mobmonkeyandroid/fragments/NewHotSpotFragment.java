@@ -8,12 +8,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.location.Address;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,14 +27,17 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -43,11 +48,10 @@ import com.mobmonkey.mobmonkeyandroid.listeners.MMOnFragmentMultipleBackListener
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMSupportMapFragment;
+import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMGeocoderAdapter;
-import com.mobmonkey.mobmonkeysdk.adapters.MMHotSpotAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMLocationAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
-import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
@@ -64,11 +68,14 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	private SharedPreferences userPrefs;
 	private FragmentManager fragmentManager;
 	private InputMethodManager inputMethodManager;
-	
+		
 	private JSONObject locationInfo;
+	private int requestCode;
 	
 	private ScrollView svHotSpotDetails;
+	private ToggleButton tbUseCurrentLocation;
 	private MMSupportMapFragment smfNewHotSpot;
+	private TextView tvTapOnTheMap;
 	private EditText etName;
 	private EditText etDescription;
 	private EditText etRange;
@@ -89,13 +96,20 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
     	fragmentManager = getFragmentManager();
 		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		
+		requestCode = getArguments().getInt(MMSDKConstants.REQUEST_CODE);
+		
 		View view = inflater.inflate(R.layout.fragment_new_hot_spot, container, false);
 		svHotSpotDetails = (ScrollView) view.findViewById(R.id.svhotspotdetails);
+		tbUseCurrentLocation = (ToggleButton) view.findViewById(R.id.tbusecurrentlocation);
+		tvTapOnTheMap = (TextView) view.findViewById(R.id.tvtaponthemap);
 		etName = (EditText) view.findViewById(R.id.etname);
 		etDescription = (EditText) view.findViewById(R.id.etdescription);
 		etRange = (EditText) view.findViewById(R.id.etrange);
 		btnCreateHotSpot = (Button) view.findViewById(R.id.btncreatehotspot);
 		
+		tvTapOnTheMap.setText(MMUtility.setTextStyleItalic(tvTapOnTheMap.getText().toString()));
+		
+		tbUseCurrentLocation.setOnClickListener(NewHotSpotFragment.this);
 		etName.setOnClickListener(NewHotSpotFragment.this);
 		etDescription.setOnKeyListener(NewHotSpotFragment.this);
 		etRange.setOnTouchListener(NewHotSpotFragment.this);
@@ -123,6 +137,8 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	 */
 	@Override
 	public void onMapClick(LatLng pointClicked) {
+		tbUseCurrentLocation.setClickable(true);
+		tbUseCurrentLocation.setChecked(false);
 		MMGeocoderAdapter.getFromLocation(getActivity(),
 										  new ReverseGeocodeCallback(),
 										  pointClicked.latitude,
@@ -166,6 +182,12 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	@Override
 	public void onClick(View view) {
 		switch(view.getId()) {
+			case R.id.tbusecurrentlocation:
+				tbUseCurrentLocation.setClickable(false);
+				if(newHotSpotMarker != null) {
+					newHotSpotMarker.remove();
+				}
+				break;
 			case R.id.btncreatehotspot:
 				try {
 					checkFields();
@@ -209,6 +231,8 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 			FragmentTransaction transaction = fragmentManager.beginTransaction();
 			transaction.remove(smfNewHotSpot);
 			transaction.commitAllowingStateLoss();
+			Log.d(TAG, TAG + "fragmentManager: " + fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG));
+			Log.d(TAG, TAG + "transaction: " + transaction.isEmpty());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -235,8 +259,10 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	 * 
 	 */
 	private void getMMSupportMapFragment() {
+		Log.d(TAG, TAG + "getSupportMapFragment");
 		smfNewHotSpot = (MMSupportMapFragment) fragmentManager.findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG);
 		if(smfNewHotSpot == null) {
+			Log.d(TAG, TAG + "smfNewHotSpot is null");
 			smfNewHotSpot = new MMSupportMapFragment() {
 				/* (non-Javadoc)
 				 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
@@ -283,25 +309,25 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 	 */
 	private void checkFields() throws JSONException {
 		if(checkName()) {
-			MMHotSpotAdapter.createSubLocationWithLocationInfo(new CreateHotSpotCallback(),
-															   etName.getText().toString(),
-															   etDescription.getText().toString(),
-															   etRange.getText().toString(),
-															   MMSDKConstants.DEFAULT_STRING_EMPTY,
-															   getLatitude(),
-															   getLongitude(),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_CATEGORY_IDS),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_COUNTRY_CODE).toLowerCase(),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_LOCALITY),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_PHONE_NUMBER),
-															   MMConstants.PROVIDER_ID,
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_REGION),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_WEBSITE),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
-															   locationInfo.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
-															   MMConstants.PARTNER_ID,
-															   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-															   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMLocationAdapter.createHotSpot(new CreateHotSpotCallback(),
+											etName.getText().toString(),
+											etDescription.getText().toString(),
+											etRange.getText().toString(),
+											MMSDKConstants.DEFAULT_STRING_EMPTY,
+											getLatitude(),
+											getLongitude(),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_CATEGORY_IDS),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_COUNTRY_CODE).toLowerCase(),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_LOCALITY),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_PHONE_NUMBER),
+											MMConstants.PROVIDER_ID,
+											locationInfo.getString(MMSDKConstants.JSON_KEY_REGION),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_WEBSITE),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
+											locationInfo.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
+											MMConstants.PARTNER_ID,
+											userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+											userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_creating_hot_spot));
@@ -389,6 +415,30 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 		newHotSpotMarker.showInfoWindow();
     }
     
+    /**
+     * 
+     * @param result
+     */
+    private void handleCreateHotSpotCallback(String result) {
+    	try {
+	    	JSONObject jObj = new JSONObject(result);
+	    	Log.d(TAG, TAG + "requestCode: " + requestCode);
+	    	if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+				if(requestCode == MMSDKConstants.REQUEST_CODE_MASTER_LOCATION || requestCode == MMSDKConstants.REQUEST_CODE_EXISTING_HOT_SPOTS) {
+					fragmentMultipleBackListener.onFragmentMultipleBack();
+				} else if(requestCode == MMSDKConstants.REQUEST_CODE_LOCATION_DETAILS) {
+					getActivity().onBackPressed();
+				}
+	    	} else if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_UNAUTHORIZED_EMAIL)){
+	    		Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
+	    	} else {
+	    		Toast.makeText(getActivity(), R.string.toast_error_create_hot_spot, Toast.LENGTH_SHORT).show();
+	    	}
+    	} catch (JSONException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
 	/**
 	 * 
 	 * @author Dezapp, LLC
@@ -403,6 +453,8 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 				if(obj instanceof String) {
 					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 						Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else if(((String) obj).equals(MMSDKConstants.SERVICE_NOT_AVAILABLE)) {
+						Toast.makeText(getActivity(), R.string.toast_service_not_available, Toast.LENGTH_LONG).show();
 					}
 				} else if(obj instanceof Address) {
 					locationClicked = (Address) obj;
@@ -428,7 +480,7 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(getActivity(), getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
-					fragmentMultipleBackListener.onFragmentMultipleBack();
+					handleCreateHotSpotCallback((String) obj);
 				}
 			}
 		}

@@ -35,6 +35,7 @@ import com.mobmonkey.mobmonkeyandroid.listeners.MMShareMediaOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMVideoPlayOnClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.OnLocationNameClickFragmentListener;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
+import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMImageLoaderAdapter;
@@ -52,11 +53,11 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  */
 
 public class AnsweredRequestsFragment extends MMFragment {
-	private static final String TAG = "AnsweredRequestsFragment";
-	private ListView lvAnsweredRequests;
-	MMMediaItem[] answeredRequestItems;
+	private static final String TAG = "AnsweredRequestsFragment: ";
+	
+	private MMExpandedListView elvAnsweredRequests;
+	private MMMediaItem[] answeredRequestItems;
 	private SharedPreferences userPrefs;
-	Location location;
 	private MMAnsweredRequestsArrayAdapter answeredRequestsArrayAdapter;
 	private OnLocationNameClickFragmentListener locationNameClickListener;
 	
@@ -73,8 +74,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 											 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		
 		View view = inflater.inflate(R.layout.fragment_answeredrequests_screen, container, false);
-		lvAnsweredRequests = (ListView) view.findViewById(R.id.lvansweredrequests);
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
+		elvAnsweredRequests = (MMExpandedListView) view.findViewById(R.id.elvansweredrequests);
 		return view;
 	}
 	
@@ -122,10 +122,12 @@ public class AnsweredRequestsFragment extends MMFragment {
 				Log.d(TAG, TAG + "mediaType: " + mediaType);
 				if(mediaType == MMSDKConstants.MEDIA_TYPE_IMAGE) {
 					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i),
+												   getActivity().getWindowManager().getDefaultDisplay(),
 												   media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL));
 					answeredRequestItem.setIsImage(true);
 				} else if(mediaType == MMSDKConstants.MEDIA_TYPE_VIDEO) {
 					MMImageLoaderAdapter.loadImage(new LoadImageCallback(i),
+												   getActivity().getWindowManager().getDefaultDisplay(),
 												   media.getString(MMSDKConstants.JSON_KEY_THUMB_URL));
 					answeredRequestItem.setIsVideo(true);
 					answeredRequestItem.setPlayOnClickListener(new MMVideoPlayOnClickListener(getActivity(), media.getString(MMSDKConstants.JSON_KEY_MEDIA_URL)));
@@ -157,7 +159,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 //		tempItem = answeredRequestItems;
 		
 		answeredRequestsArrayAdapter = new MMAnsweredRequestsArrayAdapter(getActivity(), R.layout.listview_row_answered_requests, answeredRequestItems);
-		lvAnsweredRequests.setAdapter(answeredRequestsArrayAdapter);
+		elvAnsweredRequests.setAdapter(answeredRequestsArrayAdapter);
 		
 		if(answeredRequests.length() < 1) {
 			displayAlertNoMoreAnsweredRequests();

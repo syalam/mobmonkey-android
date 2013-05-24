@@ -36,11 +36,11 @@ public class MMOpenRequestsArrayAdapter extends ArrayAdapter<MMOpenRequestsItem>
 			openRequestsRow = inflater.inflate(layoutResourceId, parent, false);
 			
 			vHolder = new ViewHolder();
-			vHolder.tvTitle = (TextView) openRequestsRow.findViewById(R.id.tvopenrequests_title);
-			vHolder.tvDis = (TextView) openRequestsRow.findViewById(R.id.tvopenrequests_dist);
-			vHolder.tvMessage = (TextView) openRequestsRow.findViewById(R.id.tvopenrequests_message);
-			vHolder.tvTime = (TextView) openRequestsRow.findViewById(R.id.tvopenrequests_time);
-			vHolder.ivIcon = (ImageView) openRequestsRow.findViewById(R.id.ivopenrequests_icon);
+			vHolder.tvTitle = (TextView) openRequestsRow.findViewById(R.id.tvopenrequesttitle);
+			vHolder.tvDis = (TextView) openRequestsRow.findViewById(R.id.tvopenrequestdist);
+			vHolder.tvMessage = (TextView) openRequestsRow.findViewById(R.id.tvopenrequestmessage);
+			vHolder.tvTime = (TextView) openRequestsRow.findViewById(R.id.tvopenrequesttime);
+			vHolder.ivIcon = (ImageView) openRequestsRow.findViewById(R.id.ivopenrequesticon);
 			
 			openRequestsRow.setTag(vHolder);
 		} else {

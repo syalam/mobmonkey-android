@@ -10,5 +10,5 @@ import org.json.JSONObject;
 public interface MMOnCreateHotSpotFragmentClickListener {
 	public void onCreateHotSpotClick(JSONArray jArr);
 	
-	public void onCreateHotSpotClick(JSONObject jObj);
+	public void onCreateHotSpotClick(JSONObject jObj, int requestCode);
 }

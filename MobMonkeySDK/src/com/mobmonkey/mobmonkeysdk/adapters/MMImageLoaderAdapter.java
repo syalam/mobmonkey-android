@@ -1,8 +1,6 @@
 package com.mobmonkey.mobmonkeysdk.adapters;
 
-import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
+import android.view.Display;
 
 import com.mobmonkey.mobmonkeysdk.asynctasks.MMLoadImageAsyncTask;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -27,8 +25,9 @@ public final class MMImageLoaderAdapter {
 	 * @param imageUrl
 	 */
 	public static void loadImage(MMCallback mmCallback,
+								 Display display,
 								 String imageUrl) {
-		new MMLoadImageAsyncTask(mmCallback).execute(imageUrl);
+		new MMLoadImageAsyncTask(mmCallback, display).execute(imageUrl);
 	}
 	
 //	/**

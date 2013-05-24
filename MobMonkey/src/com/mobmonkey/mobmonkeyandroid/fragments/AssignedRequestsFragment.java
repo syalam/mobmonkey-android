@@ -20,7 +20,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -36,11 +35,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.mobmonkey.mobmonkeyandroid.VideoRecorderActivity;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.arrayadapters.MMAssignedRequestsArrayAdapter;
 import com.mobmonkey.mobmonkeyandroid.arrayadaptersitems.MMAssignedRequestsItem;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
+import com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeyandroid.utils.MMUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMRequestAdapter;
@@ -62,7 +61,7 @@ public class AssignedRequestsFragment extends MMFragment {
 	private SharedPreferences.Editor userPrefsEditor;
 	
 	private Location location;
-	private ListView lvAssignedRequests;
+	private MMExpandedListView elvAssignedRequests;
 	private JSONArray assignedRequests;
 	private MMAssignedRequestsArrayAdapter arrayAdapter;
 	private int clickedPosition;
@@ -77,7 +76,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		userPrefsEditor = userPrefs.edit();
 		
 		View view = inflater.inflate(R.layout.fragment_assignedrequests_screen, container, false);
-		lvAssignedRequests = (ListView) view.findViewById(R.id.lvassignedrequests);
+		elvAssignedRequests = (MMExpandedListView) view.findViewById(R.id.elvassignedrequests);
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
 		try {
@@ -85,6 +84,9 @@ public class AssignedRequestsFragment extends MMFragment {
 												 MMConstants.PARTNER_ID,
 												 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
 												 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMProgressDialog.displayDialog(getActivity(),
+										   MMSDKConstants.DEFAULT_STRING_EMPTY,
+										   getString(R.string.pd_retrieving_assigned_requests));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -121,14 +123,7 @@ public class AssignedRequestsFragment extends MMFragment {
 				item.message = jObj.getString(MMSDKConstants.JSON_KEY_MESSAGE);
 			}
 			
-			//date can be null. leave time as a blank string if its null
-			if(jObj.getString(MMSDKConstants.JSON_KEY_REQUEST_DATE).compareTo(MMSDKConstants.DEFAULT_STRING_NULL) == 0) {
-				item.time = MMSDKConstants.DEFAULT_STRING_EMPTY;
-			}
-			else {
-				item.time = MMUtility.getDate(jObj.getLong(MMSDKConstants.JSON_KEY_REQUEST_DATE), "MMMM dd hh:mma");
-			}
-			
+			item.time = jObj.isNull(MMSDKConstants.JSON_KEY_ASSIGNED_DATE) ? item.time = MMSDKConstants.DEFAULT_STRING_EMPTY : MMUtility.getDate(jObj.getLong(MMSDKConstants.JSON_KEY_ASSIGNED_DATE), MMSDKConstants.DATE_FORMAT_MMMM_DD_HH_SEMICOLON_MMA);
 			item.dis = MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + getString(R.string.miles);
 			item.mediaType = jObj.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE);
 			
@@ -150,6 +145,11 @@ public class AssignedRequestsFragment extends MMFragment {
 			try {
 				JSONObject data = assignedRequests.getJSONObject(position);
 				
+				File mmDir = new File(MMSDKConstants.MOBMONKEY_DIRECTORY);
+//				Log.d(TAG, TAG + "mmDir exists: " + mmDir.exists());
+				if(!mmDir.exists()) {
+					mmDir.mkdirs();
+				}
 				switch(data.getInt(MMSDKConstants.JSON_KEY_MEDIA_TYPE)) {
 					// Image request
 					case 1:
@@ -162,17 +162,12 @@ public class AssignedRequestsFragment extends MMFragment {
 						break;
 					// Video request
 					case 2:
-						File mmDir = new File(MMSDKConstants.MOBMONKEY_DIRECTORY);
-//						Log.d(TAG, TAG + "mmDir exists: " + mmDir.exists());
-						if(!mmDir.exists()) {
-							mmDir.mkdirs();
-						}
 //						Log.d(TAG, TAG + "video file: " + new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.mp4").getAbsolutePath());
 //						Intent takeVideoIntent = new Intent(getActivity(), VideoRecorderActivity.class);
 //						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
 						
 						Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-						takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+						takeVideoIntent.putExtra("EXTRA_VIDEO_QUALITY", 1);
 						takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmvideo.3gp")));
 						takeVideoIntent.putExtra("android.intent.extra.durationLimit", 10);
 						startActivityForResult(takeVideoIntent, MMSDKConstants.REQUEST_CODE_VIDEO);
@@ -208,7 +203,7 @@ public class AssignedRequestsFragment extends MMFragment {
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 2;
 			Bitmap mImageBitmap = BitmapFactory.decodeFile(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.jpg", options);
-			mImageBitmap = scaleDownBitmap(mImageBitmap, 200, getActivity());
+			//mImageBitmap = scaleDownBitmap(mImageBitmap, 200, getActivity());
 			
 			// encode image to Base64 String
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -237,7 +232,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {		    
 		    try {
 		    	// encode to base64
-		    	File videoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
+		    	File videoFile = new File(MMSDKConstants.MOBMONKEY_DIRECTORY, MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
 		    	if(!videoFile.exists()) {
 		    		videoFile.mkdir();
 		    	}
@@ -339,7 +334,7 @@ public class AssignedRequestsFragment extends MMFragment {
 							Toast.makeText(getActivity(), R.string.toast_uploaded_assigned_request, Toast.LENGTH_LONG).show();
 						
 							// remove recorded video file
-							File mmVideoFile = new File(MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
+							File mmVideoFile = new File(MMSDKConstants.MOBMONKEY_DIRECTORY, MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
 							if(mmVideoFile.exists()) {
 								mmVideoFile.delete();
 							} else {
@@ -357,8 +352,8 @@ public class AssignedRequestsFragment extends MMFragment {
 							assignedRequests = newArray;
 							
 							arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
-							lvAssignedRequests.setAdapter(arrayAdapter);
-							lvAssignedRequests.invalidate();
+							elvAssignedRequests.setAdapter(arrayAdapter);
+							elvAssignedRequests.invalidate();
 							
 							if(newArray.length() < 1) {
 								displayAlertNoMoreAssignedRequests();
@@ -384,6 +379,8 @@ public class AssignedRequestsFragment extends MMFragment {
 	private class AssignedRequestCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
+			MMProgressDialog.dismissDialog();
+			
 			if(obj != null) {
 				Log.d(TAG, "AssignedRequest: " + (String) obj);
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
@@ -392,8 +389,9 @@ public class AssignedRequestsFragment extends MMFragment {
 					try {
 						assignedRequests = new JSONArray((String) obj);
 						arrayAdapter = new MMAssignedRequestsArrayAdapter(getActivity(), R.layout.listview_row_assigned_requests, getAssignedRequestItems());
-						lvAssignedRequests.setAdapter(arrayAdapter);
-						lvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
+						elvAssignedRequests.setAdapter(arrayAdapter);
+						elvAssignedRequests.setVisibility(View.VISIBLE);
+						elvAssignedRequests.setOnItemClickListener(new onAssignedRequestsClick());
 					} catch (JSONException e) {
 						e.printStackTrace();
 					} catch (ParseException e) {
@@ -402,17 +400,5 @@ public class AssignedRequestsFragment extends MMFragment {
 				}
 			}
 		}
-	}
-	
-	public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
-
-		final float densityMultiplier = context.getResources().getDisplayMetrics().density;        
-
-		int h= (int) (newHeight*densityMultiplier);
-		int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
-
-		photo = Bitmap.createScaledBitmap(photo, w, h, true);
-
-		return photo;
 	}
 }

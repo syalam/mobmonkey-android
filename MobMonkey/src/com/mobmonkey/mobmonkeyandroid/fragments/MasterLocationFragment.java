@@ -54,7 +54,7 @@ public class MasterLocationFragment extends MMFragment implements OnItemClickLis
 		
 		elvNearbyLocations.setOnItemClickListener(MasterLocationFragment.this);
 		llLoadMore.setOnClickListener(MasterLocationFragment.this);
-		
+		Log.d(TAG, TAG + "fragmentManager: " + getFragmentManager().findFragmentByTag(MMSDKConstants.MMSUPPORT_MAP_FRAGMENT_TAG));
 		try {
 			if(!getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_NEARBY_LOCATIONS).equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 				nearbyLocations = new JSONArray(getArguments().getString(MMSDKConstants.KEY_INTENT_EXTRA_NEARBY_LOCATIONS));
@@ -86,7 +86,7 @@ public class MasterLocationFragment extends MMFragment implements OnItemClickLis
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		masterLocationNearbyLocationsItemClickListener.onMasterLocationNearbyLocationsItemClick(nearbyLocationsArrayAdapter.getItem(position));
+		masterLocationNearbyLocationsItemClickListener.onMasterLocationNearbyLocationsItemClick(nearbyLocationsArrayAdapter.getItem(position), MMSDKConstants.REQUEST_CODE_MASTER_LOCATION);
 	}
 
 	/* (non-Javadoc)

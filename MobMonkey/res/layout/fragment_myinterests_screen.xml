@@ -19,14 +19,23 @@
 	    
 	</RelativeLayout>
 
-	<ListView android:id="@+id/lvinterests"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:layout_margin="10dp"
-	    android:background="@drawable/listview_border"
-	    android:cacheColorHint="@android:color/transparent"
-	    android:divider="@drawable/listview_divider"
-	    android:dividerHeight="1dp"
-	    android:scrollbars="none"/>
+	<ScrollView android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+		
+		<LinearLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="10dp"
+			android:orientation="vertical">
+    
+			<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/elvinterests"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:background="@drawable/listview_border_four_corners_round"
+			    android:divider="@drawable/listview_divider"
+			    android:dividerHeight="1dp"/>
+			
+		</LinearLayout>
+		
+	</ScrollView>
 	
 </LinearLayout>

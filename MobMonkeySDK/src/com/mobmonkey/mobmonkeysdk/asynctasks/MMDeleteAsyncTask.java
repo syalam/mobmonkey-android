@@ -35,6 +35,7 @@ public class MMDeleteAsyncTask extends AsyncTask<HttpDelete, Void, String>{
 	
 	@Override
 	protected String doInBackground(HttpDelete... http) {
+		stringBuilder = new StringBuilder();
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpParams httpParams = httpClient.getParams();
@@ -48,7 +49,6 @@ public class MMDeleteAsyncTask extends AsyncTask<HttpDelete, Void, String>{
 			
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inStream, "iso-8859-1"), 8);
 			String line = MMSDKConstants.DEFAULT_STRING_EMPTY;
-			stringBuilder = new StringBuilder();
 			while((line = bufferedReader.readLine()) != null) {
 				stringBuilder.append(line + MMSDKConstants.DEFAULT_STRING_NEWLINE);
 			}

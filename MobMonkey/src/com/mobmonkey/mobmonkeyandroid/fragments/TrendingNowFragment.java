@@ -40,7 +40,6 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	
 	private SharedPreferences userPrefs;
 	
-//	private String categoryIds;
 	private MMTrendingItem[] mmTrendingItem;
 	
 	private ListView lvTrending;
@@ -63,6 +62,10 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		return view;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onAttach(android.app.Activity)
+	 */
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -87,9 +90,6 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long id) {
-//		MMProgressDialog.displayDialog(getActivity(), MMSDKConstants.DEFAULT_STRING_EMPTY, getString(R.string.pd_loading) + 
-//				MMSDKConstants.DEFAULT_STRING_SPACE + ((TextView) view.findViewById(R.id.tvtrending)).getText().toString() + 
-//				getString(R.string.pd_ellipses));
 		switch (position) {
 			// bookmarks
 			case 0:
@@ -135,44 +135,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		arrayAdapter = new MMTrendingArrayAdapter(getActivity(), R.layout.listview_row_trending, mmTrendingItem);
 		lvTrending.setAdapter(arrayAdapter);
 		lvTrending.setOnItemClickListener(TrendingNowFragment.this);
-		
-//		try {
-//			JSONObject categories = new JSONObject(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY));
-//			findTopTenCategoryIds(categories.toJSONArray(categories.names()));
-//		} catch (JSONException ex) {
-//			ex.printStackTrace();
-//		}
 	}
-	
-//	/**
-//	 * 
-//	 * @return
-//	 * @throws JSONException
-//	 */
-//	private void findTopTenCategoryIds(JSONArray categories) throws JSONException {
-//		categoryIds = MMSDKConstants.DEFAULT_STRING_EMPTY;
-//		
-//		JSONArray topTenCategories = new JSONArray();
-//		
-//		FindTopTen:
-//		for(int i = 0; i < categories.length(); i++) {
-//			JSONArray jArr = categories.getJSONArray(i);
-//			for(int j = 0; j < jArr.length(); j++) {
-//				if(jArr.getJSONObject(j).getString(MMSDKConstants.JSON_KEY_PARENTS).compareTo("432") == 0) {
-//					topTenCategories.put(categories.getJSONArray(i));
-//				}
-//				if(topTenCategories.length() == 10) {
-//					break FindTopTen;
-//				}
-//			}
-//		}
-//		
-//		for(int i = 0; i < topTenCategories.length(); i++) {
-//			for(int j = 0; j < topTenCategories.getJSONArray(i).length(); j++) {
-//				categoryIds += topTenCategories.getJSONArray(i).getJSONObject(j).getString(MMSDKConstants.JSON_KEY_CATEGORY_ID) + ",";
-//			}
-//		}
-//	}
 	
 	/**
 	 * 
@@ -189,6 +152,11 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 		}
 	}
 	
+	/**
+	 * 
+	 * @param jObj
+	 * @throws JSONException
+	 */
 	private void setTrendingCounts(JSONObject jObj) throws JSONException {
 		int favoritesCount = jObj.getInt(MMSDKConstants.JSON_KEY_BOOKMARK_COUNT);
 		int myInterestsCount = jObj.getInt(MMSDKConstants.JSON_KEY_INTEREST_COUNT);
