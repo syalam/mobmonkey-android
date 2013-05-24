@@ -28,7 +28,7 @@ public final class MMSDKConstants {
 	public static final String DEFAULT_STRING_SPACE = " ";
 	public static final int DEFAULT_INT = -1;
 	public static final int DEFAULT_INT_ZERO = 0;
-	public static final double DEFAULT_DOUBLE = 1.0d;
+	public static final double DEFAULT_DOUBLE = -1.0d;
 	public static final double DEFAULT_DOUBLE_ZERO = 0.0d;
 
 	public static final String DECIMAL_FORMAT_SIX = "#.######";
@@ -40,7 +40,8 @@ public final class MMSDKConstants {
 	public static final String TEST_MOBMONKEY_GCM_URL = "http://staging.mobmonkey.com";
 	
 	public static final String MOBMONKEY_DIRECTORY = Environment.getExternalStorageDirectory() + File.separator + "MobMonkey";
-	public static final String MOBMONKEY_RECORDED_VIDEO_FILENAME = Environment.getExternalStorageDirectory() + File.separator + "MobMonkey" + File.separator + "mmvideo.3gp";
+	public static final String MOBMONKEY_RECORDED_VIDEO_FILENAME = "mmvideo.3gp";
+	public static final String MOBMONKEY_RECORDED_VIDEO_FILEPATH = Environment.getExternalStorageDirectory() + File.separator + "MobMonkey" + File.separator + "mmvideo.3gp";
 	
 	// Uri path values
 	public static final String URI_PATH_ASSIGNEDREQUESTS = "assignedrequests";
@@ -143,6 +144,7 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_INTERESTS = "Interests";
 	public static final String KEY_INTENT_EXTRA_NEARBY_LOCATIONS = "Nearby locations";
 	public static final String KEY_INTENT_EXTRA_RANGE = "Range";
+	public static final String KEY_INTENT_EXTRA_REQUEST_CODE = "Request code";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING = "Repeating";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_REPEATING_RATE = "Repeating rate";
 	public static final String KEY_INTENT_EXTRA_SCHEDULE_REQUEST_TIME = "Schedule request";
@@ -203,8 +205,9 @@ public final class MMSDKConstants {
 	public static final String TWITTER_OAUTH_VERIFIER = "oauth_verifier";
 	
 	// MobMonkey server response status values
-	public static final String RESPONSE_STATUS_SUCCESS = "Success";
 	public static final String RESPONSE_STATUS_FAILURE = "Failure";
+	public static final String RESPONSE_STATUS_SUCCESS = "Success";
+	public static final String RESPONSE_STATUS_UNAUTHORIZED_EMAIL = "Unauthorized or need to confirm email";
 	public static final String RESPONSE_ID_SUCCESS = "200";
 	public static final String RESPONSE_ID_NOT_FOUND = "404";
 	public static final String RESPONSE_ID_BAD_REQUEST = "500";	
@@ -219,7 +222,10 @@ public final class MMSDKConstants {
 	public static final int REQUEST_CODE_SIGN_UP_TWITTER = 2003;
 	public static final int REQUEST_CODE_TURN_ON_GPS_LOCATION = 5000;
 	public static final int REQUEST_CODE_ADD_LOCATION = 6000;
-	public static final int REQUEST_CODE_RANGE = 8000;
+	public static final int REQUEST_CODE_MASTER_LOCATION = 8000;
+	public static final int REQUEST_CODE_EXISTING_HOT_SPOTS = 8001;
+	public static final int REQUEST_CODE_LOCATION_DETAILS = 8002;
+	public static final int REQUEST_CODE_RANGE = 8500;
 	public static final int REQUEST_CODE_IMAGE = 10000;
 	public static final int REQUEST_CODE_VIDEO = 10001;
 	public static final int REQUEST_CODE_ADD_MESSAGE = 100000;
@@ -234,6 +240,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_ACCEPTED = "accepted";
 	public static final String JSON_KEY_ADDRESS = "address";
 	public static final String JSON_KEY_ADDRESS_EXT = "address_ext";
+	public static final String JSON_KEY_ASSIGNED_DATE = "assignedDate";
 	public static final String JSON_KEY_ASSIGNED_REQUESTS = "assignedrequests";
 	public static final String JSON_KEY_ASSIGNED_READ_REQUESTS = "assignedReadRequests";
 	public static final String JSON_KEY_ASSIGNED_UNREAD_REQUESTS = "assignedUnreadRequests";
@@ -266,6 +273,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_MEDIA_TYPE = "mediaType";
 	public static final String JSON_KEY_MEDIA_URL = "mediaURL";
 	public static final String JSON_KEY_MESSAGE = "message";
+	public static final String JSON_KEY_MESSAGE_URL = "messageUrl";
 	public static final String JSON_KEY_MONKEYS = "monkeys";	
 	public static final String JSON_KEY_NAME = "name";
 	public static final String JSON_KEY_NAME_OF_LOCATION = "nameOfLocation";
@@ -289,6 +297,7 @@ public final class MMSDKConstants {
 	public static final String JSON_KEY_SCHEDULE_DATE = "scheduleDate";
 	public static final String JSON_KEY_STATUS = "status";
 	public static final String JSON_KEY_SUB_LOCATIONS = "subLocations";
+	public static final String JSON_KEY_SUBMITTER_EMAIL = "submitterEmail";
 	public static final String JSON_KEY_THUMB_URL = "thumbURL";
 	public static final String JSON_KEY_TOP_VIEWED_COUNT = "topviewedCount";
 	public static final String JSON_KEY_TOTAL_ITEMS = "totalItems";
@@ -332,8 +341,12 @@ public final class MMSDKConstants {
 	public static final int TIMEOUT_CONNECTION = 10 * 1000;
 	public static final int TIMEOUT_SOCKET = 30 * 1000;
 	
+	// Exception message
 	public static final String CONNECTION_TIMED_OUT = "Connection timed out";
 	public static final String OPERATION_TIMED_OUT = "The operation timed out";
+	public static final String SERVICE_NOT_AVAILABLE = "Service not Available";
+	
+	public static final String NO_GEOCODER_PRESENT = "No Geocoder present";
 	
 	public static final String INTENT_FILTER_DISPLAY_MESSAGE = "com.mobmonkey.mobmonkeyandroid.DISPLAY_MESSAGE";
 }

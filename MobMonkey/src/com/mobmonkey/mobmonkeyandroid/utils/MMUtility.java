@@ -12,7 +12,10 @@ import org.json.JSONObject;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.location.Location;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -35,42 +38,46 @@ public final class MMUtility {
 	 * @return
 	 * @throws JSONException
 	 */
-	public static JSONArray filterSubLocations(String result) throws JSONException {
-		JSONArray jArr = new JSONArray(result);
+	public static JSONArray filterSubLocations(String result) {
 		ArrayList<JSONObject> locations = new ArrayList<JSONObject>();
-		ArrayList<MMSubLocations> subLocations = new ArrayList<MMSubLocations>();
-		
-		for(int i = 0; i < jArr.length(); i++) {
-			JSONObject jObj = jArr.getJSONObject(i);
-			if(jObj.isNull(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID)) {
-				locations.add(jObj);
-			} else {
-				String parentLocationId = jObj.getString(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID);
-				boolean sameParentLocationId = false;
-				for(int j = 0; j < subLocations.size(); j++) {
-					if(subLocations.get(j).parentLocationId.equals(parentLocationId)) {
-						subLocations.get(j).subLocations.put(jObj);
-						sameParentLocationId = true;
+		try {
+			JSONArray jArr = new JSONArray(result);
+			ArrayList<MMSubLocations> subLocations = new ArrayList<MMSubLocations>();
+			
+			for(int i = 0; i < jArr.length(); i++) {
+				JSONObject jObj = jArr.getJSONObject(i);
+				if(jObj.isNull(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID)) {
+					locations.add(jObj);
+				} else {
+					String parentLocationId = jObj.getString(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID);
+					boolean sameParentLocationId = false;
+					for(int j = 0; j < subLocations.size(); j++) {
+						if(subLocations.get(j).parentLocationId.equals(parentLocationId)) {
+							subLocations.get(j).subLocations.put(jObj);
+							sameParentLocationId = true;
+							break;
+						}
+					}
+					if(!sameParentLocationId) {
+						MMSubLocations mmSubLocations = new MMSubLocations();
+						mmSubLocations.parentLocationId = parentLocationId;
+						mmSubLocations.subLocations.put(jObj);
+						subLocations.add(mmSubLocations);
+					}
+				}
+			}
+			
+			for(int i = 0; i < subLocations.size(); i++) {
+				String parentLocationId = subLocations.get(i).parentLocationId;
+				for(int j = 0; j < locations.size(); j++) {
+					if(locations.get(j).getString(MMSDKConstants.JSON_KEY_LOCATION_ID).equals(parentLocationId)) {
+						locations.get(j).put(MMSDKConstants.JSON_KEY_SUB_LOCATIONS, subLocations.get(i).subLocations);
 						break;
 					}
 				}
-				if(!sameParentLocationId) {
-					MMSubLocations mmSubLocations = new MMSubLocations();
-					mmSubLocations.parentLocationId = parentLocationId;
-					mmSubLocations.subLocations.put(jObj);
-					subLocations.add(mmSubLocations);
-				}
 			}
-		}
-		
-		for(int i = 0; i < subLocations.size(); i++) {
-			String parentLocationId = subLocations.get(i).parentLocationId;
-			for(int j = 0; j < locations.size(); j++) {
-				if(locations.get(j).getString(MMSDKConstants.JSON_KEY_LOCATION_ID).equals(parentLocationId)) {
-					locations.get(j).put(MMSDKConstants.JSON_KEY_SUB_LOCATIONS, subLocations.get(i).subLocations);
-					break;
-				}
-			}
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 		
 		return new JSONArray(locations);
@@ -133,6 +140,18 @@ public final class MMUtility {
 		}
 		
 		return expiryDate;
+	}
+	
+	/**
+	 * Set text with the stle italic. Samsung Galaxy devices does not have the italic font pre-installed, need this method to set text italic.
+	 * @param text
+	 * @return
+	 */
+	public static CharSequence setTextStyleItalic(String text) {
+		StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
+		SpannableString spannableString = new SpannableString(text);
+		spannableString.setSpan(styleSpan, 0, text.length(), 0);
+		return spannableString;
 	}
 	
 	/**

@@ -38,16 +38,53 @@
 		    android:textStyle="bold"
 		    android:textSize="22sp"
 			android:textColor="@android:color/white"/>
+		
+		<Button android:id="@+id/btncancel"
+			android:layout_width="wrap_content"
+			android:layout_height="33dp"
+			android:layout_centerVertical="true"
+			android:layout_alignParentRight="true"
+			android:background="@drawable/nav_bar_button_blank"
+			android:layout_marginRight="10dp"
+			android:paddingLeft="3dp"
+			android:paddingRight="5dp"
+			android:paddingBottom="4dp"
+			android:text="@string/ad_btn_cancel"
+			android:textStyle="bold"
+			android:textColor="@android:color/white"
+			android:visibility="invisible"/>
 	    
 	</RelativeLayout>
 
-	<ListView android:id="@+id/lvbookmarks"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:layout_margin="0dp"
-	    android:scrollbars="none"
-	    android:background="@drawable/listview_border"
-		android:divider="@drawable/listview_divider"
-		android:dividerHeight="1dp"/>
+	<FrameLayout android:layout_width="match_parent"
+	    android:layout_height="match_parent">
+	
+    	<LinearLayout android:id="@+id/llfavoritesmap"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:visibility="invisible"/>
+	    
+		<ScrollView android:id="@+id/svfavorites"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent">
+		
+			<LinearLayout android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:orientation="vertical"
+			    android:padding="10dp">
+				
+				<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/elvfavorites"
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:background="@drawable/listview_border_four_corners_round"
+				    android:divider="@drawable/listview_divider"
+					android:dividerHeight="1dp"
+					android:visibility="gone"/>
+			
+			</LinearLayout>
+		
+		</ScrollView>
+	
+	</FrameLayout>
 	
 </LinearLayout>

@@ -14,12 +14,15 @@ public final class MMProgressDialog {
 	private static ProgressDialog progressDialog;
 	
 	public static void displayDialog(Context context, String title, String message) {
-		progressDialog = ProgressDialog.show(context, title, message, true, false);
+		if(progressDialog == null) {
+			progressDialog = ProgressDialog.show(context, title, message, true, false);
+		}
 	}
 	
 	public static void dismissDialog() {
 		if(!isProgressDialogNull()) {
 			progressDialog.dismiss();
+			progressDialog = null;
 		}
 	}
 	

@@ -10,6 +10,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -62,6 +63,8 @@ public class SubscribeScreen extends Activity{
 					try {
 						JSONObject jObj = new JSONObject((String) obj);
 						Toast.makeText(SubscribeScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_SHORT).show();
+						finish();
+						overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}

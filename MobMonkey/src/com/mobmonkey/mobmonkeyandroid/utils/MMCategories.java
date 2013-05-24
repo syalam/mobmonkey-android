@@ -8,16 +8,25 @@ import org.json.JSONObject;
 
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-public class MMCategories extends Activity {
+/**
+ * 
+ * @author Dezapp, LLC
+ *
+ */
+public class MMCategories {
 	private static final String TAG = "MMCategories: ";
 	
 	private static SharedPreferences userPrefs;
 	
+	/**
+	 * 
+	 * @param context
+	 * @return
+	 */
 	public static JSONArray getTopLevelCategories(Context context) {
 		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		String allCategories = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, MMSDKConstants.DEFAULT_STRING_EMPTY);
@@ -27,11 +36,7 @@ public class MMCategories extends Activity {
 			try {
 				JSONObject allCats = new JSONObject(allCategories);
 				JSONArray topLevelCatNames = allCats.names();
-//				Log.d(TAG, TAG + "allCats: " + allCats.toString());
-//				Log.d(TAG, TAG + "catNames: " + catNames.toString());
-//				catNames.getString(i)
-//				Iterator iterator = allCats.keys();
-//				while(iterator.hasNext()) {
+
 				for(int i = 0; i < topLevelCatNames.length(); i++) {
 					JSONObject temp = new JSONObject();
 					JSONArray tempCats = allCats.getJSONArray(topLevelCatNames.getString(i));
@@ -49,8 +54,14 @@ public class MMCategories extends Activity {
 		return topLevelCategories;
 	}
 	
+	/**
+	 * 
+	 * @param context
+	 * @param categoryName
+	 * @param category
+	 * @return
+	 */
 	public static JSONArray getSubCategoriesWithCategoryName(Context context, String categoryName, JSONArray category){
-		userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 		JSONArray subCategories = null;
 		
 		try {
@@ -68,7 +79,11 @@ public class MMCategories extends Activity {
 		return subCategories;
 	}
 	
+	/**
+	 * 
+	 * @param categoryId
+	 */
 	public static void addCategory(String categoryId) {
-		
+		// TODO:
 	}
 }

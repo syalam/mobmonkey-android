@@ -63,7 +63,7 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 		if(which == MMSDKConstants.FAVORITES_FRAGMENT_MAP) {
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-			fragmentTransaction.replace(R.id.llfragmentcontainer,fragmentStack.push(new FavoritesMapFragment()));
+//			fragmentTransaction.replace(R.id.llfragmentcontainer,fragmentStack.push(new FavoritesMapFragment()));
 			fragmentTransaction.commit();
 		} else if(which == MMSDKConstants.FAVORITES_FRAGMENT_LIST) {		
 			fragmentManager.beginTransaction().remove(fragmentStack.pop());
@@ -78,10 +78,10 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 	 * @see com.mobmonkey.mobmonkey.fragments.FavoritesFragment.OnMMLocationSelectedListener#onLocationSelected(java.lang.Object)
 	 */
 	@Override
-	public void onSearchResultsFragmentItemClick(JSONObject jObj) {
+	public void onSearchResultsFragmentItemClick(String locationInfo) {
 		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
 		Bundle data = new Bundle();
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, ((JSONObject) jObj).toString());
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, locationInfo);
 		locationDetailsFragment.setArguments(data);
 		performTransaction(locationDetailsFragment);
 	}
@@ -103,10 +103,10 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnNearbyLocationsItemClickListener#onNearbyLocationsItemClick(org.json.JSONObject)
 	 */
 	@Override
-	public void onNearbyLocationsItemClick(JSONObject jObj) {
+	public void onNearbyLocationsItemClick(String location) {
 		LocationDetailsFragment locationDetailsFragment = new LocationDetailsFragment();
 		Bundle data = new Bundle();
-		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, jObj.toString());
+		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_LOCATION_DETAILS, location);
 		locationDetailsFragment.setArguments(data);
 		performTransaction(locationDetailsFragment);
 	}
@@ -123,10 +123,11 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnCreateHotSpotFragmentClickListener#onCreateHotSpotClick(org.json.JSONObject)
 	 */
 	@Override
-	public void onCreateHotSpotClick(JSONObject jObj) {
+	public void onCreateHotSpotClick(JSONObject jObj, int requestCode) {
 		NewHotSpotFragment newHotSpotFragment = new NewHotSpotFragment();
 		Bundle data = new Bundle();
 		data.putString(MMSDKConstants.KEY_INTENT_EXTRA_HOT_SPOT_LOCATION, jObj.toString());
+		data.putInt(MMSDKConstants.KEY_INTENT_EXTRA_REQUEST_CODE, requestCode);
 		newHotSpotFragment.setArguments(data);
 		performTransaction(newHotSpotFragment);
 	}
@@ -153,18 +154,18 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 	public void onBackPressed() {
 		Log.d(TAG, TAG + "onBackPressed");
 		if(fragmentStack.size() > 1) {
-			if(fragmentStack.peek() instanceof FavoritesMapFragment) {
+//			if(fragmentStack.peek() instanceof FavoritesMapFragment) {
 				// Do nothing?
-			} else {
-				MMFragment mmFragment = fragmentStack.pop();
-				
-				mmFragment.onFragmentBackPressed();
-				
-				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-				fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
-				fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
-				fragmentTransaction.commit();
-			}
+//			} else {
+			MMFragment mmFragment = fragmentStack.pop();
+			
+			mmFragment.onFragmentBackPressed();
+			
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
+			fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.peek());
+			fragmentTransaction.commit();
+//			}
 		}
 		
 		moveTaskToBack(true);
@@ -175,6 +176,6 @@ public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFr
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
 		fragmentTransaction.replace(R.id.llfragmentcontainer, fragmentStack.push(mmFragment));
-		fragmentTransaction.commit();		
+		fragmentTransaction.commitAllowingStateLoss();
 	}
 }

@@ -5,15 +5,33 @@
 	android:background="@color/backgroundcolor"
 	android:orientation="vertical" >
 	
-	<TextView android:layout_width="wrap_content"
-		android:layout_height="50dip"
-		android:layout_gravity="center"
-		android:gravity="center"
-		android:text="@string/tv_message"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:textColor="@android:color/white"
-		android:textStyle="bold"
-		android:background="@drawable/navigation_bar"/>
+    <RelativeLayout android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:background="@drawable/navigation_bar">
+
+		<TextView android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerInParent="true"
+		    android:text="@string/tv_message"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
+		    android:textColor="@android:color/white"
+		    android:textStyle="bold"/>
+
+		<Button android:id="@+id/btndone"
+		    android:layout_width="wrap_content"
+		    android:layout_height="33dp"
+		    android:layout_alignParentRight="true"
+		    android:layout_centerVertical="true"
+		    android:layout_marginRight="10dp"
+		    android:background="@drawable/nav_bar_button_blank"
+		    android:paddingLeft="15dp"
+		    android:paddingRight="15dp"
+		    android:text="@string/btn_done"
+		    android:textColor="@android:color/white"
+		    android:textStyle="bold"
+		    android:onClick="viewOnClick"/>
+		
+	</RelativeLayout>
 	
 	<ScrollView android:layout_width="match_parent"
 		android:layout_height="match_parent">
@@ -34,12 +52,22 @@
 			    android:maxLines="3"
 			    android:lines="3"/>
 			
+	    	<Button android:id="@+id/btnclearmessage"
+	    	    android:layout_width="match_parent"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_margin="10dp"
+	    	    android:background="@drawable/orange_button_background"
+	    	    android:text="@string/btn_clear_message"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+			    android:textColor="@android:color/white"
+			    android:textStyle="bold"/>
+	    	
 			<com.mobmonkey.mobmonkeyandroid.utils.MMExpandedListView android:id="@+id/mmelvdefaultmessage"
 			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
 			    android:layout_margin="10dp"
 			    android:scrollbars="none"
-			    android:background="@drawable/listview_border"
+			    android:background="@drawable/listview_border_four_corners_round"
 				android:divider="@drawable/listview_divider"
 				android:dividerHeight="1dp"/>
 		    

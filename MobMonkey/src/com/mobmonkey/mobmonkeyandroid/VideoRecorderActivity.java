@@ -52,7 +52,7 @@ public class VideoRecorderActivity extends Activity {
 			mmDir.mkdir();
 		}
 		
-		videoPath =  MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME;
+		videoPath =  MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILEPATH;
 		camera = getCameraInstance();
 		
 		if(camera == null) {

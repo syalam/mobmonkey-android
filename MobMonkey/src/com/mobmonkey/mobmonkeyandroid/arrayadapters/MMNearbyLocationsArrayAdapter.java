@@ -74,8 +74,17 @@ public class MMNearbyLocationsArrayAdapter extends ArrayAdapter<JSONObject> impl
 			viewHolder.tvLocName.setText(jObj.getString(MMSDKConstants.JSON_KEY_NAME));
 			viewHolder.tvLocDist.setText(MMUtility.calcDist(location, jObj.getDouble(MMSDKConstants.JSON_KEY_LATITUDE), jObj.getDouble(MMSDKConstants.JSON_KEY_LONGITUDE)) + MMSDKConstants.DEFAULT_STRING_SPACE + 
 					context.getString(R.string.miles));
-			viewHolder.tvLocAddr.setText(jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS) + MMSDKConstants.DEFAULT_STRING_NEWLINE + jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY) + MMSDKConstants.DEFAULT_STRING_COMMA_SPACE + 
-					jObj.getString(MMSDKConstants.JSON_KEY_REGION));
+			
+			String address = MMSDKConstants.DEFAULT_STRING_EMPTY;
+			address += jObj.isNull(MMSDKConstants.JSON_KEY_ADDRESS) ? MMSDKConstants.DEFAULT_STRING_EMPTY : jObj.getString(MMSDKConstants.JSON_KEY_ADDRESS);
+			address += MMSDKConstants.DEFAULT_STRING_NEWLINE;
+			
+			String localityRegion = MMSDKConstants.DEFAULT_STRING_EMPTY;
+			localityRegion += jObj.isNull(MMSDKConstants.JSON_KEY_LOCALITY) ? MMSDKConstants.DEFAULT_STRING_EMPTY : jObj.getString(MMSDKConstants.JSON_KEY_LOCALITY);
+			localityRegion += jObj.isNull(MMSDKConstants.JSON_KEY_LOCALITY) || jObj.isNull(MMSDKConstants.JSON_KEY_REGION) ? MMSDKConstants.DEFAULT_STRING_EMPTY : MMSDKConstants.DEFAULT_STRING_COMMA_SPACE;
+			localityRegion += jObj.isNull(MMSDKConstants.JSON_KEY_REGION) ? MMSDKConstants.DEFAULT_STRING_EMPTY : jObj.getString(MMSDKConstants.JSON_KEY_REGION);
+			
+			viewHolder.tvLocAddr.setText(address + localityRegion);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

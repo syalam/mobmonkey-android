@@ -12,9 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.location.Location;
-import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -46,7 +43,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
  *
  */
 public class MainScreen extends TabActivity {
-	protected static final String TAG = "MainScreen";
+	protected static final String TAG = "MainScreen: ";
 
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
@@ -249,6 +246,7 @@ public class MainScreen extends TabActivity {
 	
 	/**
 	 * Function to get all the user's favorites from the server
+	 * NOTE: This is needed to check the location in location info
 	 */
 	private void getAllFavorites() {		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
@@ -265,6 +263,9 @@ public class MainScreen extends TabActivity {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void checkUserIn() {		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
 			MMCheckinAdapter.checkInUser(new CheckUserInCallback(),
@@ -359,7 +360,7 @@ public class MainScreen extends TabActivity {
 					try {
 						userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES, (String) obj);
 						userPrefsEditor.commit();
-						
+
 						JSONObject jObj = new JSONObject((String) obj);
 						if(jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
 							Toast.makeText(MainScreen.this, jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
@@ -372,8 +373,8 @@ public class MainScreen extends TabActivity {
 					}
 				}
 			}
-			
-			setTabs();
+
+//			setTabs();
 		}
 	}
 	
@@ -384,12 +385,24 @@ public class MainScreen extends TabActivity {
 	 */
 	private class CheckUserInCallback implements MMCallback {
 		@Override
-		public void processCallback(Object obj) {			
+		public void processCallback(Object obj) {
 			if(obj != null) {
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
 					Log.d(TAG, TAG + "checkinuser response: " + (String) obj);
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						if(jObj.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_UNAUTHORIZED_EMAIL)) {
+							userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES);
+							userPrefsEditor.remove(MMSDKConstants.SHARED_PREFS_KEY_FAVORITES);
+							userPrefsEditor.commit();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					
+					setTabs();
 				}
 			}
 		}

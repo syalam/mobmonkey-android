@@ -42,7 +42,6 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 	
 	private SupportMapFragment smfLocation;
 	private GoogleMap googleMap;
-	private MapView mapView;
 	
 	/*
 	 * (non-Javadoc)
@@ -65,6 +64,7 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == MMSDKConstants.REQUEST_CODE_ADD_LOCATION) {
 			if(resultCode == RESULT_OK) {
+				setResult(RESULT_OK, data);
 				finish();
 				overridePendingTransition(R.anim.slide_hold, R.anim.slide_bottom_out);
 			}
@@ -215,6 +215,8 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 				if(obj instanceof String) {
 					if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 						Toast.makeText(AddLocationMapScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+					} else if(((String) obj).equals(MMSDKConstants.SERVICE_NOT_AVAILABLE)) {
+						Toast.makeText(AddLocationMapScreen.this, R.string.toast_service_not_available, Toast.LENGTH_LONG).show();
 					}
 				} else if(obj instanceof Address) {
 					Address locationClicked = (Address) obj;
