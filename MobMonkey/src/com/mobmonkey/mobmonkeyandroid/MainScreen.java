@@ -186,7 +186,7 @@ public class MainScreen extends TabActivity {
 		final String regId = GCMRegistrar.getRegistrationId(MainScreen.this);
 		Log.d(TAG, TAG + "regId: " + regId);
 		if (regId.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
-			new GCMRegistrarAsyncTask().execute("");
+			new GCMRegistrarAsyncTask(new GetRegIdCallback()).execute("");
 //			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
 //			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
 //			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
@@ -285,13 +285,25 @@ public class MainScreen extends TabActivity {
 		}
 	}
 	
-	private class GCMRegistrarAsyncTask extends AsyncTask<String, Void, Void> {
+	private class GCMRegistrarAsyncTask extends AsyncTask<String, Void, String> {
+		private MMCallback mmCallback;
+		
+		public GCMRegistrarAsyncTask(MMCallback mmCallback) {
+			this.mmCallback = mmCallback;
+		}
+		
 		@Override
-		protected Void doInBackground(String... params) {
+		protected String doInBackground(String... params) {
 			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
 			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
 			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
-			return null;
+			return GCMRegistrar.getRegistrationId(MainScreen.this);
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			mmCallback.processCallback(mmCallback);
 		}
 	}
 	
@@ -324,6 +336,29 @@ public class MainScreen extends TabActivity {
                 GCMRegistrar.unregister(context);
             }
 			return null;
+		}
+	}
+	
+	private class GetRegIdCallback implements MMCallback {
+		@Override
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				Log.d(TAG, TAG + "CategoriesCallback: " + ((String) obj));
+				
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						JSONObject jObj = new JSONObject((String) obj);
+						if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
+							userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
+						}
+						userPrefsEditor.commit();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 	
