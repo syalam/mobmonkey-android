@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -25,12 +24,11 @@ import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.utils.GCMIntentService;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
-import com.mobmonkey.mobmonkeyandroid.utils.ServerUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCheckinAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMGCMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
@@ -54,9 +52,8 @@ public class MainScreen extends TabActivity {
 	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String newMessage = intent.getExtras().getString("message");
+            String newMessage = intent.getExtras().getString(MMSDKConstants.KEY_INTENT_EXTRA_MESSAGE);
             Toast.makeText(MainScreen.this, newMessage, Toast.LENGTH_LONG).show();
-            //mDisplay.append(newMessage + "\n");
         }
     };
 	
@@ -163,11 +160,11 @@ public class MainScreen extends TabActivity {
 	 */
 	private void init() {
 		Log.d(TAG, "init");
+		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(MMSDKConstants.INTENT_FILTER_DISPLAY_MESSAGE));
 		registerGCM();
 		
-		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
-		userPrefsEditor = userPrefs.edit();
 		tabWidget = getTabWidget();
 		tabHost = getTabHost();
 		
@@ -183,15 +180,17 @@ public class MainScreen extends TabActivity {
 		GCMRegistrar.checkDevice(MainScreen.this);
 		GCMRegistrar.checkManifest(MainScreen.this);
 		
-		final String regId = GCMRegistrar.getRegistrationId(MainScreen.this);
+		String regId = GCMRegistrar.getRegistrationId(MainScreen.this);
 		Log.d(TAG, TAG + "regId: " + regId);
 		if (regId.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
-			new GCMRegistrarAsyncTask(new GetRegIdCallback()).execute("");
-//			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
-//			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
-//			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
+			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
 		} else {
-			new RegisterGCMAsyncTask(MainScreen.this).execute(regId);
+			MMGCMAdapter.register(new RegisterGCMWithMobMonkeyCallback(),
+								  MainScreen.this,
+								  regId,
+								  MMConstants.PARTNER_ID,
+								  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+								  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		}
 	}
 	
@@ -265,7 +264,7 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * 
+	 * Function to check user in at his/her current location when he/she signs in
 	 */
 	private void checkUserIn() {		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
@@ -285,85 +284,28 @@ public class MainScreen extends TabActivity {
 		}
 	}
 	
-	private class GCMRegistrarAsyncTask extends AsyncTask<String, Void, String> {
-		private MMCallback mmCallback;
-		
-		public GCMRegistrarAsyncTask(MMCallback mmCallback) {
-			this.mmCallback = mmCallback;
-		}
-		
-		@Override
-		protected String doInBackground(String... params) {
-			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
-			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
-			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
-			return GCMRegistrar.getRegistrationId(MainScreen.this);
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			mmCallback.processCallback(mmCallback);
-		}
-	}
-	
 	/**
-	 * {@link AsyncTask} to register Google Cloud Message in the background
+	 * Callback to handle the response after register with MobMonkey with GCM regId
 	 * @author Dezapp, LLC
 	 *
 	 */
-	private class RegisterGCMAsyncTask extends AsyncTask<String, Void, Void> {
-		Context context;
-		
-		public RegisterGCMAsyncTask(Context context) {
-			this.context = context;
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see android.os.AsyncTask#doInBackground(Params[])
-		 */
-		@Override
-		protected Void doInBackground(String... params) {
-			boolean registered = ServerUtility.register(context, params[0]);
-            // At this point all attempts to register with the app
-            // server failed, so we need to unregister the device
-            // from GCM - the app will try to register again when
-            // it is restarted. Note that GCM will send an
-            // unregistered callback upon completion, but
-            // GCMIntentService.onUnregistered() will ignore it.
-            if (!registered) {
-                GCMRegistrar.unregister(context);
-            }
-			return null;
-		}
-	}
-	
-	private class GetRegIdCallback implements MMCallback {
+	private class RegisterGCMWithMobMonkeyCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {
 			if(obj != null) {
-				Log.d(TAG, TAG + "CategoriesCallback: " + ((String) obj));
+				Log.d(TAG, TAG + "RegisterGCMWithMobMobnkeyCallback response: " + (String) obj);
 				
 				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
 					Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
 				} else {
-					try {
-						JSONObject jObj = new JSONObject((String) obj);
-						if(!jObj.has(MMSDKConstants.JSON_KEY_STATUS)) {
-							userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES, (String) obj);
-						}
-						userPrefsEditor.commit();
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
+					// TODO:
 				}
 			}
 		}
 	}
 	
 	/**
-	 * Callback that gets all the category information
+	 * Callback that gets all the categories
 	 * @author Dezapp, LLC
 	 *
 	 */ 

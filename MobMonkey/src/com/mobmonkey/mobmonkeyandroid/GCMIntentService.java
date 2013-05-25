@@ -1,18 +1,18 @@
-package com.mobmonkey.mobmonkeyandroid.utils;
+package com.mobmonkey.mobmonkeyandroid;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
-import com.mobmonkey.mobmonkeyandroid.MainScreen;
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.R.drawable;
-import com.mobmonkey.mobmonkeyandroid.R.string;
+import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
+import com.mobmonkey.mobmonkeysdk.adapters.MMGCMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 /**
@@ -42,9 +42,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	 */
 	@Override
 	protected void onMessage(Context context, Intent intent) {
-		Log.d(TAG, TAG + "message: " + intent.getExtras().getString("message"));
-		
-        String message = intent.getExtras().getString("message");
+        String message = intent.getExtras().getString(MMSDKConstants.KEY_INTENT_EXTRA_BODY);
         displayMessage(context, message);
         generateNotification(context, message);
 	}
@@ -63,8 +61,16 @@ public class GCMIntentService extends GCMBaseIntentService {
 	 */
 	@Override
 	protected void onRegistered(Context context, String registrationId) {
-		Log.d(TAG, "Device registered: regId = " + registrationId);
-//		ServerUtility.register(context, registrationId);
+		Log.d(TAG, TAG + "Device registered: regId = " + registrationId);
+		
+		SharedPreferences userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
+		
+		MMGCMAdapter.register(null,
+							  context,
+							  registrationId,
+							  MMConstants.PARTNER_ID,
+							  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+							  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 	}
 
 	/* (non-Javadoc)
@@ -74,7 +80,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 	protected void onUnregistered(Context context, String registrationId) {
 		Log.d(TAG, "unregistered = " + registrationId);
 		if(GCMRegistrar.isRegisteredOnServer(context)) {
-//			ServerUtility.unregister(context, registrationId);
+			MMGCMAdapter.unRegister(context,
+									registrationId);
 		}
 	}
 	
@@ -106,9 +113,14 @@ public class GCMIntentService extends GCMBaseIntentService {
         notificationManager.notify(0, notification);
     }
     
+    /**
+     * 
+     * @param context
+     * @param message
+     */
     static void displayMessage(Context context, String message) {
         Intent intent = new Intent(MMSDKConstants.INTENT_FILTER_DISPLAY_MESSAGE);
-        intent.putExtra("message", message);
+        intent.putExtra(MMSDKConstants.KEY_INTENT_EXTRA_MESSAGE, message);
         context.sendBroadcast(intent);
     }
 }

@@ -61,6 +61,7 @@ public final class MMSDKConstants {
 	public static final String URI_PATH_SEARCH = "search";
 	public static final String URI_PATH_SIGNIN = "signin";
 	public static final String URI_PATH_SIGNOUT = "signout";
+	public static final String URI_PATH_TESTGCM = "testGCM";
 	public static final String URI_PATH_TOP_VIEWED = "topviewed";
 	public static final String URI_PATH_TRENDING = "trending";
 	public static final String URI_PATH_USER = "user";
@@ -68,6 +69,7 @@ public final class MMSDKConstants {
 	// Uri query parameter keys
 	public static final String URI_QUERY_PARAM_KEY_CATEGORY_IDS = "categoryIds";
 	public static final String URI_QUERY_PARAM_KEY_COUNTS_ONLY = "countsonly";
+	public static final String URI_QUERY_PARAM_KEY_DEVICE_ID = "deviceId";
 	public static final String URI_QUERY_PARAM_KEY_EMAIL = "email";
 	public static final String URI_QUERY_PARAM_KEY_FAVORITES_ONLY = "bookmarksonly";
 	public static final String URI_QUERY_PARAM_KEY_LATITUDE = "latitude";
@@ -128,6 +130,7 @@ public final class MMSDKConstants {
 	public static final String SHARED_PREFS_KEY_TOS_TWITTER = "ToS Twitter";
 	
 	// Intent extra/Bundle key values
+	public static final String KEY_INTENT_EXTRA_BODY = "body";
 	public static final String KEY_INTENT_EXTRA_CATEGORIES = "Categories";
 	public static final String KEY_INTENT_EXTRA_CATEGORY_TITLE = "Category title";
 	public static final String KEY_INTENT_EXTRA_DISPLAY_MAP = "Display map";
