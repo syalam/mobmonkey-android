@@ -2,20 +2,28 @@
 package com.mobmonkey.mobmonkeyandroid.utils;
 
 import com.google.android.gcm.GCMRegistrar;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+
+import org.apache.http.conn.ConnectTimeoutException;
 
 /**
  * Helper class used to communicate with the demo server.
@@ -35,8 +43,8 @@ public final class ServerUtility {
      * @return whether the registration succeeded or not.
      */
     public static boolean register(final Context context, final String regId) {
-        Log.i(TAG, "registering device (regId = " + regId + ")");
-        String serverUrl = GCMIntentService.SERVER_URL;
+        Log.d(TAG, "registering device (regId = " + regId + ")");
+        String serverUrl = GCMIntentService.SERVER_URL + regId;
         Map<String, String> params = new HashMap<String, String>();
         params.put("regId", regId);
         long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
@@ -83,8 +91,8 @@ public final class ServerUtility {
      * Unregister this account/device pair within the server.
      */
     public static void unregister(final Context context, final String regId) {
-        Log.i(TAG, "unregistering device (regId = " + regId + ")");
-        String serverUrl = GCMIntentService.SERVER_URL + "/unregister";
+        Log.d(TAG, "unregistering device (regId = " + regId + ")");
+        String serverUrl = GCMIntentService.SERVER_URL + "/unregister" + regId;
         Map<String, String> params = new HashMap<String, String>();
         params.put("regId", regId);
         try {
@@ -120,42 +128,82 @@ public final class ServerUtility {
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("invalid url: " + endpoint);
         }
-        StringBuilder bodyBuilder = new StringBuilder();
-        Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
+        Log.d(TAG, TAG + "url: " + url.toString());
+//        StringBuilder bodyBuilder = new StringBuilder();
+//        Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
         // constructs the POST body using the parameters
-        while (iterator.hasNext()) {
-            Entry<String, String> param = iterator.next();
-            bodyBuilder.append(param.getKey()).append('=')
-                    .append(param.getValue());
-            if (iterator.hasNext()) {
-                bodyBuilder.append('&');
-            }
-        }
-        String body = bodyBuilder.toString();
-        Log.v(TAG, "Posting '" + body + "' to " + url);
-        byte[] bytes = body.getBytes();
-        HttpURLConnection conn = null;
-        try {
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
-            conn.setFixedLengthStreamingMode(bytes.length);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type",
-                    "application/json");
-            // post the request
-            OutputStream out = conn.getOutputStream();
-            out.write(bytes);
-            out.close();
-            // handle the response
-            int status = conn.getResponseCode();
-            if (status != 200) {
-              throw new IOException("Post failed with error code " + status);
-            }
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
+//        while (iterator.hasNext()) {
+//            Entry<String, String> param = iterator.next();
+//            bodyBuilder.append(param.getKey()).append('=')
+//                    .append(param.getValue());
+//            if (iterator.hasNext()) {
+//                bodyBuilder.append('&');
+//            }
+//        }
+//        String body = bodyBuilder.toString();
+//        Log.v(TAG, "Posting '" + body + "' to " + url);
+//        byte[] bytes = body.getBytes();
+//        HttpURLConnection conn = null;
+        
+		try {
+//			URL imageUrl = new URL(params[0]);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setConnectTimeout(MMSDKConstants.TIMEOUT_CONNECTION);
+			conn.setReadTimeout(MMSDKConstants.TIMEOUT_SOCKET);
+			conn.setDoInput(true);
+			Log.d(TAG, TAG + "before connect");
+			conn.connect();
+			Log.d(TAG, TAG + "after connect");
+			Log.d(TAG, TAG + "status: " + conn.getResponseCode());
+			String response = "";
+			if(conn.getContentLength() > 0) {
+				
+				InputStream is = conn.getInputStream();
+//				image = BitmapFactory.decodeStream(is);
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
+				String line = MMSDKConstants.DEFAULT_STRING_EMPTY;
+				while((line = bufferedReader.readLine()) != null) {
+					response += line + MMSDKConstants.DEFAULT_STRING_NEWLINE;
+				}
+				is.close();
+			}
+			
+			Log.d(TAG, TAG + "response: " + response);
+			conn.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (ConnectTimeoutException e) {
+			e.printStackTrace();
+//			return MMSDKConstants.CONNECTION_TIMED_OUT;
+		} catch (SocketException e) {
+			e.printStackTrace();
+			if(e.getMessage().equals(MMSDKConstants.OPERATION_TIMED_OUT)) {
+//				return MMSDKConstants.CONNECTION_TIMED_OUT;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+//        try {
+//            conn = (HttpURLConnection) url.openConnection();
+//            conn.setDoOutput(true);
+//            conn.setUseCaches(false);
+//            conn.setFixedLengthStreamingMode(bytes.length);
+//            conn.setRequestMethod("POST");
+//            conn.setRequestProperty("Content-Type", "application/json");
+//            // post the request
+//            OutputStream out = conn.getOutputStream();
+//            out.write(bytes);
+//            out.close();
+//            // handle the response
+//            int status = conn.getResponseCode();
+//            if (status != 200) {
+//              throw new IOException("Post failed with error code " + status);
+//            }
+//        } finally {
+//            if (conn != null) {
+//                conn.disconnect();
+//            }
+//        }
       }
 }

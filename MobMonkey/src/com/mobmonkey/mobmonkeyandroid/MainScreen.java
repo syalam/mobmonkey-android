@@ -95,7 +95,7 @@ public class MainScreen extends TabActivity {
 	 */
 	@Override
 	protected void onDestroy() {
-		Log.d(TAG, TAG + ":onDestroy");
+		Log.d(TAG, TAG + "onDestroy");
 		MMProgressDialog.dismissDialog();
 		unregisterReceiver(mHandleMessageReceiver);
 		super.onDestroy();
@@ -186,9 +186,10 @@ public class MainScreen extends TabActivity {
 		final String regId = GCMRegistrar.getRegistrationId(MainScreen.this);
 		Log.d(TAG, TAG + "regId: " + regId);
 		if (regId.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
-			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
-			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
-			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
+			new GCMRegistrarAsyncTask().execute("");
+//			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
+//			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
+//			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
 		} else {
 			new RegisterGCMAsyncTask(MainScreen.this).execute(regId);
 		}
@@ -281,6 +282,16 @@ public class MainScreen extends TabActivity {
 			}
 		} else {
 			setTabs();
+		}
+	}
+	
+	private class GCMRegistrarAsyncTask extends AsyncTask<String, Void, Void> {
+		@Override
+		protected Void doInBackground(String... params) {
+			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
+			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
+			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
+			return null;
 		}
 	}
 	
