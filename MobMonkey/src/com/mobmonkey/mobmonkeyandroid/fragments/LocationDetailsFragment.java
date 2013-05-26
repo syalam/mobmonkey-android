@@ -122,7 +122,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 	private Bitmap imageMedia;
 	private View mediaButtonSelected;
 	private boolean isLocation;
-	private boolean isFavorite;
 	
 	/*
 	 * (non-Javadoc)
@@ -377,7 +376,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		for(int i = 0; i < favoritesList.length(); i++) {
 			if(favoritesList.getJSONObject(i).getString(MMSDKConstants.JSON_KEY_LOCATION_ID).equals(location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID))) {
 				locItems[1].setLocationDetail(getString(R.string.tv_remove_from_favorites));
-				isFavorite = true;
 				break;
 			}
 		}
@@ -843,7 +841,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 							Toast.makeText(getActivity(), R.string.toast_add_favorite_success, Toast.LENGTH_SHORT).show();
 							locItems[1].setLocationDetail(getString(R.string.tv_remove_from_favorites));
 							locArrayAdapter.notifyDataSetChanged();
-							isFavorite = true;
 						} else {
 							MMDialog.dismissDialog();
 							Toast.makeText(getActivity(), R.string.toast_add_favorite_fail, Toast.LENGTH_SHORT).show();
@@ -876,7 +873,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 							Toast.makeText(getActivity(), R.string.toast_remove_favorite_successs, Toast.LENGTH_SHORT).show();
 							locItems[1].setLocationDetail(getString(R.string.tv_add_to_favorites));
 							locArrayAdapter.notifyDataSetChanged();
-							isFavorite = false;
 						} else {
 							MMProgressDialog.dismissDialog();
 							Toast.makeText(getActivity(), R.string.toast_remove_favorite_fail, Toast.LENGTH_SHORT).show();

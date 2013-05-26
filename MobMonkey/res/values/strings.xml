@@ -324,6 +324,13 @@
 	<string name="tv_notify_me">Notify me of activity at</string>
 	<string name="tv_this_location">this location</string>
 	
+	<string-array name="add_notications_time_frame">
+	    <item>Today</item>
+	    <item>One Day</item>
+	    <item>One Week</item>
+	    <item>Always</item>
+	</string-array>
+	
 	<!-- Favorites Fragment -->
 	<string name="tv_title_favorites">Favorites</string>
 	<string name="pd_updating_favorites">Updating favorites&#8230;</string>

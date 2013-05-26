@@ -65,12 +65,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 		
 		SharedPreferences userPrefs = context.getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		
-		MMGCMAdapter.register(null,
-							  context,
-							  registrationId,
-							  MMConstants.PARTNER_ID,
-							  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-							  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+//		MMGCMAdapter.register(null,
+//							  context,
+//							  registrationId,
+//							  MMConstants.PARTNER_ID,
+//							  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+//							  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 	}
 
 	/* (non-Javadoc)

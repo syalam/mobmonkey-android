@@ -155,6 +155,7 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
 	public static final String KEY_INTENT_EXTRA_SELECTED_CATEGORIES = "Selected categories";
 	public static final String KEY_INTENT_EXTRA_SELECTED_CATEGORIES_IDS = "Selected categories IDs";
+	public static final String KEY_INTENT_EXTRA_TIME_FRAME_POSITION = "Time frame position";
 	public static final String KEY_INTENT_EXTRA_TOP_LEVEL = "Top level";
 	public static final String KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON = "ToS display button";
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
