@@ -70,18 +70,30 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param oauthToken Facebook OAuth access token
 	 * @param providerUserName Facebook provider username
 	 * @param partnerId MobMonkey unique partner id
+	 * @param firstName
+	 * @param lastName
+	 * @param birthdate
+	 * @param gender
 	 */
 	public static void signInUserFacebook(MMCallback mmCallback,
 			  							  String partnerId,
+										  String oauthToken,
 										  String providerUserName,
-										  String oauthToken) {
+										  String firstName,
+										  String lastName,
+										  String birthdate,
+										  String gender) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_SIGNIN);
 		uriBuilder.appendQueryParameter(MMSDKConstants.KEY_DEVICE_TYPE, MMSDKConstants.DEVICE_TYPE)
 			.appendQueryParameter(MMSDKConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
 			.appendQueryParameter(MMSDKConstants.KEY_USE_OAUTH, Boolean.toString(true))
 			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)
 			.appendQueryParameter(MMSDKConstants.KEY_OAUTH_TOKEN, oauthToken)
-			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER_USERNAME, providerUserName);
+			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER_USERNAME, providerUserName)
+			.appendQueryParameter(MMSDKConstants.KEY_FIRST_NAME, firstName)
+			.appendQueryParameter(MMSDKConstants.KEY_LAST_NAME, lastName)
+			.appendQueryParameter(MMSDKConstants.KEY_BIRTHDATE, birthdate)
+			.appendQueryParameter(MMSDKConstants.KEY_GENDER, gender);
 		
 		Log.d(TAG, TAG + "signin uri: " + uriBuilder.toString());
 		
@@ -190,18 +202,30 @@ public class MMUserAdapter extends MMAdapter {
 	 * @param partnerId MobMonkey unique partner id
 	 * @param oauthToken Facebook OAuth access token
 	 * @param providerUserName Facebook provider username
+ 	 * @param firstName
+	 * @param lastName
+	 * @param birthdate
+	 * @param gender
 	 */
 	public static void signUpNewUserFacebook(MMCallback mmCallback,
 											 String partnerId,
+											 String oauthToken,
 											 String providerUserName,
-											 String oauthToken) {
+											 String firstName,
+											 String lastName,
+											 String birthdate,
+											 String gender) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_SIGNIN);
 		uriBuilder.appendQueryParameter(MMSDKConstants.KEY_DEVICE_TYPE, MMSDKConstants.DEVICE_TYPE)
 			.appendQueryParameter(MMSDKConstants.KEY_DEVICE_ID, MMDeviceUUID.getDeviceUUID().toString())
 			.appendQueryParameter(MMSDKConstants.KEY_USE_OAUTH, Boolean.toString(true))
 			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)
 			.appendQueryParameter(MMSDKConstants.KEY_OAUTH_TOKEN, oauthToken)
-			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER_USERNAME, providerUserName);
+			.appendQueryParameter(MMSDKConstants.KEY_PROVIDER_USERNAME, providerUserName)
+			.appendQueryParameter(MMSDKConstants.KEY_FIRST_NAME, firstName)
+			.appendQueryParameter(MMSDKConstants.KEY_LAST_NAME, lastName)
+			.appendQueryParameter(MMSDKConstants.KEY_BIRTHDATE, birthdate)
+			.appendQueryParameter(MMSDKConstants.KEY_GENDER, gender);
 		
 //		Log.d(TAG, TAG + "signUpURL: " + signUpURL);
 		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder.toString());

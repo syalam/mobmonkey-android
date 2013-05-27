@@ -182,8 +182,12 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 					userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK);
 					MMUserAdapter.signUpNewUserFacebook(new SignUpCallback(),
 														MMConstants.PARTNER_ID,
+														Session.getActiveSession().getAccessToken(),
 														(String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
-														Session.getActiveSession().getAccessToken());
+														facebookUser.getFirstName(),
+														facebookUser.getLastName(),
+														facebookUser.getBirthday(),
+														(String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_GENDER));
 		    		MMProgressDialog.displayDialog(SignUpScreen.this,
 		    									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 		    									   getString(R.string.pd_signing_up_facebook));
@@ -503,7 +507,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
 			Log.d(TAG, TAG + "session opened: " + session.isOpened());
 			if(session.isOpened() && requestEmail) {
-	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
+	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL, MMSDKConstants.FACEBOOK_REQ_PERM_BIRTHDAY));
 				session.requestNewReadPermissions(request);
 				Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
 			}

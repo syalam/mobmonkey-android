@@ -122,19 +122,25 @@ public class SignInScreen extends Activity {
 					userPrefsEditor.putString(MMSDKConstants.KEY_USER, (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
 					userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, 	Session.getActiveSession().getAccessToken());
 					userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK);
-					String emailAddress = (String)facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL);
+					String emailAddress = (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL);
 					Log.d(TAG, TAG + "Email address: " + emailAddress);
 					if(emailAddress == null) {
 						requestEmail = true;
 						Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 					} else {
-						MMUserAdapter.signInUserFacebook(new SignInCallback(),
-														 MMConstants.PARTNER_ID,
-														 (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
-														 Session.getActiveSession().getAccessToken());
-						MMProgressDialog.displayDialog(SignInScreen.this,
-													   MMSDKConstants.DEFAULT_STRING_EMPTY,
-													   getString(R.string.pd_signing_in_facebook));
+						Log.d(TAG, TAG + "FB birthday: " + facebookUser.getBirthday());
+						
+//						MMUserAdapter.signInUserFacebook(new SignInCallback(),
+//														 MMConstants.PARTNER_ID,
+//														 Session.getActiveSession().getAccessToken(),
+//														 (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
+//														 facebookUser.getFirstName(),
+//														 facebookUser.getLastName(),
+//														 facebookUser.getBirthday(),
+//														 (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_GENDER));
+//						MMProgressDialog.displayDialog(SignInScreen.this,
+//													   MMSDKConstants.DEFAULT_STRING_EMPTY,
+//													   getString(R.string.pd_signing_in_facebook));
 					}
 				}
 		}
@@ -296,7 +302,7 @@ public class SignInScreen extends Activity {
 			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
 			Log.d(TAG, TAG + "session opened: " + session.isOpened());
 			if(session.isOpened() && requestEmail) {
-	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignInScreen.this, Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
+	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignInScreen.this, Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL, MMSDKConstants.FACEBOOK_REQ_PERM_BIRTHDAY));
 				session.requestNewReadPermissions(request);
 				Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
 			}
