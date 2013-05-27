@@ -158,7 +158,7 @@ public class AssignedRequestsFragment extends MMFragment {
 						userPrefsEditor.commit();
 						Log.d(TAG, "current tab tag: " + userPrefs.getInt(MMSDKConstants.TAB_TITLE_CURRENT_TAG, 0));
 						Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//						takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmpic.jpg")));
+						takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmpic.jpg")));
 						startActivityForResult(takePictureIntent, MMSDKConstants.REQUEST_CODE_IMAGE);
 						break;
 					// Video request
@@ -199,11 +199,11 @@ public class AssignedRequestsFragment extends MMFragment {
 		// picture data
 		if(requestCode == MMSDKConstants.REQUEST_CODE_IMAGE) {
 			Log.d(TAG, "return from taking picture with camera");
-			Bundle extras = data.getExtras();
-			Bitmap mImageBitmap = (Bitmap) extras.get("data");
+//			Bundle extras = data.getExtras();
+//			Bitmap mImageBitmap = (Bitmap) extras.get("data");
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 2;
-//			Bitmap mImageBitmap = BitmapFactory.decodeFile(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.jpg", options);
+			Bitmap mImageBitmap = BitmapFactory.decodeFile(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.jpg", options);
 //			
 //			Log.d(TAG, TAG + ": rotate bitmap");
 //			Log.d(TAG, TAG + ": bitmap width: " + mImageBitmap.getWidth());
@@ -213,7 +213,6 @@ public class AssignedRequestsFragment extends MMFragment {
 			
 //			Bitmap newBitmap = Bitmap.createBitmap(mImageBitmap, 0, 0, mImageBitmap.getWidth(), mImageBitmap.getHeight());
 //			Log.d(TAG, TAG + ": bitmap rotated");
-//			mImageBitmap.
 //			mImageBitmap = scaleDownBitmap(mImageBitmap, 200, getActivity());
 			
 			// encode image to Base64 String
