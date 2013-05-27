@@ -70,7 +70,7 @@ public class MMArrayAdapter extends ArrayAdapter<Object> {
 		if(icons.length != 0)
 			viewHolder.ivIcon.setImageResource(icons[position]);
         viewHolder.tvLabel.setText(items[position]);
-        if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+        if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation() == null) {
         	viewHolder.tvLabel.setTextColor(Color.GRAY);
         }
         	

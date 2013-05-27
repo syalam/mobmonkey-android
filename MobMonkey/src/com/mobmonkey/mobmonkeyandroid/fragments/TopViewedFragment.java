@@ -75,7 +75,7 @@ public class TopViewedFragment extends MMFragment {
 	 * @param position
 	 */
 	private void getTrending() {
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			MMTrendingAdapter.getTopViewed(new TopViewedCallback(),
 										   MMSDKConstants.SEARCH_TIME_WEEK,
 										   MMConstants.PARTNER_ID,

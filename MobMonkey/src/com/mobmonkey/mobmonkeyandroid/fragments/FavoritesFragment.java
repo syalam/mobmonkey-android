@@ -151,7 +151,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener,
 	 */
 	@Override
 	public void onClick(View view) {
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			switch(view.getId()) {
 				case R.id.ibmap:
 					mapButtonClicked();
@@ -213,7 +213,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener,
 	public void onResume() {
 		Log.d(TAG, TAG + "onResume");
 		super.onResume();
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			refreshFavorites();
 			getMMSupportMapFragment();
 		}
@@ -226,12 +226,14 @@ public class FavoritesFragment extends MMFragment implements OnClickListener,
 	public void onPause() {
 		Log.d(TAG, TAG + "onPause");
 		super.onPause();
-		try {
-			FragmentTransaction transaction = fragmentManager.beginTransaction();
-			transaction.remove(smfFavoriteLocations);
-			transaction.commitAllowingStateLoss();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
+			try {
+				FragmentTransaction transaction = fragmentManager.beginTransaction();
+				transaction.remove(smfFavoriteLocations);
+				transaction.commitAllowingStateLoss();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

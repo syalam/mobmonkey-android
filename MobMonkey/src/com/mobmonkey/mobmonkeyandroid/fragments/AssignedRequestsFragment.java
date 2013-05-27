@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -77,7 +78,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		
 		View view = inflater.inflate(R.layout.fragment_assignedrequests_screen, container, false);
 		elvAssignedRequests = (MMExpandedListView) view.findViewById(R.id.elvassignedrequests);
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
+		location = MMLocationManager.getGPSLocation();
 		
 		try {
 			MMRequestAdapter.getAssignedRequests(new AssignedRequestCallback(), 
@@ -157,7 +158,7 @@ public class AssignedRequestsFragment extends MMFragment {
 						userPrefsEditor.commit();
 						Log.d(TAG, "current tab tag: " + userPrefs.getInt(MMSDKConstants.TAB_TITLE_CURRENT_TAG, 0));
 						Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-						takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmpic.jpg")));
+//						takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(MMSDKConstants.MOBMONKEY_DIRECTORY, "mmpic.jpg")));
 						startActivityForResult(takePictureIntent, MMSDKConstants.REQUEST_CODE_IMAGE);
 						break;
 					// Video request
@@ -189,7 +190,7 @@ public class AssignedRequestsFragment extends MMFragment {
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d(TAG, TAG + ":onActivityResult");
+		Log.d(TAG, TAG + "onActivityResult: " + requestCode);
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if(resultCode != FragmentActivity.RESULT_OK)
@@ -198,12 +199,22 @@ public class AssignedRequestsFragment extends MMFragment {
 		// picture data
 		if(requestCode == MMSDKConstants.REQUEST_CODE_IMAGE) {
 			Log.d(TAG, "return from taking picture with camera");
-//			Bundle extras = data.getExtras();
-//			Bitmap mImageBitmap = (Bitmap) extras.get("data");
+			Bundle extras = data.getExtras();
+			Bitmap mImageBitmap = (Bitmap) extras.get("data");
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 2;
-			Bitmap mImageBitmap = BitmapFactory.decodeFile(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.jpg", options);
-			//mImageBitmap = scaleDownBitmap(mImageBitmap, 200, getActivity());
+//			Bitmap mImageBitmap = BitmapFactory.decodeFile(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.jpg", options);
+//			
+//			Log.d(TAG, TAG + ": rotate bitmap");
+//			Log.d(TAG, TAG + ": bitmap width: " + mImageBitmap.getWidth());
+//			Log.d(TAG, TAG + ": bitmap height: " + mImageBitmap.getHeight());
+//			Matrix matrix = new Matrix();
+//			matrix.postRotate(90.0f);
+			
+//			Bitmap newBitmap = Bitmap.createBitmap(mImageBitmap, 0, 0, mImageBitmap.getWidth(), mImageBitmap.getHeight());
+//			Log.d(TAG, TAG + ": bitmap rotated");
+//			mImageBitmap.
+//			mImageBitmap = scaleDownBitmap(mImageBitmap, 200, getActivity());
 			
 			// encode image to Base64 String
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -229,7 +240,8 @@ public class AssignedRequestsFragment extends MMFragment {
 			}					   
 		} 
 		// video 
-		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {		    
+		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {
+			Log.d(TAG, TAG + "returning from request video");
 		    try {
 		    	// encode to base64
 		    	File videoFile = new File(MMSDKConstants.MOBMONKEY_DIRECTORY, MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
@@ -259,6 +271,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		        	videoEncoded = new String(bv, "UTF-8");
 		        }
 		        
+		        Log.d(TAG, TAG + "about to send to server");
 		    	// send base64 file to server
 		        MMRequestAdapter.answerRequest(new AnswerRequest(),
 					     					   MMSDKConstants.MEDIA_VIDEO,

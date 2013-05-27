@@ -179,7 +179,7 @@ public class CategoriesFragment extends MMFragment implements OnClickListener,
 			e.printStackTrace();
 		}		
 		
-		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation() == null) {
 			elvCategories.setEnabled(false);
 		} else {
 			elvCategories.setOnItemClickListener(CategoriesFragment.this);

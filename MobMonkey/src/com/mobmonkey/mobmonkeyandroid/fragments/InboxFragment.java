@@ -116,7 +116,7 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	 * Update Inbox {@link ListView} when first started or resume.
 	 */
 	private void getInboxCounts() {		
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			MMInboxAdapter.getCounts(new InboxCountsCallback(), 
 									 MMConstants.PARTNER_ID, 
 									 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 

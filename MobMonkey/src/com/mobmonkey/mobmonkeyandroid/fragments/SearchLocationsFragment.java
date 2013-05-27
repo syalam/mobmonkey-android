@@ -164,7 +164,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		markerHashMap = new HashMap<Marker, JSONObject>();
 		
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			if(!enablePanAndZoom) {
 				tvHoldToPanAndZoom.setText(MMUtility.setTextStyleItalic(getString(R.string.tv_hold_to_enable_pan_and_zoom)));
 			} else {
@@ -191,7 +191,10 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 			}
 		});
 		llLoadMore.setOnClickListener(SearchLocationsFragment.this);
-		btnAddLoc.setOnClickListener(SearchLocationsFragment.this);
+		if(MMLocationManager.getGPSLocation() != null) {
+			btnAddLoc.setOnClickListener(SearchLocationsFragment.this);
+			btnAddLoc.setVisibility(View.VISIBLE);
+		}
 		elvSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -269,7 +272,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.llcreatehotspot:
-				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation()) != null) {
 					createHotSpotFragmentClicKlistener.onCreateHotSpotClick(nearbyLocations);
 				}
 				break;
@@ -278,7 +281,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 				displayTagsPopUp(view);
 				break;
 			case R.id.etsearch:
-				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation()) != null) {
 					setNearbyLocationsSearch();
 				}
 				break;
@@ -401,7 +404,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	public void onResume() {
 		Log.d(TAG, TAG + "onResume");
 		super.onResume();
-		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation()) != null) {
 			searchAllNearbyLocations();
 			getMMSupportMapFragment();
 		}
@@ -423,7 +426,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	public void onPause() {
 		Log.d(TAG, TAG + "onPause");
 		super.onPause();
-		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation()) != null) {
 			try {
 				FragmentTransaction transaction = fragmentManager.beginTransaction();
 				transaction.remove(smfNearbyLocations);
@@ -463,7 +466,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 		etSearch.setOnLongClickListener(SearchLocationsFragment.this);
 		etSearch.addTextChangedListener(new NearbyLocationsTextWatcher());
 		
-		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation() == null) {
 			etSearch.setFocusable(false);
 			etSearch.setFocusableInTouchMode(false);
 			etSearch.setClickable(false);
@@ -487,7 +490,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 		ArrayAdapter<MMSearchCategoriesItem> arrayAdapter = new MMSearchCategoriesArrayAdapter(getActivity(), R.layout.listview_row_searchcategory, searchItems);
 		elvSearch.setAdapter(arrayAdapter);
 		
-		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation() == null) {
 			elvSearch.setEnabled(false);
 		}
 	}
@@ -582,6 +585,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 			if(resultLocations.size() > 0) {
 				enllvNearbyLocations.setVisibility(View.VISIBLE);
 				llLoadMore.setVisibility(View.VISIBLE);
+				btnAddLoc.setVisibility(View.VISIBLE);
 				
 				nearbyLocationsArrayAdapter = new MMNearbyLocationsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
 				enllvNearbyLocations.setAdapter(nearbyLocationsArrayAdapter);

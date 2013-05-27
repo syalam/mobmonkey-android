@@ -41,7 +41,7 @@ public class MMNearbyLocationsArrayAdapter extends ArrayAdapter<JSONObject> impl
 	
 	public MMNearbyLocationsArrayAdapter(Context context, int listRowLayout, ArrayList<JSONObject> locations) {
 		super(context, listRowLayout, locations);
-		this.location = MMLocationManager.getGPSLocation(new MMLocationListener());
+		this.location = MMLocationManager.getGPSLocation();
 		this.context = context;
 		this.layoutInflater = LayoutInflater.from(context);
 		this.listRowLayout = listRowLayout;

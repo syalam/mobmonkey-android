@@ -12,6 +12,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -65,26 +67,25 @@ public class MainScreen extends TabActivity {
 		Log.d(TAG, TAG + "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);
-		MMLocationManager.setContext(getApplicationContext());
-		checkForGPSAccess();
+		checkForGPSLocation();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d(TAG, TAG + ":onActivityResult");
-		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == MMSDKConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION) {
-			if(MMLocationManager.isGPSEnabled()) {
-				checkForGPSAccess();
-			} else {
-				noGPSEnabled();
-			}
-		}
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+//	 */
+//	@Override
+//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//		Log.d(TAG, TAG + ":onActivityResult");
+//		super.onActivityResult(requestCode, resultCode, data);
+//		if(requestCode == MMSDKConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION) {
+//			if(MMLocationManager.isGPSEnabled()) {
+//				checkForGPSAccess();
+//			} else {
+//				noGPSEnabled();
+//			}
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -102,25 +103,8 @@ public class MainScreen extends TabActivity {
 	 * Function that check if user's device has GPS access. Display a {@link Toast} message informing the user if 
 	 * there is no GPS access.
 	 */
-	private void checkForGPSAccess() {
-		if(!MMLocationManager.isGPSEnabled()) {
-			new AlertDialog.Builder(MainScreen.this)
-	    	.setTitle(R.string.ad_title_enable_gps)
-	    	.setMessage(R.string.ad_message_enable_gps)
-	    	.setCancelable(false)
-	    	.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) {
-		            // Launch settings, allowing user to make a change
-		            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), MMSDKConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION);
-		        }
-	    	})
-	    	.setNegativeButton(R.string.ad_btn_no, new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) {
-		        	noGPSEnabled();
-		        }
-	    	})
-	    	.show();
-	    } else if(MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+	private void checkForGPSLocation() {
+		if(MMLocationManager.getGPSLocation() == null) {
 			new AlertDialog.Builder(MainScreen.this)
 	    	.setTitle(R.string.ad_title_no_location)
 	    	.setMessage(R.string.ad_message_no_location)
@@ -135,24 +119,6 @@ public class MainScreen extends TabActivity {
 	    } else {
 			init();
 	    }
-	}
-	
-	/**
-	 * Function that create an {@link AlertDialog} to the user if the GPS is not enabled alerting them some features are not accessible without GPS
-	 */
-	private void noGPSEnabled() {
-    	new AlertDialog.Builder(MainScreen.this)
-	    	.setIcon(android.R.drawable.ic_dialog_alert)
-	    	.setTitle(R.string.ad_title_no_gps_warning)
-	    	.setMessage(R.string.ad_message_no_gps)
-	    	.setCancelable(false)
-	    	.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					init();
-				}
-			})
-	    	.show();
 	}
 	
 	/**
@@ -230,7 +196,7 @@ public class MainScreen extends TabActivity {
 	 * Function to get all the categories from the server
 	 */
 	private void getAllCategories() {
-		if(!userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {			
+		if(!userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {			
 			MMCategoryAdapter.cancelGetAllCategories();
 			MMCategoryAdapter.getAllCategories(new CategoriesCallback(),
 											   MMConstants.PARTNER_ID,
@@ -249,7 +215,7 @@ public class MainScreen extends TabActivity {
 	 * NOTE: This is needed to check the location in location info
 	 */
 	private void getAllFavorites() {		
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			MMFavoritesAdapter.cancelGetFavorites();
 			MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
 											MMConstants.PARTNER_ID, 
@@ -267,7 +233,7 @@ public class MainScreen extends TabActivity {
 	 * Function to check user in at his/her current location when he/she signs in
 	 */
 	private void checkUserIn() {		
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			MMCheckinAdapter.checkInUser(new CheckUserInCallback(),
 							 MMLocationManager.getLocationLatitude(),
 							 MMLocationManager.getLocationLongitude(),
@@ -393,6 +359,34 @@ public class MainScreen extends TabActivity {
 					setTabs();
 				}
 			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
+	private class MobMonkeyLocationListener implements LocationListener {
+
+		@Override
+		public void onLocationChanged(Location location) {
+			
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+			
+		}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+			Log.d(TAG, TAG + "provider: " + provider + " enabled");
+		}
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			
 		}
 	}
 }

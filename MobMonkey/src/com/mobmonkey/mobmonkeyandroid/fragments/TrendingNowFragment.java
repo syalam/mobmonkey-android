@@ -141,7 +141,7 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	 * 
 	 */
 	private void getTrendingCounts() {
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			MMTrendingAdapter.getTrendingCounts(new TrendingCountsCallback(),
 												MMSDKConstants.SEARCH_TIME_DAY,
 												MMConstants.PARTNER_ID,

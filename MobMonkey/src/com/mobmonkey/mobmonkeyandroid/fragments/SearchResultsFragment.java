@@ -101,7 +101,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		userPrefsEditor = userPrefs.edit();
 		user = userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY);
 		fragmentManager = getFragmentManager();
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
+		location = MMLocationManager.getGPSLocation();
 		
 		View view = inflater.inflate(R.layout.fragment_searchresults_screen, container, false);
 		tvNavBarTitle = (TextView) view.findViewById(R.id.tvnavbartitle);
@@ -445,7 +445,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 * 
 	 */
 	private void buttonAddLocClick() {
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			if(smfResultLocations.getView().getVisibility() == View.INVISIBLE) {
 				startActivity(new Intent(getActivity(), AddLocationScreen.class));
 			} else {

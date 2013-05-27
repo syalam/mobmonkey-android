@@ -5,6 +5,16 @@
 	<string name="app_id_facebook">160583530745361</string>
 	<string name="app_google_api_key0">AIzaSyCLKPK_nHrx7d8wWl3cWCUtnQGVXnmHkYQ</string> <!-- Any referers allowed -->
 
+	<!-- Splash Screen -->
+	<string name="ad_title_enable_gps">Enable GPS</string>	
+	<string name="ad_title_no_location">Location unavailable</string>
+	<string name="ad_title_no_gps_warning">Warning</string>
+	<string name="ad_message_enable_gps">GPS not enabled, enable GPS to use MobMonkey?</string>
+	<string name="ad_message_no_location">GPS location is currently unavailable, some features may not be accessible</string>
+	<string name="ad_message_no_gps">You have not enabled GPS, some features are not accessible.</string>
+	<string name="ad_btn_yes">Yes</string>
+	<string name="ad_btn_no">No</string>
+
 	<!-- SignIn Screen -->
 	<string name="ad_title_no_internet_access">No internet access</string>
 	<string name="ad_message_no_internet_access">You have no internet access at the moment, cannot start MobMonkey</string>
@@ -66,16 +76,7 @@
 	<!-- TwitterAuth Screen -->
 	<string name="pd_signing_up_twitter">Signing up via Twitter&#8230;</string>
 	
-	<!-- Main Screen -->
-	<string name="ad_title_enable_gps">Enable GPS</string>	
-	<string name="ad_title_no_location">Location unavailable</string>
-	<string name="ad_title_no_gps_warning">Warning</string>
-	<string name="ad_message_enable_gps">Enable GPS to use this feature?</string>
-	<string name="ad_message_no_location">GPS location is currently unavailable, some features may not be accessible</string>
-	<string name="ad_message_no_gps">You have not enabled GPS, some features are not accessible.</string>
-	<string name="ad_btn_yes">Yes</string>
-	<string name="ad_btn_no">No</string>
-	
+	<!-- Main Screen -->	
 	<string name="pd_loading">Loading&#8230;</string>
 	
 	<string name="toast_not_enable_gps">GPS was not enabled</string>

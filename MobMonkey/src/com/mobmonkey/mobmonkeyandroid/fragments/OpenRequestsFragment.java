@@ -68,7 +68,7 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 
 		View view = inflater.inflate(R.layout.fragment_openrequests_screen, container, false);
 		elvOpenedRequests = (MMExpandedListView) view.findViewById(R.id.elvopenrequests);
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
+		location = MMLocationManager.getGPSLocation();
 				
 		return view;
 	}
