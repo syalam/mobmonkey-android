@@ -90,6 +90,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
+	private String user;
 	private FragmentManager fragmentManager;
 	
 	private Location location;
@@ -141,6 +142,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
+		user = userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY);
 		fragmentManager = getFragmentManager();
 		
 		View view = inflater.inflate(R.layout.fragment_searchlocations_screen, container, false);
@@ -180,6 +182,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 				try {
 					Log.d(TAG, TAG + "onItemClick");
+					Log.d(TAG, TAG + "positon: " + position);
 					addToHistory(nearbyLocationsArrayAdapter.getItem(position));					
 					nearbyLocationsFragmentItemClickListener.onNearbyLocationsItemClick(nearbyLocationsArrayAdapter.getItem(position).toString());
 				} catch (JSONException e) {
@@ -498,7 +501,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 														 MMLocationManager.getLocationLongitude(),
 														 userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE),
 														 MMConstants.PARTNER_ID,
-														 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+														 user,
 														 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
 		MMProgressDialog.displayDialog(getActivity(),
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
@@ -549,7 +552,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	 * @throws JSONException
 	 */
 	private boolean getLocationHistory() throws JSONException {
-		String history = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY);
+		String history = userPrefs.getString(user + MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY);
 		if(!history.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 			locationHistory = new JSONArray(history);
 			return true;
@@ -682,7 +685,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 				locationHistory = new JSONArray(temp);
 			}
 		}
-		userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
+		userPrefsEditor.putString(user + MMSDKConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
 		userPrefsEditor.commit();
 	}
 	

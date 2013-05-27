@@ -65,6 +65,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
+	private String user;
 	private FragmentManager fragmentManager;
 	
 	private JSONArray searchResults;
@@ -98,6 +99,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 		Log.d(TAG, TAG + "onCreateView");
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
+		user = userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY);
 		fragmentManager = getFragmentManager();
 		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		
@@ -316,7 +318,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 	 * @throws JSONException
 	 */
 	private boolean getLocationHistory() throws JSONException {
-		String history = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY);
+		String history = userPrefs.getString(user + MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY);
 		if(!history.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 			locationHistory = new JSONArray(history);
 			return true;
@@ -389,7 +391,7 @@ public class SearchResultsFragment extends MMFragment implements OnClickListener
 				locationHistory = new JSONArray(temp);
 			}
 		}
-		userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
+		userPrefsEditor.putString(user + MMSDKConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
 		userPrefsEditor.commit();
 	}
 	
