@@ -1,7 +1,11 @@
 package com.mobmonkey.mobmonkeyandroid;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,21 +27,16 @@ import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 /**
@@ -89,12 +88,12 @@ public class SignInScreen extends Activity {
 		
 		switch(requestCode) {
 			case MMSDKConstants.REQUEST_CODE_TOS_FACEBOOK:
-				if(userPrefs.getBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, false)) {
+				if(resultCode == RESULT_OK) {
 					Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 				}
 				break;
 			case MMSDKConstants.REQUEST_CODE_TOS_TWITTER:
-				if(userPrefs.getBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_TWITTER, false)) {
+				if(resultCode == RESULT_OK) {
 					launchTwitterAuthScreen();
 				}
 				break;
@@ -128,19 +127,17 @@ public class SignInScreen extends Activity {
 						requestEmail = true;
 						Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 					} else {
-						Log.d(TAG, TAG + "FB birthday: " + facebookUser.getBirthday());
-						
-//						MMUserAdapter.signInUserFacebook(new SignInCallback(),
-//														 MMConstants.PARTNER_ID,
-//														 Session.getActiveSession().getAccessToken(),
-//														 (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
-//														 facebookUser.getFirstName(),
-//														 facebookUser.getLastName(),
-//														 facebookUser.getBirthday(),
-//														 (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_GENDER));
-//						MMProgressDialog.displayDialog(SignInScreen.this,
-//													   MMSDKConstants.DEFAULT_STRING_EMPTY,
-//													   getString(R.string.pd_signing_in_facebook));
+						MMUserAdapter.signInUserFacebook(new SignInCallback(),
+														 MMConstants.PARTNER_ID,
+														 Session.getActiveSession().getAccessToken(),
+														 (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
+														 facebookUser.getFirstName(),
+														 facebookUser.getLastName(),
+														 convertBirthdate(facebookUser.getBirthday()),
+														 convertGender((String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_GENDER)));
+						MMProgressDialog.displayDialog(SignInScreen.this,
+													   MMSDKConstants.DEFAULT_STRING_EMPTY,
+													   getString(R.string.pd_signing_in_facebook));
 					}
 				}
 		}
@@ -179,10 +176,6 @@ public class SignInScreen extends Activity {
 		etPassword = (EditText) findViewById(R.id.etpassword);
         
 		requestEmail = true;
-		
-		// TODO: hardcoded values, to be removed
-		etEmailAddress.setText("hankyu1@yahoo.com");
-		etPassword.setText("a1a2a3");
 	}
 	
 	private void launchToS(int requestCode) {
@@ -223,11 +216,7 @@ public class SignInScreen extends Activity {
      * Function that handles the user sign in with Facebook API
      */
 	private void signInFacebook() {
-		if(!userPrefs.getBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, false)) {
-			launchToS(MMSDKConstants.REQUEST_CODE_TOS_FACEBOOK);
-		} else {
-			Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
-		}
+		launchToS(MMSDKConstants.REQUEST_CODE_TOS_FACEBOOK);
 	}
 	
     /**
@@ -238,11 +227,7 @@ public class SignInScreen extends Activity {
      * 		launchMode singleTask is that this {@link Activity} can only be created once, if it was destroyed and recreated, it will cause an {@link IllegalStateException} error.
      */
 	private void signInTwitter() {
-		if(!userPrefs.getBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_TWITTER, false)) {
-			launchToS(MMSDKConstants.REQUEST_CODE_TOS_TWITTER);
-		} else {
-			launchTwitterAuthScreen();
-		}
+		launchTwitterAuthScreen();
 	}
 	
 	/**
@@ -289,6 +274,36 @@ public class SignInScreen extends Activity {
 			.setNeutralButton(android.R.string.ok, null)
 			.show();
 	}
+	
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
+	private String convertBirthdate(String date) {
+		try {
+			Date birthdate = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).parse(date);
+			return Long.toString(birthdate.getTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+    /**
+     * Function that converts the gender of the user from {@link String} representation to {@link Integer} representation.
+     * @return
+     */
+    private String convertGender(String sex) {
+    	int gender = MMSDKConstants.DEFAULT_INT;
+    	if(sex.equalsIgnoreCase(MMSDKConstants.TEXT_MALE)) {
+    		gender = MMSDKConstants.NUM_MALE;
+    	} else if(sex.equalsIgnoreCase(MMSDKConstants.TEXT_FEMALE)) {
+    		gender = MMSDKConstants.NUM_FEMALE;
+    	}
+    	return Integer.toString(gender);
+    }
 	
 	/**
 	 * Custom {@link Session.StatusCallback} specifically for {@link SignInScreen} to handle the {@link Session} state change.

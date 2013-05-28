@@ -232,6 +232,7 @@ public final class MMSDKConstants {
 	public static final int REQUEST_CODE_RANGE = 8500;
 	public static final int REQUEST_CODE_IMAGE = 10000;
 	public static final int REQUEST_CODE_VIDEO = 10001;
+	public static final int REQUEST_CODE_FACEBOOK_SESSION = 64206;
 	public static final int REQUEST_CODE_ADD_MESSAGE = 100000;
 	public static final int REQUEST_CODE_ADD_CATEGORY = 10000011;
 	public static final int REQUEST_CODE_SCHEDULE_REQUEST = 100001;

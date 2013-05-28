@@ -170,11 +170,6 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
     	etEmailAddress.setOnKeyListener(SignUpTwitterScreen.this);
     	etBirthdate.setOnTouchListener(SignUpTwitterScreen.this);
     	etGender.setOnTouchListener(SignUpTwitterScreen.this);
-    	
-    	// TODO: Hardcoded values, to be removed
-    	etFirstName.setText("Scumbagu");
-    	etLastName.setText("Hanku");
-    	etEmailAddress.setText("scumbaghank@gmail.com");
 	}
 	
     /**
@@ -202,7 +197,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
     		.setPositiveButton(R.string.ad_btn_choose, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
-					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
+					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), MMSDKConstants.DATE_FORMAT_MMM_DD_COMMA_YYYY));
 				}
 			})
 			.setNegativeButton(R.string.ad_btn_cancel, null)

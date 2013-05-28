@@ -258,7 +258,6 @@
 	<string name="ad_message_delete_location_question_mark">\'?</string>
 	<string name="ad_btn_delete">Delete</string>
 	
-	<string name="btn_create_hot_spot">Create Hot Spot</string>
 	<string name="btn_delete_location">Delete Location</string>
 	<string name="btn_delete_hot_spot">Delete Hot Spot</string>
 	
@@ -415,6 +414,5 @@
 	<string name="toast_service_not_available">Location geocoding is not available at the moment, please restart device or try again at a later time.</string>
 	
 	<!-- Add Location Category List Screen -->
-	<string name="tv_title_categories">Categories</string>
 	<string name="btn_done">Done</string>
 </resources>

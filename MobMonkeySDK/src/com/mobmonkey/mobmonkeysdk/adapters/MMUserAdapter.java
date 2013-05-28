@@ -155,7 +155,7 @@ public class MMUserAdapter extends MMAdapter {
 									 String emailAddress,
 									 String password,
 									 String birthdate,
-									 int gender,
+									 String gender,
 									 boolean checkedToS,
 									 String partnerId) {		
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_USER);
@@ -175,7 +175,7 @@ public class MMUserAdapter extends MMAdapter {
 			// TODO: remove hardcoded values
 			params.put(MMSDKConstants.KEY_CITY, "Tempe");
 			params.put(MMSDKConstants.KEY_STATE, "Arizona");
-			params.put(MMSDKConstants.KEY_ZIP, "85283");
+			params.put(MMSDKConstants.KEY_ZIP, "85280");
 			params.put(MMSDKConstants.KEY_PHONE_NUMBER, "480-555-5555");
 			// end TODO:
 			
