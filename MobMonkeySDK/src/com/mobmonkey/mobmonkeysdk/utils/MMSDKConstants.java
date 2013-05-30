@@ -343,6 +343,10 @@ public final class MMSDKConstants {
 	public static final String REQUEST_REPEAT_RATE_WEEKLY = "weekly";
 	public static final String REQUEST_REPEAT_RATE_MONTHLY = "monthly";
 	
+	public static final long REQUEST_FREQUENCY_DAILY = 86400000l;
+	public static final long REQUEST_FREQUENCY_WEEKLY = 604800000l;
+	public static final long REQUEST_FREQUENCY_MONTHLY = 2629740000l;
+	
 	public static final int TIMEOUT_CONNECTION = 10 * 1000;
 	public static final int TIMEOUT_SOCKET = 30 * 1000;
 	

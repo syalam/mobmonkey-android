@@ -179,19 +179,10 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			if(retrieveLocationDetails) {
 				MMLocationAdapter.getLocationInfo(new LocationCallback(),
 												  location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
-												  location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
-												  MMConstants.PARTNER_ID,
-												  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-												  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+												  location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
 				MMMediaAdapter.retrieveAllMediaForLocation(new MediaCallback(),
 														   location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
-														   location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
-														   MMConstants.PARTNER_ID,
-														   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-														   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-//				MMProgressDialog.displayDialog(getActivity(),
-//											   MMSDKConstants.DEFAULT_STRING_EMPTY,
-//											   getString(R.string.pd_loading_location_information));
+														   location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
 			} else {
 				setLocationMembers();
 				hasMedia();
@@ -447,7 +438,8 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		}
 		
 		if(!location.isNull(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL)) {
-			if(location.getString(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL).equals(userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY))) {
+			if(location.getString(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL).equals(userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY)) || 
+					location.getString(MMSDKConstants.JSON_KEY_SUBMITTER_EMAIL).equals(userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, MMSDKConstants.DEFAULT_STRING_EMPTY))) {
 				llDeleteLocationHotSpot.setOnClickListener(LocationDetailsFragment.this);
 				llDeleteLocationHotSpot.setVisibility(View.VISIBLE);
 				
@@ -605,10 +597,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		try {
 			MMFavoritesAdapter.addFavorite(new AddFavoriteCallback(),  
 										   location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
-										   location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
-										   MMConstants.PARTNER_ID,
-										   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+										   location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_adding_to_favorites));
@@ -624,10 +613,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 		try {
 			MMFavoritesAdapter.removeFavorite(new RemoveFavoriteCallback(),  
 											  location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID), 
-											  location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID), 
-											  MMConstants.PARTNER_ID, 
-											  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-											  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+											  location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_removing_from_favorites));
@@ -660,20 +646,14 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 						if(isLocation) {
 							MMLocationAdapter.deleteLocation(new DeleteLocationCallback(),
 															 location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
-															 location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
-															 MMConstants.PARTNER_ID,
-															 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-															 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+															 location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
 							MMProgressDialog.displayDialog(getActivity(),
 														   MMSDKConstants.DEFAULT_STRING_EMPTY,
 														   getString(R.string.pd_deleting_location));
 						} else {
 							MMLocationAdapter.deleteHotSpot(new DeleteHotSpotCallback(),
 															location.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
-															location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
-															MMConstants.PARTNER_ID,
-															userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-															userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+															location.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
 							MMProgressDialog.displayDialog(getActivity(),
 														   MMSDKConstants.DEFAULT_STRING_EMPTY,
 														   getString(R.string.pd_deleting_hot_spot));
@@ -686,8 +666,6 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			})
 			.setNegativeButton(R.string.ad_btn_cancel, null)
 			.show();
-//		TextView tvTitle = (TextView) confirmDeleteAlert.findViewById(android.R.id.title);
-//		tvTitle.setGravity(Gravity.CENTER);
 		TextView tvMessage = (TextView) confirmDeleteAlert.findViewById(android.R.id.message);
 		tvMessage.setGravity(Gravity.CENTER);
 		

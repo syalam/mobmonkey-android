@@ -296,10 +296,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener,
 	 * Make a call to the server and refresh the Favorites list
 	 */
 	private void refreshFavorites() {
-		MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
-										MMConstants.PARTNER_ID,
-										userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		MMFavoritesAdapter.getFavorites(new FavoritesCallback());
 		MMProgressDialog.displayDialog(getActivity(),
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 									   getString(R.string.pd_updating_favorites));

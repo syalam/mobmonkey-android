@@ -15,6 +15,13 @@ import android.content.Context;
  *
  */
 public class MMGCMAdapter extends MMAdapter {
+	
+	/**
+	 * 
+	 */
+	private MMGCMAdapter() {
+		throw new AssertionError();
+	}
 
 	/**
 	 * 
@@ -22,21 +29,13 @@ public class MMGCMAdapter extends MMAdapter {
 	 * @param context
 	 * @param regId
 	 */
-	public static void register(MMCallback mmCallback,
-								Context context,
-								String regId,
-								String partnerId,
-								String user,
-								String auth) {
+	public static void registerGCMRegId(MMCallback mmCallback,
+										Context context,
+										String regId) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_MEDIA, MMSDKConstants.URI_PATH_TESTGCM);
-		
 		uriBuilder.appendQueryParameter(MMSDKConstants.URI_QUERY_PARAM_KEY_DEVICE_ID, regId);
 		
-		HttpPost httpPost = new HttpPost(uriBuilder.toString());
-		httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);		
-		httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpPost.setHeader(MMSDKConstants.KEY_USER, user);
-		httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpPost httpPost = newHttpPostInstance();
 		
 		new MMPostAsyncTask(mmCallback).execute(httpPost);
 		

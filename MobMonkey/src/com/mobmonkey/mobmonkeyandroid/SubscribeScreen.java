@@ -40,10 +40,7 @@ public class SubscribeScreen extends Activity{
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsubscribe:
-				MMUserAdapter.subscribeUser(new SubscribeCallback(),
-											MMConstants.PARTNER_ID,
-											userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+				MMUserAdapter.subscribeUser(new SubscribeCallback());
 				break;
 		}
 	}

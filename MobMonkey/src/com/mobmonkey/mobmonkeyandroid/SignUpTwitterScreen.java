@@ -356,6 +356,12 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 						if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
 							Toast.makeText(SignUpTwitterScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
 							setResult(Activity.RESULT_OK);
+							// TODO: set useOAuth to true once figure out how to get the email address from Twitter user
+							// Twitter API does not allow email to be return to app
+//							userPrefsEditor.putBoolean(MMSDKConstants.KEY_USE_OAUTH, true);
+//							userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_TWITTER);
+//							userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
+							userPrefsEditor.putBoolean(MMSDKConstants.KEY_USE_OAUTH, false);
 							userPrefsEditor.putString(MMSDKConstants.KEY_USER, providerUserName);
 							userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, getIntent().getStringExtra(MMSDKConstants.KEY_OAUTH_TOKEN));
 							userPrefsEditor.commit();

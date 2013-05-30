@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 import com.facebook.Session;
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.SettingsActivity;
 import com.mobmonkey.mobmonkeyandroid.SubscribeScreen;
 import com.mobmonkey.mobmonkeyandroid.TermsofuseScreen;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
@@ -73,10 +72,7 @@ public class SettingsFragment extends MMFragment implements OnClickListener,
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnsignout:
-				MMUserAdapter.signOut(new SignOutCallback(),
-									  MMConstants.PARTNER_ID,
-									  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-									  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+				MMUserAdapter.signOut(new SignOutCallback());
 				MMProgressDialog.displayDialog(getActivity(),
 											   MMSDKConstants.DEFAULT_STRING_EMPTY,
 											   getString(R.string.pd_signing_out));
@@ -151,7 +147,6 @@ public class SettingsFragment extends MMFragment implements OnClickListener,
 					try {
 						JSONObject response = new JSONObject((String) obj);
 						if(response.getString(MMSDKConstants.JSON_KEY_STATUS).equals(MMSDKConstants.RESPONSE_STATUS_SUCCESS)) {
-							// TODO: clear all the saved username/email/passwords/tokens
 							Session session = Session.getActiveSession();
 							if(session != null) {
 								Log.d(TAG, TAG + "session not null");
@@ -159,6 +154,10 @@ public class SettingsFragment extends MMFragment implements OnClickListener,
 							}
 							Toast.makeText(getActivity(), R.string.toast_sign_out_successful, Toast.LENGTH_SHORT).show();
 							
+							userPrefsEditor.remove(MMSDKConstants.KEY_USER);
+							userPrefsEditor.remove(MMSDKConstants.KEY_AUTH);
+							userPrefsEditor.remove(MMSDKConstants.KEY_OAUTH_PROVIDER);
+							userPrefsEditor.remove(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME);
 							userPrefsEditor.remove(MMSDKConstants.TAB_TITLE_CURRENT_TAG);
 							userPrefsEditor.commit();
 						}

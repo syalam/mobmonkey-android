@@ -80,8 +80,12 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	 */
 	@Override
 	public void onResume() {
-		getTrendingCounts();
 		super.onResume();
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
+			getTrendingCounts();
+		} else {
+			MMProgressDialog.dismissDialog();
+		}
 	}
 	
 	/*
@@ -141,15 +145,8 @@ public class TrendingNowFragment extends MMFragment implements OnItemClickListen
 	 * 
 	 */
 	private void getTrendingCounts() {
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
-			MMTrendingAdapter.getTrendingCounts(new TrendingCountsCallback(),
-												MMSDKConstants.SEARCH_TIME_DAY,
-												MMConstants.PARTNER_ID,
-												userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-												userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-		} else {
-			MMProgressDialog.dismissDialog();
-		}
+		MMTrendingAdapter.getTrendingCounts(new TrendingCountsCallback(),
+											MMSDKConstants.SEARCH_TIME_DAY);
 	}
 	
 	/**

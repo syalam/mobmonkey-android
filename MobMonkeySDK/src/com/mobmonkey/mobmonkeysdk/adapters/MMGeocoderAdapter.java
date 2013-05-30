@@ -13,6 +13,13 @@ public final class MMGeocoderAdapter {
 	
 	/**
 	 * 
+	 */
+	private MMGeocoderAdapter() {
+		throw new AssertionError();
+	}
+	
+	/**
+	 * 
 	 * @param context
 	 * @param mmCallback
 	 * @param address

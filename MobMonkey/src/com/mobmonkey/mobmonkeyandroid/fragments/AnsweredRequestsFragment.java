@@ -139,17 +139,11 @@ public class AnsweredRequestsFragment extends MMFragment {
 				answeredRequestItem.setAcceptMediaOnClickListener(new MMAcceptMediaOnClickListener(getActivity(),
 																								   new MMAcceptedRequestCallback(),
 																								   media.getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
-																								   media.getString(MMSDKConstants.JSON_KEY_MEDIA_ID),
-																								   MMConstants.PARTNER_ID,
-																								   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-																								   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY)));
-				answeredRequestItem.setRejectMediaOnClickListener(new MMRejectMediaOnClickListener(new MMRejectRequestCallback(), 
+																								   media.getString(MMSDKConstants.JSON_KEY_MEDIA_ID)));
+				answeredRequestItem.setRejectMediaOnClickListener(new MMRejectMediaOnClickListener(getActivity(),
+																								   new MMRejectRequestCallback(), 
 																								   media.getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
-																								   media.getString(MMSDKConstants.JSON_KEY_MEDIA_ID),
-																								   MMConstants.PARTNER_ID,
-																								   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-																								   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY),
-																								   getActivity()));
+																								   media.getString(MMSDKConstants.JSON_KEY_MEDIA_ID)));
 				
 			}
 			

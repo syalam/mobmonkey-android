@@ -175,7 +175,14 @@ public class TwitterAuthScreen extends Activity {
 						setResult(MMSDKConstants.RESULT_CODE_SUCCESS);
 						userPrefsEditor.putString(MMSDKConstants.KEY_USER, twitterAccessToken.getScreenName());
 						userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, twitterAccessToken.getToken());
-						userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_TWITTER);
+						userPrefsEditor.putBoolean(MMSDKConstants.KEY_USE_OAUTH, false);
+						userPrefsEditor.putString(MMSDKConstants.KEY_USER, twitterAccessToken.getScreenName());
+						userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, twitterAccessToken.getToken());
+						// TODO: set useOAuth to true once figure out how to get the email address from Twitter user
+						// Twitter API does not allow email to be return to app
+//						userPrefsEditor.putBoolean(MMSDKConstants.KEY_USE_OAUTH, true);
+//						userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_TWITTER);
+//						userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, twitterAccessToken.getScreenName());
 						userPrefsEditor.commit();
 					} else if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_NOT_FOUND)) {
 						Intent resultIntent = new Intent();

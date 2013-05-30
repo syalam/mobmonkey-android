@@ -50,9 +50,6 @@ public class MMLocationAdapter extends MMAdapter {
 	 * @param region
 	 * @param providerId
 	 * @param website
-	 * @param partnerId
-	 * @param user
-	 * @param auth
 	 */
 	public static void addLocation(MMCallback mmCallback,
 								   String address,
@@ -69,11 +66,7 @@ public class MMLocationAdapter extends MMAdapter {
 								   String postCode,
 								   String region,
 								   String providerId,
-								   String website,
-								   String partnerId,
-								   String user,
-								   String auth) {
-		
+								   String website) {		
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		Log.d(TAG, TAG + "addLocation: " + uriBuilder.toString());
@@ -97,13 +90,9 @@ public class MMLocationAdapter extends MMAdapter {
 			
 			Log.d(TAG, TAG + "userInfo: " + params.toString());
 			
-			HttpPut httpPut = new HttpPut(uriBuilder.toString());
+			HttpPut httpPut = newHttpPutInstance();
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPut.setEntity(stringEntity);
-			httpPut.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-			httpPut.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-			httpPut.setHeader(MMSDKConstants.KEY_USER, user);
-			httpPut.setHeader(MMSDKConstants.KEY_AUTH, auth);
 
 			new MMPutAsyncTask(mmCallback).execute(httpPut);			
 		} catch (JSONException e) {
@@ -113,6 +102,25 @@ public class MMLocationAdapter extends MMAdapter {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param locationId
+	 * @param providerId
+	 * @param address
+	 * @param address_ext
+	 * @param categoryIds
+	 * @param countryCode
+	 * @param latitude
+	 * @param locality
+	 * @param longitude
+	 * @param name
+	 * @param neighborhood
+	 * @param phoneNumber
+	 * @param postCode
+	 * @param region
+	 * @param webSite
+	 */
 	public static void updateLocation(MMCallback mmCallback,
 									  String locationId,
 									  String providerId,
@@ -129,10 +137,7 @@ public class MMLocationAdapter extends MMAdapter {
 									  String postCode,
 //									  String providerId,
 									  String region,
-									  String webSite,
-									  String partnerId,
-									  String user,
-									  String auth) {
+									  String webSite) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		
@@ -154,13 +159,9 @@ public class MMLocationAdapter extends MMAdapter {
 			params.put(MMSDKConstants.JSON_KEY_REGION, region);
 			params.put(MMSDKConstants.JSON_KEY_WEBSITE, webSite);
 			
-			HttpPost httpPost = new HttpPost(uriBuilder.toString());
+			HttpPost httpPost = newHttpPostInstance();
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPost.setEntity(stringEntity);
-			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMSDKConstants.KEY_USER, user);
-			httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
 
 			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch (JSONException e) {
@@ -178,10 +179,7 @@ public class MMLocationAdapter extends MMAdapter {
 	 */
 	public static void deleteLocation(MMCallback mmCallback,
 									  String locationId,
-								      String providerId,
-									  String partnerId,
-									  String user,
-									  String auth) {
+								      String providerId) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		
@@ -190,11 +188,7 @@ public class MMLocationAdapter extends MMAdapter {
 		
 		Log.d(TAG, TAG + "uriBuilder: " + uriBuilder);
 		
-		HttpDelete httpDelete = new HttpDelete(uriBuilder.toString());
-		httpDelete.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		httpDelete.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpDelete.setHeader(MMSDKConstants.KEY_USER, user);
-		httpDelete.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpDelete httpDelete = newHttpDeleteInstance();
 		
 		new MMDeleteAsyncTask(mmCallback).execute(httpDelete);
 	}
@@ -217,9 +211,6 @@ public class MMLocationAdapter extends MMAdapter {
 	 * @param webSite
 	 * @param parentLocationId
 	 * @param parentProviderId
-	 * @param partnerId
-	 * @param user
-	 * @param auth
 	 */
 	public static void createHotSpot(MMCallback mmCallback,
 									 String name,
@@ -236,10 +227,7 @@ public class MMLocationAdapter extends MMAdapter {
 									 String region,
 									 String webSite,
 									 String parentLocationId,
-									 String parentProviderId,
-									 String partnerId,
-									 String user,
-									 String auth) {
+									 String parentProviderId) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		
@@ -259,13 +247,9 @@ public class MMLocationAdapter extends MMAdapter {
 			params.put(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID, parentLocationId);
 			params.put(MMSDKConstants.JSON_KEY_PARENT_PROVIDER_ID, parentProviderId);
 			
-			HttpPut httpPut = new HttpPut(uriBuilder.toString());
+			HttpPut httpPut = newHttpPutInstance();
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPut.setEntity(stringEntity);
-			httpPut.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-			httpPut.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-			httpPut.setHeader(MMSDKConstants.KEY_USER, user);
-			httpPut.setHeader(MMSDKConstants.KEY_AUTH, auth);
 
 			new MMPutAsyncTask(mmCallback).execute(httpPut);
 		} catch (JSONException e) {
@@ -275,6 +259,25 @@ public class MMLocationAdapter extends MMAdapter {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param name
+	 * @param description
+	 * @param range
+	 * @param locationId
+	 * @param latitude
+	 * @param longitude
+	 * @param categoryIds
+	 * @param countryCode
+	 * @param locality
+	 * @param phoneNumber
+	 * @param providerId
+	 * @param region
+	 * @param webSite
+	 * @param parentLocationId
+	 * @param parentProviderId
+	 */
 	public static void updateHotSpot(MMCallback mmCallback,
 									 String name,
 									 String description,
@@ -290,10 +293,7 @@ public class MMLocationAdapter extends MMAdapter {
 									 String region,
 									 String webSite,
 									 String parentLocationId,
-									 String parentProviderId,
-									 String partnerId,
-									 String user,
-									 String auth) {
+									 String parentProviderId) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		
@@ -313,13 +313,9 @@ public class MMLocationAdapter extends MMAdapter {
 			params.put(MMSDKConstants.JSON_KEY_PARENT_LOCATION_ID, parentLocationId);
 			params.put(MMSDKConstants.JSON_KEY_PARENT_PROVIDER_ID, parentProviderId);
 			
-			HttpPost httpPost = new HttpPost(uriBuilder.toString());
+			HttpPost httpPost = newHttpPostInstance();
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPost.setEntity(stringEntity);
-			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMSDKConstants.KEY_USER, user);
-			httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
 
 			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch (JSONException e) {
@@ -337,21 +333,14 @@ public class MMLocationAdapter extends MMAdapter {
 	 */
 	public static void deleteHotSpot(MMCallback mmCallback,
 									 String locationId,
-									 String providerId,
-									 String partnerId,
-									 String user,
-									 String auth) {
+									 String providerId) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_LOCATION);
 		createParamsInstance();
 		
 		uriBuilder.appendQueryParameter(MMSDKConstants.JSON_KEY_LOCATION_ID, locationId);
 		uriBuilder.appendQueryParameter(MMSDKConstants.JSON_KEY_PROVIDER_ID, providerId);
 		
-		HttpDelete httpDelete = new HttpDelete(uriBuilder.toString());
-		httpDelete.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		httpDelete.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpDelete.setHeader(MMSDKConstants.KEY_USER, user);
-		httpDelete.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpDelete httpDelete = newHttpDeleteInstance();
 		
 		new MMDeleteAsyncTask(mmCallback).execute(httpDelete);
 	}
@@ -361,27 +350,17 @@ public class MMLocationAdapter extends MMAdapter {
 	 * @param mmCallback
 	 * @param locationId
 	 * @param providerId
-	 * @param partnerId
-	 * @param user
-	 * @param auth
 	 */
 	public static void getLocationInfo(MMCallback mmCallback,
 									   String locationId,
-									   String providerId,
-									   String partnerId,
-									   String user,
-									   String auth) {
+									   String providerId) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_LOCATION);
 		uriBuilder.appendQueryParameter(MMSDKConstants.JSON_KEY_LOCATION_ID, locationId);
 		uriBuilder.appendQueryParameter(MMSDKConstants.JSON_KEY_PROVIDER_ID, providerId);
 		
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
-		HttpGet httpGet = new HttpGet(uriBuilder.toString());
-		httpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		httpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpGet.setHeader(MMSDKConstants.KEY_USER, user);
-		httpGet.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpGet httpGet = newHttpGetInstance();
 		
 		getLocationInfoTask = new MMGetAsyncTask(mmCallback);
 		getLocationInfoTask.execute(httpGet);

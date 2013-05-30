@@ -26,6 +26,17 @@ public class MMMakeARequestAdapter extends MMAdapter {
 		throw new AssertionError();
 	}
 	
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param message
+	 * @param scheduleDate
+	 * @param providerId
+	 * @param locationId
+	 * @param duration
+	 * @param repeating
+	 * @param mediaType
+	 */
 	public static void makeARequest(MMCallback mmCallback,
 									String message,
 									String scheduleDate,
@@ -33,10 +44,7 @@ public class MMMakeARequestAdapter extends MMAdapter {
 									String locationId,
 									int duration,
 									String repeating,
-									String mediaType,
-									String partnerId,
-									String user,
-									String auth) {
+									String mediaType) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_REQUESTMEDIA, mediaType);
 		createParamsInstance();
 		
@@ -52,21 +60,17 @@ public class MMMakeARequestAdapter extends MMAdapter {
 				params.put(MMSDKConstants.JSON_KEY_RECURRING, 0);
 			} else {
 				params.put(MMSDKConstants.JSON_KEY_RECURRING, true);
-				long freq = 86400000; //TODO: Change these to calculated values. This is miliseconds in a day for Daily repeat.
+				long freq = MMSDKConstants.REQUEST_FREQUENCY_DAILY; //TODO: Change these to calculated values. This is miliseconds in a day for Daily repeat.
 				if(repeating.equals(MMSDKConstants.REQUEST_REPEAT_RATE_WEEKLY))
-					freq = 604800000;
+					freq = MMSDKConstants.REQUEST_FREQUENCY_WEEKLY;
 				if(repeating.equals(MMSDKConstants.REQUEST_REPEAT_RATE_MONTHLY))
-					freq = 2629740000L;
+					freq = MMSDKConstants.REQUEST_FREQUENCY_MONTHLY;
 				params.put(MMSDKConstants.JSON_KEY_FREQUENCY_IN_MS, freq);
 			}
 			
-			HttpPost httpPost = new HttpPost(uriBuilder.toString());
+			HttpPost httpPost = newHttpPostInstance();
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPost.setEntity(stringEntity);
-			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMSDKConstants.KEY_USER, user);
-			httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
 
 			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch(JSONException ex) {

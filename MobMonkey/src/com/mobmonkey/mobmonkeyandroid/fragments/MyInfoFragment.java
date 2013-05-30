@@ -95,10 +95,7 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
 			session.requestNewReadPermissions(request);
 			Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
     	} else {
-			MMUserAdapter.getUserInfo(new UserInfoCallback(),
-									  MMConstants.PARTNER_ID,
-									  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-									  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMUserAdapter.getUserInfo(new UserInfoCallback());
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_loading_user_info));
@@ -449,10 +446,7 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
 										   	 response.getString(MMSDKConstants.KEY_CITY),
 										   	 response.getString(MMSDKConstants.KEY_STATE),
 										   	 response.getString(MMSDKConstants.KEY_ZIP),
-										   	 response.getBoolean(MMSDKConstants.KEY_ACCEPTEDTOS),
-											 MMConstants.PARTNER_ID,
-											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										   	 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+										   	 response.getBoolean(MMSDKConstants.KEY_ACCEPTEDTOS));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

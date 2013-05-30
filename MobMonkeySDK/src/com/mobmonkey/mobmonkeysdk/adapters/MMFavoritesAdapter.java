@@ -41,10 +41,7 @@ public class MMFavoritesAdapter extends MMAdapter {
 	 */
 	public static void addFavorite(MMCallback mmCallback,
 								   String locationId,
-								   String providerId,
-								   String partnerId,
-								   String user,
-								   String auth) {
+								   String providerId) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_FAVORITES);
 		createParamsInstance();
 
@@ -56,13 +53,9 @@ public class MMFavoritesAdapter extends MMAdapter {
 			
 			Log.d(TAG, TAG + "params: " + params.toString());
 			
-			HttpPost httpPost = new HttpPost(uriBuilder.toString());
+			HttpPost httpPost = newHttpPostInstance();
 			StringEntity stringEntity = new StringEntity(params.toString());
 			httpPost.setEntity(stringEntity);
-			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMSDKConstants.KEY_USER, user);
-			httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
 			
 			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch(JSONException ex) {
@@ -75,25 +68,14 @@ public class MMFavoritesAdapter extends MMAdapter {
 	/**
 	 * 
 	 * @param mmCallback
-	 * @param partnerId
-	 * @param user
-	 * @param auth
 	 */
-	public static void getFavorites(MMCallback mmCallback,
-									String partnerId,
-									String user,
-									String auth) {
+	public static void getFavorites(MMCallback mmCallback) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_FAVORITES);
 		
-		HttpGet HttpGet = new HttpGet(uriBuilder.toString());
-
-		HttpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		HttpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		HttpGet.setHeader(MMSDKConstants.KEY_USER, user);
-		HttpGet.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpGet httpGet = newHttpGetInstance();
 		
 		mmGetAsyncTask = new MMGetAsyncTask(mmCallback);
-		mmGetAsyncTask.execute(HttpGet);
+		mmGetAsyncTask.execute(httpGet);
 	}
 	
 	/**
@@ -107,20 +89,12 @@ public class MMFavoritesAdapter extends MMAdapter {
 	 */
 	public static void removeFavorite(MMCallback mmCallback,
 									  String locationId,
-									  String providerId,
-									  String partnerId,
-									  String user,
-									  String auth) {
+									  String providerId) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_FAVORITES);
 		uriBuilder.appendQueryParameter(MMSDKConstants.JSON_KEY_LOCATION_ID, locationId)
 			.appendQueryParameter(MMSDKConstants.JSON_KEY_PROVIDER_ID, providerId);
 		
-		HttpDelete httpDelete = new HttpDelete(uriBuilder.toString());
-		
-		httpDelete.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		httpDelete.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpDelete.setHeader(MMSDKConstants.KEY_USER, user);
-		httpDelete.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpDelete httpDelete = newHttpDeleteInstance();
 		
 		new MMDeleteAsyncTask(mmCallback).execute(httpDelete);
 	}

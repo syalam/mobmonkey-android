@@ -118,19 +118,21 @@ public class SignInScreen extends Activity {
 			default:
 				Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 				if(!requestEmail) {
-					userPrefsEditor.putString(MMSDKConstants.KEY_USER, (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
-					userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, 	Session.getActiveSession().getAccessToken());
-					userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK);
+//					userPrefsEditor.putString(MMSDKConstants.KEY_USER, (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
+//					userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, 	Session.getActiveSession().getAccessToken());
 					String emailAddress = (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL);
 					Log.d(TAG, TAG + "Email address: " + emailAddress);
 					if(emailAddress == null) {
 						requestEmail = true;
 						Session.openActiveSession(SignInScreen.this, true, new SessionStatusCallback());
 					} else {
+						userPrefsEditor.putBoolean(MMSDKConstants.KEY_USE_OAUTH, true);
+						userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK);
+						userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, emailAddress);
 						MMUserAdapter.signInUserFacebook(new SignInCallback(),
 														 MMConstants.PARTNER_ID,
 														 Session.getActiveSession().getAccessToken(),
-														 (String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
+														 emailAddress,
 														 facebookUser.getFirstName(),
 														 facebookUser.getLastName(),
 														 convertBirthdate(facebookUser.getBirthday()),
@@ -201,7 +203,8 @@ public class SignInScreen extends Activity {
 		if(checkEmailAddress()) {
 			userPrefsEditor.putString(MMSDKConstants.KEY_USER, etEmailAddress.getText().toString());
 			userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, etPassword.getText().toString());
-			userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY);
+			userPrefsEditor.putBoolean(MMSDKConstants.KEY_USE_OAUTH, false);
+//			userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY);
 			MMUserAdapter.signInUser(new SignInCallback(),
 									 MMConstants.PARTNER_ID,
 									 etEmailAddress.getText().toString(),
