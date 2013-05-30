@@ -58,10 +58,7 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
-		MMRequestAdapter.getOpenRequests(new OpenRequestCallback(), 
-										 MMConstants.PARTNER_ID,
-										 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		MMRequestAdapter.getOpenRequests(new OpenRequestCallback());
 		MMProgressDialog.displayDialog(getActivity(),
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 									   getString(R.string.pd_retrieving_all_open_requests));
@@ -151,10 +148,7 @@ public class OpenRequestsFragment extends MMFragment implements OnItemClickListe
 		try {
 			MMRequestAdapter.deleteRequest(new DeleteRequestCallback(position),
 										   openRequests.getJSONObject(position).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
-										   openRequests.getJSONObject(position).getString(MMSDKConstants.JSON_KEY_RECURRING),
-										   MMConstants.PARTNER_ID,
-										   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+										   openRequests.getJSONObject(position).getString(MMSDKConstants.JSON_KEY_RECURRING));
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_deleting_request));

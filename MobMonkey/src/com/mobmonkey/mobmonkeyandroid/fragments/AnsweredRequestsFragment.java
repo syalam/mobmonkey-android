@@ -68,10 +68,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
-		MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
-											 MMConstants.PARTNER_ID,
-											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback());
 		
 		View view = inflater.inflate(R.layout.fragment_answeredrequests_screen, container, false);
 		elvAnsweredRequests = (MMExpandedListView) view.findViewById(R.id.elvansweredrequests);
@@ -248,10 +245,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 				} else {
 					try {
 						JSONObject jObj = new JSONObject((String) obj);
-						MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(), 
-															 MMConstants.PARTNER_ID,
-															 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-															 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+						MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback());
 					
 						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 					} catch (JSONException e) {
@@ -281,10 +275,7 @@ public class AnsweredRequestsFragment extends MMFragment {
 				} else {
 					try {
 						JSONObject jObj = new JSONObject((String) obj);
-						MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback(),
-															 MMConstants.PARTNER_ID,
-															 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-															 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+						MMRequestAdapter.getAnsweredRequests(new AnsweredRequestCallback());
 						
 						Toast.makeText(getActivity(), jObj.getString(MMSDKConstants.JSON_KEY_DESCRIPTION), Toast.LENGTH_LONG).show();
 					} catch (JSONException e) {

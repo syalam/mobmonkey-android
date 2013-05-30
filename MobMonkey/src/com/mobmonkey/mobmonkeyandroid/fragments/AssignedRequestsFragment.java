@@ -81,10 +81,7 @@ public class AssignedRequestsFragment extends MMFragment {
 		location = MMLocationManager.getGPSLocation();
 		
 		try {
-			MMRequestAdapter.getAssignedRequests(new AssignedRequestCallback(), 
-												 MMConstants.PARTNER_ID,
-												 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-												 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMRequestAdapter.getAssignedRequests(new AssignedRequestCallback());
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_retrieving_assigned_requests));
@@ -227,10 +224,7 @@ public class AssignedRequestsFragment extends MMFragment {
 											   assignedRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
 											   assignedRequests.getJSONObject(clickedPosition).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
 											   MMSDKConstants.MEDIA_CONTENT_JPEG,
-											   imageEncoded,
-											   MMConstants.PARTNER_ID,
-											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+											   imageEncoded);
 				MMProgressDialog.displayDialog(getActivity(),
 											   MMSDKConstants.DEFAULT_STRING_EMPTY,
 											   getString(R.string.pd_uploading_image));
@@ -277,10 +271,7 @@ public class AssignedRequestsFragment extends MMFragment {
 					     					   assignedRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
 					     					   assignedRequests.getJSONObject(clickedPosition).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
 					     					   MMSDKConstants.MEDIA_CONTENT_MP4,
-					     					   videoEncoded,
-					     					   MMConstants.PARTNER_ID,
-					     					   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-					     					   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+					     					   videoEncoded);
 				MMProgressDialog.displayDialog(getActivity(),
 											   MMSDKConstants.DEFAULT_STRING_EMPTY,
 											   getString(R.string.pd_uploading_video));		        
