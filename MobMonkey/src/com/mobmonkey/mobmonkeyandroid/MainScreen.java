@@ -12,7 +12,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -25,15 +26,14 @@ import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.mobmonkey.mobmonkeyandroid.R;
-import com.mobmonkey.mobmonkeyandroid.utils.GCMIntentService;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
-import com.mobmonkey.mobmonkeyandroid.utils.ServerUtility;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCheckinAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
+import com.mobmonkey.mobmonkeysdk.adapters.MMGCMAdapter;
+import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 
@@ -54,9 +54,8 @@ public class MainScreen extends TabActivity {
 	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String newMessage = intent.getExtras().getString("message");
+            String newMessage = intent.getExtras().getString(MMSDKConstants.KEY_INTENT_EXTRA_MESSAGE);
             Toast.makeText(MainScreen.this, newMessage, Toast.LENGTH_LONG).show();
-            //mDisplay.append(newMessage + "\n");
         }
     };
 	
@@ -68,26 +67,25 @@ public class MainScreen extends TabActivity {
 		Log.d(TAG, TAG + "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);
-		MMLocationManager.setContext(getApplicationContext());
-		checkForGPSAccess();
+		checkForGPSLocation();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d(TAG, TAG + ":onActivityResult");
-		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == MMSDKConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION) {
-			if(MMLocationManager.isGPSEnabled()) {
-				checkForGPSAccess();
-			} else {
-				noGPSEnabled();
-			}
-		}
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+//	 */
+//	@Override
+//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//		Log.d(TAG, TAG + ":onActivityResult");
+//		super.onActivityResult(requestCode, resultCode, data);
+//		if(requestCode == MMSDKConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION) {
+//			if(MMLocationManager.isGPSEnabled()) {
+//				checkForGPSAccess();
+//			} else {
+//				noGPSEnabled();
+//			}
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -95,7 +93,7 @@ public class MainScreen extends TabActivity {
 	 */
 	@Override
 	protected void onDestroy() {
-		Log.d(TAG, TAG + ":onDestroy");
+		Log.d(TAG, TAG + "onDestroy");
 		MMProgressDialog.dismissDialog();
 		unregisterReceiver(mHandleMessageReceiver);
 		super.onDestroy();
@@ -105,25 +103,8 @@ public class MainScreen extends TabActivity {
 	 * Function that check if user's device has GPS access. Display a {@link Toast} message informing the user if 
 	 * there is no GPS access.
 	 */
-	private void checkForGPSAccess() {
-		if(!MMLocationManager.isGPSEnabled()) {
-			new AlertDialog.Builder(MainScreen.this)
-	    	.setTitle(R.string.ad_title_enable_gps)
-	    	.setMessage(R.string.ad_message_enable_gps)
-	    	.setCancelable(false)
-	    	.setPositiveButton(R.string.ad_btn_yes, new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) {
-		            // Launch settings, allowing user to make a change
-		            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), MMSDKConstants.REQUEST_CODE_TURN_ON_GPS_LOCATION);
-		        }
-	    	})
-	    	.setNegativeButton(R.string.ad_btn_no, new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) {
-		        	noGPSEnabled();
-		        }
-	    	})
-	    	.show();
-	    } else if(MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+	private void checkForGPSLocation() {
+		if(MMLocationManager.getGPSLocation() == null) {
 			new AlertDialog.Builder(MainScreen.this)
 	    	.setTitle(R.string.ad_title_no_location)
 	    	.setMessage(R.string.ad_message_no_location)
@@ -141,33 +122,25 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * Function that create an {@link AlertDialog} to the user if the GPS is not enabled alerting them some features are not accessible without GPS
-	 */
-	private void noGPSEnabled() {
-    	new AlertDialog.Builder(MainScreen.this)
-	    	.setIcon(android.R.drawable.ic_dialog_alert)
-	    	.setTitle(R.string.ad_title_no_gps_warning)
-	    	.setMessage(R.string.ad_message_no_gps)
-	    	.setCancelable(false)
-	    	.setNeutralButton(R.string.ad_btn_ok, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					init();
-				}
-			})
-	    	.show();
-	}
-	
-	/**
 	 * Initialize all the variables to be used in {@link MainScreen}
 	 */
 	private void init() {
 		Log.d(TAG, "init");
+		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
+		userPrefsEditor = userPrefs.edit();
+		if(userPrefs.getBoolean(MMSDKConstants.KEY_USE_OAUTH, false)) {
+			MMAdapter.useOAuth(MMConstants.PARTNER_ID,
+							   userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, MMSDKConstants.DEFAULT_STRING_EMPTY),
+							   userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		} else {
+			MMAdapter.useMobMonkey(MMConstants.PARTNER_ID,
+								   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
+								   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		}
+		
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(MMSDKConstants.INTENT_FILTER_DISPLAY_MESSAGE));
 		registerGCM();
 		
-		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
-		userPrefsEditor = userPrefs.edit();
 		tabWidget = getTabWidget();
 		tabHost = getTabHost();
 		
@@ -183,14 +156,14 @@ public class MainScreen extends TabActivity {
 		GCMRegistrar.checkDevice(MainScreen.this);
 		GCMRegistrar.checkManifest(MainScreen.this);
 		
-		final String regId = GCMRegistrar.getRegistrationId(MainScreen.this);
+		String regId = GCMRegistrar.getRegistrationId(MainScreen.this);
 		Log.d(TAG, TAG + "regId: " + regId);
 		if (regId.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 			GCMRegistrar.register(MainScreen.this, GCMIntentService.SENDER_ID);
-			String a = GCMRegistrar.getRegistrationId(MainScreen.this);
-			Log.d(TAG, TAG + "GCMRegistrar regId: " + a);
 		} else {
-			new RegisterGCMAsyncTask(MainScreen.this).execute(regId);
+			MMGCMAdapter.registerGCMRegId(new RegisterGCMWithMobMonkeyCallback(),
+										  MainScreen.this,
+										  regId);
 		}
 	}
 	
@@ -230,12 +203,9 @@ public class MainScreen extends TabActivity {
 	 * Function to get all the categories from the server
 	 */
 	private void getAllCategories() {
-		if(!userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {			
+		if(!userPrefs.contains(MMSDKConstants.SHARED_PREFS_KEY_ALL_CATEGORIES) && MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {			
 			MMCategoryAdapter.cancelGetAllCategories();
-			MMCategoryAdapter.getAllCategories(new CategoriesCallback(),
-											   MMConstants.PARTNER_ID,
-											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMCategoryAdapter.getAllCategories(new CategoriesCallback());
 			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
 				MMProgressDialog.displayDialog(MainScreen.this,
 											   MMSDKConstants.DEFAULT_STRING_EMPTY,
@@ -249,12 +219,9 @@ public class MainScreen extends TabActivity {
 	 * NOTE: This is needed to check the location in location info
 	 */
 	private void getAllFavorites() {		
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			MMFavoritesAdapter.cancelGetFavorites();
-			MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
-											MMConstants.PARTNER_ID, 
-											userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-											userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMFavoritesAdapter.getFavorites(new FavoritesCallback());
 			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
 				MMProgressDialog.displayDialog(MainScreen.this,
 											   MMSDKConstants.DEFAULT_STRING_EMPTY,
@@ -264,16 +231,11 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * 
+	 * Function to check user in at his/her current location when he/she signs in
 	 */
 	private void checkUserIn() {		
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-			MMCheckinAdapter.checkInUser(new CheckUserInCallback(),
-							 MMLocationManager.getLocationLatitude(),
-							 MMLocationManager.getLocationLongitude(),
-							 MMConstants.PARTNER_ID,
-							 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-							 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
+			MMCheckinAdapter.checkInUser(new CheckUserInCallback());
 			if(MMProgressDialog.isProgressDialogNull() || !MMProgressDialog.isProgressDialogShowing()) {
 				MMProgressDialog.displayDialog(MainScreen.this,
 											   MMSDKConstants.DEFAULT_STRING_EMPTY,
@@ -285,39 +247,27 @@ public class MainScreen extends TabActivity {
 	}
 	
 	/**
-	 * {@link AsyncTask} to register Google Cloud Message in the background
+	 * Callback to handle the response after register with MobMonkey with GCM regId
 	 * @author Dezapp, LLC
 	 *
 	 */
-	private class RegisterGCMAsyncTask extends AsyncTask<String, Void, Void> {
-		Context context;
-		
-		public RegisterGCMAsyncTask(Context context) {
-			this.context = context;
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see android.os.AsyncTask#doInBackground(Params[])
-		 */
+	private class RegisterGCMWithMobMonkeyCallback implements MMCallback {
 		@Override
-		protected Void doInBackground(String... params) {
-			boolean registered = ServerUtility.register(context, params[0]);
-            // At this point all attempts to register with the app
-            // server failed, so we need to unregister the device
-            // from GCM - the app will try to register again when
-            // it is restarted. Note that GCM will send an
-            // unregistered callback upon completion, but
-            // GCMIntentService.onUnregistered() will ignore it.
-            if (!registered) {
-                GCMRegistrar.unregister(context);
-            }
-			return null;
+		public void processCallback(Object obj) {
+			if(obj != null) {
+				Log.d(TAG, TAG + "RegisterGCMWithMobMobnkeyCallback response: " + (String) obj);
+				
+				if(((String) obj).equals(MMSDKConstants.CONNECTION_TIMED_OUT)) {
+					Toast.makeText(MainScreen.this, getString(R.string.toast_connection_timed_out), Toast.LENGTH_SHORT).show();
+				} else {
+					// TODO:
+				}
+			}
 		}
 	}
 	
 	/**
-	 * Callback that gets all the category information
+	 * Callback that gets all the categories
 	 * @author Dezapp, LLC
 	 *
 	 */ 

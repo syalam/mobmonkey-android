@@ -29,7 +29,8 @@ import android.widget.ToggleButton;
  * @author Dezapp, LLC
  *
  */
-public class ScheduleRequestScreen extends Activity implements OnWheelChangedListener, OnCheckedChangeListener {
+public class ScheduleRequestScreen extends Activity implements OnWheelChangedListener,
+															   OnCheckedChangeListener {
 	private static final String TAG = "ScheduleRequestScreen: ";
 	
 	private WheelView wvDay;

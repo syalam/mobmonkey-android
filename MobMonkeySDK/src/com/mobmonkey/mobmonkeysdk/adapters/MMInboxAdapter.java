@@ -30,18 +30,11 @@ public class MMInboxAdapter extends MMAdapter {
 	 * @param emailAddress
 	 * @param auth
 	 */
-	public static void getCounts(MMCallback mmCallback,
-								 String partnerId,
-								 String user,
-								 String auth) {
+	public static void getCounts(MMCallback mmCallback) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_INBOX, MMSDKConstants.URI_PATH_COUNTS);
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
-		HttpGet httpGet = new HttpGet(uriBuilder.toString());
-		httpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		httpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpGet.setHeader(MMSDKConstants.KEY_USER, user);
-		httpGet.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpGet httpGet = newHttpGetInstance();
 		
 		new MMGetAsyncTask(mmCallback).execute(httpGet);
 	}

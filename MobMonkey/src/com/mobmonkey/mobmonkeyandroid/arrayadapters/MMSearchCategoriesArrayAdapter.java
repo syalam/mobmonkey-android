@@ -67,7 +67,7 @@ public class MMSearchCategoriesArrayAdapter extends ArrayAdapter<MMSearchCategor
 		vHolder.tvCatName.setText(mmSearchCategoryItems[position].getCatName());
 		vHolder.ivCatIndicatorIcon.setImageResource(mmSearchCategoryItems[position].getCatIndicatorIconId());
 		
-        if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+        if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation() == null) {
         	vHolder.tvCatName.setTextColor(Color.GRAY);
         }
 		

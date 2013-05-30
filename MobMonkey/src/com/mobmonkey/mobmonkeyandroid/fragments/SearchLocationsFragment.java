@@ -90,6 +90,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
+	private String user;
 	private FragmentManager fragmentManager;
 	
 	private Location location;
@@ -141,6 +142,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		userPrefs = getActivity().getSharedPreferences(MMSDKConstants.USER_PREFS, Context.MODE_PRIVATE);
 		userPrefsEditor = userPrefs.edit();
+		user = userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY);
 		fragmentManager = getFragmentManager();
 		
 		View view = inflater.inflate(R.layout.fragment_searchlocations_screen, container, false);
@@ -162,7 +164,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		markerHashMap = new HashMap<Marker, JSONObject>();
 		
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			if(!enablePanAndZoom) {
 				tvHoldToPanAndZoom.setText(MMUtility.setTextStyleItalic(getString(R.string.tv_hold_to_enable_pan_and_zoom)));
 			} else {
@@ -180,6 +182,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 				try {
 					Log.d(TAG, TAG + "onItemClick");
+					Log.d(TAG, TAG + "positon: " + position);
 					addToHistory(nearbyLocationsArrayAdapter.getItem(position));					
 					nearbyLocationsFragmentItemClickListener.onNearbyLocationsItemClick(nearbyLocationsArrayAdapter.getItem(position).toString());
 				} catch (JSONException e) {
@@ -188,7 +191,10 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 			}
 		});
 		llLoadMore.setOnClickListener(SearchLocationsFragment.this);
-		btnAddLoc.setOnClickListener(SearchLocationsFragment.this);
+		if(MMLocationManager.getGPSLocation() != null) {
+			btnAddLoc.setOnClickListener(SearchLocationsFragment.this);
+			btnAddLoc.setVisibility(View.VISIBLE);
+		}
 		elvSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -266,7 +272,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	public void onClick(View view) {
 		switch(view.getId()) {
 			case R.id.llcreatehotspot:
-				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation()) != null) {
 					createHotSpotFragmentClicKlistener.onCreateHotSpotClick(nearbyLocations);
 				}
 				break;
@@ -275,7 +281,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 				displayTagsPopUp(view);
 				break;
 			case R.id.etsearch:
-				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+				if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation()) != null) {
 					setNearbyLocationsSearch();
 				}
 				break;
@@ -398,7 +404,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	public void onResume() {
 		Log.d(TAG, TAG + "onResume");
 		super.onResume();
-		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation()) != null) {
 			searchAllNearbyLocations();
 			getMMSupportMapFragment();
 		}
@@ -420,7 +426,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	public void onPause() {
 		Log.d(TAG, TAG + "onPause");
 		super.onPause();
-		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation(new MMLocationListener())) != null) {
+		if(MMLocationManager.isGPSEnabled() && (location = MMLocationManager.getGPSLocation()) != null) {
 			try {
 				FragmentTransaction transaction = fragmentManager.beginTransaction();
 				transaction.remove(smfNearbyLocations);
@@ -460,7 +466,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 		etSearch.setOnLongClickListener(SearchLocationsFragment.this);
 		etSearch.addTextChangedListener(new NearbyLocationsTextWatcher());
 		
-		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation() == null) {
 			etSearch.setFocusable(false);
 			etSearch.setFocusableInTouchMode(false);
 			etSearch.setClickable(false);
@@ -484,7 +490,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 		ArrayAdapter<MMSearchCategoriesItem> arrayAdapter = new MMSearchCategoriesArrayAdapter(getActivity(), R.layout.listview_row_searchcategory, searchItems);
 		elvSearch.setAdapter(arrayAdapter);
 		
-		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation() == null) {
 			elvSearch.setEnabled(false);
 		}
 	}
@@ -494,12 +500,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	 */
 	private void searchAllNearbyLocations() {
 		MMSearchLocationAdapter.searchAllNearbyLocations(new SearchCallback(),
-														 MMLocationManager.getLocationLatitude(),
-														 MMLocationManager.getLocationLongitude(),
-														 userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE),
-														 MMConstants.PARTNER_ID,
-														 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-														 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+														 userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE));
 		MMProgressDialog.displayDialog(getActivity(),
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 									   getString(R.string.pd_search_all_nearby));
@@ -549,7 +550,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 	 * @throws JSONException
 	 */
 	private boolean getLocationHistory() throws JSONException {
-		String history = userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY);
+		String history = userPrefs.getString(user + MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY);
 		if(!history.equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
 			locationHistory = new JSONArray(history);
 			return true;
@@ -579,6 +580,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 			if(resultLocations.size() > 0) {
 				enllvNearbyLocations.setVisibility(View.VISIBLE);
 				llLoadMore.setVisibility(View.VISIBLE);
+				btnAddLoc.setVisibility(View.VISIBLE);
 				
 				nearbyLocationsArrayAdapter = new MMNearbyLocationsArrayAdapter(getActivity(), R.layout.listview_row_searchresults, resultLocations);
 				enllvNearbyLocations.setAdapter(nearbyLocationsArrayAdapter);
@@ -682,7 +684,7 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 				locationHistory = new JSONArray(temp);
 			}
 		}
-		userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
+		userPrefsEditor.putString(user + MMSDKConstants.SHARED_PREFS_KEY_HISTORY, locationHistory.toString());
 		userPrefsEditor.commit();
 	}
 	

@@ -34,7 +34,7 @@ public class MMHistoryArrayAdapter extends ArrayAdapter<JSONObject> {
 	
 	public MMHistoryArrayAdapter(Context context, int listRowLayout, ArrayList<JSONObject> historyLocations) {
 		super(context, listRowLayout, historyLocations);
-		this.location = MMLocationManager.getGPSLocation(new MMLocationListener());
+		this.location = MMLocationManager.getGPSLocation();
 		this.context = context;
 		this.layoutInflater = LayoutInflater.from(context);
 		this.listRowLayout = listRowLayout;

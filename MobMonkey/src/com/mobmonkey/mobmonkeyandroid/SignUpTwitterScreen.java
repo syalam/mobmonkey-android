@@ -170,11 +170,6 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
     	etEmailAddress.setOnKeyListener(SignUpTwitterScreen.this);
     	etBirthdate.setOnTouchListener(SignUpTwitterScreen.this);
     	etGender.setOnTouchListener(SignUpTwitterScreen.this);
-    	
-    	// TODO: Hardcoded values, to be removed
-    	etFirstName.setText("Scumbagu");
-    	etLastName.setText("Hanku");
-    	etEmailAddress.setText("scumbaghank@gmail.com");
 	}
 	
     /**
@@ -202,7 +197,7 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
     		.setPositiveButton(R.string.ad_btn_choose, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
-					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
+					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), MMSDKConstants.DATE_FORMAT_MMM_DD_COMMA_YYYY));
 				}
 			})
 			.setNegativeButton(R.string.ad_btn_cancel, null)
@@ -361,6 +356,12 @@ public class SignUpTwitterScreen extends Activity implements OnKeyListener, OnTo
 						if(response.getString(MMSDKConstants.JSON_KEY_ID).equals(MMSDKConstants.RESPONSE_ID_SUCCESS)) {
 							Toast.makeText(SignUpTwitterScreen.this, R.string.toast_sign_up_successful, Toast.LENGTH_SHORT).show();
 							setResult(Activity.RESULT_OK);
+							// TODO: set useOAuth to true once figure out how to get the email address from Twitter user
+							// Twitter API does not allow email to be return to app
+//							userPrefsEditor.putBoolean(MMSDKConstants.KEY_USE_OAUTH, true);
+//							userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_TWITTER);
+//							userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER_USER_NAME, providerUserName);
+							userPrefsEditor.putBoolean(MMSDKConstants.KEY_USE_OAUTH, false);
 							userPrefsEditor.putString(MMSDKConstants.KEY_USER, providerUserName);
 							userPrefsEditor.putString(MMSDKConstants.KEY_AUTH, getIntent().getStringExtra(MMSDKConstants.KEY_OAUTH_TOKEN));
 							userPrefsEditor.commit();

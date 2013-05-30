@@ -324,10 +324,7 @@ public class NewHotSpotFragment extends MMFragment implements OnMapClickListener
 											locationInfo.getString(MMSDKConstants.JSON_KEY_REGION),
 											locationInfo.getString(MMSDKConstants.JSON_KEY_WEBSITE),
 											locationInfo.getString(MMSDKConstants.JSON_KEY_LOCATION_ID),
-											locationInfo.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID),
-											MMConstants.PARTNER_ID,
-											userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+											locationInfo.getString(MMSDKConstants.JSON_KEY_PROVIDER_ID));
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_creating_hot_spot));

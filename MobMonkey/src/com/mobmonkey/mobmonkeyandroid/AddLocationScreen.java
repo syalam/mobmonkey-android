@@ -254,10 +254,7 @@ public class AddLocationScreen extends Activity implements OnTouchListener,
 										  etZip.getText().toString(),
 										  etState.getText().toString(),
 										  MMConstants.PROVIDER_ID,
-										  "www.mobmonkey.com", // TODO: hardcoded
-										  MMConstants.PARTNER_ID,
-										  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+										  null);
 			MMProgressDialog.displayDialog(AddLocationScreen.this,
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_adding_location));

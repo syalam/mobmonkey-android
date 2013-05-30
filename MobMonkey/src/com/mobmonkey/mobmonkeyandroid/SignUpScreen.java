@@ -1,8 +1,12 @@
 private package com.mobmonkey.mobmonkeyandroid;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -182,8 +186,12 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 					userPrefsEditor.putString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.OAUTH_PROVIDER_FACEBOOK);
 					MMUserAdapter.signUpNewUserFacebook(new SignUpCallback(),
 														MMConstants.PARTNER_ID,
+														Session.getActiveSession().getAccessToken(),
 														(String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL),
-														Session.getActiveSession().getAccessToken());
+														facebookUser.getFirstName(),
+														facebookUser.getLastName(),
+														 convertBirthdate(facebookUser.getBirthday()),
+														 convertGender((String) facebookUser.getProperty(MMSDKConstants.FACEBOOK_REQ_PERM_GENDER)));
 		    		MMProgressDialog.displayDialog(SignUpScreen.this,
 		    									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 		    									   getString(R.string.pd_signing_up_facebook));
@@ -244,13 +252,6 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     	etGender.setOnTouchListener(SignUpScreen.this);
     	
     	requestEmail = true;
-    	
-    	// TODO: Hardcoded values, to be removed
-    	etFirstName.setText("Hank");
-    	etLastName.setText("Bananas");
-    	etEmailAddress.setText("hank.bananas@gmail.com");
-    	etPassword.setText("helloworld123");
-    	etPasswordConfirm.setText("helloworld123");
     }
     
     /**
@@ -274,7 +275,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     				etEmailAddress.getText().toString(), 
     				etPassword.getText().toString(), 
     				Long.toString(birthdate.getTimeInMillis()), 
-    				convertGender(),
+    				convertGender(etGender.getText().toString()),
     				cbAcceptedToS.isChecked(), 
     				MMConstants.PARTNER_ID);
     		MMProgressDialog.displayDialog(SignUpScreen.this,
@@ -416,20 +417,6 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     }
     
     /**
-     * Function that converts the gender of the user from {@link String} representation to {@link Integer} representation.
-     * @return
-     */
-    private int convertGender() {
-    	int gender = MMSDKConstants.DEFAULT_INT;
-    	if(etGender.getText().toString().equalsIgnoreCase(MMSDKConstants.TEXT_MALE)) {
-    		gender = MMSDKConstants.NUM_MALE;
-    	} else if(etGender.getText().toString().equalsIgnoreCase(MMSDKConstants.TEXT_FEMALE)) {
-    		gender = MMSDKConstants.NUM_FEMALE;
-    	}
-    	return gender;
-    }
-    
-    /**
      * Display an {@link AlertDialog} with the associated message informing user that they forgot enter a certain input field.
      * @param messageId String resource id of the message to be displayed
      */
@@ -467,7 +454,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     			@Override
 				public void onClick(DialogInterface dialog, int which) {
 					birthdate.set(dpBirthdate.getYear(), dpBirthdate.getMonth(), dpBirthdate.getDayOfMonth());
-					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), "MMM dd, yyyy"));
+					etBirthdate.setText(MMUtility.getDate(birthdate.getTimeInMillis(), MMSDKConstants.DATE_FORMAT_MMM_DD_COMMA_YYYY));
 				}
 			})
 			.setNegativeButton(R.string.ad_btn_cancel, null)
@@ -490,6 +477,31 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
     		.setCancelable(false)
     		.show();
     }
+
+	private String convertBirthdate(String date) {
+		try {
+			Date birthdate = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).parse(date);
+			return Long.toString(birthdate.getTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+    /**
+     * Function that converts the gender of the user from {@link String} representation to {@link Integer} representation.
+     * @return
+     */
+    private String convertGender(String sex) {
+    	int gender = MMSDKConstants.DEFAULT_INT;
+    	if(sex.equalsIgnoreCase(MMSDKConstants.TEXT_MALE)) {
+    		gender = MMSDKConstants.NUM_MALE;
+    	} else if(sex.equalsIgnoreCase(MMSDKConstants.TEXT_FEMALE)) {
+    		gender = MMSDKConstants.NUM_FEMALE;
+    	}
+    	return Integer.toString(gender);
+    }
     
 	/**
 	 * Custom {@link Session.StatusCallback} specifically for {@link SignInScreen} to handle the {@link Session} state change.
@@ -503,7 +515,7 @@ public class SignUpScreen extends Activity implements OnKeyListener, OnDateChang
 			Log.d(TAG, TAG + "requestEmail: " + requestEmail);
 			Log.d(TAG, TAG + "session opened: " + session.isOpened());
 			if(session.isOpened() && requestEmail) {
-	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL));
+	    		Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(SignUpScreen.this, Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL, MMSDKConstants.FACEBOOK_REQ_PERM_BIRTHDAY));
 				session.requestNewReadPermissions(request);
 				Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
 			}

@@ -67,27 +67,29 @@ public class TermsofuseScreen extends Activity {
 	public void viewOnClick(View view) {
 		switch(view.getId()) {
 			case R.id.btnreject:
+				setResult(RESULT_CANCELED);
 				break;
 			case R.id.btnaccept:
-				onAcceptClick();
+//				onAcceptClick();
+				setResult(RESULT_OK);
 				break;
 		}
 		
 		onBackPressed();
 	}
 	
-	private void onAcceptClick() {
-		switch(requestCode) {
-			case MMSDKConstants.REQUEST_CODE_TOS_FACEBOOK:
-				userPrefsEditor.putBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, true);
-				break;
-			case MMSDKConstants.REQUEST_CODE_TOS_TWITTER:
-				userPrefsEditor.putBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_TWITTER, true);
-				break;
-		}
-		
-		userPrefsEditor.commit();
-	}
+//	private void onAcceptClick() {
+//		switch(requestCode) {
+//			case MMSDKConstants.REQUEST_CODE_TOS_FACEBOOK:
+//				userPrefsEditor.putBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_FACEBOOK, true);
+//				break;
+//			case MMSDKConstants.REQUEST_CODE_TOS_TWITTER:
+//				userPrefsEditor.putBoolean(MMSDKConstants.SHARED_PREFS_KEY_TOS_TWITTER, true);
+//				break;
+//		}
+//		
+//		userPrefsEditor.commit();
+//	}
 	
 	private String readText() {
 		InputStream in = getResources().openRawResource(R.raw.mm_terms_of_use);

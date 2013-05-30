@@ -151,7 +151,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener,
 	 */
 	@Override
 	public void onClick(View view) {
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			switch(view.getId()) {
 				case R.id.ibmap:
 					mapButtonClicked();
@@ -213,7 +213,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener,
 	public void onResume() {
 		Log.d(TAG, TAG + "onResume");
 		super.onResume();
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			refreshFavorites();
 			getMMSupportMapFragment();
 		}
@@ -226,12 +226,14 @@ public class FavoritesFragment extends MMFragment implements OnClickListener,
 	public void onPause() {
 		Log.d(TAG, TAG + "onPause");
 		super.onPause();
-		try {
-			FragmentTransaction transaction = fragmentManager.beginTransaction();
-			transaction.remove(smfFavoriteLocations);
-			transaction.commitAllowingStateLoss();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
+			try {
+				FragmentTransaction transaction = fragmentManager.beginTransaction();
+				transaction.remove(smfFavoriteLocations);
+				transaction.commitAllowingStateLoss();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -294,10 +296,7 @@ public class FavoritesFragment extends MMFragment implements OnClickListener,
 	 * Make a call to the server and refresh the Favorites list
 	 */
 	private void refreshFavorites() {
-		MMFavoritesAdapter.getFavorites(new FavoritesCallback(),
-										MMConstants.PARTNER_ID,
-										userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+		MMFavoritesAdapter.getFavorites(new FavoritesCallback());
 		MMProgressDialog.displayDialog(getActivity(),
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 									   getString(R.string.pd_updating_favorites));

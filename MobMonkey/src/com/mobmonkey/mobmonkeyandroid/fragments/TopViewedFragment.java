@@ -75,12 +75,9 @@ public class TopViewedFragment extends MMFragment {
 	 * @param position
 	 */
 	private void getTrending() {
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			MMTrendingAdapter.getTopViewed(new TopViewedCallback(),
-										   MMSDKConstants.SEARCH_TIME_WEEK,
-										   MMConstants.PARTNER_ID,
-										   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+										   MMSDKConstants.SEARCH_TIME_WEEK);
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_retrieving_all_top_viewed));
