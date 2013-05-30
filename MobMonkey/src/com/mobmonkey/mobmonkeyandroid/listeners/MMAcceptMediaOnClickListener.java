@@ -11,41 +11,48 @@ import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
+/**
+ * 
+ * @author Dezapp, LLC
+ *
+ */
 public class MMAcceptMediaOnClickListener implements OnClickListener{
 	private static final String TAG = "MMAcceptMediaOnClickListener";
 	
-	private String requestId, mediaId, partnerId, user, auth;
-	private MMCallback mmCallback;
 	private Context context;
+	private String requestId;
+	private String mediaId;
+	private MMCallback mmCallback;
 	
+	/**
+	 * 
+	 * @param context
+	 * @param mmCallback
+	 * @param requestId
+	 * @param mediaId
+	 */
 	public MMAcceptMediaOnClickListener(Context context,
 										MMCallback mmCallback,
 										String requestId,
-										String mediaId,
-										String partnerId,
-										String user,
-										String auth) {
+										String mediaId) {
+		this.context = context;
 		this.requestId = requestId;
 		this.mediaId = mediaId;
 		this.mmCallback = mmCallback;
-		this.partnerId = partnerId;
-		this.user = user;
-		this.auth = auth;
-		this.context = context;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.view.View.OnClickListener#onClick(android.view.View)
+	 */
 	@Override
 	public void onClick(View v) {
 		Log.d(TAG, mediaId);
 		MMMediaAdapter.acceptMedia(mmCallback,
 								   requestId,
-								   mediaId,
-								   partnerId,
-								   user,
-								   auth);
+								   mediaId);
 		MMProgressDialog.displayDialog(context,
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 									   context.getString(R.string.pd_accepting_answered_request));
 	}
-	
 }

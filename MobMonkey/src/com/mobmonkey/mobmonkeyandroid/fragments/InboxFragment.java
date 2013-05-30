@@ -26,7 +26,6 @@ import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMInboxAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
-import com.mobmonkey.mobmonkeysdk.utils.MMLocationListener;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 
 /**
@@ -78,8 +77,10 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	 */
 	@Override
 	public void onResume() {
-		getInboxCounts();
 		super.onResume();
+		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
+			getInboxCounts();
+		}
 	}
 	
 	/*
@@ -99,6 +100,9 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		
 	}
 	
+	/**
+	 * 
+	 */
 	private void createInbox() {
 		inboxItems = new MMInboxItem[getResources().getStringArray(R.array.inbox_category).length];
 		for(int i = 0; i < inboxItems.length; i++) {
@@ -115,15 +119,15 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 	/**
 	 * Update Inbox {@link ListView} when first started or resume.
 	 */
-	private void getInboxCounts() {		
-		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation(new MMLocationListener()) != null) {
-			MMInboxAdapter.getCounts(new InboxCountsCallback(), 
-									 MMConstants.PARTNER_ID, 
-									 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY), 
-									 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
-		}
+	private void getInboxCounts() {
+		MMInboxAdapter.getCounts(new InboxCountsCallback());
 	}
 	
+	/**
+	 * 
+	 * @param jObj
+	 * @throws JSONException
+	 */
 	private void setInboxCounts(JSONObject jObj) throws JSONException {
 		int openrequests = jObj.getInt(MMSDKConstants.JSON_KEY_OPEN_REQUESTS_COUNT);
 		int assignedReadCount = jObj.getInt(MMSDKConstants.JSON_KEY_ASSIGNED_READ_REQUESTS);
@@ -165,6 +169,11 @@ public class InboxFragment extends MMFragment implements OnItemClickListener {
 		arrayAdapter.notifyDataSetChanged();
 	}
 	
+	/**
+	 * 
+	 * @author Dezapp, LLC
+	 *
+	 */
 	private class InboxCountsCallback implements MMCallback {
 		@Override
 		public void processCallback(Object obj) {

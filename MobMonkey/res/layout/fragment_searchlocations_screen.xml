@@ -146,7 +146,8 @@
 				    android:text="@string/btn_add_a_location"
 				    android:textAppearance="?android:attr/textAppearanceMedium"
 				    android:textColor="@android:color/white"
-				    android:textStyle="bold"/>
+				    android:textStyle="bold"
+				    android:visibility="gone"/>
 				
 				<TextView android:id="@+id/tvholdtopanandzoom"
 				    android:layout_width="wrap_content"

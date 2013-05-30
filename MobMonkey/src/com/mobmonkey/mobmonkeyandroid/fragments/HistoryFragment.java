@@ -39,10 +39,11 @@ import com.mobmonkey.mobmonkeysdk.utils.*;
 public class HistoryFragment extends MMFragment implements OnClickListener,
 														   OnItemClickListener,
 														   OnItemLongClickListener {
-	private static final String TAG = "HistoryFragment";
+	private static final String TAG = "HistoryFragment: ";
 	
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
+	private String user;
 	
 	private JSONArray history;
 	private ArrayList<JSONObject> historyLocations;
@@ -66,8 +67,9 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 		elvHistory = (MMExpandedListView) view.findViewById(R.id.elvhistory);
 		
 		try {
-			if(!userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY).equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
-				history = new JSONArray(userPrefs.getString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			user = userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY);
+			if(!userPrefs.getString(user + MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY).equals(MMSDKConstants.DEFAULT_STRING_EMPTY)) {
+				history = new JSONArray(userPrefs.getString(user + MMSDKConstants.SHARED_PREFS_KEY_HISTORY, MMSDKConstants.DEFAULT_STRING_EMPTY));
 
 				if(history.length() > 0) {
 					getHistoryLocations();
@@ -143,7 +145,7 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 	 */
 	@Override
 	public void onFragmentBackPressed() {
-		userPrefsEditor.putString(MMSDKConstants.SHARED_PREFS_KEY_HISTORY, history.toString());
+		userPrefsEditor.putString(user + MMSDKConstants.SHARED_PREFS_KEY_HISTORY, history.toString());
 		userPrefsEditor.commit();
 	}
 	
@@ -200,6 +202,11 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 		}
 	}
 	
+	/**
+	 * 
+	 * @param loc
+	 * @throws JSONException
+	 */
 	private void promptRemoveLocationFromHistory(final JSONObject loc) throws JSONException {
 		new AlertDialog.Builder(getActivity())
 			.setTitle(R.string.ad_title_remove_history)
@@ -222,11 +229,16 @@ public class HistoryFragment extends MMFragment implements OnClickListener,
 		historyLocations.removeAll(historyLocations);
 		history = new JSONArray(historyLocations);
 		arrayAdapter.notifyDataSetChanged();
+		displayNoHistoryAlert();
 	}
 	
 	private void removeFromHistory(JSONObject loc) {
 		historyLocations.remove(loc);
 		history = new JSONArray(historyLocations);
 		arrayAdapter.notifyDataSetChanged();
+		
+		if(history.length() < 1) {
+			displayNoHistoryAlert();
+		}
 	}
 }

@@ -325,10 +325,7 @@ public class MakeARequestScreen extends Activity implements OnCheckedChangeListe
 										   locationId,
 										   duration,
 										   repeatRate,
-										   mediaType,
-										   MMConstants.PARTNER_ID,
-										   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										   userPrefs.getString(MMSDKConstants.KEY_AUTH,MMSDKConstants.DEFAULT_STRING_EMPTY));
+										   mediaType);
 		MMProgressDialog.displayDialog(MakeARequestScreen.this,
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 									   getString(R.string.pd_sending_request));

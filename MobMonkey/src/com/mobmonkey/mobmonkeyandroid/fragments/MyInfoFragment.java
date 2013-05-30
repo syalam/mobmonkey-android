@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -79,8 +80,6 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
 	private String oAuthProvider;
 	private String newPassword;
 	
-	// TODO: figure out how to update user info if user signed in with Facebook
-	
 	/*
 	 * (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
@@ -91,15 +90,12 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
 		userPrefsEditor = userPrefs.edit();
     	oAuthProvider = userPrefs.getString(MMSDKConstants.KEY_OAUTH_PROVIDER, MMSDKConstants.DEFAULT_STRING_EMPTY);
     	if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)) {
-			Session session = Session.getActiveSession();
+    		Session session = Session.getActiveSession();
 			Session.NewPermissionsRequest request = new Session.NewPermissionsRequest(getActivity(), Arrays.asList(MMSDKConstants.FACEBOOK_REQ_PERM_EMAIL, MMSDKConstants.FACEBOOK_REQ_PERM_BIRTHDAY));
 			session.requestNewReadPermissions(request);
 			Request.executeMeRequestAsync(session, new RequestGraphUserCallback());
     	} else {
-			MMUserAdapter.getUserInfo(new UserInfoCallback(),
-									  MMConstants.PARTNER_ID,
-									  userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-									  userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMUserAdapter.getUserInfo(new UserInfoCallback());
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_loading_user_info));
@@ -108,9 +104,7 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
     	inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		View view = inflater.inflate(R.layout.fragment_myinfo_screen, container, false);
 		btnSave = (Button) view.findViewById(R.id.btnsave);
-		
     	ScrollView svMyInfo = (ScrollView) view.findViewById(R.id.svmyinfo);
-    	
     	etFirstName = (EditText) view.findViewById(R.id.etfirstname);
     	etLastName = (EditText) view.findViewById(R.id.etlastname);
     	etEmailAddress = (EditText) view.findViewById(R.id.etemailaddress);
@@ -120,7 +114,7 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
     	etGender = (EditText) view.findViewById(R.id.etgender);
     	birthdate = Calendar.getInstance();
     	
-    	btnSave.setOnClickListener(MyInfoFragment.this);
+		btnSave.setOnClickListener(MyInfoFragment.this);
     	svMyInfo.setOnTouchListener(MyInfoFragment.this);
     	etEmailAddress.setFocusable(false);
 		etEmailAddress.setFocusableInTouchMode(false);
@@ -130,6 +124,8 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
     	
     	// if user signed in with Facebook account, they can edit nothing in this screen.
     	if(oAuthProvider.equals(MMSDKConstants.OAUTH_PROVIDER_FACEBOOK)) {
+    		btnSave.setVisibility(View.INVISIBLE);
+    		
     		etFirstName.setFocusable(false);
     		etFirstName.setClickable(false);
     		
@@ -193,6 +189,12 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
 		}
 	}
 	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.d(TAG, TAG + "onActivityResult");
+	}
+
 	/* (non-Javadoc)
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
 	 */
@@ -261,6 +263,7 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
 	
 	@Override
 	public void onFragmentBackPressed() {
+		
 		fragmentFinishListener.onFragmentFinish();
 	}
 	
@@ -424,6 +427,9 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
     	}
     }
     
+    /**
+     * 
+     */
     private void saveUserInfo() {
 		newPassword = etNewPassword.getText().toString(); 
 		if(checkFields()) {
@@ -440,15 +446,11 @@ public class MyInfoFragment extends MMFragment implements OnClickListener,
 										   	 response.getString(MMSDKConstants.KEY_CITY),
 										   	 response.getString(MMSDKConstants.KEY_STATE),
 										   	 response.getString(MMSDKConstants.KEY_ZIP),
-										   	 response.getBoolean(MMSDKConstants.KEY_ACCEPTEDTOS),
-											 MMConstants.PARTNER_ID,
-											 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-										   	 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+										   	 response.getBoolean(MMSDKConstants.KEY_ACCEPTEDTOS));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
-
     }
     
     /**

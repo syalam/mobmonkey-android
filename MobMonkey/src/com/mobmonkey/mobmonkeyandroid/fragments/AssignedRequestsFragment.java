@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -77,13 +78,10 @@ public class AssignedRequestsFragment extends MMFragment {
 		
 		View view = inflater.inflate(R.layout.fragment_assignedrequests_screen, container, false);
 		elvAssignedRequests = (MMExpandedListView) view.findViewById(R.id.elvassignedrequests);
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
+		location = MMLocationManager.getGPSLocation();
 		
 		try {
-			MMRequestAdapter.getAssignedRequests(new AssignedRequestCallback(), 
-												 MMConstants.PARTNER_ID,
-												 userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-												 userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+			MMRequestAdapter.getAssignedRequests(new AssignedRequestCallback());
 			MMProgressDialog.displayDialog(getActivity(),
 										   MMSDKConstants.DEFAULT_STRING_EMPTY,
 										   getString(R.string.pd_retrieving_assigned_requests));
@@ -189,7 +187,7 @@ public class AssignedRequestsFragment extends MMFragment {
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d(TAG, TAG + ":onActivityResult");
+		Log.d(TAG, TAG + "onActivityResult: " + requestCode);
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if(resultCode != FragmentActivity.RESULT_OK)
@@ -203,7 +201,16 @@ public class AssignedRequestsFragment extends MMFragment {
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 2;
 			Bitmap mImageBitmap = BitmapFactory.decodeFile(MMSDKConstants.MOBMONKEY_DIRECTORY + File.separator + "mmpic.jpg", options);
-			//mImageBitmap = scaleDownBitmap(mImageBitmap, 200, getActivity());
+//			
+//			Log.d(TAG, TAG + ": rotate bitmap");
+//			Log.d(TAG, TAG + ": bitmap width: " + mImageBitmap.getWidth());
+//			Log.d(TAG, TAG + ": bitmap height: " + mImageBitmap.getHeight());
+//			Matrix matrix = new Matrix();
+//			matrix.postRotate(90.0f);
+			
+//			Bitmap newBitmap = Bitmap.createBitmap(mImageBitmap, 0, 0, mImageBitmap.getWidth(), mImageBitmap.getHeight());
+//			Log.d(TAG, TAG + ": bitmap rotated");
+//			mImageBitmap = scaleDownBitmap(mImageBitmap, 200, getActivity());
 			
 			// encode image to Base64 String
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -217,10 +224,7 @@ public class AssignedRequestsFragment extends MMFragment {
 											   assignedRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
 											   assignedRequests.getJSONObject(clickedPosition).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
 											   MMSDKConstants.MEDIA_CONTENT_JPEG,
-											   imageEncoded,
-											   MMConstants.PARTNER_ID,
-											   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-											   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+											   imageEncoded);
 				MMProgressDialog.displayDialog(getActivity(),
 											   MMSDKConstants.DEFAULT_STRING_EMPTY,
 											   getString(R.string.pd_uploading_image));
@@ -229,7 +233,8 @@ public class AssignedRequestsFragment extends MMFragment {
 			}					   
 		} 
 		// video 
-		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {		    
+		else if(requestCode == MMSDKConstants.REQUEST_CODE_VIDEO) {
+			Log.d(TAG, TAG + "returning from request video");
 		    try {
 		    	// encode to base64
 		    	File videoFile = new File(MMSDKConstants.MOBMONKEY_DIRECTORY, MMSDKConstants.MOBMONKEY_RECORDED_VIDEO_FILENAME);
@@ -259,16 +264,14 @@ public class AssignedRequestsFragment extends MMFragment {
 		        	videoEncoded = new String(bv, "UTF-8");
 		        }
 		        
+		        Log.d(TAG, TAG + "about to send to server");
 		    	// send base64 file to server
 		        MMRequestAdapter.answerRequest(new AnswerRequest(),
 					     					   MMSDKConstants.MEDIA_VIDEO,
 					     					   assignedRequests.getJSONObject(clickedPosition).getString(MMSDKConstants.JSON_KEY_REQUEST_ID),
 					     					   assignedRequests.getJSONObject(clickedPosition).getInt(MMSDKConstants.JSON_KEY_REQUEST_TYPE),
 					     					   MMSDKConstants.MEDIA_CONTENT_MP4,
-					     					   videoEncoded,
-					     					   MMConstants.PARTNER_ID,
-					     					   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-					     					   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+					     					   videoEncoded);
 				MMProgressDialog.displayDialog(getActivity(),
 											   MMSDKConstants.DEFAULT_STRING_EMPTY,
 											   getString(R.string.pd_uploading_video));		        

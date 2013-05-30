@@ -34,7 +34,6 @@ import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
  */
 public class AddLocationMapScreen extends FragmentActivity implements OnMapClickListener {
 	FragmentManager fragmentManager;
-	private Location location;
 	
 	private Button btnCancel;
 	private Button btnPlus;
@@ -141,7 +140,6 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 	 */
 	private void init() {
 		fragmentManager = getSupportFragmentManager();
-		location = MMLocationManager.getGPSLocation(new MMLocationListener());
 		btnCancel = (Button) findViewById(R.id.btncancel);
 		btnPlus = (Button) findViewById(R.id.btnplus);
 		addLocClicked = false;
@@ -178,7 +176,7 @@ public class AddLocationMapScreen extends FragmentActivity implements OnMapClick
 	 * 
 	 */
 	private void setUpGoogleMap() {
-		LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+		LatLng currentLoc = new LatLng(MMLocationManager.getLocationLatitude(), MMLocationManager.getLocationLongitude());
 		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 13));
 		googleMap.setOnMapClickListener(AddLocationMapScreen.this);
 		googleMap.setMyLocationEnabled(true);

@@ -4,14 +4,12 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 
 import android.util.Log;
 
 import com.mobmonkey.mobmonkeysdk.asynctasks.MMPostAsyncTask;
+import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
@@ -26,27 +24,26 @@ public class MMCheckinAdapter extends MMAdapter {
 		throw new AssertionError();
 	}
 	
-	public static void checkInUser(MMCallback mmCallback,
-								   double latitude,
-								   double longitude,
-								   String partnerId,
-								   String user,
-								   String auth) {
-		
+	/**
+	 * 
+	 * @param mmCallback
+	 * @param latitude
+	 * @param longitude
+	 * @param partnerId
+	 * @param user
+	 * @param auth
+	 */
+	public static void checkInUser(MMCallback mmCallback) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_CHECKIN);
 		createParamsInstance();
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 
 		try {
-			params.put(MMSDKConstants.KEY_LATITUDE, latitude);
-			params.put(MMSDKConstants.KEY_LONGITUDE, longitude);
+			params.put(MMSDKConstants.KEY_LATITUDE, MMLocationManager.getLocationLatitude());
+			params.put(MMSDKConstants.KEY_LONGITUDE, MMLocationManager.getLocationLongitude());
 			
-			HttpPost httpPost = new HttpPost(uriBuilder.toString());
+			HttpPost httpPost = newHttpPostInstance();
 			httpPost.setEntity(new StringEntity(params.toString()));
-			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMSDKConstants.KEY_USER, user);
-			httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
 			
 			new MMPostAsyncTask(mmCallback).execute(httpPost);
 		} catch (JSONException ex) {
@@ -54,6 +51,5 @@ public class MMCheckinAdapter extends MMAdapter {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
 	}
 }

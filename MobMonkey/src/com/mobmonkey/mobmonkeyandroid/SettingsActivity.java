@@ -4,11 +4,13 @@ import java.util.Stack;
 
 import org.json.JSONArray;
 
+import com.facebook.Session;
 import com.mobmonkey.mobmonkeyandroid.fragments.*;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -28,6 +30,10 @@ public class SettingsActivity extends FragmentActivity implements MMOnMyInfoFrag
 	private FragmentManager fragmentManager;
 	private Stack<MMFragment> fragmentStack;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,6 +53,20 @@ public class SettingsActivity extends FragmentActivity implements MMOnMyInfoFrag
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.FragmentActivity#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == MMSDKConstants.REQUEST_CODE_FACEBOOK_SESSION) {
+			Session.getActiveSession().onActivityResult(SettingsActivity.this, requestCode, resultCode, data);
+		}
+	}
+
+
+
 	/* (non-Javadoc)
 	 * @see com.mobmonkey.mobmonkeyandroid.listeners.MMOnMyInfoFragmentItemClickListener#onMyInfoFragmentItemClick()
 	 */

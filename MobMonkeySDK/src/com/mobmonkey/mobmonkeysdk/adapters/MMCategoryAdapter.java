@@ -10,7 +10,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 
 public class MMCategoryAdapter extends MMAdapter {
-	private static final String TAG = "MMCategories";
+	private static final String TAG = "MMCategories: ";
 	
 	private static MMGetAsyncTask mmGetAsyncTask;
 	
@@ -29,21 +29,13 @@ public class MMCategoryAdapter extends MMAdapter {
 	 * @param auth
 	 * @param partnerId
 	 */
-	public static void getCategories(MMCallback mmCallback,
-									 String categoryId,
-									 String partnerId,
-									 String user,
-									 String auth) {		
+	public static void getCategories(MMCallback mmCallback) {		
 		
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_CATEGORY);
 		
 		Log.d(TAG, TAG + "categoryURL: " + uriBuilder.toString());
 		
-		HttpGet httpGet = new HttpGet(uriBuilder.toString());
-		httpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		httpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpGet.setHeader(MMSDKConstants.KEY_USER, user);
-		httpGet.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpGet httpGet = newHttpGetInstance();
 		
 		mmGetAsyncTask = new MMGetAsyncTask(mmCallback);
 		mmGetAsyncTask.execute(httpGet);
@@ -56,11 +48,8 @@ public class MMCategoryAdapter extends MMAdapter {
 	 * @param auth
 	 * @param partnerId
 	 */
-	public static void getAllCategories(MMCallback mmCallback,
-										String partnerId,
-										String user,
-										String auth) {
-		getCategories(mmCallback, MMSDKConstants.DEFAULT_STRING_EMPTY, partnerId, user, auth);
+	public static void getAllCategories(MMCallback mmCallback) {
+		getCategories(mmCallback);
 	}
 	
 	/**

@@ -86,7 +86,9 @@ public class MMPostAsyncTask extends AsyncTask<HttpPost, Void, String> {
 	 */
 	@Override
 	protected void onPostExecute(String result) {
-		mmCallback.processCallback(result);
+		if(mmCallback != null) {
+			mmCallback.processCallback(result);
+		}
 		super.onPostExecute(result);
 	}
 }

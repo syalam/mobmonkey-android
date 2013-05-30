@@ -13,18 +13,20 @@ import android.location.LocationManager;
  */
 public final class MMLocationManager {
 	private static LocationManager locationManager;
+	private static LocationListener locationListener;
 	private static Location location;
 	private static DecimalFormat decimalFormat = new DecimalFormat(MMSDKConstants.DECIMAL_FORMAT_SIX);
 	
-	public static void setContext(Context context) {
-		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);		
+	public static void setContext(Context context, LocationListener locListener) {
+		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		locationListener = locListener;
 	}
 	
 	public static boolean isGPSEnabled() {
 		return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 	}
 	
-	public static Location getGPSLocation(LocationListener locationListener) {
+	public static Location getGPSLocation() {
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 		location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		return location;
@@ -39,7 +41,7 @@ public final class MMLocationManager {
 	
 	public static double getLocationLongitude() {
 		return Double.valueOf(decimalFormat.format(location.getLongitude()));
-//		return -122.410973;
+//		return -122.410973; // text (near iOS simulator location);
 //		return -111.93929; // Brickyard
 //		return -111.904784; // Domain
 	}

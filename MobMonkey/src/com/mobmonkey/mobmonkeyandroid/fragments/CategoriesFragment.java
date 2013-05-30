@@ -179,7 +179,7 @@ public class CategoriesFragment extends MMFragment implements OnClickListener,
 			e.printStackTrace();
 		}		
 		
-		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation(new MMLocationListener()) == null) {
+		if(!MMLocationManager.isGPSEnabled() || MMLocationManager.getGPSLocation() == null) {
 			elvCategories.setEnabled(false);
 		} else {
 			elvCategories.setOnItemClickListener(CategoriesFragment.this);
@@ -253,13 +253,8 @@ public class CategoriesFragment extends MMFragment implements OnClickListener,
 	 */
 	private void searchSubCategory(String selectedCategory, JSONObject subCategory) throws JSONException {
 		MMSearchLocationAdapter.searchLocationsWithCategoryIds(new MMSearchLocationsWithCategoryIdsCallback(selectedCategory),
-															   MMLocationManager.getLocationLatitude(),
-															   MMLocationManager.getLocationLongitude(),
 															   userPrefs.getInt(MMSDKConstants.SHARED_PREFS_KEY_SEARCH_RADIUS, MMSDKConstants.SEARCH_RADIUS_HALF_MILE),
-															   subCategory.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID),
-															   MMConstants.PARTNER_ID,
-															   userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY),
-															   userPrefs.getString(MMSDKConstants.KEY_AUTH, MMSDKConstants.DEFAULT_STRING_EMPTY));
+															   subCategory.getString(MMSDKConstants.JSON_KEY_CATEGORY_ID));
 		MMProgressDialog.displayDialog(getActivity(),
 									   MMSDKConstants.DEFAULT_STRING_EMPTY,
 									   getString(R.string.pd_locating) + MMSDKConstants.DEFAULT_STRING_SPACE + selectedCategory + getString(R.string.pd_ellipses));

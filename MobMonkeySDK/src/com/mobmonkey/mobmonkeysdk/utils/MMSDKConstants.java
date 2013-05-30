@@ -61,6 +61,7 @@ public final class MMSDKConstants {
 	public static final String URI_PATH_SEARCH = "search";
 	public static final String URI_PATH_SIGNIN = "signin";
 	public static final String URI_PATH_SIGNOUT = "signout";
+	public static final String URI_PATH_TESTGCM = "testGCM";
 	public static final String URI_PATH_TOP_VIEWED = "topviewed";
 	public static final String URI_PATH_TRENDING = "trending";
 	public static final String URI_PATH_USER = "user";
@@ -68,6 +69,7 @@ public final class MMSDKConstants {
 	// Uri query parameter keys
 	public static final String URI_QUERY_PARAM_KEY_CATEGORY_IDS = "categoryIds";
 	public static final String URI_QUERY_PARAM_KEY_COUNTS_ONLY = "countsonly";
+	public static final String URI_QUERY_PARAM_KEY_DEVICE_ID = "deviceId";
 	public static final String URI_QUERY_PARAM_KEY_EMAIL = "email";
 	public static final String URI_QUERY_PARAM_KEY_FAVORITES_ONLY = "bookmarksonly";
 	public static final String URI_QUERY_PARAM_KEY_LATITUDE = "latitude";
@@ -128,6 +130,7 @@ public final class MMSDKConstants {
 	public static final String SHARED_PREFS_KEY_TOS_TWITTER = "ToS Twitter";
 	
 	// Intent extra/Bundle key values
+	public static final String KEY_INTENT_EXTRA_BODY = "body";
 	public static final String KEY_INTENT_EXTRA_CATEGORIES = "Categories";
 	public static final String KEY_INTENT_EXTRA_CATEGORY_TITLE = "Category title";
 	public static final String KEY_INTENT_EXTRA_DISPLAY_MAP = "Display map";
@@ -152,6 +155,7 @@ public final class MMSDKConstants {
 	public static final String KEY_INTENT_EXTRA_SEARCH_RESULTS = "Search results";
 	public static final String KEY_INTENT_EXTRA_SELECTED_CATEGORIES = "Selected categories";
 	public static final String KEY_INTENT_EXTRA_SELECTED_CATEGORIES_IDS = "Selected categories IDs";
+	public static final String KEY_INTENT_EXTRA_TIME_FRAME_POSITION = "Time frame position";
 	public static final String KEY_INTENT_EXTRA_TOP_LEVEL = "Top level";
 	public static final String KEY_INTENT_EXTRA_TOS_DISPLAY_BUTTON = "ToS display button";
 	public static final String KEY_INTENT_EXTRA_TRENDING_TOP_VIEWED = "Top Viewed";
@@ -228,6 +232,7 @@ public final class MMSDKConstants {
 	public static final int REQUEST_CODE_RANGE = 8500;
 	public static final int REQUEST_CODE_IMAGE = 10000;
 	public static final int REQUEST_CODE_VIDEO = 10001;
+	public static final int REQUEST_CODE_FACEBOOK_SESSION = 64206;
 	public static final int REQUEST_CODE_ADD_MESSAGE = 100000;
 	public static final int REQUEST_CODE_ADD_CATEGORY = 10000011;
 	public static final int REQUEST_CODE_SCHEDULE_REQUEST = 100001;
@@ -337,6 +342,10 @@ public final class MMSDKConstants {
 	public static final String REQUEST_REPEAT_RATE_DAILY = "daily";
 	public static final String REQUEST_REPEAT_RATE_WEEKLY = "weekly";
 	public static final String REQUEST_REPEAT_RATE_MONTHLY = "monthly";
+	
+	public static final long REQUEST_FREQUENCY_DAILY = 86400000l;
+	public static final long REQUEST_FREQUENCY_WEEKLY = 604800000l;
+	public static final long REQUEST_FREQUENCY_MONTHLY = 2629740000l;
 	
 	public static final int TIMEOUT_CONNECTION = 10 * 1000;
 	public static final int TIMEOUT_SOCKET = 30 * 1000;

@@ -29,7 +29,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
  *  
  */
 public class MMRequestAdapter extends MMAdapter {
-	private static String TAG = "MMAnswerRequestAdapter: ";
+	private static String TAG = "MMRequestAdapter: ";
 	
 	/**
 	 * Private class to prevent the instantiation of this class outside the scope of this class
@@ -47,19 +47,13 @@ public class MMRequestAdapter extends MMAdapter {
 	 * @param contentType. The type of the data that is going to be send to the server. Currently supported types are "image/jpg",
 	 * 		  "image/jpeg", "image/png", "video/mp4", "video/mpeg", and "video/quicktime".
 	 * @param mediaData. The Base64 encoded media data.
-	 * @param partnerId
-	 * @param user
-	 * @param auth
 	 */
 	public static void answerRequest(MMCallback mmCallback,
 									 String mediaType,
 									 String requestID,
 									 int requestType,
 									 String contentType,
-									 String mediaData,
-									 String partnerId,
-									 String user,
-									 String auth) {
+									 String mediaData) {
 		
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_MEDIA, mediaType);
 		createParamsInstance();
@@ -71,12 +65,7 @@ public class MMRequestAdapter extends MMAdapter {
 			params.put(MMSDKConstants.JSON_KEY_CONTENT_TYPE, contentType);
 			params.put(MMSDKConstants.JSON_KEY_MEDIA_DATA, mediaData);
 			
-			HttpPost httpPost = new HttpPost(uriBuilder.toString());
-			// add header
-			httpPost.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-			httpPost.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-			httpPost.setHeader(MMSDKConstants.KEY_USER, user);
-			httpPost.setHeader(MMSDKConstants.KEY_AUTH, auth);
+			HttpPost httpPost = newHttpPostInstance();
 			
 			// might cause outofmemory
 			try {
@@ -142,50 +131,30 @@ public class MMRequestAdapter extends MMAdapter {
 	 * @param mmCallback
 	 * @param requestId
 	 * @param isRecurring
-	 * @param partnerId
-	 * @param user
-	 * @param auth
 	 */
 	public static void deleteRequest(MMCallback mmCallback,
 									 String requestId,
-									 String isRecurring,
-									 String partnerId,
-									 String user,
-									 String auth) {
+									 String isRecurring) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_REQUESTMEDIA);
 		uriBuilder.appendQueryParameter(MMSDKConstants.JSON_KEY_REQUEST_ID, requestId);
 		uriBuilder.appendQueryParameter(MMSDKConstants.JSON_KEY_IS_RECURRING, isRecurring);
 		
 		Log.d(TAG, uriBuilder.toString());
 		
-		HttpDelete httpDelete = new HttpDelete(uriBuilder.toString());
-		httpDelete.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		httpDelete.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpDelete.setHeader(MMSDKConstants.KEY_USER, user);
-		httpDelete.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpDelete httpDelete = newHttpDeleteInstance();
 		new MMDeleteAsyncTask(mmCallback).execute(httpDelete);
 	}
 	
 	/**
 	 * Get all answered requests that have been fulfilled or waiting to be fulfilled.
-	 * @param mmCallback 
-	 * @param partnerId
-	 * @param user
-	 * @param auth
+	 * @param mmCallback
 	 */
-	public static void getAnsweredRequests(MMCallback mmCallback,
-										   String partnerId,
-										   String user,
-										   String auth) {
+	public static void getAnsweredRequests(MMCallback mmCallback) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_INBOX, MMSDKConstants.URI_PATH_ANSWEREDREQUESTS);
 		
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
-		HttpGet httpGet = new HttpGet(uriBuilder.toString());
-		httpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		httpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpGet.setHeader(MMSDKConstants.KEY_USER, user);
-		httpGet.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpGet httpGet = newHttpGetInstance();
 		
 		new MMGetAsyncTask(mmCallback).execute(httpGet);
 	}
@@ -194,22 +163,12 @@ public class MMRequestAdapter extends MMAdapter {
 	/**
 	 * Get all requests that have been assigned to you from the checkin API.
 	 * @param mmCallback
-	 * @param partnerId
-	 * @param user
-	 * @param auth
 	 */
-	public static void getAssignedRequests(MMCallback mmCallback,
-										   String partnerId,
-										   String user,
-										   String auth) {
+	public static void getAssignedRequests(MMCallback mmCallback) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_INBOX, MMSDKConstants.URI_PATH_ASSIGNEDREQUESTS);
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
-		HttpGet httpGet = new HttpGet(uriBuilder.toString());
-		httpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		httpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpGet.setHeader(MMSDKConstants.KEY_USER, user);
-		httpGet.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpGet httpGet = newHttpGetInstance();
 		
 		new MMGetAsyncTask(mmCallback).execute(httpGet);
 	}
@@ -217,23 +176,13 @@ public class MMRequestAdapter extends MMAdapter {
 	/**
 	 * Get all open requests that have been fulfilled or waiting to be fulfilled.
 	 * @param mmCallback
-	 * @param partnerId
-	 * @param user
-	 * @param auth
 	 */
-	public static void getOpenRequests(MMCallback mmCallback,
-									   String partnerId,
-									   String user,
-									   String auth) {
+	public static void getOpenRequests(MMCallback mmCallback) {
 		createUriBuilderInstance(MMSDKConstants.URI_PATH_INBOX, MMSDKConstants.URI_PATH_OPENREQUESTS);
 		
 		Log.d(TAG, TAG + "uri: " + uriBuilder.toString());
 		
-		HttpGet httpGet = new HttpGet(uriBuilder.toString());
-		httpGet.setHeader(MMSDKConstants.KEY_CONTENT_TYPE, MMSDKConstants.CONTENT_TYPE_APP_JSON);
-		httpGet.setHeader(MMSDKConstants.KEY_PARTNER_ID, partnerId);
-		httpGet.setHeader(MMSDKConstants.KEY_USER, user);
-		httpGet.setHeader(MMSDKConstants.KEY_AUTH, auth);
+		HttpGet httpGet = newHttpGetInstance();
 		
 		new MMGetAsyncTask(mmCallback).execute(httpGet);
 	}
