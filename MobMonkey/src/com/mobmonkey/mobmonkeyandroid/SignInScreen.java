@@ -230,7 +230,7 @@ public class SignInScreen extends Activity {
      * 		launchMode singleTask is that this {@link Activity} can only be created once, if it was destroyed and recreated, it will cause an {@link IllegalStateException} error.
      */
 	private void signInTwitter() {
-		launchTwitterAuthScreen();
+		launchToS(MMSDKConstants.REQUEST_CODE_TOS_TWITTER);
 	}
 	
 	/**
