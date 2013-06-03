@@ -3,46 +3,56 @@ package com.mobmonkey.mobmonkeyandroid;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.location.Location;
-import android.location.LocationListener;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gcm.GCMRegistrar;
-import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.fragments.Fragment_1;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
+import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCategoryAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCheckinAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMFavoritesAdapter;
 import com.mobmonkey.mobmonkeysdk.adapters.MMGCMAdapter;
 import com.mobmonkey.mobmonkeysdk.utils.MMAdapter;
-import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 import com.mobmonkey.mobmonkeysdk.utils.MMCallback;
 import com.mobmonkey.mobmonkeysdk.utils.MMLocationManager;
 import com.mobmonkey.mobmonkeysdk.utils.MMProgressDialog;
+import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
 
 /**
  * Android {@link Activity} screen displays the signed in user portion of the application with different tabs.
  * @author Dezapp, LLC
  *
  */
-public class MainScreen extends TabActivity {
+public class MainScreen extends SherlockFragmentActivity {
 	protected static final String TAG = "MainScreen: ";
 
 	private SharedPreferences userPrefs;
@@ -51,6 +61,17 @@ public class MainScreen extends TabActivity {
 	private TabWidget tabWidget;
 	private TabHost tabHost;
 	
+	private DrawerLayout mDrawerLayout;
+	private ListView mDrawerList;
+	private ActionBarDrawerToggle mDrawerToggle;
+	
+	private CharSequence mDrawerTitle;
+	private CharSequence mTitle;
+	private String[] mFragmentTitles;
+	private FragmentManager fragmentManager;
+	
+
+	
 	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -58,6 +79,8 @@ public class MainScreen extends TabActivity {
             Toast.makeText(MainScreen.this, newMessage, Toast.LENGTH_LONG).show();
         }
     };
+
+    
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -68,8 +91,180 @@ public class MainScreen extends TabActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);
 		checkForGPSLocation();
+		
+		//Fire off nav drawer sequence
+		//initNavigationDrawerLayout(savedInstanceState);
+		
+    	mTitle = mDrawerTitle = getTitle();
+    	mFragmentTitles = getResources().getStringArray(R.array.drawer_fragments_array);
+    	mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer);
+    	mDrawerList = (ListView)findViewById(R.id.drawer_list);
+    	
+    	mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+    	mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mFragmentTitles));
+    	mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+    	    	
+    	getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    	getSupportActionBar().setHomeButtonEnabled(true);
+    	
+    	
+    	//DrawerToggle setup
+    	mDrawerToggle = initActionBarDrawerToggle();
+    	mDrawerLayout.setDrawerListener(mDrawerToggle);
+    	
+    	//Automatically go to Trending Screen
+    	if (savedInstanceState == null) {
+    		selectFragmentFromDrawer(0);
+    	}
+	}
+	
+	
+
+    private void initNavigationDrawerLayout (Bundle savedInstanceState) {
+    	mTitle = mDrawerTitle = getTitle();
+    	mFragmentTitles = getResources().getStringArray(R.array.drawer_fragments_array);
+    	mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer);
+    	mDrawerList = (ListView)findViewById(R.id.drawer_list);
+    	
+    	mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+    	mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mFragmentTitles));
+    	mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+    	
+    	getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    	getSupportActionBar().setHomeButtonEnabled(true);
+    	
+    	
+    	//DrawerToggle setup
+    	mDrawerToggle = initActionBarDrawerToggle();
+    	mDrawerLayout.setDrawerListener(mDrawerToggle);
+    	if (savedInstanceState == null) {
+    		selectFragmentFromDrawer(0);
+    	}
+
+    
+    }
+    
+    private ActionBarDrawerToggle initActionBarDrawerToggle() {
+    	
+    	return new ActionBarDrawerToggle(this, 
+    			mDrawerLayout,
+    			R.drawable.ic_drawer,
+    			R.string.drawer_open,
+    			R.string.drawer_close) {
+    		
+    		public void onDrawerClosed(View v) {
+    			getSupportActionBar().setTitle(mTitle);
+    			supportInvalidateOptionsMenu();
+    		}
+    		public void onDrawerOpened(View v) {
+    			getSupportActionBar().setTitle(mDrawerTitle);
+    			supportInvalidateOptionsMenu();
+    		}
+    		
+    	};
+    	
+    }
+    
+    private void selectFragmentFromDrawer(int position) {
+    	
+		MMFragment mmFragment = null;
+		
+		Intent i = null;
+		Class<?> activityToStart = null;
+		Context context = MainScreen.this;
+		
+		switch(position) {
+			case 0:
+				mmFragment = new Fragment_1();
+				//i = new Intent(MainScreen.this, TrendingNowActivity.class);
+				break;
+			case 1:
+				//i = new Intent(MainScreen.this, InboxActivity.class);
+				break;
+			case 2:
+				//i = new Intent(MainScreen.this, SearchLocationsActivity.class);
+				break;
+			case 3:
+				//i = new Intent(MainScreen.this, FavoritesActivity.class);
+				break;
+			default:
+				//i = new Intent(MainScreen.this, SettingsActivity.class);
+				break;
+		}
+		//startActivity(i);
+		performTransaction(mmFragment);    	
+    	
+    }
+    
+	private void performTransaction(MMFragment mmFragment) {
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
+		fragmentTransaction.replace(R.id.content_frame, mmFragment);
+		fragmentTransaction.commit();
+	}
+	
+	@Override
+	public void setTitle(CharSequence title) {
+		mTitle = title;
+		getSupportActionBar().setTitle(title);
+	}
+	
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState){
+		super.onPostCreate(savedInstanceState);
+		mDrawerToggle.syncState();
+	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig){
+		super.onConfigurationChanged(newConfig);
+		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+	
+	
+	//ActionBar Setup
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu){
+		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+		menu.findItem(R.id.menu_settings).setVisible(!drawerOpen);
+		return super.onPrepareOptionsMenu(menu);
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getSupportMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch(item.getItemId()){
+		case android.R.id.home:
+			if (mDrawerLayout.isDrawerOpen(mDrawerList)){
+				mDrawerLayout.closeDrawer(mDrawerList);
+			} else {
+				mDrawerLayout.openDrawer(mDrawerList);
+			}
+			return true;
+		case R.id.menu_settings:
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	/***
+	 * Click listener to pick up user selection from navigation drawer
+	 * @author KV_87
+	 *
+	 */
+	private class DrawerItemClickListener implements ListView.OnItemClickListener{
+		@Override
+		public void onItemClick(AdapterView<?> parent, View v, int position, long id){
+			selectFragmentFromDrawer(position);
+		}
+	}
+	
 //	/*
 //	 * (non-Javadoc)
 //	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
@@ -141,8 +336,8 @@ public class MainScreen extends TabActivity {
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(MMSDKConstants.INTENT_FILTER_DISPLAY_MESSAGE));
 		registerGCM();
 		
-		tabWidget = getTabWidget();
-		tabHost = getTabHost();
+		//tabWidget = getTabWidget();
+		//tabHost = getTabHost();
 		
 		getAllCategories();
 		getAllFavorites();
@@ -242,7 +437,8 @@ public class MainScreen extends TabActivity {
 											   getString(R.string.pd_loading) + getString(R.string.pd_ellipses));
 			}
 		} else {
-			setTabs();
+			//setTabs();
+			selectFragmentFromDrawer(0); //Go to trending screen
 		}
 	}
 	
@@ -352,7 +548,7 @@ public class MainScreen extends TabActivity {
 						e.printStackTrace();
 					}
 					
-					setTabs();
+					//setTabs();
 				}
 			}
 		}
