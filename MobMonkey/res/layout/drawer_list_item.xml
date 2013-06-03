@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/drawer_text_padding_left"
+    android:paddingRight="@dimen/drawer_text_padding_right"
+    android:gravity="center_vertical"
+    android:textColor="@color/drawer_text_color"
+    android:minHeight="@dimen/drawer_text_min_height"/>

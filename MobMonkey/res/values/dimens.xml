@@ -13,5 +13,9 @@
     <!-- Dimensions for Navigation Drawer -->
     <dimen name="drawer_width">240dp</dimen>
     <dimen name="drawer_divider_height">1dp</dimen>
+    <!-- Dimensions for Textview for the Drawer layout items -->
+    <dimen name="drawer_text_padding_left">16dp</dimen>
+    <dimen name="drawer_text_padding_right">16dp</dimen>
+    <dimen name="drawer_text_min_height">48dp</dimen>
     
 </resources>

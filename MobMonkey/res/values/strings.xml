@@ -415,4 +415,10 @@
 	
 	<!-- Add Location Category List Screen -->
 	<string name="btn_done">Done</string>
+	
+	<!-- Navigation Drawer Strings -->
+	
+    <string name="drawer_open">Open the Drawer</string>
+    <string name="drawer_close">Close the Drawer</string>
+    
 </resources>

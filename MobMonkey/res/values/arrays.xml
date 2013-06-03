@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="drawer_fragments_array">
+        <item>What\'s Trending Now</item>
+        <item>Inbox</item>
+        <item>Search Locations</item>
+        <item>Favorites</item>
+        <item>Settings</item>
+    </string-array>
+</resources>

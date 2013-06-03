@@ -21,5 +21,6 @@
 	
 	<color name="drawer_background">#111000</color>
 	<color name="drawer_divider_color">#FFF000</color>
+	<color name="drawer_text_color">#FFF000</color>
 	
 </resources>
