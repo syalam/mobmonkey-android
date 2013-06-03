@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import org.json.JSONArray;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.facebook.Session;
 import com.mobmonkey.mobmonkeyandroid.fragments.*;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
@@ -22,7 +23,7 @@ import android.view.MotionEvent;
  * @author Dezapp, LLC
  *
  */
-public class SettingsActivity extends FragmentActivity implements MMOnMyInfoFragmentItemClickListener,
+public class SettingsActivity extends SherlockFragmentActivity implements MMOnMyInfoFragmentItemClickListener,
 																  MMOnSocialNetworksFragmentItemClickListener,
 																  MMOnMyInterestsFragmentItemClickListener,
 																  MMOnFragmentFinishListener {

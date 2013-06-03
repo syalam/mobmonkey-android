@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import org.json.JSONObject;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.AnsweredRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.AssignedRequestsFragment;
@@ -30,7 +31,7 @@ import android.widget.AdapterView.OnItemClickListener;
  * @author Dezapp, LLC
  * 
  */
-public class InboxActivity extends FragmentActivity implements MMOnInboxFragmentItemClickListener, OnLocationNameClickFragmentListener {
+public class InboxActivity extends SherlockFragmentActivity implements MMOnInboxFragmentItemClickListener, OnLocationNameClickFragmentListener {
 	private static final String TAG = "InboxActivity"; 
 	
 	private FragmentManager fragmentManager;

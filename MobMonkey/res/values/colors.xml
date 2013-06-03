@@ -17,4 +17,9 @@
 	
 	<color name="translucent_black">#80000000</color>
 	
+	<!-- Color Navigation Drawers -->
+	
+	<color name="drawer_background">#111000</color>
+	<color name="drawer_divider_color">#FFF000</color>
+	
 </resources>

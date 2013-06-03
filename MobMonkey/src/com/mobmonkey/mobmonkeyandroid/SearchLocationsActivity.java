@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.mobmonkey.mobmonkeyandroid.fragments.*;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
@@ -21,7 +22,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  * @author Dezapp, LLC
  *
  */
-public class SearchLocationsActivity extends FragmentActivity implements MMOnCreateHotSpotFragmentClickListener,
+public class SearchLocationsActivity extends SherlockFragmentActivity implements MMOnCreateHotSpotFragmentClickListener,
 																		 MMOnNearbyLocationsItemClickListener,
 																		 MMOnHistoryFragmentItemClickListener,
 																		 MMOnCategoryFragmentItemClickListener,

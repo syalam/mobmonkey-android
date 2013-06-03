@@ -5,6 +5,8 @@ import java.util.Stack;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.*;
 import com.mobmonkey.mobmonkeyandroid.listeners.*;
@@ -23,7 +25,7 @@ import android.util.Log;
  * @author Dezapp, LLC
  *
  */
-public class FavoritesActivity extends FragmentActivity implements MMOnMapIconFragmentClickListener,
+public class FavoritesActivity extends SherlockFragmentActivity implements MMOnMapIconFragmentClickListener,
 																   MMOnSearchResultsFragmentItemClickListener,
 																   MMOnAddressFragmentItemClickListener,
 																   MMOnNearbyLocationsItemClickListener,

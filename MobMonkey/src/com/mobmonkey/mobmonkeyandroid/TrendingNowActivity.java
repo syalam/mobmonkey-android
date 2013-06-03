@@ -2,6 +2,7 @@ package com.mobmonkey.mobmonkeyandroid;
 
 import java.util.Stack;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.mobmonkey.mobmonkeyandroid.R;
 import com.mobmonkey.mobmonkeyandroid.fragments.TopViewedFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.TrendingNowFragment;
@@ -17,7 +18,7 @@ import android.support.v4.app.FragmentTransaction;
  * @author Dezapp, LLC
  *
  */
-public class TrendingNowActivity extends FragmentActivity implements MMOnTrendingFragmentItemClickListener {
+public class TrendingNowActivity extends SherlockFragmentActivity implements MMOnTrendingFragmentItemClickListener {
 	FragmentManager fragmentManager;
 	Stack<MMFragment> fragmentStack;
 	
