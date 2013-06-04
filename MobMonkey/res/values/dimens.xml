@@ -18,4 +18,8 @@
     <dimen name="drawer_text_padding_right">16dp</dimen>
     <dimen name="drawer_text_min_height">48dp</dimen>
     
+    <!-- Action Bar Dimensions -->
+    <dimen name="action_bar_title_size">18dp</dimen>
+    <dimen name="action_bar_subtitle_size">14dp</dimen>
+    
 </resources>

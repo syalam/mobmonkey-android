@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
@@ -88,30 +89,18 @@ public class MainScreen extends SherlockFragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreate");
+		
+		   if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH){
+		        this.setTheme(com.actionbarsherlock.R.style.Theme_Sherlock);
+		   }
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_screen);
 		checkForGPSLocation();
-		
+	
 		//Fire off nav drawer sequence
-		//initNavigationDrawerLayout(savedInstanceState);
-		
-    	mTitle = mDrawerTitle = getTitle();
-    	mFragmentTitles = getResources().getStringArray(R.array.drawer_fragments_array);
-    	mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer);
-    	mDrawerList = (ListView)findViewById(R.id.drawer_list);
-    	
-    	mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-    	mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mFragmentTitles));
-    	mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-    	    	
-    	getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    	getSupportActionBar().setHomeButtonEnabled(true);
-    	
-    	
-    	//DrawerToggle setup
-    	mDrawerToggle = initActionBarDrawerToggle();
-    	mDrawerLayout.setDrawerListener(mDrawerToggle);
-    	
+		initNavigationDrawerLayout(savedInstanceState);
+
+    	fragmentManager = getSupportFragmentManager();
     	//Automatically go to Trending Screen
     	if (savedInstanceState == null) {
     		selectFragmentFromDrawer(0);
@@ -175,8 +164,9 @@ public class MainScreen extends SherlockFragmentActivity {
 		
 		switch(position) {
 			case 0:
-				mmFragment = new Fragment_1();
+				//mmFragment = new Fragment_1();
 				//i = new Intent(MainScreen.this, TrendingNowActivity.class);
+				activityToStart = TrendingNowActivity.class;
 				break;
 			case 1:
 				//i = new Intent(MainScreen.this, InboxActivity.class);
@@ -191,8 +181,8 @@ public class MainScreen extends SherlockFragmentActivity {
 				//i = new Intent(MainScreen.this, SettingsActivity.class);
 				break;
 		}
-		//startActivity(i);
-		performTransaction(mmFragment);    	
+		startActivity(new Intent(MainScreen.this, activityToStart));
+		//performTransaction(mmFragment);    	
     	
     }
     
