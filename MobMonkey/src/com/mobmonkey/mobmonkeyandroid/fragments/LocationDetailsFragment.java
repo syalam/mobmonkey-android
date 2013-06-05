@@ -404,6 +404,7 @@ public class LocationDetailsFragment extends MMFragment implements OnClickListen
 			tvLocName.setText(getString(R.string.tv_title_hot_spot) + MMSDKConstants.DEFAULT_STRING_SPACE + location.getString(MMSDKConstants.JSON_KEY_NAME));
 			tvDeleteLocationHotSpot.setText(R.string.btn_delete_hot_spot);
 			isLocation = false;
+			
 		}
 	}
 	

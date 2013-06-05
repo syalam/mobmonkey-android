@@ -4,16 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundcolor"
     android:orientation="vertical" >
-    
-    <TextView android:layout_width="wrap_content"
-		android:layout_height="50dip"
-		android:layout_gravity="center"
-		android:gravity="center"
-		android:text="@string/tv_title_assignedrequests"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:textColor="@android:color/white"
-		android:textStyle="bold"
-		android:background="@drawable/navigation_bar"/>
 	
 	<ScrollView android:layout_width="match_parent"
 		android:layout_height="wrap_content">

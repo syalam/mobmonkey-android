@@ -5,20 +5,6 @@
     android:background="@color/backgroundcolor"
     android:orientation="vertical">
     
-	<RelativeLayout android:layout_width="match_parent"
-		android:layout_height="50dp"
-		android:background="@drawable/navigation_bar">
-	    
-	    <TextView android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-			android:layout_centerInParent="true"
-			android:text="@string/tv_title_inbox"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:textColor="@android:color/white"
-			android:textStyle="bold"/>
-	    
-	</RelativeLayout>
-    
 	<ListView android:id="@+id/lvinbox"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"

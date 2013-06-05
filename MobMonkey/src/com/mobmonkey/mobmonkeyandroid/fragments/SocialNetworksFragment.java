@@ -64,6 +64,18 @@ public class SocialNetworksFragment extends MMFragment {
 		}
 	}
 
+	
+	
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onResume()
+	 */
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		getActivity().setTitle(getResources().getString(R.string.tv_title_socialnetworks));
+	}
+
 	@Override
 	public void onFragmentBackPressed() {
 		fragmentFinishListener.onFragmentFinish();

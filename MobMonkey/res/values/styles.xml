@@ -1,21 +1,33 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-	
-	<style name="AppTheme" parent="android:Theme.Sherlock.Light" />
-	
-	<style name="ActionSheetAnimation" parent="@android:style/Animation.Activity">
-		<item name="android:windowEnterAnimation">@anim/slide_bottom_in</item>
-		<item name="android:windowExitAnimation">@anim/slide_bottom_out</item>
-	</style>
-	
-	<style name="AnimationPopupLeft">
-		<item name="@android:windowEnterAnimation">@anim/grow_from_topleft_to_bottomright</item>
-		<item name="@android:windowExitAnimation">@anim/shrink_from_bottomright_to_topleft</item>
-	</style>
-	
-	    <!-- Application theme. -->
+
+    <!-- Action Bar themes -->
+    <style name="AppTheme" parent="android:Theme.Sherlock.Light">
+        <item name="actionBarStyle">@style/MyTheme.ActionBarStyle</item>
+    </style>
+
+    <style name="MyTheme.ActionBarStyle" parent="@style/Sherlock.__Widget.ActionBar">
+        <item name="titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>
+    </style>
+
+    <style name="MyTheme.ActionBar.TitleTextStyle" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!-- Animation -->
+
+    <style name="ActionSheetAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:windowEnterAnimation">@anim/slide_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_bottom_out</item>
+    </style>
+
+    <style name="AnimationPopupLeft">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_topleft_to_bottomright</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottomright_to_topleft</item>
+    </style>
+
+    <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-	
-	
+
 </resources>
