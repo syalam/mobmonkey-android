@@ -22,10 +22,14 @@ public class SubscribeScreen extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_hold);
+		//getWindow().setWindowAnimations(0);
+		overridePendingTransition(0, 0);
+		//overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_hold);
 		
 		userPrefs = getSharedPreferences(MMSDKConstants.USER_PREFS, MODE_PRIVATE);
 		setContentView(R.layout.subscribe_screen);
+		
+		
 	}
 
 	/* (non-Javadoc)

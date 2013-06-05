@@ -77,6 +77,7 @@ import com.mobmonkey.mobmonkeyandroid.listeners.MMOnSearchResultsFragmentItemCli
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnSocialNetworksFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnTrendingFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.OnLocationNameClickFragmentListener;
+import com.mobmonkey.mobmonkeyandroid.utils.MMBaseActivity;
 import com.mobmonkey.mobmonkeyandroid.utils.MMConstants;
 import com.mobmonkey.mobmonkeyandroid.utils.MMFragment;
 import com.mobmonkey.mobmonkeysdk.adapters.MMCategoryAdapter;
@@ -96,7 +97,7 @@ import com.mobmonkey.mobmonkeysdk.utils.MMSDKConstants;
  * @author Dezapp, LLC
  * 
  */
-public class MainScreen extends SherlockFragmentActivity implements
+public class MainScreen extends MMBaseActivity implements
 		MMOnMyInfoFragmentItemClickListener,
 		MMOnSocialNetworksFragmentItemClickListener,
 		MMOnMyInterestsFragmentItemClickListener, MMOnFragmentFinishListener,
@@ -121,16 +122,6 @@ public class MainScreen extends SherlockFragmentActivity implements
 	private SharedPreferences userPrefs;
 	private SharedPreferences.Editor userPrefsEditor;
 
-	private TabWidget tabWidget;
-	private TabHost tabHost;
-
-	private DrawerLayout mDrawerLayout;
-	private ListView mDrawerList;
-	private ActionBarDrawerToggle mDrawerToggle;
-
-	private CharSequence mDrawerTitle;
-	private CharSequence mTitle;
-	private String[] mFragmentTitles;
 	private FragmentManager fragmentManager;
 
 	private Stack<MMFragment> fragmentStack;
@@ -153,192 +144,14 @@ public class MainScreen extends SherlockFragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreate");
-
-		if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			this.setTheme(com.actionbarsherlock.R.style.Theme_Sherlock);
-		}
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_screen);
 		checkForGPSLocation();
 
 		fragmentStack = new Stack<MMFragment>();
 		fragmentManager = getSupportFragmentManager();
 
-		// Fire off nav drawer sequence
-		initNavigationDrawerLayout(savedInstanceState);
-
-		// Automatically go to Trending Screen
-		if (savedInstanceState == null) {
-			selectFragmentFromDrawer(0);
-		}
 	}
 
-	private void initNavigationDrawerLayout(Bundle savedInstanceState) {
-		mTitle = mDrawerTitle = getTitle();
-		mFragmentTitles = getResources().getStringArray(
-				R.array.drawer_fragments_array);
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-		mDrawerList = (ListView) findViewById(R.id.drawer_list);
-
-		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
-				GravityCompat.START);
-		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-				R.layout.drawer_list_item, mFragmentTitles));
-		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		getSupportActionBar().setBackgroundDrawable(
-				getResources().getDrawable(R.drawable.navigation_bar));
-
-		// DrawerToggle setup
-		mDrawerToggle = initActionBarDrawerToggle();
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		if (savedInstanceState == null) {
-			selectFragmentFromDrawer(0);
-		}
-
-	}
-
-	private ActionBarDrawerToggle initActionBarDrawerToggle() {
-
-		return new ActionBarDrawerToggle(this, mDrawerLayout,
-				R.drawable.ic_drawer, R.string.drawer_open,
-				R.string.drawer_close) {
-
-			public void onDrawerClosed(View v) {
-				getSupportActionBar().setTitle(mTitle);
-				supportInvalidateOptionsMenu();
-			}
-
-			public void onDrawerOpened(View v) {
-				getSupportActionBar().setTitle(mDrawerTitle);
-				supportInvalidateOptionsMenu();
-			}
-
-		};
-
-	}
-
-	private void selectFragmentFromDrawer(int position) {
-
-		MMFragment mmFragment = null;
-
-		Intent i = null;
-		Class<?> activityToStart = null;
-		Context context = MainScreen.this;
-		boolean isActivity = false;
-
-		switch (position) {
-		case 0:
-			// mmFragment = new Fragment_1();
-			// i = new Intent(MainScreen.this, TrendingNowActivity.class);
-			// activityToStart = TrendingNowActivity.class;
-			mmFragment = new TrendingNowFragment();
-			// isActivity = true;
-			break;
-		case 1:
-			mmFragment = new InboxFragment();
-			break;
-		case 2:
-			mmFragment = new SearchLocationsFragment();
-			break;
-		case 3:
-			mmFragment = new FavoritesFragment();
-			break;
-		case 4:
-			mmFragment = new SettingsFragment();
-			isActivity = false;
-			break;
-		default:
-			break;
-		}
-
-		if (isActivity) {
-			// startActivity(new Intent(MainScreen.this, activityToStart));
-		} else {
-
-			mDrawerList.setItemChecked(position, true);
-			setTitle(mFragmentTitles[position]);
-			mDrawerLayout.closeDrawer(mDrawerList);
-			performTransaction(mmFragment);
-
-		}
-
-	}
-
-	private void performTransaction(MMFragment mmFragment) {
-		FragmentTransaction fragmentTransaction = fragmentManager
-				.beginTransaction();
-		fragmentTransaction.setCustomAnimations(R.anim.slide_right_in,
-				R.anim.slide_left_out);
-		fragmentTransaction.replace(R.id.content_frame,
-				fragmentStack.push(mmFragment));
-		fragmentTransaction.commit();
-	}
-
-	@Override
-	public void setTitle(CharSequence title) {
-		mTitle = title;
-		getSupportActionBar().setTitle(title);
-	}
-
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		mDrawerToggle.syncState();
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		mDrawerToggle.onConfigurationChanged(newConfig);
-	}
-
-	/*
-	 * // ActionBar Setup
-	 * 
-	 * @Override public boolean onPrepareOptionsMenu(Menu menu) { boolean
-	 * drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-	 * menu.findItem(R.id.menu_settings).setVisible(!drawerOpen); return
-	 * super.onPrepareOptionsMenu(menu); }
-	 * 
-	 * @Override public boolean onCreateOptionsMenu(Menu menu) { // Inflate the
-	 * menu; this adds items to the action bar if it is present.
-	 * getSupportMenuInflater().inflate(R.menu.activity_main, menu); return
-	 * true; }
-	 */
-
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-				mDrawerLayout.closeDrawer(mDrawerList);
-			} else {
-				mDrawerLayout.openDrawer(mDrawerList);
-			}
-			return true;
-		case R.id.menu_settings:
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-
-	/***
-	 * Click listener to pick up user selection from navigation drawer
-	 * 
-	 * @author KV_87
-	 * 
-	 */
-	private class DrawerItemClickListener implements
-			ListView.OnItemClickListener {
-		@Override
-		public void onItemClick(AdapterView<?> parent, View v, int position,
-				long id) {
-			selectFragmentFromDrawer(position);
-		}
-	}
 
 	// /*
 	// * (non-Javadoc)
@@ -447,10 +260,10 @@ public class MainScreen extends SherlockFragmentActivity implements
 		}
 	}
 
-	/**
+/*	*//**
 	 * Function that set the tabs and the corresponding {@link Activity} for the
 	 * {@link TabHost}
-	 */
+	 *//*
 	private void setTabs() {
 		addTab(MMSDKConstants.TAB_TITLE_TRENDING_NOW,
 				R.drawable.tab_trendingnow, TrendingNowActivity.class);
@@ -464,33 +277,9 @@ public class MainScreen extends SherlockFragmentActivity implements
 				SettingsActivity.class);
 		tabHost.setCurrentTab(userPrefs.getInt(
 				MMSDKConstants.TAB_TITLE_CURRENT_TAG, 0));
-	}
+	}*/
 
-	/**
-	 * Add the tab to the existing {@link TabHost} object
-	 * 
-	 * @param tabTitle
-	 *            Title of the tab
-	 * @param drawableIconId
-	 *            Tab icon drawable resource id
-	 * @param c
-	 *            {@link Class} instance of the screen to be displayed for the
-	 *            tab
-	 */
-	private void addTab(String tabTitle, int drawableIconId, Class<?> c) {
-		Intent intent = new Intent(MainScreen.this, c);
-		TabHost.TabSpec tabSpec = tabHost.newTabSpec("tab" + tabTitle);
 
-		LayoutInflater layoutInflater = LayoutInflater.from(MainScreen.this);
-		View tabIndicator = layoutInflater.inflate(R.layout.tab_indicator,
-				tabWidget, false);
-		ImageView icon = (ImageView) tabIndicator.findViewById(R.id.ivtabicon);
-		icon.setImageResource(drawableIconId);
-
-		tabSpec.setIndicator(tabIndicator);
-		tabSpec.setContent(intent);
-		tabHost.addTab(tabSpec);
-	}
 
 	/**
 	 * Function to get all the categories from the server
