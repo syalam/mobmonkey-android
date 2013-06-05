@@ -5,6 +5,7 @@ package com.mobmonkey.mobmonkeyandroid.utils;
 
 import java.util.Stack;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -23,6 +24,8 @@ import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.mobmonkey.mobmonkeyandroid.R;
+import com.mobmonkey.mobmonkeyandroid.SubscribeScreen;
+import com.mobmonkey.mobmonkeyandroid.TermsofuseScreen;
 import com.mobmonkey.mobmonkeyandroid.fragments.FavoritesFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.InboxFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.SearchLocationsFragment;
@@ -61,7 +64,7 @@ public abstract class MMBaseActivity extends SherlockFragmentActivity {
 			this.setTheme(com.actionbarsherlock.R.style.Theme_Sherlock);
 		}
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_screen);
+		//setContentView(R.layout.main_screen);
 
 		fragmentStack = new Stack<MMFragment>();
 		fragmentManager = getSupportFragmentManager();
@@ -74,6 +77,8 @@ public abstract class MMBaseActivity extends SherlockFragmentActivity {
 			selectFragmentFromDrawer(0);
 		}
 	}
+	
+	protected abstract Context getActivityContext();
 
 	protected void initNavigationDrawerLayout(Bundle savedInstanceState) {
 		mTitle = mDrawerTitle = getTitle();
@@ -152,12 +157,20 @@ public abstract class MMBaseActivity extends SherlockFragmentActivity {
 			mmFragment = new SettingsFragment();
 			isActivity = false;
 			break;
+		case 5:
+			activityToStart = TermsofuseScreen.class;
+			isActivity = true;
+			break;
+		case 6:
+			activityToStart = SubscribeScreen.class;
+			isActivity = true;
+			break;
 		default:
 			break;
 		}
 
 		if (isActivity) {
-			// startActivity(new Intent(MainScreen.this, activityToStart));
+			 startActivity(new Intent(MMBaseActivity.this, activityToStart));
 		} else {
 
 			mDrawerList.setItemChecked(position, true);

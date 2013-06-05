@@ -5,6 +5,21 @@
         <item>Inbox</item>
         <item>Search Locations</item>
         <item>Favorites</item>
-        <item>Settings</item>
+        <item>User Settings</item>
+        <item>Terms &amp; Conditions</item>
+        <item>Subscribe</item>
     </string-array>
+    
+    <string-array name="drawer_list_array">
+        <item>Search For Places</item>
+        <item>Request Inbox</item>
+        <item>Create Hot Spot</item>
+        <item>Subscribe</item>
+        <item>What\'s Trending Now!</item>
+        <item>Favorite Places</item>
+        <item>Notifications</item>
+        <item>User Settings</item>
+        <item>Terms &amp; Conditions</item>
+    </string-array>
+    
 </resources>

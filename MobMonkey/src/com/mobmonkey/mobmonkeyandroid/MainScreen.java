@@ -144,6 +144,7 @@ public class MainScreen extends MMBaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, TAG + "onCreate");
+		setContentView(R.layout.main_screen);
 		super.onCreate(savedInstanceState);
 		checkForGPSLocation();
 
@@ -789,6 +790,12 @@ public class MainScreen extends MMBaseActivity implements
 	public void onHistoryItemClick() {
 		performTransaction(new HistoryFragment());
 		
+	}
+
+
+	@Override
+	protected Context getActivityContext() {
+		return MainScreen.this;
 	}
 
 }
