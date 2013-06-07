@@ -38,6 +38,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -144,7 +145,6 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 		userPrefsEditor = userPrefs.edit();
 		user = userPrefs.getString(MMSDKConstants.KEY_USER, MMSDKConstants.DEFAULT_STRING_EMPTY);
 		fragmentManager = getFragmentManager();
-		
 		View view = inflater.inflate(R.layout.fragment_searchlocations_screen, container, false);
 		tvNavBarTitle = (TextView) view.findViewById(R.id.tvnavbartitle);
 		llCreateHotSpot = (LinearLayout) view.findViewById(R.id.llcreatehotspot);
@@ -163,6 +163,9 @@ public class SearchLocationsFragment extends MMFragment implements MMScrollViewL
 		
 		inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		markerHashMap = new HashMap<Marker, JSONObject>();
+		
+		setHasOptionsMenu(true);
+
 		
 		if(MMLocationManager.isGPSEnabled() && MMLocationManager.getGPSLocation() != null) {
 			if(!enablePanAndZoom) {

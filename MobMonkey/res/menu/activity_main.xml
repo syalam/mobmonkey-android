@@ -11,5 +11,7 @@
         android:icon="@android:drawable/ic_menu_search"
         android:showAsAction="ifRoom|collapseActionView"
         android:title="@string/tv_title_search_locations"/>
+    
+    
 
 </menu>

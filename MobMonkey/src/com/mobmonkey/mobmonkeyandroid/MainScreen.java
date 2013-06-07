@@ -14,26 +14,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TabHost;
-import android.widget.TabWidget;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gcm.GCMRegistrar;
 import com.mobmonkey.mobmonkeyandroid.fragments.AddNotificationsFragment;
@@ -41,9 +31,7 @@ import com.mobmonkey.mobmonkeyandroid.fragments.AnsweredRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.AssignedRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.CategoriesFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.ExistingHotSpotsFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.FavoritesFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.HistoryFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.InboxFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.LocationDetailsMapFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.MyInfoFragment;
@@ -52,10 +40,8 @@ import com.mobmonkey.mobmonkeyandroid.fragments.NewHotSpotFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.OpenRequestsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.SearchLocationsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.SearchResultsFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.SettingsFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.SocialNetworksFragment;
 import com.mobmonkey.mobmonkeyandroid.fragments.TopViewedFragment;
-import com.mobmonkey.mobmonkeyandroid.fragments.TrendingNowFragment;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnAddNotificationsFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnAddressFragmentItemClickListener;
 import com.mobmonkey.mobmonkeyandroid.listeners.MMOnCategoryFragmentItemClickListener;
@@ -797,5 +783,40 @@ public class MainScreen extends MMBaseActivity implements
 	protected Context getActivityContext() {
 		return MainScreen.this;
 	}
+	
+	private ActionMode.Callback mCallback = new ActionMode.Callback()
+	{
+
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.activity_main, menu);
+			MenuItem item = menu.findItem(R.id.menu_search);
+			View v = item.getActionView();
+			
+			//TODO if(v instanceof )
+			
+			return false;
+		}
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			// TODO Auto-generated method stub
+			
+		}
+
+	};
 
 }
