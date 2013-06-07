@@ -30,4 +30,23 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <!-- Request View Styles -->
+    
+    <style name="Request.QuestionAnswer.QuestionLayout" parent="@android:style/Widget.TextView">
+        <item name="android:l"></item>
+    </style>
+    
+    <style name="Request.QuestionAnswer.Title" parent="@style/TextAppearance.Sherlock">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Request.QuestionAnswer.Question" parent="@style/TextAppearance.Sherlock">
+        <item name="android:textStyle">italic</item>
+    </style>
+    
+    <style name="Request.QuestionAnswer.Answer" parent="@style/TextAppearance.Sherlock">
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

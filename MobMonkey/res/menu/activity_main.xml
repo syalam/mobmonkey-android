@@ -1,6 +1,15 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_settings"
-        android:title="@string/menu_settings"
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_settings"
         android:orderInCategory="100"
-        android:showAsAction="always" />
+        android:showAsAction="always"
+        android:title="@string/menu_settings"/>
+    <item
+        android:id="@+id/menu_search"
+        android:actionViewClass="android.widget.SearchView"
+        android:icon="@android:drawable/ic_menu_search"
+        android:showAsAction="ifRoom|collapseActionView"
+        android:title="@string/tv_title_search_locations"/>
+
 </menu>

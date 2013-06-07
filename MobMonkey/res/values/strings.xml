@@ -420,5 +420,7 @@
 	
     <string name="drawer_open">Open the Drawer</string>
     <string name="drawer_close">Close the Drawer</string>
+    <string name="cd_attached_request_media">Attached media to answered request</string>
+    <string name="cd_request_saveorshare">Share or Save</string>
     
 </resources>
