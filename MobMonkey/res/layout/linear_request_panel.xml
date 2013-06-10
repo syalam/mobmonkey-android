@@ -28,13 +28,13 @@
                 android:id="@+id/tv_timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/imageButton1"
+                android:layout_alignBaseline="@+id/ib_share_post"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:text="@string/request_timestamp" />
 
             <ImageButton
-                android:id="@+id/imageButton1"
+                android:id="@+id/ib_share_post"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -53,7 +53,6 @@
                 android:id="@+id/iv_hotspot_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@tv_hotspot_title"
                 android:src="@drawable/icon_calendar"
                 android:visibility="gone" />
 
@@ -61,7 +60,7 @@
                 android:id="@+id/tv_hotspot_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/iv_hotspot_logo"
+                android:layout_toRightOf="@id/iv_hotspot_logo"
                 android:layout_marginLeft="5dp"
                 android:text="@string/request_hotspot_name"
                 android:textSize="14sp"

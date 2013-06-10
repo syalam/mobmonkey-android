@@ -33,7 +33,8 @@
     <!-- Request View Styles -->
     
     <style name="Request.QuestionAnswer.QuestionLayout" parent="@android:style/Widget.TextView">
-        <item name="android:l"></item>
+
+        <!-- FILL IN STYLE -->
     </style>
     
     <style name="Request.QuestionAnswer.Title" parent="@style/TextAppearance.Sherlock">
